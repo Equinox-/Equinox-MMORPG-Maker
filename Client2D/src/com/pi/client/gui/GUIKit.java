@@ -7,7 +7,7 @@ import com.pi.common.database.GraphicsAnimation;
 public class GUIKit {
     public static class Graphics {
 	public static final GraphicsAnimation loader = new GraphicsAnimation(
-		12, 126, 150);
+		12, 150, "loader", 0, 0, 126 * 12, 22);
     }
 
     public static final PIStyle defaultStyle = new PIStyle();
@@ -35,19 +35,6 @@ public class GUIKit {
 
     public static void init() {
 	if (!init) {
-	    Graphics.loader.setGraphic("loader");
-	    Graphics.loader.setPosition(0, 0, 126 * 12, 22);
-	    /*
-	     * Graphics.buttonNormal.setPosition(0, 0, 80,80);
-	     * Graphics.buttonActive.setPosition(0.33333, 0, 0.33333, 0.33333f);
-	     * Graphics.buttonHover.setPosition(0.66666, 0, 0.33333, 0.33333f);
-	     * buttonNormal.borderImage = new
-	     * PIBorderSet(Graphics.buttonNormal); buttonNormal.border = new
-	     * Color(0.5f,0.5f,0.5f); buttonActive.bgImage =
-	     * Graphics.buttonActive; buttonHover.bgImage =
-	     * Graphics.buttonHover;
-	     */
-
 	    // Buttons start
 	    buttonHover.background = new Color(0.05f, 0.05f, 0.05f);
 	    buttonHover.foreground = Color.white;
@@ -106,7 +93,7 @@ public class GUIKit {
 	    // Container end
 
 	    label.foreground = Color.white;
-	    
+
 	    loadingBar.foreground = Color.white;
 	    loadingBar.border = Color.lightGray;
 	    loadingBar.background = Color.darkGray;

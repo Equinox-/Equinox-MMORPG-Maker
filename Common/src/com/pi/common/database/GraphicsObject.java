@@ -17,6 +17,11 @@ public class GraphicsObject implements Serializable {
 	this.graphic = graphic;
     }
 
+    public GraphicsObject(String graphic, int x, int y, int width, int height) {
+	this.graphic = graphic;
+	setPosition(x, y, width, height);
+    }
+
     public void setGraphic(String graphic) {
 	this.graphic = graphic;
     }

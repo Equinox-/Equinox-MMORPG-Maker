@@ -5,43 +5,52 @@ import com.pi.common.contants.GlobalConstants;
 public class GraphicsAnimation extends GraphicsObject {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private int frames;
-    private int frame_width;
     private int currentFrame = 0;
     private long lastFrame = 0;
     private long frameDuration;
+    private int frameWidth;
 
-    public GraphicsAnimation(int frames, int frame_width, long frameTime) {
+    public GraphicsAnimation(int frames, long frameTime) {
 	this.frames = frames;
-	this.frame_width = frame_width;
 	this.frameDuration = frameTime;
-	lastFrame = System.currentTimeMillis();
+	this.lastFrame = System.currentTimeMillis();
+    }
+
+    public GraphicsAnimation(int frames, long frameTime, String graphic) {
+	this(frames, frameTime);
+	setGraphic(graphic);
+    }
+    public GraphicsAnimation(int frames, long frameTime, String graphic, int x, int y, int width, int height) {
+	this(frames, frameTime, graphic);
+	setPosition(x, y, width, height);
+    }
+
+    @Override
+    public void setPosition(int x, int y, int width, int height) {
+	super.setPosition(x, y, width, height);
+	this.frameWidth = (int) (super.getPositionWidth() / frames);
     }
 
     @Override
     public float getPositionX() {
-	if (lastFrame + frameDuration <= System.currentTimeMillis()) {
-	    long passed = System.currentTimeMillis()
-		    - lastFrame;
-	    currentFrame += passed / frameDuration;
-	    if (currentFrame >= frames) {
-		currentFrame = 0;
-	    }
-	    lastFrame = System.currentTimeMillis();
-	}
-	return super.getPositionX() + (frame_width * currentFrame);
+	advanceFrames();
+	return super.getPositionX() + (frameWidth * currentFrame);
     }
 
     @Override
     public float getPositionWidth() {
+	advanceFrames();
+	return frameWidth;
+    }
+
+    private void advanceFrames() {
 	if (lastFrame + frameDuration <= System.currentTimeMillis()) {
-	    long passed = System.currentTimeMillis()
-		    - lastFrame;
+	    long passed = System.currentTimeMillis() - lastFrame;
 	    currentFrame += passed / frameDuration;
 	    if (currentFrame >= frames) {
-		currentFrame = 0;
+		currentFrame -= frames;
 	    }
 	    lastFrame = System.currentTimeMillis();
 	}
-	return super.getPositionWidth() / frames;
     }
 }
