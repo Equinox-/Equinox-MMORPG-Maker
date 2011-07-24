@@ -21,10 +21,11 @@ public class Paths {
 	    .getProperty("os.name"));
 
     public static File getHomeDirectory() {
-	File f = new File((CURRENT_OS == OperatingSystem.WINDOWS ? FileSystemView
-		.getFileSystemView().getDefaultDirectory().getAbsolutePath()
-		: getUnixHome())
-		+ File.separator + ".equinox_mmorpg");
+	File f = new File(
+		(CURRENT_OS == OperatingSystem.WINDOWS ? FileSystemView
+			.getFileSystemView().getDefaultDirectory()
+			.getAbsolutePath() : getUnixHome())
+			+ File.separator + ".equinox_mmorpg");
 	if (!f.exists())
 	    f.mkdir();
 	return f;
@@ -36,14 +37,14 @@ public class Paths {
     }
 
     public static File getGraphicsDirectory() {
-	File f = new File(getHomeDirectory(),"graphics");
+	File f = new File(getHomeDirectory(), "graphics");
 	if (!f.exists())
 	    f.mkdir();
 	return f;
     }
 
     public static File getSectorDirectory() {
-	File f = new File(getHomeDirectory(),"world");
+	File f = new File(getHomeDirectory(), "world");
 	if (!f.exists())
 	    f.mkdir();
 	return f;
@@ -55,6 +56,8 @@ public class Paths {
 	    File f = new File(gDir, id + "." + ext);
 	    if (f.exists())
 		return f;
+	    if (id.endsWith(ext))
+		return new File(gDir, id);
 	}
 	return null;
     }

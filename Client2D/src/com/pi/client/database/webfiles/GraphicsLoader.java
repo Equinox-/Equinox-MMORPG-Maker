@@ -91,6 +91,7 @@ public class GraphicsLoader {
 	    if (fout != null)
 		fout.close();
 	}
+	dest.delete();
 	f.renameTo(dest);
     }
 }
