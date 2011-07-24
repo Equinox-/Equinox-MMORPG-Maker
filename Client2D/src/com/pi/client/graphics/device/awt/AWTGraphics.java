@@ -162,4 +162,19 @@ public class AWTGraphics extends IGraphics {
     public Rectangle2D getStringBounds(Font f, String s) {
 	return graphics.getFontMetrics(f).getStringBounds(s, graphics);
     }
+
+    @Override
+    public void setClip(Rectangle r) {
+	if (r == null)
+	    r = mgr.getClient().getApplet().getBounds();
+	graphics.setClip(r);
+    }
+
+    @Override
+    public Rectangle getClip() {
+	Rectangle r = graphics.getClipBounds();
+	if (r == null)
+	    r = mgr.getClient().getApplet().getBounds();
+	return r;
+    }
 }

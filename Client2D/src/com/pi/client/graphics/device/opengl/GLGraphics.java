@@ -16,6 +16,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     private final Animator animator;
     private final TextRendererProvider txtRender;
     private final TextureManager textureManager;
+    private Rectangle cliparea;
 
     public GLGraphics(DisplayManager mgr) {
 	super(mgr);
@@ -24,6 +25,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	super.mgr.getClient().getApplet().add(canvas);
 	canvas.addGLEventListener(this);
 	canvas.setSize(super.mgr.getClient().getApplet().getSize());
+	cliparea = canvas.getBounds();
 	canvas.setLocation(0, 0);
 	animator = new Animator(canvas);
 	animator.add(canvas);
@@ -121,6 +123,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	if (!canvas.getSize().equals(
 		super.mgr.getClient().getApplet().getSize())) {
 	    canvas.setSize(super.mgr.getClient().getApplet().getSize());
+	    cliparea = canvas.getBounds();
 	    canvas.reshape(0, 0, super.mgr.getClient().getApplet().getWidth(),
 		    super.mgr.getClient().getApplet().getHeight());
 	}
@@ -206,5 +209,33 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	if (tex != null)
 	    return tex.getHeight();
 	return 0;
+    }
+
+    @Override
+    public void setClip(Rectangle r) {
+	if (r != null) {
+	    gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 1, 0, 0, -r.x },
+		    0);
+	    gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[] { 0, 1, 0, -r.y },
+		    0);
+	    gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[] { -1, 0, 0,
+		    r.x + r.width }, 0);
+	    gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[] { 0, -1, 0,
+		    r.y + r.height }, 0);
+	    gl.glEnable(GL2.GL_CLIP_PLANE0);
+	    gl.glEnable(GL2.GL_CLIP_PLANE1);
+	    gl.glEnable(GL2.GL_CLIP_PLANE2);
+	    gl.glEnable(GL2.GL_CLIP_PLANE3);
+	} else {
+	    gl.glDisable(GL2.GL_CLIP_PLANE0);
+	    gl.glDisable(GL2.GL_CLIP_PLANE1);
+	    gl.glDisable(GL2.GL_CLIP_PLANE2);
+	    gl.glDisable(GL2.GL_CLIP_PLANE3);
+	}
+    }
+
+    @Override
+    public Rectangle getClip() {
+	return cliparea;
     }
 }

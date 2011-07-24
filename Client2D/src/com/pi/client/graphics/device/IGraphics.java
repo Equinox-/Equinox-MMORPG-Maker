@@ -194,4 +194,12 @@ public abstract class IGraphics {
 	}
 	return new String[] { "", s };
     }
+
+    public abstract void setClip(Rectangle r);
+
+    public abstract Rectangle getClip();
+
+    public void setClip(int x, int y, int width, int height) {
+	setClip(new Rectangle(x, y, width, height));
+    }
 }

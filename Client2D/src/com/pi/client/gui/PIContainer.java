@@ -1,5 +1,6 @@
 package com.pi.client.gui;
 
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,17 @@ public class PIContainer extends PIComponent {
     @Override
     public void render(IGraphics g) {
 	super.render(g);
-	for (PIComponent child : children)
+	Rectangle currentBounds = null;
+	Rectangle bounds = getAbsolutePaddedBounds();
+	if (clipContents)
+	    currentBounds = (Rectangle) g.getClip().clone();
+	for (PIComponent child : children) {
+	    if (clipContents)
+		g.setClip(bounds);
 	    child.render(g);
+	}
+	if (clipContents)
+	    g.setClip(currentBounds);
     }
 
     @Override

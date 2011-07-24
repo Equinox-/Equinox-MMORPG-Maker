@@ -23,6 +23,7 @@ public class PIComponent implements Renderable, MouseWheelListener,
     protected boolean isVisible = true;
     protected boolean isFocused = false;
     protected boolean isActive = false;
+    protected boolean clipContents = false;
 
     public PIComponent() {
 	styles.put(PIStyle.StyleType.Normal, GUIKit.defaultStyle);
@@ -52,8 +53,7 @@ public class PIComponent implements Renderable, MouseWheelListener,
     public PIStyle getCurrentStyle() {
 	if (hovering && styles.containsKey(PIStyle.StyleType.Hover))
 	    return styles.get(PIStyle.StyleType.Hover);
-	if (isActive
-		&& styles.containsKey(PIStyle.StyleType.Active))
+	if (isActive && styles.containsKey(PIStyle.StyleType.Active))
 	    return styles.get(PIStyle.StyleType.Active);
 	return styles.get(PIStyle.StyleType.Normal);
     }
@@ -102,11 +102,19 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	if (isVisible && (style = getCurrentStyle()) != null) {
 	    String disp;
 	    Rectangle bounds = getAbsolutePaddedBounds();
+	    Rectangle clipArea = null;
+	    if (clipContents) {
+		clipArea = (Rectangle) g.getClip().clone();
+		g.setClip(bounds);
+	    }
 	    if (style.foreground != null && style.font != null
 		    && content != null
 		    && (disp = getDisplay()).trim().length() > 0) {
 		g.drawWrappedText(bounds, style.font, disp, style.foreground,
 			style.hAlign, style.vAlign);
+	    }
+	    if (clipContents) {
+		g.setClip(clipArea);
 	    }
 	}
     }
@@ -328,5 +336,13 @@ public class PIComponent implements Renderable, MouseWheelListener,
     public void mouseWheelMoved(MouseWheelEvent arg0) {
 	if (hovering) {
 	}
+    }
+
+    public void setClipContents(boolean val) {
+	this.clipContents = val;
+    }
+
+    public boolean doesClipContents() {
+	return this.clipContents;
     }
 }
