@@ -13,6 +13,7 @@ public abstract class Packet {
 	registerPacket(0, Packet0Disconnect.class);
 	registerPacket(1, Packet1Login.class);
 	registerPacket(2, Packet2Alert.class);
+	registerPacket(3, Packet3Register.class);
     }
 
     public Packet() {

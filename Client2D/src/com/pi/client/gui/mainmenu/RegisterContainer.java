@@ -1,7 +1,12 @@
 package com.pi.client.gui.mainmenu;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import com.pi.client.gui.*;
 import com.pi.client.gui.PIStyle.StyleType;
+import com.pi.common.PICryptUtils;
+import com.pi.common.net.packet.Packet3Register;
 
 public class RegisterContainer extends PIContainer {
     PIComponent registerButton = new PIComponent();
@@ -13,7 +18,7 @@ public class RegisterContainer extends PIContainer {
     PITextField confpasswordField = new PITextField();
     private final MainMenu menu;
 
-    public RegisterContainer(MainMenu menu) {
+    public RegisterContainer(final MainMenu menu) {
 	this.menu = menu;
 	setStyle(StyleType.Normal, GUIKit.containerNormal);
 	usernameField.setStyleSet(GUIKit.textfieldSet, false);
@@ -32,6 +37,31 @@ public class RegisterContainer extends PIContainer {
 	confpasswordField.setMaxLength(16);
 	registerButton.setStyleSet(GUIKit.buttonSet, false);
 	registerButton.setContent("Register");
+	registerButton.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		if (menu.client.isNetworkConnected()) {
+		    if (usernameField.getContent().length() <= 0) {
+			menu.alert("You must enter a username!");
+		    } else if (passwordField.getContent().length() <= 0) {
+			menu.alert("You must enter a password!");
+		    } else if (!passwordField.getContent().equals(
+			    confpasswordField.getContent())) {
+			menu.alert("You must correctly confirm your password!");
+		    } else {
+			Packet3Register pack = new Packet3Register();
+			pack.username = usernameField.getContent();
+			System.out.println(passwordField.getContent());
+			pack.password = PICryptUtils.crypt(passwordField
+				.getContent());
+			menu.client.getNetwork().send(pack);
+			menu.loading("Connecting to server...");
+		    }
+		} else {
+		    menu.alert("Cannot login without network connection!");
+		}
+	    }
+	});
 	add(registerButton);
 	add(usernameLabel);
 	add(passwordLabel);

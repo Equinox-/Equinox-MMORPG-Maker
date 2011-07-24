@@ -46,7 +46,6 @@ public class NetServerClient extends NetClient {
 		p.writePacket(dOut);
 		dOut.flush();
 	    } catch (Exception e) {
-		e.printStackTrace();
 	    }
 	}
 	dispose();

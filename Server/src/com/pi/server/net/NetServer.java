@@ -35,12 +35,14 @@ public class NetServer extends Thread {
 
     @Override
     public void run() {
+	server.getLog().fine("Starting client listener");
 	while (sock.isBound() && !sock.isClosed()) {
 	    try {
 		addClient(sock.accept());
 	    } catch (IOException ignored) {
 	    }
 	}
+	server.getLog().fine("Killing client listener");
     }
 
     private void addClient(Socket src) {

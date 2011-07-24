@@ -30,11 +30,21 @@ public class AccountDatabase {
     }
 
     public Account getAccount(String username) {
-	for (Account acc:list){
+	for (Account acc : list) {
 	    if (acc.getUsername().equalsIgnoreCase(username))
 		return acc;
 	}
 	return null;
+    }
+
+    public boolean addAccount(String username, String passwordHash) {
+	if (getAccount(username) != null)
+	    return false;
+	Account acc = new Account();
+	acc.setPasswordHash(passwordHash);
+	acc.setUsername(username);
+	list.add(acc);
+	return true;
     }
 
     public void writeData() throws IOException {

@@ -81,7 +81,7 @@ public class PILogger {
 		    String s = getFormatter() != null ? getFormatter().format(
 			    record) : ("[" + record.getLevel() + "] " + record
 			    .getMessage());
-		    if (record.getLevel().intValue() > level.intValue()) {
+		    if (record.getLevel().intValue() >= level.intValue()) {
 			lastMessage = record.getMessage();
 			if (record.getLevel().intValue() == Level.SEVERE
 				.intValue() || record.getThrown() != null)

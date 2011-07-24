@@ -36,10 +36,12 @@ public class SectorManager extends Thread {
 
     @Override
     public void run() {
+	server.getLog().fine("Started Sector Manager");
 	while (running) {
 	    doRequest();
 	    removeExpired();
 	}
+	server.getLog().fine("Killing Sector Manager");
     }
 
     private void removeExpired() {

@@ -30,10 +30,7 @@ public class Server {
     }
 
     public Server() {
-	database = new ServerDatabase(this);
 	try {
-	    int port = Integer.valueOf(9999);
-	    network = new NetServer(this, port, null);
 	    JFrame f = new JFrame("Server");
 	    f.addWindowListener(new WindowAdapter() {
 		@Override
@@ -56,12 +53,15 @@ public class Server {
 		}
 	    });
 	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	    int port = Integer.valueOf(9999);
+	    database = new ServerDatabase(this);
+	    network = new NetServer(this, port, null);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
     }
-    
-    public void dispose(){
+
+    public void dispose() {
 	network.dispose();
 	database.save();
     }

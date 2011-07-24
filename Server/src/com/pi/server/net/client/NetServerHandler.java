@@ -21,6 +21,10 @@ public class NetServerHandler extends NetHandler {
     public void process(Packet p) {
     }
 
+    public void process(Packet0Disconnect p) {
+	netClient.dispose(p.reason, p.details);
+    }
+
     public void process(Packet1Login p) {
 	Account acc = server.getDatabase().getAccounts().getAccount(p.username);
 	if (acc != null) {
@@ -35,6 +39,17 @@ public class NetServerHandler extends NetHandler {
 	} else {
 	    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
 		    "That account does not exist"));
+	}
+    }
+
+    public void process(Packet3Register p) {
+	if (server.getDatabase().getAccounts()
+		.addAccount(p.username, p.password)) {
+	    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
+		    "Sucessfully registered!"));
+	} else {
+	    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
+		    "There is already an account by that username!"));
 	}
     }
 }

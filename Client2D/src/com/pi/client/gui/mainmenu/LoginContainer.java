@@ -33,7 +33,6 @@ public class LoginContainer extends PIContainer {
 	loginButton.addMouseListener(new MouseAdapter() {
 	    @Override
 	    public void mouseClicked(MouseEvent e) {
-		loginButton.setFocused(false);
 		if (menu.client.isNetworkConnected()) {
 		    if (usernameField.getContent().length() <= 0) {
 			menu.alert("You must enter a username!");
