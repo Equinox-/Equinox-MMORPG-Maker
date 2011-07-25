@@ -12,7 +12,9 @@ public class NetWriterThread extends Thread {
 
     @Override
     public void run() {
-	while (netClient.isConnected()) {
+	netClient.getLog().finer(
+		"Starting client " + netClient.getID() + " writer thread");
+	while (netClient.isConnected() && !netClient.isQuitting()) {
 	    while (netClient.sendQueuedPacket())
 		;
 	    try {
@@ -27,5 +29,7 @@ public class NetWriterThread extends Thread {
 		e.printStackTrace();
 	    }
 	}
+	netClient.getLog().finer(
+		"Quit client " + netClient.getID() + " writer thread");
     }
 }

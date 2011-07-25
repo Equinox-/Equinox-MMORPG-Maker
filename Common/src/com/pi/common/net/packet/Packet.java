@@ -14,6 +14,8 @@ public abstract class Packet {
 	registerPacket(1, Packet1Login.class);
 	registerPacket(2, Packet2Alert.class);
 	registerPacket(3, Packet3Register.class);
+	registerPacket(4, Packet4Sector.class);
+	registerPacket(5, Packet5SectorRequest.class);
     }
 
     public Packet() {
@@ -60,6 +62,10 @@ public abstract class Packet {
 	char[] data = s.toCharArray();
 	for (char c : data)
 	    dOut.writeChar(c);
+    }
+
+    public String getName() {
+	return idMapping.get(getID()).getSimpleName();
     }
 
     protected static int stringByteLength(String str) {

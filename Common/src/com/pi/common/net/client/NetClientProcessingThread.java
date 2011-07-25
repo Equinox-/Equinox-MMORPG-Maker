@@ -10,9 +10,13 @@ public class NetClientProcessingThread extends Thread {
 
     @Override
     public void run() {
+	netClient.getLog().finer(
+		"Starting client " + netClient.getID() + " processing thread");
 	while (netClient.isConnected()
 		&& (!netClient.isQuitting() || netClient.shouldProcessPacket())) {
 	    netClient.processPacket();
 	}
+	netClient.getLog().finer(
+		"Quit client " + netClient.getID() + " processing thread");
     }
 }

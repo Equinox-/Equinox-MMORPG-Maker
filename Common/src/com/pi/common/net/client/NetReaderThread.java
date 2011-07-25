@@ -10,6 +10,8 @@ public class NetReaderThread extends Thread {
 
     @Override
     public void run() {
+	netClient.getLog().finer(
+		"Starting client " + netClient.getID() + " reader thread");
 	while (netClient.isConnected() && !netClient.isQuitting()) {
 	    while (netClient.readPacket())
 		;
@@ -18,5 +20,7 @@ public class NetReaderThread extends Thread {
 	    } catch (InterruptedException e) {
 	    }
 	}
+	netClient.getLog().finer(
+		"Quit client " + netClient.getID() + " reader thread");
     }
 }

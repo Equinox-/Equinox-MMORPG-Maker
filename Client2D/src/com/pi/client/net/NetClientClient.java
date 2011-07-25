@@ -38,6 +38,7 @@ public class NetClientClient extends NetClient {
 		p.writePacket(dOut);
 		dOut.flush();
 	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
 	}
 	super.dispose();
@@ -51,6 +52,7 @@ public class NetClientClient extends NetClient {
 		p.writePacket(dOut);
 		dOut.flush();
 	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
 	}
 	super.dispose();

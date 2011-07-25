@@ -23,7 +23,7 @@ public class ImageManager extends Thread {
 	super.start();
     }
 
-    public BufferedImage fetchImage(String id) {
+    public synchronized BufferedImage fetchImage(String id) {
 	ImageStorage tS = map.get(id);
 	if (tS == null) {
 	    loadQueue.put(id, System.currentTimeMillis());
@@ -39,7 +39,7 @@ public class ImageManager extends Thread {
 	private long lastUsed;
     }
 
-    private BufferedImage loadImage(String id) {
+    private synchronized BufferedImage loadImage(String id) {
 	File img = Paths.getGraphicsFile(id);
 	if (img == null) {
 	    return null;
@@ -68,7 +68,7 @@ public class ImageManager extends Thread {
 	client.getLog().fine("Killing Image Manager Thread");
     }
 
-    private void removeExpired() {
+    private synchronized void removeExpired() {
 	for (String i : map.keySet()) {
 	    if (System.currentTimeMillis() - map.get(i).lastUsed > imageExpiry) {
 		ImageStorage str = map.remove(i);
@@ -78,7 +78,7 @@ public class ImageManager extends Thread {
 	}
     }
 
-    private String oldestRequest() {
+    private synchronized String oldestRequest() {
 	long oldestTime = Long.MAX_VALUE;
 	String oldestID = null;
 	for (String i : loadQueue.keySet()) {
@@ -97,7 +97,7 @@ public class ImageManager extends Thread {
 	return oldestID;
     }
 
-    public void dispose() {
+    public synchronized void dispose() {
 	running = false;
 	try {
 	    super.join();

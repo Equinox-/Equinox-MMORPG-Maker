@@ -31,8 +31,17 @@ public class NetClientHandler extends NetHandler {
 		&& client.getDisplayManager() != null
 		&& client.getDisplayManager().getRenderLoop() != null
 		&& client.getDisplayManager().getRenderLoop().getMainMenu() != null) {
-	    client.getDisplayManager().getRenderLoop().getMainMenu()
-		    .alert(p.message);
+	    if (p.message.equalsIgnoreCase("Login sucessfull")) {
+		client.setInGame(true);
+	    } else {
+		client.getDisplayManager().getRenderLoop().getMainMenu()
+			.alert(p.message);
+	    }
 	}
+    }
+
+    public void process(Packet4Sector p) {
+	System.out.println("Sector packet recevied");
+	client.getWorld().getSectorManager().setSector(p.sector);
     }
 }

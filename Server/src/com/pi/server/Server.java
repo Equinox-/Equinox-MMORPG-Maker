@@ -8,12 +8,15 @@ import java.io.PrintStream;
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 
+import com.pi.common.PILogViewer;
 import com.pi.common.PILogger;
 import com.pi.server.database.ServerDatabase;
 import com.pi.server.net.NetServer;
+import com.pi.server.world.World;
 
 public class Server {
     private NetServer network;
+    private World world;
     private PILogger log;
     private ServerDatabase database;
 
@@ -31,42 +34,38 @@ public class Server {
 
     public Server() {
 	try {
-	    JFrame f = new JFrame("Server");
+	    PILogViewer f = new PILogViewer("Server");
 	    f.addWindowListener(new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
 		    dispose();
 		}
 	    });
-	    f.setSize(500, 500);
-	    f.setLocation(250, 50);
-	    f.setVisible(true);
-	    final JTextPane tPane = new JTextPane();
-	    tPane.setSize(500, 450);
-	    tPane.setLocation(0, 0);
-	    f.add(tPane);
-	    log = new PILogger(new PrintStream(new File(
-		    "/home/westin/Desktop/log")) {
-		@Override
-		public void println(String s) {
-		    tPane.setText(tPane.getText() + s + "\n");
-		}
-	    });
-	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	    log = new PILogger(f.logOut);
 	    int port = Integer.valueOf(9999);
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
+	    world = new World(this);
+	    world.getSectorManager().getSector(0, 0);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
     }
 
     public void dispose() {
-	network.dispose();
-	database.save();
+	if (network != null)
+	    network.dispose();
+	if (database != null)
+	    database.save();
+	if (world != null)
+	    world.dispose();
     }
 
     public static void main(String[] args) {
 	new Server();
+    }
+
+    public World getWorld() {
+	return world;
     }
 }

@@ -2,16 +2,18 @@ package com.pi.server.world;
 
 import java.awt.Point;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.pi.common.database.Sector;
 import com.pi.common.database.io.SectorIO;
+import com.pi.common.net.client.NetClient;
+import com.pi.common.net.packet.Packet4Sector;
 import com.pi.server.Server;
 import com.pi.server.database.Paths;
+import com.pi.server.net.client.NetServerClient;
 
 public class SectorManager extends Thread {
-    public final static int sectorExpiry = 60000; // 1 Minute
+    public final static int sectorExpiry = 300000; // 5 Minutes
     private final Server server;
     private boolean running = true;
 
@@ -34,14 +36,24 @@ public class SectorManager extends Thread {
 	return sS.data;
     }
 
+    public synchronized void setSector(Sector sector) {
+	SectorStorage sec = map.get(sector.getSectorLocation());
+	if (sec == null)
+	    sec = new SectorStorage();
+	sec.lastUsed = System.currentTimeMillis();
+	sec.data = sector;
+	map.put(sector.getSectorLocation(), sec);
+	server.getWorld().getSectorWriter().writeSector(sector);
+    }
+
     @Override
     public void run() {
-	server.getLog().fine("Started Sector Manager");
+	server.getLog().finer("Started Sector Manager Thread");
 	while (running) {
 	    doRequest();
 	    removeExpired();
 	}
-	server.getLog().fine("Killing Sector Manager");
+	server.getLog().finer("Killed Sector Manager Thread");
     }
 
     private void removeExpired() {
@@ -69,16 +81,15 @@ public class SectorManager extends Thread {
 	if (oldestSector != null) {
 	    loadQueue.remove(oldestSector);
 	    SectorStorage sX = new SectorStorage();
-	    // TODO Send sector request to server
 	    try {
 		sX.data = SectorIO.read(Paths.getSectorFile(oldestSector.x,
 			oldestSector.y));
 	    } catch (IOException e) {
 		e.printStackTrace();
-		System.exit(0);
 	    }
 	    sX.lastUsed = System.currentTimeMillis();
 	    map.put(oldestSector, sX);
+	    server.getLog().info("Loaded: " + oldestSector.toString());
 	}
     }
 

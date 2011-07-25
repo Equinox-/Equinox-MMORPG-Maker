@@ -13,9 +13,9 @@ public class ClientApplet extends Applet {
 	setSize(500, 500);
 	setLayout(null);
     }
-    
+
     @Override
-    public void init(){
+    public void init() {
 	super.init();
 	this.client = new Client(this);
     }
@@ -23,6 +23,6 @@ public class ClientApplet extends Applet {
     @Override
     public void destroy() {
 	super.destroy();
-	this.client.destroy();
+	this.client.dispose();
     }
 }

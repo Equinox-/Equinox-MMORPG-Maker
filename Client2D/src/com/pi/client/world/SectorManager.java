@@ -1,6 +1,7 @@
 package com.pi.client.world;
 
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,14 +10,17 @@ import com.pi.client.Client;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
 import com.pi.common.database.io.SectorIO;
+import com.pi.common.net.packet.Packet5SectorRequest;
 
 public class SectorManager extends Thread {
     public final static int sectorExpiry = 60000; // 1 Minute
+    public final static int serverRequestExpiry = 30000; // 30 seconds
     private final Client client;
     private boolean running = true;
 
     private Map<Point, Long> loadQueue = new HashMap<Point, Long>();
     private Map<Point, SectorStorage> map = new HashMap<Point, SectorStorage>();
+    private Map<Point, Long> sentRequests = new HashMap<Point, Long>();
 
     public SectorManager(Client client) {
 	super("SectorManager");
@@ -32,6 +36,16 @@ public class SectorManager extends Thread {
 	    return null;
 	}
 	return sS.data;
+    }
+
+    public synchronized void setSector(Sector sector) {
+	SectorStorage sec = map.get(sector.getSectorLocation());
+	if (sec == null)
+	    sec = new SectorStorage();
+	sec.lastUsed = System.currentTimeMillis();
+	sec.data = sector;
+	map.put(sector.getSectorLocation(), sec);
+	client.getWorld().getSectorWriter().writeSector(sector);
     }
 
     @Override
@@ -68,16 +82,33 @@ public class SectorManager extends Thread {
 	if (oldestSector != null) {
 	    loadQueue.remove(oldestSector);
 	    SectorStorage sX = new SectorStorage();
-	    // TODO Send sector request to server
-	    try {
-		sX.data = SectorIO.read(Paths.getSectorFile(oldestSector.x,
-			oldestSector.y));
-	    } catch (IOException e) {
-		e.printStackTrace();
-		System.exit(0);
+	    File f = Paths.getSectorFile(oldestSector.x, oldestSector.y);
+	    int revision = -1;
+	    if (f.exists()) {
+		try {
+		    sX.data = SectorIO.read(f);
+		    revision = sX.data.getRevision();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	    }
-	    sX.lastUsed = System.currentTimeMillis();
-	    map.put(oldestSector, sX);
+	    if (client.getNetwork() != null
+		    && client.getNetwork().getSocket() != null
+		    && client.getNetwork().getSocket().isConnected()) {
+		if (sentRequests.get(oldestSector) == null
+			|| sentRequests.get(oldestSector).longValue()
+				+ serverRequestExpiry < System
+				    .currentTimeMillis()) {
+		    sentRequests.put(oldestSector, System.currentTimeMillis());
+		    Packet5SectorRequest pack = new Packet5SectorRequest();
+		    pack.baseX = oldestSector.x;
+		    pack.baseY = oldestSector.y;
+		    pack.revision = revision;
+		    client.getNetwork().send(pack);
+		    sX.lastUsed = System.currentTimeMillis();
+		    map.put(oldestSector, sX);
+		}
+	    }
 	}
     }
 

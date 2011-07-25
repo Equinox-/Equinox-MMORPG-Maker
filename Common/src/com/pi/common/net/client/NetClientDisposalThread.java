@@ -10,6 +10,8 @@ public class NetClientDisposalThread extends Thread {
     @SuppressWarnings("deprecation")
     @Override
     public void run() {
+	netClient.getLog().finer(
+		"Disposing network client " + netClient.getID());
 	if (netClient.getNetReader().isAlive())
 	    try {
 		netClient.getNetReader().join();
@@ -17,6 +19,10 @@ public class NetClientDisposalThread extends Thread {
 		e.printStackTrace();
 		netClient.getNetReader().stop();
 	    }
+	else
+	    netClient.getLog().finer(
+		    "Client " + netClient.getID()
+			    + " reader thread is already stopped");
 	if (netClient.getNetWriter().isAlive())
 	    try {
 		netClient.getNetWriter().join();
@@ -24,6 +30,11 @@ public class NetClientDisposalThread extends Thread {
 		e.printStackTrace();
 		netClient.getNetWriter().stop();
 	    }
+
+	else
+	    netClient.getLog().finer(
+		    "Client " + netClient.getID()
+			    + " writer thread is already stopped");
 	while (netClient.shouldProcessPacket()) {
 	    try {
 		sleep(100l);
@@ -38,5 +49,11 @@ public class NetClientDisposalThread extends Thread {
 		e.printStackTrace();
 		netClient.getNetProcessor().stop();
 	    }
+	else
+	    netClient.getLog().finer(
+		    "Client " + netClient.getID()
+			    + " processing thread is already stopped");
+	netClient.getLog()
+		.finer("Disposed network client " + netClient.getID());
     }
 }

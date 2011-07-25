@@ -1,8 +1,8 @@
 package com.pi.server.net.client;
 
 import com.pi.common.database.Account;
+import com.pi.common.database.Sector;
 import com.pi.common.net.NetHandler;
-import com.pi.common.net.client.NetClient;
 import com.pi.common.net.packet.*;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
 import com.pi.server.Server;
@@ -50,6 +50,16 @@ public class NetServerHandler extends NetHandler {
 	} else {
 	    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
 		    "There is already an account by that username!"));
+	}
+    }
+
+    public void process(Packet5SectorRequest p) {
+	Sector sec = server.getWorld().getSectorManager()
+		.getSector(p.baseX, p.baseY);
+	if (sec != null && sec.getRevision() != p.revision) {
+	    Packet4Sector packet = new Packet4Sector();
+	    packet.sector = sec;
+	    netClient.send(packet);
 	}
     }
 }

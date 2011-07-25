@@ -85,7 +85,7 @@ public class PILogger {
 			lastMessage = record.getMessage();
 			if (record.getLevel().intValue() == Level.SEVERE
 				.intValue() || record.getThrown() != null)
-			    System.err.println(s);
+			    streamOut.println(s);
 			streamOut.println(s);
 		    }
 		}

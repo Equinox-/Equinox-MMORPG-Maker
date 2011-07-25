@@ -41,12 +41,12 @@ public abstract class NetClient {
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }
+	    this.netHandle = netHandle;
 	    this.netReader = new NetReaderThread(this);
 	    this.netWriter = new NetWriterThread(this);
 	    this.netProcessor = new NetClientProcessingThread(this);
 	    this.netReader.start();
 	    this.netWriter.start();
-	    this.netHandle = netHandle;
 	    this.netProcessor.start();
 	}
     }
@@ -60,7 +60,8 @@ public abstract class NetClient {
     }
 
     public boolean isConnected() {
-	return connected;
+	return connected && sock != null && sock.isConnected()
+		&& !sock.isClosed();
     }
 
     public boolean isQuitting() {
@@ -77,7 +78,7 @@ public abstract class NetClient {
 	    Packet packet = Packet.getPacket(dIn);
 	    if (packet != null) {
 		processQueue.add(packet);
-		getLog().finer("Reading: " + packet.getID());
+		getLog().finest("Reading packet " + packet.getName());
 		read = true;
 	    } else {
 		error("End Of Stream", "");
@@ -100,7 +101,7 @@ public abstract class NetClient {
 		synchronized (syncObject) {
 		    packet = (Packet) sendQueue.remove(0);
 		}
-		getLog().finer("Sending: " + packet.getID());
+		getLog().finest("Sending packet " + packet.getName());
 		packet.writePacket(dOut);
 		sent = true;
 	    }
@@ -113,7 +114,6 @@ public abstract class NetClient {
     }
 
     public void error(Exception exception) {
-	exception.printStackTrace();
 	this.error("Internal Exception", exception.toString());
     }
 
@@ -122,6 +122,7 @@ public abstract class NetClient {
 	    hasErrored = true;
 	    errorReason = reason;
 	    errorDetails = details;
+	    quitting = true;
 	    new NetClientDisposalThread(this).start();
 	    connected = false;
 	    try {
@@ -175,7 +176,7 @@ public abstract class NetClient {
 	for (int i = 0; i < 100 && !processQueue.isEmpty(); i++) {
 	    Packet packet = (Packet) processQueue.remove(0);
 	    getHandle().processPacket(packet);
-	    getLog().finer("Processing: " + packet.getID());
+	    getLog().finest("Processing packet " + packet.getName());
 	}
 
 	if (hasErrored() && processQueue.isEmpty())
