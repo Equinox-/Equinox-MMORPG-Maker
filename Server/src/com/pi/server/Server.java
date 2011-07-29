@@ -46,7 +46,7 @@ public class Server {
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
 	    world = new World(this);
-	    world.getSectorManager().getSector(0, 0);
+	   // world.getSectorManager().getSector(0, 0);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

@@ -114,11 +114,15 @@ public abstract class NetClient {
     }
 
     public void error(Exception exception) {
-	this.error("Internal Exception", exception.toString());
+	String s = "";
+	for (StackTraceElement e : exception.getStackTrace())
+	    s += e.toString();
+	this.error("Internal Exception", exception.toString() + "\n" + s);
     }
 
     public void error(String reason, String details) {
 	if (connected) {
+	    getLog().severe("Error: " + reason + "\n" + details + "\n");
 	    hasErrored = true;
 	    errorReason = reason;
 	    errorDetails = details;

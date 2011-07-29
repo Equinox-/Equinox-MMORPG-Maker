@@ -54,12 +54,7 @@ public class NetServerHandler extends NetHandler {
     }
 
     public void process(Packet5SectorRequest p) {
-	Sector sec = server.getWorld().getSectorManager()
-		.getSector(p.baseX, p.baseY);
-	if (sec != null && sec.getRevision() != p.revision) {
-	    Packet4Sector packet = new Packet4Sector();
-	    packet.sector = sec;
-	    netClient.send(packet);
-	}
+	server.getWorld().getSectorManager()
+		.requestSector(netClient.getID(), p);
     }
 }

@@ -8,9 +8,9 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.io.SectorIO;
 import com.pi.common.net.client.NetClient;
 import com.pi.common.net.packet.Packet4Sector;
+import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.server.Server;
 import com.pi.server.database.Paths;
-import com.pi.server.net.client.NetServerClient;
 
 public class SectorManager extends Thread {
     public final static int sectorExpiry = 300000; // 5 Minutes
@@ -19,11 +19,29 @@ public class SectorManager extends Thread {
 
     private Map<Point, Long> loadQueue = new HashMap<Point, Long>();
     private Map<Point, SectorStorage> map = new HashMap<Point, SectorStorage>();
+    private List<ClientSectorRequest> requests = new ArrayList<ClientSectorRequest>();
 
     public SectorManager(Server server) {
 	super("SectorManager");
 	this.server = server;
 	start();
+    }
+
+    public void requestSector(int clientID, Packet5SectorRequest req) {
+	Sector sec = getSector(req.baseX, req.baseY);
+	if (sec != null) {
+	    if (sec.getRevision() != req.revision) {
+		Packet4Sector packet = new Packet4Sector();
+		packet.sector = sec;
+		NetClient netClient = server.getNetwork().getClientMap()
+			.get(clientID);
+		netClient.send(packet);
+	    }
+	} else {
+	    ClientSectorRequest request = new ClientSectorRequest(clientID, req);
+	    requests.remove(request);
+	    requests.add(request);
+	}
     }
 
     public synchronized Sector getSector(int x, int y) {
@@ -90,6 +108,25 @@ public class SectorManager extends Thread {
 	    sX.lastUsed = System.currentTimeMillis();
 	    map.put(oldestSector, sX);
 	    server.getLog().info("Loaded: " + oldestSector.toString());
+	    // Go through the requests, grabbing the correct ones
+	    Packet4Sector secPack = null;
+	    for (ClientSectorRequest req : requests) {
+		if (req.baseX == oldestSector.x && req.baseY == oldestSector.y) {
+		    if (secPack == null) {
+			secPack = new Packet4Sector();
+			secPack.sector = sX.data;
+		    }
+		    NetClient nC = server.getNetwork().getClient(req.clientId);
+		    if (nC != null && nC.isConnected()) {
+			nC.send(secPack);
+			server.getLog().fine(
+				"Sending sector " + oldestSector.x + ","
+					+ oldestSector.y + " to client "
+					+ req.clientId);
+		    }
+		    requests.remove(req);
+		}
+	    }
 	}
     }
 
@@ -106,5 +143,28 @@ public class SectorManager extends Thread {
     private static class SectorStorage {
 	public long lastUsed;
 	public Sector data;
+    }
+
+    public static class ClientSectorRequest {
+	public int clientId;
+	public int revision;
+	public int baseX, baseY;
+
+	public ClientSectorRequest(int client, Packet5SectorRequest req) {
+	    this.clientId = client;
+	    this.revision = req.revision;
+	    this.baseX = req.baseX;
+	    this.baseY = req.baseY;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	    if (o instanceof ClientSectorRequest) {
+		ClientSectorRequest req = (ClientSectorRequest) o;
+		return this.clientId == req.clientId && this.baseX == req.baseX
+			&& this.baseY == req.baseY;
+	    }
+	    return false;
+	}
     }
 }

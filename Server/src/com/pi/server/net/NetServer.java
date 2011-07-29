@@ -80,6 +80,10 @@ public class NetServer extends Thread {
 	return clientMap;
     }
 
+    public NetClient getClient(int id) {
+	return clientMap.get(id);
+    }
+
     private int getAvaliableID() {
 	for (int id = 0; id < MAX_CLIENTS; id++) {
 	    if (!clientMap.containsKey(id))

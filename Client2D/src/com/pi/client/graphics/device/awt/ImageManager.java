@@ -24,6 +24,8 @@ public class ImageManager extends Thread {
     }
 
     public synchronized BufferedImage fetchImage(String id) {
+	if (!running)
+	    return null;
 	ImageStorage tS = map.get(id);
 	if (tS == null) {
 	    loadQueue.put(id, System.currentTimeMillis());

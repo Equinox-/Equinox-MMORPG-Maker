@@ -57,7 +57,7 @@ public class SectorManager extends Thread {
 	client.getLog().fine("Killing Sector Manager Thread");
     }
 
-    private void removeExpired() {
+    private synchronized void removeExpired() {
 	for (Point i : map.keySet()) {
 	    if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
 		map.remove(i);
@@ -65,7 +65,7 @@ public class SectorManager extends Thread {
 	}
     }
 
-    private void doRequest() {
+    private synchronized void doRequest() {
 	long oldestTime = Long.MAX_VALUE;
 	Point oldestSector = null;
 	for (Point i : loadQueue.keySet()) {
