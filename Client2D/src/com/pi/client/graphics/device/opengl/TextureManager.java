@@ -17,6 +17,7 @@ public class TextureManager extends Thread {
     private Map<String, Long> loadQueue = new HashMap<String, Long>();
     private boolean running = true;
     private final Client client;
+    private Object syncObject = new Object();
 
     public TextureManager(GLGraphics gl, Client client) {
 	super("PiTextureManager");
@@ -34,29 +35,17 @@ public class TextureManager extends Thread {
      * @return the texture object, or null if not loaded
      */
     public Texture fetchTexture(String id) {
-	TextureStorage tS = map.get(id);
-	if (tS == null || tS.texData == null) {
-	    loadQueue.put(id, System.currentTimeMillis());
-	    return null;
-	}
-	tS.lastUsed = System.currentTimeMillis();
-	if (tS.texData != null && tS.tex == null)
-	    tS.tex = TextureIO.newTexture(tS.texData);
-	map.put(id, tS);
-	return tS.tex;
-    }
-
-    /**
-     * Forces the given texture to be loaded
-     * 
-     * @param id
-     */
-    public void loadTexture(String id) {
-	TextureStorage tS = map.get(id);
-	if (tS == null || tS.texData == null) {
-	    if (loadQueue.get(id) == null
-		    || System.currentTimeMillis() - loadQueue.get(id) > textureExpiry / 2)
+	synchronized (syncObject) {
+	    TextureStorage tS = map.get(id);
+	    if (tS == null || tS.texData == null) {
 		loadQueue.put(id, System.currentTimeMillis());
+		return null;
+	    }
+	    tS.lastUsed = System.currentTimeMillis();
+	    if (tS.texData != null && tS.tex == null)
+		tS.tex = TextureIO.newTexture(tS.texData);
+	    map.put(id, tS);
+	    return tS.tex;
 	}
     }
 
@@ -99,39 +88,43 @@ public class TextureManager extends Thread {
     }
 
     private void removeExpired() {
-	for (String i : map.keySet()) {
-	    if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
-		if (glGraphics.getCore() != null
-			&& glGraphics.getCore().getGL() != null
-			&& map.get(i).tex != null) {
-		    map.get(i).tex.destroy(glGraphics.getCore().getGL());
+	synchronized (syncObject) {
+	    for (String i : map.keySet()) {
+		if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
+		    if (glGraphics.getCore() != null
+			    && glGraphics.getCore().getGL() != null
+			    && map.get(i).tex != null) {
+			map.get(i).tex.destroy(glGraphics.getCore().getGL());
+		    }
+		    map.get(i).texData.flush();
+		    map.remove(i);
 		}
-		map.get(i).texData.flush();
-		map.remove(i);
 	    }
 	}
     }
 
     private void doRequest() {
-	long oldestTime = Long.MAX_VALUE;
-	String oldestID = null;
-	for (String i : loadQueue.keySet()) {
-	    long requestTime = loadQueue.get(i);
-	    if (System.currentTimeMillis() - requestTime > textureExpiry) {
-		loadQueue.remove(i);
-	    } else {
-		if (oldestTime > requestTime && i != null) {
-		    oldestTime = requestTime;
-		    oldestID = i;
+	synchronized (syncObject) {
+	    long oldestTime = Long.MAX_VALUE;
+	    String oldestID = null;
+	    for (String i : loadQueue.keySet()) {
+		long requestTime = loadQueue.get(i);
+		if (System.currentTimeMillis() - requestTime > textureExpiry) {
+		    loadQueue.remove(i);
+		} else {
+		    if (oldestTime > requestTime && i != null) {
+			oldestTime = requestTime;
+			oldestID = i;
+		    }
 		}
 	    }
-	}
-	if (oldestID != null) {
-	    loadQueue.remove(oldestID);
-	    TextureStorage tX = new TextureStorage();
-	    tX.texData = getTextureData(oldestID);
-	    tX.lastUsed = System.currentTimeMillis();
-	    map.put(oldestID, tX);
+	    if (oldestID != null) {
+		loadQueue.remove(oldestID);
+		TextureStorage tX = new TextureStorage();
+		tX.texData = getTextureData(oldestID);
+		tX.lastUsed = System.currentTimeMillis();
+		map.put(oldestID, tX);
+	    }
 	}
     }
 

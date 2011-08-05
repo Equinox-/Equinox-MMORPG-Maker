@@ -14,6 +14,7 @@ public class SectorWriter extends Thread {
     private final Client client;
     private boolean running = true;
     private Map<Point, WritableRequest> writeQueue = new HashMap<Point, WritableRequest>();
+    private Object syncObject = new Object();
 
     public SectorWriter(Client client) {
 	super("SectorWriter");
@@ -21,11 +22,13 @@ public class SectorWriter extends Thread {
 	start();
     }
 
-    public synchronized void writeSector(Sector sec) {
-	WritableRequest write = new WritableRequest();
-	write.data = sec;
-	write.requestTime = System.currentTimeMillis();
-	writeQueue.put(sec.getSectorLocation(), write);
+    public void writeSector(Sector sec) {
+	synchronized (syncObject) {
+	    WritableRequest write = new WritableRequest();
+	    write.data = sec;
+	    write.requestTime = System.currentTimeMillis();
+	    writeQueue.put(sec.getSectorLocation(), write);
+	}
     }
 
     @Override
@@ -37,23 +40,25 @@ public class SectorWriter extends Thread {
     }
 
     private void doRequest() {
-	long oldestTime = Long.MAX_VALUE;
-	Point oldestSector = null;
-	for (Point i : writeQueue.keySet()) {
-	    long requestTime = writeQueue.get(i).requestTime;
-	    if (oldestTime > requestTime) {
-		oldestTime = requestTime;
-		oldestSector = i;
+	synchronized (syncObject) {
+	    long oldestTime = Long.MAX_VALUE;
+	    Point oldestSector = null;
+	    for (Point i : writeQueue.keySet()) {
+		long requestTime = writeQueue.get(i).requestTime;
+		if (oldestTime > requestTime) {
+		    oldestTime = requestTime;
+		    oldestSector = i;
+		}
 	    }
-	}
-	if (oldestSector != null) {
-	    WritableRequest wr = writeQueue.remove(oldestSector);
-	    try {
-		SectorIO.write(
-			Paths.getSectorFile(oldestSector.x, oldestSector.y),
-			wr.data);
-	    } catch (IOException e) {
-		e.printStackTrace();
+	    if (oldestSector != null) {
+		WritableRequest wr = writeQueue.remove(oldestSector);
+		try {
+		    SectorIO.write(
+			    Paths.getSectorFile(oldestSector.x, oldestSector.y),
+			    wr.data);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
 	    }
 	}
     }
