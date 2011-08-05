@@ -1,15 +1,14 @@
 package com.pi.common.database;
 
 import java.io.Serializable;
+import java.util.*;
 
 import com.pi.common.contants.GlobalConstants;
 
 public class Tile implements Serializable {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private int flags = 0;
-    private GraphicsObject ground;
-    private GraphicsObject mask1;
-    private GraphicsObject fringe1;
+    private Map<TileLayer, GraphicsObject> layers = new HashMap<TileLayer, GraphicsObject>();
 
     public int getFlags() {
 	return flags;
@@ -23,27 +22,15 @@ public class Tile implements Serializable {
 	return (flags & flag) == flag;
     }
 
-    public void setGround(GraphicsObject ground) {
-	this.ground = ground;
+    public void setLayer(TileLayer layer, GraphicsObject tile) {
+	layers.put(layer, tile);
     }
 
-    public void setMask1(GraphicsObject mask1) {
-	this.mask1 = mask1;
+    public GraphicsObject getLayer(TileLayer layer) {
+	return layers.get(layer);
     }
 
-    public void setFringe1(GraphicsObject fringe1) {
-	this.fringe1 = fringe1;
-    }
-
-    public GraphicsObject getGround() {
-	return ground;
-    }
-
-    public GraphicsObject getMask1() {
-	return mask1;
-    }
-
-    public GraphicsObject getFringe1() {
-	return fringe1;
+    public static enum TileLayer {
+	GROUND, MASK1, FRINGE1;
     }
 }

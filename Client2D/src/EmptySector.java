@@ -4,6 +4,7 @@ import com.pi.client.database.Paths;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.*;
+import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.database.io.SectorIO;
 
 public class EmptySector {
@@ -16,7 +17,7 @@ public class EmptySector {
 		GraphicsObject obj = new GraphicsObject();
 		obj.setGraphic("tiles_1");
 		obj.setPosition(0, 32, 32, 32);
-		t.setGround(obj);
+		t.setLayer(TileLayer.GROUND, obj);
 		sec.setLocalTile(x, y, t);
 	    }
 	for (int x = 0; x < 4; x++)
@@ -25,7 +26,7 @@ public class EmptySector {
 		obj.setGraphic("tiles_1");
 		obj.setPosition(x * TileConstants.TILE_WIDTH, (5 + y)
 			* TileConstants.TILE_HEIGHT, 32, 32);
-		sec.getLocalTile(5 + x, 5 + y).setFringe1(obj);
+		sec.getLocalTile(5 + x, 5 + y).setLayer(TileLayer.FRINGE1, obj);
 	    }
 	return sec;
     }

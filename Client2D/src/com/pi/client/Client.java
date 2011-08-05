@@ -1,5 +1,7 @@
 package com.pi.client;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.net.ConnectException;
 
 import com.pi.client.clientviewer.ClientApplet;
@@ -47,6 +49,22 @@ public class Client {
 		network.dispose();
 	    network = null;
 	}
+	cApplet.addKeyListener(new KeyAdapter() {
+	    public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP){
+		    player.moveTo(player.getX(),player.getY()-1);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN){
+		    player.moveTo(player.getX(),player.getY()+1);
+		}
+		if (e.getKeyCode() == KeyEvent.VK_LEFT){
+		    player.moveTo(player.getX()-1,player.getY());
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+		    player.moveTo(player.getX()+1,player.getY());
+		}
+	    }
+	});
 	this.displayManager.postInititation();
     }
 
@@ -71,7 +89,7 @@ public class Client {
     }
 
     public void dispose() {
-	if (viewerFrame == null) {
+	if (viewerFrame != null) {
 	    viewerFrame.setVisible(false);
 	    viewerFrame.dispose();
 	}

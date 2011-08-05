@@ -1,14 +1,14 @@
 package com.pi.server.world;
 
 import java.awt.Point;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
 import com.pi.common.database.Sector;
 import com.pi.common.database.io.SectorIO;
 import com.pi.common.net.client.NetClient;
-import com.pi.common.net.packet.Packet4Sector;
-import com.pi.common.net.packet.Packet5SectorRequest;
+import com.pi.common.net.packet.*;
 import com.pi.server.Server;
 import com.pi.server.database.Paths;
 
@@ -102,6 +102,29 @@ public class SectorManager extends Thread {
 	    try {
 		sX.data = SectorIO.read(Paths.getSectorFile(oldestSector.x,
 			oldestSector.y));
+	    } catch (FileNotFoundException e) {
+		Packet6BlankSector blankPack = null;
+		for (ClientSectorRequest req : requests) {
+		    if (req.baseX == oldestSector.x
+			    && req.baseY == oldestSector.y) {
+			if (blankPack == null) {
+			    blankPack = new Packet6BlankSector();
+			    blankPack.baseX = req.baseX;
+			    blankPack.baseY = req.baseY;
+			}
+			NetClient nC = server.getNetwork().getClient(
+				req.clientId);
+			if (nC != null && nC.isConnected()) {
+			    nC.send(blankPack);
+			    server.getLog().fine(
+				    "Notifing client " + req.clientId
+					    + " of empty sector "
+					    + blankPack.baseX + ","
+					    + blankPack.baseY);
+			}
+			requests.remove(req);
+		    }
+		}
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    }

@@ -16,6 +16,7 @@ public abstract class Packet {
 	registerPacket(3, Packet3Register.class);
 	registerPacket(4, Packet4Sector.class);
 	registerPacket(5, Packet5SectorRequest.class);
+	registerPacket(6, Packet6BlankSector.class);
     }
 
     public Packet() {

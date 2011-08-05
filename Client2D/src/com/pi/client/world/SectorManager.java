@@ -3,8 +3,7 @@ package com.pi.client.world;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
@@ -15,6 +14,7 @@ import com.pi.common.net.packet.Packet5SectorRequest;
 public class SectorManager extends Thread {
     public final static int sectorExpiry = 60000; // 1 Minute
     public final static int serverRequestExpiry = 30000; // 30 seconds
+    private List<Point> blankSectors = new ArrayList<Point>();
     private final Client client;
     private boolean running = true;
 
@@ -31,7 +31,7 @@ public class SectorManager extends Thread {
     public synchronized Sector getSector(int x, int y) {
 	Point p = new Point(x, y);
 	SectorStorage sS = map.get(p);
-	if (sS == null || sS.data == null) {
+	if ((sS == null || sS.data == null) && !blankSectors.contains(p)) {
 	    loadQueue.put(p, System.currentTimeMillis());
 	    return null;
 	}
@@ -120,6 +120,11 @@ public class SectorManager extends Thread {
 	    e.printStackTrace();
 	    System.exit(0);
 	}
+    }
+
+    public void flagSectorAsBlack(Point p) {
+	if (!blankSectors.contains(p))
+	    blankSectors.add(p);
     }
 
     private static class SectorStorage {

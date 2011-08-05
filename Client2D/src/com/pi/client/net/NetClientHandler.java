@@ -1,5 +1,7 @@
 package com.pi.client.net;
 
+import java.awt.Point;
+
 import javax.swing.JOptionPane;
 
 import com.pi.client.Client;
@@ -41,7 +43,11 @@ public class NetClientHandler extends NetHandler {
     }
 
     public void process(Packet4Sector p) {
-	System.out.println("Sector packet recevied");
 	client.getWorld().getSectorManager().setSector(p.sector);
+    }
+
+    public void process(Packet6BlankSector p) {
+	client.getWorld().getSectorManager()
+		.flagSectorAsBlack(new Point(p.baseX, p.baseY));
     }
 }
