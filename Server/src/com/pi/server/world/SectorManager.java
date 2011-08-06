@@ -1,11 +1,11 @@
 package com.pi.server.world;
 
-import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
 import com.pi.common.database.Sector;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 import com.pi.common.net.client.NetClient;
 import com.pi.common.net.packet.*;
@@ -17,8 +17,8 @@ public class SectorManager extends Thread {
     private final Server server;
     private boolean running = true;
 
-    private Map<Point, Long> loadQueue = new HashMap<Point, Long>();
-    private Map<Point, SectorStorage> map = new HashMap<Point, SectorStorage>();
+    private Map<SectorLocation, Long> loadQueue = new HashMap<SectorLocation, Long>();
+    private Map<SectorLocation, SectorStorage> map = new HashMap<SectorLocation, SectorStorage>();
     private List<ClientSectorRequest> requests = new ArrayList<ClientSectorRequest>();
     private Object syncObject = new Object();
 
@@ -30,7 +30,7 @@ public class SectorManager extends Thread {
 
     public void requestSector(int clientID, Packet5SectorRequest req) {
 	synchronized (syncObject) {
-	    Sector sec = getSector(req.baseX, req.baseY);
+	    Sector sec = getSector(req.baseX, req.baseY, req.baseZ);
 	    if (sec != null) {
 		if (sec.getRevision() != req.revision) {
 		    Packet4Sector packet = new Packet4Sector();
@@ -48,9 +48,9 @@ public class SectorManager extends Thread {
 	}
     }
 
-    public Sector getSector(int x, int y) {
+    public Sector getSector(int x, int y, int z) {
 	synchronized (syncObject) {
-	    Point p = new Point(x, y);
+	    SectorLocation p = new SectorLocation(x, y, z);
 	    SectorStorage sS = map.get(p);
 	    if (sS == null || sS.data == null) {
 		loadQueue.put(p, System.currentTimeMillis());
@@ -84,7 +84,7 @@ public class SectorManager extends Thread {
 
     private void removeExpired() {
 	synchronized (syncObject) {
-	    for (Point i : map.keySet()) {
+	    for (SectorLocation i : map.keySet()) {
 		if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
 		    map.remove(i);
 		}
@@ -95,8 +95,8 @@ public class SectorManager extends Thread {
     private void doRequest() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
-	    Point oldestSector = null;
-	    for (Point i : loadQueue.keySet()) {
+	    SectorLocation oldestSector = null;
+	    for (SectorLocation i : loadQueue.keySet()) {
 		long requestTime = loadQueue.get(i);
 		if (System.currentTimeMillis() - requestTime > sectorExpiry) {
 		    loadQueue.remove(i);
@@ -111,17 +111,19 @@ public class SectorManager extends Thread {
 		loadQueue.remove(oldestSector);
 		SectorStorage sX = new SectorStorage();
 		try {
-		    sX.data = SectorIO.read(Paths.getSectorFile(oldestSector.x,
-			    oldestSector.y));
+		    sX.data = SectorIO
+			    .read(Paths.getSectorFile(oldestSector));
 		} catch (FileNotFoundException e) {
 		    Packet6BlankSector blankPack = null;
 		    for (ClientSectorRequest req : requests) {
 			if (req.baseX == oldestSector.x
-				&& req.baseY == oldestSector.y) {
+				&& req.baseY == oldestSector.y
+				&& req.baseZ == oldestSector.z) {
 			    if (blankPack == null) {
 				blankPack = new Packet6BlankSector();
 				blankPack.baseX = req.baseX;
 				blankPack.baseY = req.baseY;
+				blankPack.baseZ = req.baseZ;
 			    }
 			    NetClient nC = server.getNetwork().getClient(
 				    req.clientId);
@@ -146,7 +148,8 @@ public class SectorManager extends Thread {
 		Packet4Sector secPack = null;
 		for (ClientSectorRequest req : requests) {
 		    if (req.baseX == oldestSector.x
-			    && req.baseY == oldestSector.y) {
+			    && req.baseY == oldestSector.y
+			    && req.baseZ == oldestSector.z) {
 			if (secPack == null) {
 			    secPack = new Packet4Sector();
 			    secPack.sector = sX.data;
@@ -185,13 +188,14 @@ public class SectorManager extends Thread {
     public static class ClientSectorRequest {
 	public int clientId;
 	public int revision;
-	public int baseX, baseY;
+	public int baseX, baseY, baseZ;
 
 	public ClientSectorRequest(int client, Packet5SectorRequest req) {
 	    this.clientId = client;
 	    this.revision = req.revision;
 	    this.baseX = req.baseX;
 	    this.baseY = req.baseY;
+	    this.baseZ = req.baseZ;
 	}
 
 	@Override
@@ -199,7 +203,7 @@ public class SectorManager extends Thread {
 	    if (o instanceof ClientSectorRequest) {
 		ClientSectorRequest req = (ClientSectorRequest) o;
 		return this.clientId == req.clientId && this.baseX == req.baseX
-			&& this.baseY == req.baseY;
+			&& this.baseY == req.baseY && this.baseZ == req.baseZ;
 	    }
 	    return false;
 	}

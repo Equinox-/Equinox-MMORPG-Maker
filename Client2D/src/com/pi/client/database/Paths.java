@@ -4,7 +4,11 @@ import java.io.File;
 
 import javax.swing.filechooser.FileSystemView;
 
+import com.pi.common.database.SectorLocation;
+
 public class Paths {
+    private static String[] imageFiles = { "gif", "jpg", "jpeg", "png" };
+
     public enum OperatingSystem {
 	MAC, WINDOWS, LINUX, UNKNOWN;
 	public static OperatingSystem lookup(String name) {
@@ -16,9 +20,28 @@ public class Paths {
 	}
     }
 
-    private static String[] imageFiles = { "gif", "jpg", "jpeg", "png" };
-    private static OperatingSystem CURRENT_OS = OperatingSystem.lookup(System
+    public static OperatingSystem CURRENT_OS = OperatingSystem.lookup(System
 	    .getProperty("os.name"));
+
+    public static String getUnixHome() {
+	final String home = System.getProperty("user.home");
+	return home == null ? "~" : home;
+    }
+
+    public static File getSectorDirectory() {
+	File f = new File(getHomeDirectory(), "world");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+
+    public static File getSectorFile(int x, int y, int z) {
+	return new File(getSectorDirectory(), x + "-" + y + "-" + z + ".sector");
+    }
+
+    public static File getSectorFile(SectorLocation l) {
+	return getSectorFile(l.x, l.y, l.z);
+    }
 
     public static File getHomeDirectory() {
 	File f = new File(
@@ -26,25 +49,6 @@ public class Paths {
 			.getFileSystemView().getDefaultDirectory()
 			.getAbsolutePath() : getUnixHome())
 			+ File.separator + ".equinox_mmorpg");
-	if (!f.exists())
-	    f.mkdir();
-	return f;
-    }
-
-    private static String getUnixHome() {
-	final String home = System.getProperty("user.home");
-	return home == null ? "~" : home;
-    }
-
-    public static File getGraphicsDirectory() {
-	File f = new File(getHomeDirectory(), "graphics");
-	if (!f.exists())
-	    f.mkdir();
-	return f;
-    }
-
-    public static File getSectorDirectory() {
-	File f = new File(getHomeDirectory(), "world");
 	if (!f.exists())
 	    f.mkdir();
 	return f;
@@ -62,7 +66,10 @@ public class Paths {
 	return null;
     }
 
-    public static File getSectorFile(int x, int y) {
-	return new File(getSectorDirectory(), x + "-" + y + ".sector");
+    public static File getGraphicsDirectory() {
+	File f = new File(getHomeDirectory(), "graphics");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
     }
 }

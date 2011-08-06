@@ -1,10 +1,9 @@
 package com.pi.client.net;
 
-import java.awt.Point;
-
 import javax.swing.JOptionPane;
 
 import com.pi.client.Client;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.*;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
@@ -47,7 +46,9 @@ public class NetClientHandler extends NetHandler {
     }
 
     public void process(Packet6BlankSector p) {
-	client.getWorld().getSectorManager()
-		.flagSectorAsBlack(new Point(p.baseX, p.baseY));
+	client.getWorld()
+		.getSectorManager()
+		.flagSectorAsBlack(
+			new SectorLocation(p.baseX, p.baseY, p.baseZ));
     }
 }

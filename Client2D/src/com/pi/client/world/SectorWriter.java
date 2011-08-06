@@ -8,12 +8,13 @@ import java.util.Map;
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 
 public class SectorWriter extends Thread {
     private final Client client;
     private boolean running = true;
-    private Map<Point, WritableRequest> writeQueue = new HashMap<Point, WritableRequest>();
+    private Map<SectorLocation, WritableRequest> writeQueue = new HashMap<SectorLocation, WritableRequest>();
     private Object syncObject = new Object();
 
     public SectorWriter(Client client) {
@@ -42,8 +43,8 @@ public class SectorWriter extends Thread {
     private void doRequest() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
-	    Point oldestSector = null;
-	    for (Point i : writeQueue.keySet()) {
+	    SectorLocation oldestSector = null;
+	    for (SectorLocation i : writeQueue.keySet()) {
 		long requestTime = writeQueue.get(i).requestTime;
 		if (oldestTime > requestTime) {
 		    oldestTime = requestTime;
@@ -53,9 +54,7 @@ public class SectorWriter extends Thread {
 	    if (oldestSector != null) {
 		WritableRequest wr = writeQueue.remove(oldestSector);
 		try {
-		    SectorIO.write(
-			    Paths.getSectorFile(oldestSector.x, oldestSector.y),
-			    wr.data);
+		    SectorIO.write(Paths.getSectorFile(oldestSector), wr.data);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}

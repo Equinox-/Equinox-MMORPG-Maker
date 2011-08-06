@@ -1,11 +1,11 @@
 package com.pi.server.world;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.common.database.Sector;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 import com.pi.server.Server;
 import com.pi.server.database.Paths;
@@ -13,7 +13,7 @@ import com.pi.server.database.Paths;
 public class SectorWriter extends Thread {
     private final Server server;
     private boolean running = true;
-    private Map<Point, WritableRequest> writeQueue = new HashMap<Point, WritableRequest>();
+    private Map<SectorLocation, WritableRequest> writeQueue = new HashMap<SectorLocation, WritableRequest>();
     private Object syncObject = new Object();
 
     public SectorWriter(Server server) {
@@ -43,8 +43,8 @@ public class SectorWriter extends Thread {
     private void doRequest() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
-	    Point oldestSector = null;
-	    for (Point i : writeQueue.keySet()) {
+	    SectorLocation oldestSector = null;
+	    for (SectorLocation i : writeQueue.keySet()) {
 		long requestTime = writeQueue.get(i).requestTime;
 		if (oldestTime > requestTime) {
 		    oldestTime = requestTime;
@@ -54,9 +54,7 @@ public class SectorWriter extends Thread {
 	    if (oldestSector != null) {
 		WritableRequest wr = writeQueue.remove(oldestSector);
 		try {
-		    SectorIO.write(
-			    Paths.getSectorFile(oldestSector.x, oldestSector.y),
-			    wr.data);
+		    SectorIO.write(Paths.getSectorFile(oldestSector), wr.data);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}

@@ -22,24 +22,14 @@ public class GameRenderLoop implements Renderable {
 	if (client.getWorld() != null) {
 	    Point mySector = client.player.getSector();
 	    Sector[][] sec = new Sector[3][3];
-	    sec[0][0] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x - 1, mySector.y - 1);
-	    sec[0][1] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x - 1, mySector.y);
-	    sec[0][2] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x - 1, mySector.y + 1);
-	    sec[1][0] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x, mySector.y - 1);
-	    sec[1][1] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x, mySector.y);
-	    sec[1][2] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x, mySector.y + 1);
-	    sec[2][0] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x + 1, mySector.y - 1);
-	    sec[2][1] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x + 1, mySector.y);
-	    sec[2][2] = client.getWorld().getSectorManager()
-		    .getSector(mySector.x + 1, mySector.y + 1);
+	    for (int x = 0; x < 3; x++)
+		for (int y = 0; y < 3; y++) {
+		    sec[x][y] = client
+			    .getWorld()
+			    .getSectorManager()
+			    .getSector(mySector.x - 1 + x, 0,
+				    mySector.y - 1 + y);
+		}
 	    int sec11X = (int) clip.getCenterX() - client.player.getLocalX()
 		    * TileConstants.TILE_WIDTH - (TileConstants.TILE_WIDTH / 2);
 	    int sec11Y = (int) clip.getCenterY() - client.player.getLocalY()

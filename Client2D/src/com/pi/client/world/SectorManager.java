@@ -8,19 +8,20 @@ import java.util.*;
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
 public class SectorManager extends Thread {
     public final static int sectorExpiry = 60000; // 1 Minute
     public final static int serverRequestExpiry = 30000; // 30 seconds
-    private List<Point> blankSectors = new ArrayList<Point>();
+    private List<SectorLocation> blankSectors = new ArrayList<SectorLocation>();
     private final Client client;
     private boolean running = true;
 
-    private Map<Point, Long> loadQueue = new HashMap<Point, Long>();
-    private Map<Point, SectorStorage> map = new HashMap<Point, SectorStorage>();
-    private Map<Point, Long> sentRequests = new HashMap<Point, Long>();
+    private Map<SectorLocation, Long> loadQueue = new HashMap<SectorLocation, Long>();
+    private Map<SectorLocation, SectorStorage> map = new HashMap<SectorLocation, SectorStorage>();
+    private Map<SectorLocation, Long> sentRequests = new HashMap<SectorLocation, Long>();
     private Object syncObject = new Object();
 
     public SectorManager(Client client) {
@@ -29,9 +30,9 @@ public class SectorManager extends Thread {
 	start();
     }
 
-    public Sector getSector(int x, int y) {
+    public Sector getSector(int x, int y, int z) {
 	synchronized (syncObject) {
-	    Point p = new Point(x, y);
+	    SectorLocation p = new SectorLocation(x, y, z);
 	    SectorStorage sS = map.get(p);
 	    if ((sS == null || sS.data == null) && !blankSectors.contains(p)) {
 		loadQueue.put(p, System.currentTimeMillis());
@@ -64,7 +65,7 @@ public class SectorManager extends Thread {
 
     private void removeExpired() {
 	synchronized (syncObject) {
-	    for (Point i : map.keySet()) {
+	    for (SectorLocation i : map.keySet()) {
 		if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
 		    map.remove(i);
 		}
@@ -75,8 +76,8 @@ public class SectorManager extends Thread {
     private void doRequest() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
-	    Point oldestSector = null;
-	    for (Point i : loadQueue.keySet()) {
+	    SectorLocation oldestSector = null;
+	    for (SectorLocation i : loadQueue.keySet()) {
 		long requestTime = loadQueue.get(i);
 		if (System.currentTimeMillis() - requestTime > sectorExpiry) {
 		    loadQueue.remove(i);
@@ -90,7 +91,7 @@ public class SectorManager extends Thread {
 	    if (oldestSector != null) {
 		loadQueue.remove(oldestSector);
 		SectorStorage sX = new SectorStorage();
-		File f = Paths.getSectorFile(oldestSector.x, oldestSector.y);
+		File f = Paths.getSectorFile(oldestSector);
 		int revision = -1;
 		if (f.exists()) {
 		    try {
@@ -112,6 +113,7 @@ public class SectorManager extends Thread {
 			Packet5SectorRequest pack = new Packet5SectorRequest();
 			pack.baseX = oldestSector.x;
 			pack.baseY = oldestSector.y;
+			pack.baseZ = oldestSector.z;
 			pack.revision = revision;
 			client.getNetwork().send(pack);
 			sX.lastUsed = System.currentTimeMillis();
@@ -132,7 +134,7 @@ public class SectorManager extends Thread {
 	}
     }
 
-    public void flagSectorAsBlack(Point p) {
+    public void flagSectorAsBlack(SectorLocation p) {
 	if (!blankSectors.contains(p))
 	    blankSectors.add(p);
     }

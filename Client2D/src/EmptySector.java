@@ -10,7 +10,7 @@ import com.pi.common.database.io.SectorIO;
 public class EmptySector {
     public static Sector create() {
 	Sector sec = new Sector();
-	sec.setSectorLocation(0, 0);
+	sec.setSectorLocation(0, 0, 0);
 	for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++)
 	    for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
 		Tile t = new Tile();
@@ -33,7 +33,7 @@ public class EmptySector {
 
     public static void main(String[] args) {
 	try {
-	    SectorIO.write(Paths.getSectorFile(0, 0), create());
+	    SectorIO.write(Paths.getSectorFile(0, 0, 0), create());
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
