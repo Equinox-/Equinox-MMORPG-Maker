@@ -1,0 +1,10 @@
+Equinox MMORPG is an open source Massivly Multiplayer Online Role Playing Game creation tool.  It provides the central networking, graphics support and more to create a decent game, but to make any amazing game you must edit the source.
+
+Current Progress:
+Networking Structure - Finished
+Packets - In Progress
+Graphics Structure - Finished
+World Structure - Finished
+Client/Server World Synchronization - Finished
+Render Loop - In Progress
+Entity Synchronization - Not Started
