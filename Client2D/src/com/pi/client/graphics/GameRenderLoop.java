@@ -1,6 +1,7 @@
 package com.pi.client.graphics;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import com.pi.client.Client;
 import com.pi.client.graphics.device.IGraphics;
@@ -20,39 +21,46 @@ public class GameRenderLoop implements Renderable {
     public void render(IGraphics g) {
 	Rectangle clip = g.getClip();
 	if (client.getWorld() != null) {
-	    Point mySector = client.player.getSector();
-	    Sector[][] sec = new Sector[3][3];
+	    int myPlane = client.player.getPlane();
+	    for (int plane = myPlane; plane >= 0; plane--) {
+		renderSectorSurround(clip, g, client, plane);
+	    }
+	}
+    }
+
+    private static void renderSectorSurround(Rectangle clip, IGraphics g,
+	    Client client, int plane) {
+	SectorLocation mySector = client.player.getSectorLocation();
+	Sector[][] sec = new Sector[3][3];
+	for (int x = 0; x < 3; x++)
+	    for (int y = 0; y < 3; y++) {
+		sec[x][y] = client
+			.getWorld()
+			.getSectorManager()
+			.getSector(mySector.x - 1 + x, plane,
+				mySector.z - 1 + y);
+	    }
+	int sec11X = (int) (clip.getCenterX() - client.player.getLocalX()
+		* TileConstants.TILE_WIDTH - (TileConstants.TILE_WIDTH / 2));
+	int sec11Y = (int) (clip.getCenterY() - client.player.getLocalY()
+		* TileConstants.TILE_HEIGHT - (TileConstants.TILE_HEIGHT / 2));
+	for (TileLayer l : TileLayer.values()) {
 	    for (int x = 0; x < 3; x++)
 		for (int y = 0; y < 3; y++) {
-		    sec[x][y] = client
-			    .getWorld()
-			    .getSectorManager()
-			    .getSector(mySector.x - 1 + x, 0,
-				    mySector.y - 1 + y);
+		    renderSectorLayer(
+			    sec11X
+				    - ((x - 1) * (TileConstants.TILE_WIDTH * SectorConstants.SECTOR_WIDTH)),
+			    sec11Y
+				    - ((y - 1) * (TileConstants.TILE_HEIGHT * SectorConstants.SECTOR_HEIGHT)),
+			    sec[x][y], g, l);
 		}
-	    int sec11X = (int) clip.getCenterX() - client.player.getLocalX()
-		    * TileConstants.TILE_WIDTH - (TileConstants.TILE_WIDTH / 2);
-	    int sec11Y = (int) clip.getCenterY() - client.player.getLocalY()
-		    * TileConstants.TILE_HEIGHT
-		    - (TileConstants.TILE_HEIGHT / 2);
-	    for (TileLayer l : TileLayer.values()) {
-		for (int x = 0; x < 3; x++)
-		    for (int y = 0; y < 3; y++) {
-			renderSectorLayer(
-				sec11X
-					- ((x - 1) * (TileConstants.TILE_WIDTH * SectorConstants.SECTOR_WIDTH)),
-				sec11Y
-					- ((y - 1) * (TileConstants.TILE_HEIGHT * SectorConstants.SECTOR_HEIGHT)),
-				sec[x][y], g, l);
-		    }
-		if (client.player.getLayer().equals(l)) {
-		    g.drawImage(
-			    "char_1",
-			    (int) (clip.getCenterX() - (TileConstants.TILE_WIDTH / 2)),
-			    (int) (clip.getCenterY()
-				    + (TileConstants.TILE_HEIGHT / 2) - 50), 0,
-			    client.player.getDir() * 50, 32, 50);
-		}
+	    if (client.player.getLayer().equals(l)) {
+		g.drawImage(
+			"char_1",
+			(int) (clip.getCenterX() - (TileConstants.TILE_WIDTH / 2)),
+			(int) (clip.getCenterY()
+				+ (TileConstants.TILE_HEIGHT / 2) - 50), 0,
+			client.player.getDir() * 50, 32, 50);
 	    }
 	}
     }
