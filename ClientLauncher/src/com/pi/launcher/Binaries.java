@@ -6,10 +6,10 @@ import java.net.URL;
 import com.pi.common.PILogger;
 
 public class Binaries {
-    private final static String jogl_jar = "jogl.all.jar";
-    private final static String gluegen_jar = "gluegen-rt.jar";
-    private final static String nativewindow_jar = "nativewindow.all.jar";
-    private final static String client_jar = "EquinoxClient.jar";
+    public final static String jogl_jar = "jogl.all.jar";
+    public final static String gluegen_jar = "gluegen-rt.jar";
+    public final static String nativewindow_jar = "nativewindow.all.jar";
+    public final static String client_jar = "EquinoxClient.jar";
 
     public static void loadBinaries(PILogger log) throws IOException {
 	URL jogl = new URL(ServerConfiguration.libFolder + jogl_jar);
@@ -30,7 +30,13 @@ public class Binaries {
 	download(nativewindow, nativewindow_f);
 	log.info("Downloading " + client_jar);
 	download(client, client_f);
-	log.info("Downloaded binaries");
+    }
+
+    public static void loadBinary(PILogger log, String binary_jar) throws IOException {
+	URL binary = new URL(ServerConfiguration.libFolder + binary_jar);
+	File binary_f = new File(Paths.getBinDirectory(), binary_jar);
+	log.info("Downloading " + binary_jar);
+	download(binary, binary_f);
     }
 
     private static void download(URL url, File dest) throws IOException {

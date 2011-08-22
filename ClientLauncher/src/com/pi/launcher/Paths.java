@@ -5,11 +5,7 @@ import java.io.File;
 
 import javax.swing.filechooser.FileSystemView;
 
-import com.pi.common.database.SectorLocation;
-
 public class Paths {
-    private static String[] imageFiles = { "gif", "jpg", "jpeg", "png" };
-
     public enum OperatingSystem {
 	MAC, WINDOWS, LINUX, UNKNOWN;
 	public static OperatingSystem lookup(String name) {

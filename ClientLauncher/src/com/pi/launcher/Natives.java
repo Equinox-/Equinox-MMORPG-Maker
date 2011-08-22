@@ -1,7 +1,6 @@
 package com.pi.launcher;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -27,9 +26,7 @@ public class Natives {
     public static void load(PILogger log) throws IOException {
 	String jarname = getNativeJar();
 	File jarfile = new File(Paths.getNativesDirectory(), jarname);
-	File verfile = new File(Paths.getNativesDirectory(), "ver");
-	if (verfile.exists())
-	    return;
+	log.info("Downloading " + jarname);
 	download(new URL(ServerConfiguration.libFolder + jarname), jarfile);
 	JarFile arc = new JarFile(jarfile);
 	Enumeration<JarEntry> entries = arc.entries();
@@ -52,7 +49,8 @@ public class Natives {
 	    out.close();
 	    in.close();
 	}
-	verfile.createNewFile();
+	jarfile.delete();
+	log.info("Extraction of natives complete");
     }
 
     private static void download(URL url, File dest) throws IOException {
