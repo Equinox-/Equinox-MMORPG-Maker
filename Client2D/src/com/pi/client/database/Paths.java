@@ -34,6 +34,18 @@ public class Paths {
 	    f.mkdir();
 	return f;
     }
+    public static File getBinDirectory() {
+	File f = new File(getHomeDirectory(), "bin");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+    public static File getNativesDirectory() {
+	File f = new File(getBinDirectory(), "natives");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
 
     public static File getSectorFile(int x, int y, int z) {
 	return new File(getSectorDirectory(), x + "-" + y + "-" + z + ".sector");
