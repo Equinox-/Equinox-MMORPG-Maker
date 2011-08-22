@@ -27,6 +27,9 @@ public class NetClientClient extends NetClient {
 	    throw e;
 	} catch (IOException e) {
 	    e.printStackTrace();
+	} catch (SecurityException e) {
+	    client.getLog().severe(e.toString());
+	    throw new ConnectException(e.toString());
 	}
     }
 
