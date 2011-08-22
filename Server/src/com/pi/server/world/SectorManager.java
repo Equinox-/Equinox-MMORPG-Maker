@@ -117,7 +117,7 @@ public class SectorManager extends Thread {
 		    Packet6BlankSector blankPack = null;
 		    for (ClientSectorRequest req : requests) {
 			if (req.baseX == oldestSector.x
-				&& req.baseY == oldestSector.y
+				&& req.baseY == oldestSector.plane
 				&& req.baseZ == oldestSector.z) {
 			    if (blankPack == null) {
 				blankPack = new Packet6BlankSector();
@@ -148,7 +148,7 @@ public class SectorManager extends Thread {
 		Packet4Sector secPack = null;
 		for (ClientSectorRequest req : requests) {
 		    if (req.baseX == oldestSector.x
-			    && req.baseY == oldestSector.y
+			    && req.baseY == oldestSector.plane
 			    && req.baseZ == oldestSector.z) {
 			if (secPack == null) {
 			    secPack = new Packet4Sector();
@@ -160,7 +160,7 @@ public class SectorManager extends Thread {
 			    nC.send(secPack);
 			    server.getLog().fine(
 				    "Sending sector " + oldestSector.x + ","
-					    + oldestSector.y + " to client "
+					    + oldestSector.plane + " to client "
 					    + req.clientId);
 			}
 			requests.remove(req);

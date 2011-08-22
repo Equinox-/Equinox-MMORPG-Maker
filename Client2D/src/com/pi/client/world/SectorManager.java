@@ -112,7 +112,7 @@ public class SectorManager extends Thread {
 				System.currentTimeMillis());
 			Packet5SectorRequest pack = new Packet5SectorRequest();
 			pack.baseX = oldestSector.x;
-			pack.baseY = oldestSector.y;
+			pack.baseY = oldestSector.plane;
 			pack.baseZ = oldestSector.z;
 			pack.revision = revision;
 			client.getNetwork().send(pack);

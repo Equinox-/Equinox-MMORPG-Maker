@@ -40,7 +40,7 @@ public class Paths {
     }
 
     public static File getSectorFile(SectorLocation l) {
-	return getSectorFile(l.x, l.y, l.z);
+	return getSectorFile(l.x, l.plane, l.z);
     }
 
     public static File getHomeDirectory() {
