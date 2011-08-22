@@ -41,7 +41,7 @@ public class Server {
 		    dispose();
 		}
 	    });
-	    log = new PILogger(f.logOut);
+	    log = new PILogger(f.pane.logOut);
 	    int port = Integer.valueOf(9999);
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);

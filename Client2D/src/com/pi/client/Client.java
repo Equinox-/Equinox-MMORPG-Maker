@@ -29,7 +29,7 @@ public class Client {
     public Client(ClientApplet applet) {
 	if (logViewer) {
 	    viewerFrame = new PILogViewer("Client");
-	    logger = new PILogger(viewerFrame.logOut);
+	    logger = new PILogger(viewerFrame.pane.logOut);
 	} else {
 	    viewerFrame = null;
 	    logger = new PILogger();

@@ -1,6 +1,7 @@
 package com.pi.launcher;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.pi.common.PILogger;
@@ -10,6 +11,18 @@ public class Binaries {
     public final static String gluegen_jar = "gluegen-rt.jar";
     public final static String nativewindow_jar = "nativewindow.all.jar";
     public final static String client_jar = "EquinoxClient.jar";
+
+    public static URL[] getJarURLs() {
+	try {
+	    return new URL[] {
+		    new File(Paths.getBinDirectory(), jogl_jar).toURI().toURL(),
+		    new File(Paths.getBinDirectory(), gluegen_jar).toURI().toURL(),
+		    new File(Paths.getBinDirectory(), nativewindow_jar).toURI().toURL(),
+		    new File(Paths.getBinDirectory(), client_jar).toURI().toURL() };
+	} catch (MalformedURLException e) {
+	    return new URL[] {};
+	}
+    }
 
     public static void loadBinaries(PILogger log) throws IOException {
 	URL jogl = new URL(ServerConfiguration.libFolder + jogl_jar);
@@ -32,7 +45,8 @@ public class Binaries {
 	download(client, client_f);
     }
 
-    public static void loadBinary(PILogger log, String binary_jar) throws IOException {
+    public static void loadBinary(PILogger log, String binary_jar)
+	    throws IOException {
 	URL binary = new URL(ServerConfiguration.libFolder + binary_jar);
 	File binary_f = new File(Paths.getBinDirectory(), binary_jar);
 	log.info("Downloading " + binary_jar);
