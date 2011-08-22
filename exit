@@ -1,0 +1,140 @@
+commit b7c8c0e3dec9e2d8fa6a79ab33725fd94eb8782c
+Author: westin <westin@Mach-Server>
+Date:   Sun Aug 21 23:12:04 2011 -0700
+
+    Renamed y-world-axis to plane
+
+commit d55d42d4235f31d0a9384630b9a3d30d99be7f9d
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Fri Aug 19 09:59:05 2011 -0700
+
+    Added render support for stacked sectors.
+    Added basic Location class for defining locations in the game world.
+    Made the Entity class extend the Location class to replace primitives.
+
+commit f9322dd8f0e7886bec053176d83e46cad3843dae
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Tue Aug 16 12:09:57 2011 -0700
+
+    Added Readme
+
+commit c3c056ddccc1d6ecb7a5d0cda037c2ef61e1e18b
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Aug 6 09:46:41 2011 -0700
+
+    Added database and networking support for stacked sectors.
+
+commit 4b788d1b86024a32b92b27fc934d0bd5b74efc0b
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Thu Aug 4 22:24:34 2011 -0700
+
+    Converted from synchronized methods to using synchronized objects.
+    Hopefully it will clear up some concurrent modification problems.
+
+commit 14c18df88507afbdd60ce0911187961a670bb56b
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Thu Aug 4 22:15:07 2011 -0700
+
+    Added blank sector so client won't keep request sectors that don't
+    exist.  Added a character sprite.  Added main game loop with sector
+    rendering based on layers.  Made entities layer based also. Updated the
+    sector storage system for more expandable layers.
+
+commit fc37dceaf73cf6b1c788f57bd7238fca14bb1ae1
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Thu Jul 28 21:07:43 2011 -0700
+
+    Fixed some synchronization problems with ImageManager and SectorManager.
+     Made the requests for sectors on the server work better.  Now when the
+    client requests a sector, the server will check if its loaded the
+    sector into the RAM, and if not it will have the server send the sector
+    to the client as soon as its loaded.  Otherwise it will send it right
+    away.
+
+commit 90676fb9e3f6e53957cbc96e6194cbc3991dbd94
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Wed Jul 27 18:52:54 2011 -0700
+
+    Fixed filelist.
+
+commit 620d7b995ff2c43256cee148f8ffc578aad19311
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Wed Jul 27 18:50:20 2011 -0700
+
+    Added jar files to repository and created a signed jar file.
+
+commit 903a553f8edc93646675350af28b6394b9ea37a6
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Mon Jul 25 16:04:42 2011 -0700
+
+    Added a basic sector, and a simple tile set image.  Also updated the
+    filelist for graphics.
+
+commit 8865bfe428d36a32567a539c4cdaabda41b7e35a
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Mon Jul 25 15:52:39 2011 -0700
+
+    Added sector sending and requesting.  Also added link to main render
+    loop to a main game GUI and main game render loop.
+    Fixed
+    some
+    thread
+    disposal issues.  Added a log viewer for client and server.  Added
+    synchronization to the AWT Image Manager.  Also added some thread start
+    and disposal messages.
+
+commit e25cd86648f915e398593e57d3c8dc4295cf1d1f
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sun Jul 24 12:43:43 2011 -0700
+
+    Fixed miniscule problem in the graphics loader, where the extension was
+    appended to the filename twice before checking for existence.  This was
+    fixed by added a extension check in the Paths class.
+
+commit 1b27b734a96c69da0659bf6c16dd6e4d8c5de744
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sun Jul 24 12:38:10 2011 -0700
+
+    Added support for clipping the contents of a component.  This will be
+    used mainly in scrollable areas.
+
+commit e62c8f87c183f7a0744e84b172a99fd300fd003e
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 21:04:57 2011 -0700
+
+    Added support for registering.
+
+commit 5cbd089a90f194ead63158e908c87ebb70dd4d99
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 16:36:04 2011 -0700
+
+    Added more constructor variants to Graphic Objects and Graphic
+    Animations.  Changed constructor for loading bar graphic in the GUIKit.
+
+commit 7ec58c49d233d5b62027895b70c04f23f5981080
+Merge: bf4c572 dde46ca
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 16:15:51 2011 -0700
+
+    Merge remote branch 'origin/master'
+    
+    Conflicts:
+    	Client2D/src/com/pi/client/database/webfiles/ServerConfiguration.java
+
+commit bf4c5726490a9b014a0c64670742c712a985f942
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 16:13:04 2011 -0700
+
+    Moved bad package.  Changed graphics host to github.
+
+commit dde46ca7bed47d782b457fba482b08ba1a3af589
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 16:07:44 2011 -0700
+
+    Moved bad package.  Changed graphics host to github.
+
+commit ef753b29339bf4fe73a9b4262fa5be6d6e6f9785
+Author: Westin Miller <3.14.pi.wm@gmail.com>
+Date:   Sat Jul 23 12:52:24 2011 -0700
+
+    Initial Commit
