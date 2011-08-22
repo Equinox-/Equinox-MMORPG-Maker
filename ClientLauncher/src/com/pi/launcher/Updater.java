@@ -19,16 +19,20 @@ public class Updater {
 	if (checkKey("natives", remote_ver, local_ver)) {
 	    Natives.load(log);
 	}
-	if (checkKey("jogl", remote_ver, local_ver)) {
+	if (checkKey("jogl", remote_ver, local_ver)
+		|| checkFile(Binaries.jogl_jar)) {
 	    Binaries.loadBinary(log, Binaries.jogl_jar);
 	}
-	if (checkKey("gluegen", remote_ver, local_ver)) {
+	if (checkKey("gluegen", remote_ver, local_ver)
+		|| checkFile(Binaries.gluegen_jar)) {
 	    Binaries.loadBinary(log, Binaries.gluegen_jar);
 	}
-	if (checkKey("nativewindow", remote_ver, local_ver)) {
+	if (checkKey("nativewindow", remote_ver, local_ver)
+		|| checkFile(Binaries.nativewindow_jar)) {
 	    Binaries.loadBinary(log, Binaries.nativewindow_jar);
 	}
-	if (checkKey("client", remote_ver, local_ver)) {
+	if (checkKey("client", remote_ver, local_ver)
+		|| checkFile(Binaries.client_jar)) {
 	    Binaries.loadBinary(log, Binaries.client_jar);
 	}
 	if (!lcl.exists())
@@ -39,6 +43,10 @@ public class Updater {
 	    writer.newLine();
 	}
 	writer.close();
+    }
+
+    private static boolean checkFile(String name) {
+	return !new File(Paths.getBinDirectory(), name).exists();
     }
 
     private static boolean checkKey(String key, Map<String, Integer> remote,
