@@ -10,7 +10,11 @@ import com.pi.common.PILogger;
 
 public class Natives {
     public static String getNativeJar() {
-	String arch = System.getProperty("os.arch");
+	String arch = System.getProperty("sun.arch.data.model");
+	if (arch.equals("32"))
+	    arch = "x86";
+	else
+	    arch = "amd64";
 	switch (Paths.CURRENT_OS) {
 	case LINUX:
 	    return "natives-linux-" + arch + ".jar";
