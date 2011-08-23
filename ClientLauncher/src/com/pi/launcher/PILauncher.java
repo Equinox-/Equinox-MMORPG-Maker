@@ -4,14 +4,13 @@ import java.applet.Applet;
 import java.awt.event.*;
 import java.io.IOException;
 
-import com.pi.common.PILogViewer;
-import com.pi.common.PILogger;
+import com.pi.common.*;
 
 public class PILauncher extends Applet {
     private static final long serialVersionUID = 1L;
     PILogger log;
     PILogViewer.LogPane pane;
-    Applet bound;
+    Disposable bound;
 
     public PILauncher() {
 	setSize(500, 500);
@@ -27,11 +26,11 @@ public class PILauncher extends Applet {
     public void start() {
 	try {
 	    Updater.update(log);
-	    Applet cApp = ClientLoader.loadClientApplet();
-	    remove(pane);
-	    cApp.init();
-	    cApp.start();
-	    bindApplet(cApp);
+	    bound = ClientLoader.loadClientApplet(this);
+	    // remove(pane);
+	    // cApp.init();
+	    // cApp.start();
+	    // bindApplet(cApp);
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
@@ -40,7 +39,7 @@ public class PILauncher extends Applet {
     @Override
     public void destroy() {
 	if (bound != null)
-	    bound.destroy();
+	    bound.dispose();
 	super.destroy();
     }
 
@@ -126,6 +125,6 @@ public class PILauncher extends Applet {
 	});
 	removeAll();
 	add(app);
-	bound = app;
+	//bound = app;
     }
 }

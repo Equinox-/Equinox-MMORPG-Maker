@@ -2,14 +2,18 @@ package com.pi.launcher;
 
 import java.applet.Applet;
 
+import com.pi.common.Disposable;
+
 public class ClientLoader {
-    private final static String appletName = "com.pi.client.clientviewer.ClientApplet";
+    private final static String appletName = "com.pi.client.Client";
     private final static String frameName = "com.pi.client.clientviewer.ClientViewerFrame";
 
-    public static Applet loadClientApplet() {
+    public static Disposable loadClientApplet(Applet bind) {
 	ClientClassLoader cLoader = new ClientClassLoader();
 	try {
-	    return (Applet) cLoader.loadClass(appletName).newInstance();
+	    bind.removeAll();
+	    return (Disposable) cLoader.loadClass(appletName)
+		    .getConstructor(Applet.class).newInstance(bind);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}

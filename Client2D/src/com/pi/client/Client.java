@@ -1,23 +1,22 @@
 package com.pi.client;
 
+import java.applet.Applet;
 import java.net.ConnectException;
 
-import com.pi.client.clientviewer.ClientApplet;
 import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.gui.GUIKit;
 import com.pi.client.net.NetClientClient;
 import com.pi.client.world.World;
-import com.pi.common.PILogViewer;
-import com.pi.common.PILogger;
+import com.pi.common.*;
 import com.pi.common.database.Entity;
 
-public class Client {
+public class Client implements Disposable {
     static {
 	GUIKit.init();
     }
     private boolean inGame = false;
-    private ClientApplet cApplet;
+    private Applet cApplet;
     private DisplayManager displayManager;
     private World world;
     public Entity player;
@@ -26,7 +25,7 @@ public class Client {
     private final boolean logViewer = true;
     private final PILogViewer viewerFrame;
 
-    public Client(ClientApplet applet) {
+    public Client(Applet applet) {
 	if (logViewer) {
 	    viewerFrame = new PILogViewer("Client");
 	    logger = new PILogger(viewerFrame.pane.logOut);
@@ -56,7 +55,7 @@ public class Client {
 	return network;
     }
 
-    public ClientApplet getApplet() {
+    public Applet getApplet() {
 	return this.cApplet;
     }
 
@@ -72,6 +71,7 @@ public class Client {
 	return logger;
     }
 
+    @Override
     public void dispose() {
 	if (viewerFrame != null) {
 	    viewerFrame.setVisible(false);
