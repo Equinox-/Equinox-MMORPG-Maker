@@ -21,7 +21,7 @@ public class AWTGraphics extends IGraphics {
 	this.applet = mgr.getClient().getApplet();
 	startTime = System.currentTimeMillis();
 	imageManager = new ImageManager(mgr.getClient());
-	graphicsLoop = new Thread("PI Graphics Thread") {
+	graphicsLoop = new Thread(mgr.getClient().getThreadGroup(),null,"PI Graphics Thread") {
 	    private Image backBuffer;
 	    private int width, height;
 

@@ -18,7 +18,7 @@ public class SectorWriter extends Thread {
     private Object syncObject = new Object();
 
     public SectorWriter(Client client) {
-	super("SectorWriter");
+	super(client.getThreadGroup(),null,"SectorWriter");
 	this.client = client;
 	start();
     }

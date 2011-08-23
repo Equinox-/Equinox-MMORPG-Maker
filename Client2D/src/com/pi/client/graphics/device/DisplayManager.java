@@ -2,9 +2,6 @@ package com.pi.client.graphics.device;
 
 import java.awt.*;
 
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLProfile;
-
 import com.pi.client.Client;
 import com.pi.client.graphics.RenderLoop;
 import com.pi.client.graphics.device.awt.AWTGraphics;
@@ -26,13 +23,13 @@ public class DisplayManager {
     }
 
     public void postInititation() {
-	try {
+	/*try {
 	    client.getLog().fine("Checking for opengl...");
 	    new GLCapabilities(GLProfile.getDefault());
 	    hasOpenGL = true;
 	} catch (Exception e) {
 	    e.printStackTrace();
-	}
+	}*/
 	client.getLog().fine(
 		"We " + (hasOpenGL ? "" : "don't ") + "have OpenGL");
 	renderLoop.postInitiation();

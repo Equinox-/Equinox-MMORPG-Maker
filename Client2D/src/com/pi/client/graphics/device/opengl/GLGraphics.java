@@ -27,7 +27,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	canvas.setSize(super.mgr.getClient().getApplet().getSize());
 	cliparea = canvas.getBounds();
 	canvas.setLocation(0, 0);
-	animator = new Animator(canvas);
+	animator = new Animator(mgr.getClient().getThreadGroup());
 	animator.add(canvas);
 	animator.start();
 	mgr.getClient().getLog().fine("Started graphics thread");

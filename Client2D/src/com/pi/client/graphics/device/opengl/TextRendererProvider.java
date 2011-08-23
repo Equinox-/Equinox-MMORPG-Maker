@@ -16,7 +16,7 @@ public class TextRendererProvider extends Thread {
     private final Client client;
 
     public TextRendererProvider(Client client) {
-	super("TextRendererProvider");
+	super(client.getThreadGroup(),null,"TextRendererProvider");
 	this.client = client;
 	super.start();
     }

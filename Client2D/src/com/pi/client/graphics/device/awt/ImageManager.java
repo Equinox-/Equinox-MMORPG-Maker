@@ -18,7 +18,7 @@ public class ImageManager extends Thread {
     private Object syncObject = new Object();
 
     public ImageManager(Client client) {
-	super("PiImageManager");
+	super(client.getThreadGroup(), null, "PiImageManager");
 	this.client = client;
 	super.start();
     }

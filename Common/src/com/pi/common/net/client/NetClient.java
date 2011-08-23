@@ -128,22 +128,28 @@ public abstract class NetClient {
 	    errorDetails = details;
 	    quitting = true;
 	    new NetClientDisposalThread(this).start();
-	    connected = false;
-	    try {
+	}
+    }
+
+    public void closeStreams() {
+	connected = false;
+	try {
+	    if (dIn != null)
 		dIn.close();
-		dIn = null;
-	    } catch (Exception e) {
-	    }
-	    try {
+	    dIn = null;
+	} catch (Exception e) {
+	}
+	try {
+	    if (dOut != null)
 		dOut.close();
-		dOut = null;
-	    } catch (Exception e) {
-	    }
-	    try {
+	    dOut = null;
+	} catch (Exception e) {
+	}
+	try {
+	    if (sock != null && !sock.isClosed())
 		sock.close();
-		sock = null;
-	    } catch (Exception e) {
-	    }
+	    sock = null;
+	} catch (Exception e) {
 	}
     }
 
@@ -201,6 +207,8 @@ public abstract class NetClient {
     }
 
     public abstract PILogger getLog();
+
+    public abstract ThreadGroup getThreadGroup();
 
     @Override
     public String toString() {

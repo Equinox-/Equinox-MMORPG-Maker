@@ -17,6 +17,9 @@ public class Client implements Disposable {
     static {
 	GUIKit.init();
     }
+    private ThreadGroup clientThreads;
+    private String ip;
+    private int port;
     private boolean inGame = false;
     private Applet cApplet;
     private DisplayManager displayManager;
@@ -28,8 +31,8 @@ public class Client implements Disposable {
     private final PILogViewer viewerFrame;
 
     public Client(Applet applet) {
-	String ip = JOptionPane.showInputDialog("IP?");
-	int port = 0;
+	clientThreads = new ThreadGroup("ClientThreads");
+	ip = JOptionPane.showInputDialog("IP?");
 	try {
 	    port = Integer.valueOf(JOptionPane.showInputDialog("Port?"));
 	} catch (Exception e) {
@@ -51,13 +54,7 @@ public class Client implements Disposable {
 	this.displayManager = new DisplayManager(this);
 	GraphicsLoader.load(this);
 	this.world = new World(this);
-	try {
-	    network = new NetClientClient(this, ip, port);
-	} catch (ConnectException e) {
-	    if (network != null)
-		network.dispose();
-	    network = null;
-	}
+	network = new NetClientClient(this);
 	this.displayManager.postInititation();
     }
 
@@ -105,5 +102,17 @@ public class Client implements Disposable {
 	return getNetwork() != null && getNetwork().getSocket() != null
 		&& getNetwork().getSocket().isConnected()
 		&& !getNetwork().getSocket().isClosed();
+    }
+
+    public String getNetworkIP() {
+	return ip;
+    }
+
+    public int getNetworkPort() {
+	return port;
+    }
+
+    public ThreadGroup getThreadGroup() {
+	return clientThreads;
     }
 }

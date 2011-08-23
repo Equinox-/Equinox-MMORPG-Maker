@@ -15,6 +15,7 @@ import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
 
 public class Server {
+    private ThreadGroup serverThreads;
     private NetServer network;
     private World world;
     private PILogger log;
@@ -33,6 +34,7 @@ public class Server {
     }
 
     public Server() {
+	serverThreads = new ThreadGroup("Server");
 	try {
 	    PILogViewer f = new PILogViewer("Server");
 	    f.addWindowListener(new WindowAdapter() {
@@ -46,7 +48,7 @@ public class Server {
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
 	    world = new World(this);
-	   // world.getSectorManager().getSector(0, 0);
+	    // world.getSectorManager().getSector(0, 0);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -67,5 +69,9 @@ public class Server {
 
     public World getWorld() {
 	return world;
+    }
+    
+    public ThreadGroup getThreadGroup(){
+	return serverThreads;
     }
 }

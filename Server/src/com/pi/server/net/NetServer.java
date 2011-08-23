@@ -22,6 +22,7 @@ public class NetServer extends Thread {
 
     public NetServer(Server server, int port, ClientListener cl)
 	    throws IOException {
+	super(server.getThreadGroup(), null, "ClientListener");
 	this.server = server;
 	this.cl = cl;
 	this.clientMap = new HashMap<Integer, NetClient>();

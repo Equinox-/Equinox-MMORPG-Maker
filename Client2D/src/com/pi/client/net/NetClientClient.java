@@ -1,7 +1,8 @@
 package com.pi.client.net;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.ConnectException;
+import java.net.Socket;
 
 import com.pi.client.Client;
 import com.pi.common.PILogger;
@@ -12,30 +13,31 @@ import com.pi.common.net.packet.Packet0Disconnect;
 public class NetClientClient extends NetClient {
     private final Client client;
 
-    public NetClientClient(Client client, String address, int port)
-	    throws ConnectException {
+    public NetClientClient(Client client) {
 	this.client = client;
+    }
+
+    public boolean connect(String ip, int port) {
+	dispose();
 	try {
-	    InetAddress addr = InetAddress.getByName(address);
-	    Socket sock = new Socket();
-	    sock.connect(new InetSocketAddress(addr, port));
-	    client.getLog().info(
-		    "Connected to server: (addr=" + addr.getHostAddress()
-			    + " port=" + port + ")");
+	    Socket sock = new Socket(ip, port);
 	    connect(0, sock, new NetClientHandler(this, client));
+	    return true;
 	} catch (ConnectException e) {
-	    throw e;
+	    return false;
 	} catch (IOException e) {
 	    e.printStackTrace();
+	    return false;
 	} catch (SecurityException e) {
-	    client.getLog().severe(e.toString());
-	    throw new ConnectException(e.toString());
+	    e.printStackTrace();
+	    return false;
 	}
     }
 
     @Override
     public void dispose() {
-	if (sock != null && sock.isConnected() && dOut != null) {
+	if (sock != null && sock.isConnected() && dOut != null
+		&& !sock.isOutputShutdown()) {
 	    try {
 		Packet p = new Packet0Disconnect("", "");
 		p.writePacket(dOut);
@@ -49,7 +51,8 @@ public class NetClientClient extends NetClient {
 
     @Override
     public void dispose(String reason, String details) {
-	if (sock != null && sock.isConnected() && dOut != null) {
+	if (sock != null && sock.isConnected() && dOut != null
+		&& !sock.isOutputShutdown()) {
 	    try {
 		Packet p = new Packet0Disconnect(reason, details);
 		p.writePacket(dOut);
@@ -64,5 +67,10 @@ public class NetClientClient extends NetClient {
     @Override
     public PILogger getLog() {
 	return client.getLog();
+    }
+
+    @Override
+    public ThreadGroup getThreadGroup() {
+	return client.getThreadGroup();
     }
 }

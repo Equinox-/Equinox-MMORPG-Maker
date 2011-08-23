@@ -25,7 +25,7 @@ public class SectorManager extends Thread {
     private Object syncObject = new Object();
 
     public SectorManager(Client client) {
-	super("SectorManager");
+	super(client.getThreadGroup(),null,"SectorManager");
 	this.client = client;
 	start();
     }

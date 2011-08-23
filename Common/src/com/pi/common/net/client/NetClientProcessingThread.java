@@ -4,7 +4,8 @@ public class NetClientProcessingThread extends Thread {
     private final NetClient netClient;
 
     public NetClientProcessingThread(final NetClient netClient) {
-	super(netClient.getID() + " processing thread");
+	super(netClient.getThreadGroup(), null, netClient.getID()
+		+ " processing thread");
 	this.netClient = netClient;
     }
 

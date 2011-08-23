@@ -20,7 +20,7 @@ public class TextureManager extends Thread {
     private Object syncObject = new Object();
 
     public TextureManager(GLGraphics gl, Client client) {
-	super("PiTextureManager");
+	super(client.getThreadGroup(),null,"PiTextureManager");
 	this.glGraphics = gl;
 	this.client = client;
 	super.start();

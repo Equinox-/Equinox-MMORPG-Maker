@@ -40,7 +40,8 @@ public class NetServerClient extends NetClient {
 
     @Override
     public void dispose(String reason, String details) {
-	if (sock != null && isConnected() && dOut != null) {
+	if (sock != null && isConnected() && dOut != null
+		&& !sock.isOutputShutdown()) {
 	    try {
 		Packet p = new Packet0Disconnect(reason, details);
 		p.writePacket(dOut);
@@ -50,6 +51,11 @@ public class NetServerClient extends NetClient {
 	    }
 	}
 	dispose();
+    }
+
+    @Override
+    public ThreadGroup getThreadGroup() {
+	return server.getThreadGroup();
     }
 
 }

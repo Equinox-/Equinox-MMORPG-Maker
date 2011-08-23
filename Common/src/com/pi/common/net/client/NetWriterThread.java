@@ -6,7 +6,7 @@ public class NetWriterThread extends Thread {
     private final NetClient netClient;
 
     public NetWriterThread(NetClient netClient) {
-	super(netClient.getID() + " reader thread");
+	super(netClient.getThreadGroup(), null,netClient.getID() + " writer thread");
 	this.netClient = netClient;
     }
 
@@ -14,8 +14,10 @@ public class NetWriterThread extends Thread {
     public void run() {
 	netClient.getLog().finer(
 		"Starting client " + netClient.getID() + " writer thread");
-	while (netClient.isConnected() && !netClient.isQuitting()) {
-	    while (netClient.sendQueuedPacket())
+	while (netClient.isConnected() && !netClient.isQuitting()
+		&& !netClient.getSocket().isOutputShutdown()) {
+	    while (netClient.sendQueuedPacket()
+		    && !netClient.getSocket().isOutputShutdown())
 		;
 	    try {
 		sleep(100L);

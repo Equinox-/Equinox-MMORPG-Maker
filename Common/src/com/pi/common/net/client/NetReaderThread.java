@@ -4,7 +4,7 @@ public class NetReaderThread extends Thread {
     private final NetClient netClient;
 
     public NetReaderThread(NetClient netClient) {
-	super(netClient.getID() + " reader thread");
+	super(netClient.getThreadGroup(), null,netClient.getID() + " reader thread");
 	this.netClient = netClient;
     }
 
@@ -12,7 +12,8 @@ public class NetReaderThread extends Thread {
     public void run() {
 	netClient.getLog().finer(
 		"Starting client " + netClient.getID() + " reader thread");
-	while (netClient.isConnected() && !netClient.isQuitting()) {
+	while (netClient.isConnected() && !netClient.isQuitting()
+		&& !netClient.getSocket().isInputShutdown()) {
 	    while (netClient.readPacket())
 		;
 	    try {
