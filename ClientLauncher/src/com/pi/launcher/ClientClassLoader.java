@@ -4,8 +4,17 @@ import java.io.File;
 import java.net.URLClassLoader;
 
 public class ClientClassLoader extends URLClassLoader {
-    public ClientClassLoader() {
+    private static ClientClassLoader ldr;
+
+    private ClientClassLoader() {
 	super(Binaries.getJarURLs(), ClassLoader.getSystemClassLoader());
+    }
+
+    public static ClientClassLoader getClientClassLoader() {
+	if (ldr == null) {
+	    ldr = new ClientClassLoader();
+	}
+	return ldr;
     }
 
     @Override

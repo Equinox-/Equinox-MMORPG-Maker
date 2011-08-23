@@ -9,7 +9,7 @@ public class ClientLoader {
     private final static String frameName = "com.pi.client.clientviewer.ClientViewerFrame";
 
     public static Disposable loadClientApplet(Applet bind) {
-	ClientClassLoader cLoader = new ClientClassLoader();
+	ClientClassLoader cLoader = ClientClassLoader.getClientClassLoader();
 	try {
 	    bind.removeAll();
 	    return (Disposable) cLoader.loadClass(appletName)
@@ -21,7 +21,7 @@ public class ClientLoader {
     }
 
     public static void runClientFrame() {
-	ClientClassLoader cLoader = new ClientClassLoader();
+	ClientClassLoader cLoader = ClientClassLoader.getClientClassLoader();
 	Object[] args = new Object[] { new String[] {} };
 	try {
 	    cLoader.loadClass(frameName).getMethod("main", String[].class)
