@@ -3,6 +3,8 @@ package com.pi.client;
 import java.applet.Applet;
 import java.net.ConnectException;
 
+import javax.swing.JOptionPane;
+
 import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.gui.GUIKit;
@@ -26,6 +28,14 @@ public class Client implements Disposable {
     private final PILogViewer viewerFrame;
 
     public Client(Applet applet) {
+	String ip = JOptionPane.showInputDialog("IP?");
+	int port = 0;
+	try {
+	    port = Integer.valueOf(JOptionPane.showInputDialog("Port?"));
+	} catch (Exception e) {
+	    JOptionPane.showMessageDialog(null, "Bad port number");
+	    System.exit(0);
+	}
 	if (logViewer) {
 	    viewerFrame = new PILogViewer("Client");
 	    logger = new PILogger(viewerFrame.pane.logOut);
@@ -42,7 +52,7 @@ public class Client implements Disposable {
 	GraphicsLoader.load(this);
 	this.world = new World(this);
 	try {
-	    network = new NetClientClient(this, "127.0.0.1", 9999);
+	    network = new NetClientClient(this, ip, port);
 	} catch (ConnectException e) {
 	    if (network != null)
 		network.dispose();
