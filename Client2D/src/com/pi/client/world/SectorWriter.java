@@ -67,7 +67,7 @@ public class SectorWriter extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(client.getLog().getErrorStream());
 	    System.exit(0);
 	}
     }

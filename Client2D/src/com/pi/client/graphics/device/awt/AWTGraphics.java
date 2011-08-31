@@ -113,7 +113,7 @@ public class AWTGraphics extends IGraphics {
 	try {
 	    graphicsLoop.join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(client.getLog().getErrorStream());
 	    System.exit(0);
 	}
 	imageManager.dispose();

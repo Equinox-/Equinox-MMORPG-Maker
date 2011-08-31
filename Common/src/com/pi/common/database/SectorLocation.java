@@ -24,4 +24,9 @@ public class SectorLocation {
 	}
 	return false;
     }
+
+    public boolean containsLocation(Location l) {
+	return l.plane == this.plane && l.getSectorX() == this.x
+		&& l.getSectorZ() == this.z;
+    }
 }

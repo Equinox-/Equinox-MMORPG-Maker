@@ -56,7 +56,7 @@ public class SectorWriter extends Thread {
 		try {
 		    SectorIO.write(Paths.getSectorFile(oldestSector), wr.data);
 		} catch (IOException e) {
-		    e.printStackTrace();
+		    e.printStackTrace(server.getLog().getErrorStream());
 		}
 	    }
 	}
@@ -67,7 +67,7 @@ public class SectorWriter extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(server.getLog().getErrorStream());
 	    System.exit(0);
 	}
     }

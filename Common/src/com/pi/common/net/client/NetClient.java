@@ -39,7 +39,7 @@ public abstract class NetClient {
 		this.dOut = new DataOutputStream(new BufferedOutputStream(
 			this.sock.getOutputStream(), 5120)); // 5kb buffer
 	    } catch (IOException e) {
-		e.printStackTrace();
+		e.printStackTrace(getLog().getErrorStream());
 	    }
 	    this.netHandle = netHandle;
 	    this.netReader = new NetReaderThread(this);

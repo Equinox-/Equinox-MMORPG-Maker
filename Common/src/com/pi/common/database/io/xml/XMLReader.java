@@ -14,14 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLReader {
     public static SAXParserFactory factory = SAXParserFactory.newInstance();
     public static SAXParser saxParser;
-
-    public static void main(String[] args) {
-	XMLElement[] elements = readEntries(new File(
-		"/home/westin/Desktop/metadata.opf"), "package");
-	for (XMLElement e : elements)
-	    System.out.println(e);
-    }
-
+    
     public static XMLElement[] readEntries(File file, String eleName) {
 	try {
 	    if (saxParser == null)

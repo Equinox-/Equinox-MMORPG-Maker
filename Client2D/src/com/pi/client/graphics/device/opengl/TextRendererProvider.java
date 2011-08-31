@@ -16,7 +16,7 @@ public class TextRendererProvider extends Thread {
     private final Client client;
 
     public TextRendererProvider(Client client) {
-	super(client.getThreadGroup(),null,"TextRendererProvider");
+	super(client.getThreadGroup(), null, "TextRendererProvider");
 	this.client = client;
 	super.start();
     }
@@ -39,7 +39,7 @@ public class TextRendererProvider extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(client.getLog().getErrorStream());
 	    System.exit(0);
 	}
 	for (TextRendererStorage r : map.values()) {
@@ -47,6 +47,7 @@ public class TextRendererProvider extends Thread {
 		GLContext.getCurrentGL();
 		r.r.dispose();
 	    } catch (Exception e) {
+		e.printStackTrace(client.getLog().getErrorStream());
 	    }
 	}
 	map.clear();

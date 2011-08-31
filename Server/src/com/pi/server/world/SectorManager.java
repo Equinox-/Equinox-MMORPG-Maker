@@ -139,7 +139,7 @@ public class SectorManager extends Thread {
 			}
 		    }
 		} catch (IOException e) {
-		    e.printStackTrace();
+		    e.printStackTrace(server.getLog().getErrorStream());
 		}
 		sX.lastUsed = System.currentTimeMillis();
 		map.put(oldestSector, sX);
@@ -175,7 +175,7 @@ public class SectorManager extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(server.getLog().getErrorStream());
 	    System.exit(0);
 	}
     }

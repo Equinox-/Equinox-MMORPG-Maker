@@ -26,10 +26,10 @@ public class NetClientClient extends NetClient {
 	} catch (ConnectException e) {
 	    return false;
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(client.getLog().getErrorStream());
 	    return false;
 	} catch (SecurityException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(client.getLog().getErrorStream());
 	    return false;
 	}
     }

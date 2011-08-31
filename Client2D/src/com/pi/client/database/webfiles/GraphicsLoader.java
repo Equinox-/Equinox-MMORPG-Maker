@@ -44,7 +44,7 @@ public class GraphicsLoader {
 		try {
 		    ver = Float.valueOf(line[1]);
 		} catch (Exception e) {
-		    e.printStackTrace();
+		    e.printStackTrace(client.getLog().getErrorStream());
 		    continue;
 		}
 		Float cVer = currentVersions.get(name);
@@ -59,7 +59,7 @@ public class GraphicsLoader {
 			download(new URL(ServerConfiguration.graphicsFolder
 				+ name), dest);
 		    } catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace(client.getLog().getErrorStream());
 		    }
 		}
 	    }
@@ -69,6 +69,7 @@ public class GraphicsLoader {
 	    client.getLog().info("Finished checking graphic versions!");
 	} catch (Exception e) {
 	    client.getLog().info("Failed to check for graphical updates!");
+	    e.printStackTrace(client.getLog().getErrorStream());
 	}
     }
 

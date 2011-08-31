@@ -28,7 +28,7 @@ public class NetWriterThread extends Thread {
 	    } catch (IOException e) {
 		if (!netClient.hasErrored())
 		    netClient.error(e);
-		e.printStackTrace();
+		e.printStackTrace(netClient.getLog().getErrorStream());
 	    }
 	}
 	netClient.getLog().finer(

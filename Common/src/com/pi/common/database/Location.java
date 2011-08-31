@@ -49,7 +49,21 @@ public class Location {
 	return x - (getSectorX() * SectorConstants.SECTOR_WIDTH);
     }
 
-    public float getLocalY() {
+    public float getGlobalX() {
+	return x;
+    }
+
+    public float getLocalZ() {
 	return z - (getSectorZ() * SectorConstants.SECTOR_HEIGHT);
+    }
+
+    public float getGlobalZ() {
+	return z;
+    }
+
+    public static int dist(Location a, Location b) {
+	float dX = a.getGlobalX() - b.getGlobalX();
+	float dZ = a.getGlobalZ() - b.getGlobalZ();
+	return (int) Math.sqrt((dX * dX) + (dZ * dZ));
     }
 }

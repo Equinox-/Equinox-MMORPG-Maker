@@ -3,13 +3,16 @@ package com.pi.client.graphics.device;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
+import com.pi.client.Client;
 import com.pi.common.database.GraphicsObject;
 
 public abstract class IGraphics {
     protected final DisplayManager mgr;
+    protected final Client client;
 
     public IGraphics(DisplayManager mgr) {
 	this.mgr = mgr;
+	this.client = mgr.getClient();
     }
 
     protected void doRender() {

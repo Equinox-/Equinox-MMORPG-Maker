@@ -13,16 +13,27 @@ public class PILogger {
     public boolean showDate = false, showTime = false, showCode = false,
 	    showLevel = true;
     public PrintStream streamOut = System.out;
+    private PrintStream errorStream;
 
-    public PILogger(PrintStream streamOut) {
-	this.streamOut = streamOut;
+    public PILogger(PrintStream streamOutt) {
+	this.streamOut = streamOutt;
 	this.handler = getHandler();
 	this.formatter = getFormatter();
+	errorStream = new PrintStream(new OutputStream() {
+	    @Override
+	    public void write(int arg0) throws IOException {
+		streamOut.write(arg0);
+	    }
+
+	    @Override
+	    public void write(byte[] byts, int off, int len) {
+		streamOut.write(byts, off, len);
+	    }
+	});
     }
 
     public PILogger() {
-	this.handler = getHandler();
-	this.formatter = getFormatter();
+	this(System.out);
     }
 
     public void fine(String s) {
@@ -59,6 +70,10 @@ public class PILogger {
 	    s += "\n...";
 	}
 	return s;
+    }
+
+    public PrintStream getErrorStream() {
+	return errorStream;
     }
 
     public String getLastMessage() {

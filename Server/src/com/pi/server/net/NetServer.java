@@ -65,7 +65,7 @@ public class NetServer extends Thread {
 		d.close();
 		src.close();
 	    } catch (IOException e) {
-		e.printStackTrace();
+		e.printStackTrace(server.getLog().getErrorStream());
 	    }
 	}
     }
@@ -97,7 +97,7 @@ public class NetServer extends Thread {
 	try {
 	    sock.close();
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    e.printStackTrace(server.getLog().getErrorStream());
 	}
 	for (int id : clientMap.keySet()) {
 	    removeClient(id, "Socket Closed", "Server shutdown");

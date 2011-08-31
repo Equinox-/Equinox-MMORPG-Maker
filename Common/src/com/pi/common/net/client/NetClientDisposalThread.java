@@ -17,7 +17,7 @@ public class NetClientDisposalThread extends Thread {
 	    try {
 		netClient.getNetReader().join();
 	    } catch (Exception e) {
-		e.printStackTrace();
+		e.printStackTrace(netClient.getLog().getErrorStream());
 		netClient.getNetReader().stop();
 	    }
 	if (netClient.getNetWriter() != null
@@ -25,14 +25,14 @@ public class NetClientDisposalThread extends Thread {
 	    try {
 		netClient.getNetWriter().join();
 	    } catch (Exception e) {
-		e.printStackTrace();
+		e.printStackTrace(netClient.getLog().getErrorStream());
 		netClient.getNetWriter().stop();
 	    }
 	while (netClient.shouldProcessPacket()) {
 	    try {
 		sleep(100l);
 	    } catch (InterruptedException e) {
-		e.printStackTrace();
+		e.printStackTrace(netClient.getLog().getErrorStream());
 	    }
 	}
 	if (netClient.getNetProcessor() != null
@@ -40,7 +40,7 @@ public class NetClientDisposalThread extends Thread {
 	    try {
 		netClient.getNetProcessor().join();
 	    } catch (Exception e) {
-		e.printStackTrace();
+		e.printStackTrace(netClient.getLog().getErrorStream());
 		netClient.getNetProcessor().stop();
 	    }
 	netClient.closeStreams();

@@ -42,7 +42,7 @@ public class GameRenderLoop implements Renderable {
 	    }
 	int sec11X = (int) (clip.getCenterX() - client.player.getLocalX()
 		* TileConstants.TILE_WIDTH - (TileConstants.TILE_WIDTH / 2));
-	int sec11Y = (int) (clip.getCenterY() - client.player.getLocalY()
+	int sec11Y = (int) (clip.getCenterY() - client.player.getLocalZ()
 		* TileConstants.TILE_HEIGHT - (TileConstants.TILE_HEIGHT / 2));
 	for (TileLayer l : TileLayer.values()) {
 	    for (int x = 0; x < 3; x++)
