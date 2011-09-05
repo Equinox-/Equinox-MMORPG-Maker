@@ -26,11 +26,9 @@ public class MainMenu implements Renderable, MouseListener,
     private PIStyle serverStatusStyle = GUIKit.label.clone();
     public final Client client;
     private PIPopup popup = new PIPopup();
-    private NetworkStatusMonitor netState;
 
     public MainMenu(final Client c) {
 	this.client = c;
-	netState = new NetworkStatusMonitor(client);
 	set = GUIKit.buttonSet.clone();
 	serverStatusStyle.hAlign = false;
 	serverStatus.setStyle(StyleType.Normal, serverStatusStyle);

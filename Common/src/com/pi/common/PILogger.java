@@ -12,10 +12,21 @@ public class PILogger {
     private final Formatter formatter;
     public boolean showDate = false, showTime = false, showCode = false,
 	    showLevel = true;
-    public PrintStream streamOut = System.out;
+    public PrintStream streamOut;
     private PrintStream errorStream;
+    private PrintStream fileOut;
 
-    public PILogger(PrintStream streamOutt) {
+    public PILogger(File f, PrintStream streamOutt) {
+	if (f != null) {
+	    try {
+		if (!f.exists())
+		    f.createNewFile();
+		if (f.exists())
+		    fileOut = new PrintStream(new FileOutputStream(f));
+	    } catch (IOException e) {
+		e.printStackTrace();
+	    }
+	}
 	this.streamOut = streamOutt;
 	this.handler = getHandler();
 	this.formatter = getFormatter();
@@ -23,17 +34,21 @@ public class PILogger {
 	    @Override
 	    public void write(int arg0) throws IOException {
 		streamOut.write(arg0);
+		if (fileOut != null)
+		    fileOut.write(arg0);
 	    }
 
 	    @Override
 	    public void write(byte[] byts, int off, int len) {
 		streamOut.write(byts, off, len);
+		if (fileOut != null)
+		    fileOut.write(byts, off, len);
 	    }
 	});
     }
 
-    public PILogger() {
-	this(System.out);
+    public PILogger(PrintStream out) {
+	this(null,out);
     }
 
     public void fine(String s) {
@@ -98,10 +113,9 @@ public class PILogger {
 			    .getMessage());
 		    if (record.getLevel().intValue() >= level.intValue()) {
 			lastMessage = record.getMessage();
-			if (record.getLevel().intValue() == Level.SEVERE
-				.intValue() || record.getThrown() != null)
-			    streamOut.println(s);
 			streamOut.println(s);
+			if (fileOut != null)
+			    fileOut.println(s);
 		    }
 		}
 	    };
@@ -159,5 +173,12 @@ public class PILogger {
 	} else {
 	    return formatter;
 	}
+    }
+
+    public void close() {
+	errorStream.close();
+	streamOut.close();
+	if (fileOut != null)
+	    fileOut.close();
     }
 }

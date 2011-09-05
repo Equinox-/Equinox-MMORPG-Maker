@@ -11,11 +11,13 @@ public class LauncherViewerFrame {
 	PILogger log = new PILogger(plv.pane.logOut);
 	try {
 	    Updater.update(log);
+	} catch (IOException e) {
+	    e.printStackTrace();
+	}
+	if (ClientLoader.canRun()) {
 	    plv.setVisible(false);
 	    plv.dispose();
 	    ClientLoader.runClientFrame();
-	} catch (IOException e) {
-	    e.printStackTrace();
 	}
     }
 }

@@ -69,7 +69,7 @@ public class GraphicsLoader {
 	    client.getLog().info("Finished checking graphic versions!");
 	} catch (Exception e) {
 	    client.getLog().info("Failed to check for graphical updates!");
-	    e.printStackTrace(client.getLog().getErrorStream());
+	    //e.printStackTrace(client.getLog().getErrorStream());
 	}
     }
 

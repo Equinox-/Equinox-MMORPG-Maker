@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.pi.common.database.*;
 
-public class EntityManager {
+public class ServerEntityManager {
     private final Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
 
     public boolean registerEntity(Entity e) {

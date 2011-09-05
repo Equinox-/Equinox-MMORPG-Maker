@@ -79,4 +79,8 @@ public class Natives {
 	dest.delete();
 	f.renameTo(dest);
     }
+
+    public static boolean hasNatives() {
+	return Paths.getNativesDirectory().isDirectory();
+    }
 }

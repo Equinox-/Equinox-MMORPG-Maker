@@ -1,6 +1,9 @@
 package com.pi.common.net.packet;
 
-import java.io.*;
+import java.io.IOException;
+
+import com.pi.common.net.client.PacketInputStream;
+import com.pi.common.net.client.PacketOutputStream;
 
 public class Packet2Alert extends Packet {
     public static enum AlertType {
@@ -28,13 +31,13 @@ public class Packet2Alert extends Packet {
     public AlertType alertType = AlertType.NONE;
 
     @Override
-    protected void writeData(DataOutputStream dOut) throws IOException {
-	writeString(dOut, alertType.getMessage(message));
+    protected void writeData(PacketOutputStream dOut) throws IOException {
+	dOut.writeString(alertType.getMessage(message));
     }
 
     @Override
-    protected void readData(DataInputStream dIn) throws IOException {
-	String[] data = readString(dIn).split(new String(new char[] { 128 }));
+    protected void readData(PacketInputStream dIn) throws IOException {
+	String[] data = dIn.readString().split(new String(new char[] { 128 }),2);
 	if (data.length > 1) {
 	    message = "";
 	    for (int i = 1; i < data.length; i++) {

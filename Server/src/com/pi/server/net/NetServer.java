@@ -1,6 +1,5 @@
 package com.pi.server.net;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.common.net.client.NetClient;
+import com.pi.common.net.client.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
 import com.pi.server.Server;
@@ -59,7 +59,8 @@ public class NetServer extends Thread {
 		Packet0Disconnect p = new Packet0Disconnect("Max Clients",
 			"The server has reached the maximum client amount, "
 				+ MAX_CLIENTS);
-		DataOutputStream d = new DataOutputStream(src.getOutputStream());
+		PacketOutputStream d = new PacketOutputStream(
+			src.getOutputStream());
 		p.writePacket(d);
 		d.flush();
 		d.close();

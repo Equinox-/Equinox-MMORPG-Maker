@@ -4,12 +4,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JTextPane;
 
 import com.pi.common.PILogViewer;
 import com.pi.common.PILogger;
+import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
 import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
@@ -43,18 +45,18 @@ public class Server {
 		    dispose();
 		}
 	    });
-	    log = new PILogger(f.pane.logOut);
+	    log = new PILogger(Paths.getLogFile(),f.pane.logOut);
 	    int port = Integer.valueOf(9999);
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
 	    world = new World(this);
-	    // world.getSectorManager().getSector(0, 0);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
     }
 
     public void dispose() {
+	log.close();
 	if (network != null)
 	    network.dispose();
 	if (database != null)

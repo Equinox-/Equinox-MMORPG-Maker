@@ -1,10 +1,10 @@
 package com.pi.client;
 
 import java.applet.Applet;
-import java.net.ConnectException;
 
 import javax.swing.JOptionPane;
 
+import com.pi.client.database.Paths;
 import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.gui.GUIKit;
@@ -41,10 +41,10 @@ public class Client implements Disposable {
 	}
 	if (logViewer) {
 	    viewerFrame = new PILogViewer("Client");
-	    logger = new PILogger(viewerFrame.pane.logOut);
+	    logger = new PILogger(Paths.getLogFile(), viewerFrame.pane.logOut);
 	} else {
 	    viewerFrame = null;
-	    logger = new PILogger();
+	    logger = new PILogger(Paths.getLogFile(), System.out);
 	}
 	this.cApplet = applet;
 	this.player = new Entity();
@@ -54,7 +54,7 @@ public class Client implements Disposable {
 	this.displayManager = new DisplayManager(this);
 	GraphicsLoader.load(this);
 	this.world = new World(this);
-	network = new NetClientClient(this);
+	network = new NetClientClient(this, ip, port);
 	this.displayManager.postInititation();
     }
 
@@ -80,6 +80,7 @@ public class Client implements Disposable {
 
     @Override
     public void dispose() {
+	logger.close();
 	if (viewerFrame != null) {
 	    viewerFrame.setVisible(false);
 	    viewerFrame.dispose();

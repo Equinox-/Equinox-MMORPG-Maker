@@ -1,6 +1,10 @@
 package com.pi.common.net.packet;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import com.pi.common.net.client.PacketInputStream;
+import com.pi.common.net.client.PacketOutputStream;
 
 public class Packet0Disconnect extends Packet {
     public String reason;
@@ -16,19 +20,18 @@ public class Packet0Disconnect extends Packet {
     }
 
     @Override
-    protected void writeData(DataOutputStream dOut) throws IOException {
-	dOut.writeInt(getID());
+    protected void writeData(PacketOutputStream dOut) throws IOException {
 	if (reason == null)
 	    reason = "";
 	if (details == null)
 	    details = "";
-	super.writeString(dOut, reason);
-	super.writeString(dOut, details);
+	dOut.writeString(reason);
+	dOut.writeString(details);
     }
 
     @Override
-    protected void readData(DataInputStream dIn) throws IOException {
-	reason = super.readString(dIn);
-	details = super.readString(dIn);
+    protected void readData(PacketInputStream dIn) throws IOException {
+	reason = dIn.readString();
+	details = dIn.readString();
     }
 }

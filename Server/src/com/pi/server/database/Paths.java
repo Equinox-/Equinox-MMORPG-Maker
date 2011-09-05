@@ -6,7 +6,10 @@ import com.pi.common.database.SectorLocation;
 
 public class Paths {
     public static File getHomeDirectory() {
-	return new File("");
+	File f = new File("/home/westin/equinox-server");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
     }
 
     public static File getSectorDirectory() {
@@ -25,12 +28,14 @@ public class Paths {
 
     public static File getAccountsDatabase() {
 	File f = new File(getDatabaseFolder(), "accounts.db");
-	if (!f.exists())
+	if (!f.exists()) {
+	    System.out.println(f.getAbsolutePath());
 	    try {
 		f.createNewFile();
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
+	}
 	return f;
     }
 
@@ -40,5 +45,16 @@ public class Paths {
 
     public static File getSectorFile(SectorLocation l) {
 	return getSectorFile(l.x, l.plane, l.z);
+    }
+
+    public static File getLogDirectory() {
+	File f = new File(getHomeDirectory(), "log");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+
+    public static File getLogFile() {
+	return new File(getLogDirectory(), "log");
     }
 }

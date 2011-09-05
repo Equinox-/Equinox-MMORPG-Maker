@@ -2,19 +2,22 @@ package com.pi.common.net.packet;
 
 import java.io.*;
 
+import com.pi.common.net.client.PacketInputStream;
+import com.pi.common.net.client.PacketOutputStream;
+
 public class Packet3Register extends Packet {
     public String username;
     public String password;
 
     @Override
-    protected void writeData(DataOutputStream dOut) throws IOException {
-	super.writeString(dOut, username);
-	super.writeString(dOut, password);
+    protected void writeData(PacketOutputStream dOut) throws IOException {
+	dOut.writeString(username);
+	dOut.writeString(password);
     }
 
     @Override
-    protected void readData(DataInputStream dIn) throws IOException {
-	username = super.readString(dIn);
-	password = super.readString(dIn);
+    protected void readData(PacketInputStream dIn) throws IOException {
+	username = dIn.readString();
+	password = dIn.readString();
     }
 }

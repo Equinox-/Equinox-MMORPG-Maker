@@ -34,12 +34,14 @@ public class Paths {
 	    f.mkdir();
 	return f;
     }
+
     public static File getBinDirectory() {
 	File f = new File(getHomeDirectory(), "bin");
 	if (!f.exists())
 	    f.mkdir();
 	return f;
     }
+
     public static File getNativesDirectory() {
 	File f = new File(getBinDirectory(), "natives");
 	if (!f.exists())
@@ -83,5 +85,16 @@ public class Paths {
 	if (!f.exists())
 	    f.mkdir();
 	return f;
+    }
+
+    public static File getLogDirectory() {
+	File f = new File(getHomeDirectory(), "log");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+
+    public static File getLogFile() {
+	return new File(getLogDirectory(), "log");
     }
 }

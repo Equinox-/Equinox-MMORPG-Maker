@@ -1,11 +1,11 @@
 import java.io.IOException;
 
-import com.pi.client.database.Paths;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.*;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.database.io.SectorIO;
+import com.pi.server.database.Paths;
 
 public class EmptySector {
     public static Sector create() {

@@ -29,4 +29,8 @@ public class SectorLocation {
 	return l.plane == this.plane && l.getSectorX() == this.x
 		&& l.getSectorZ() == this.z;
     }
+
+    public String toString() {
+	return "SectorLocation[x=" + x + ", z=" + z + ", plane=" + plane + "]";
+    }
 }

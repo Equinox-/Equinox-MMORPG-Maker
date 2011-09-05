@@ -16,9 +16,12 @@ public class Binaries {
 	try {
 	    return new URL[] {
 		    new File(Paths.getBinDirectory(), jogl_jar).toURI().toURL(),
-		    new File(Paths.getBinDirectory(), gluegen_jar).toURI().toURL(),
-		    new File(Paths.getBinDirectory(), nativewindow_jar).toURI().toURL(),
-		    new File(Paths.getBinDirectory(), client_jar).toURI().toURL() };
+		    new File(Paths.getBinDirectory(), gluegen_jar).toURI()
+			    .toURL(),
+		    new File(Paths.getBinDirectory(), nativewindow_jar).toURI()
+			    .toURL(),
+		    new File(Paths.getBinDirectory(), client_jar).toURI()
+			    .toURL() };
 	} catch (MalformedURLException e) {
 	    return new URL[] {};
 	}
@@ -43,6 +46,16 @@ public class Binaries {
 	download(nativewindow, nativewindow_f);
 	log.info("Downloading " + client_jar);
 	download(client, client_f);
+    }
+
+    public static boolean hasBinaries() {
+	File jogl_f = new File(Paths.getBinDirectory(), jogl_jar);
+	File gluegen_f = new File(Paths.getBinDirectory(), gluegen_jar);
+	File nativewindow_f = new File(Paths.getBinDirectory(),
+		nativewindow_jar);
+	File client_f = new File(Paths.getBinDirectory(), client_jar);
+	return jogl_f.exists() && gluegen_f.exists() && nativewindow_f.exists()
+		&& client_f.exists();
     }
 
     public static void loadBinary(PILogger log, String binary_jar)

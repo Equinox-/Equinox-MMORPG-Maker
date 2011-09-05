@@ -1,5 +1,6 @@
 package com.pi.common;
 
+import java.awt.ScrollPane;
 import java.io.*;
 
 import javax.swing.*;
@@ -23,12 +24,19 @@ public class PILogViewer extends JFrame {
 
 	public LogPane() {
 	    super();
+	    final JScrollPane p = new JScrollPane();
+	    p.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	    final JTextPane tPane = new JTextPane();
 	    setSize(500, 450);
+	    p.setAutoscrolls(true);
+	    tPane.setAutoscrolls(true);
 	    setLocation(0, 0);
 	    tPane.setSize(500, 450);
 	    tPane.setLocation(0, 0);
-	    add(tPane);
+	    p.setSize(500, 450);
+	    p.setLocation(0, 0);
+	    p.add(tPane);
+	    add(p);
 	    logOut = new PrintStream(new OutputStream() {
 
 		@Override

@@ -1,6 +1,9 @@
 package com.pi.common.net.packet;
 
-import java.io.*;
+import java.io.IOException;
+
+import com.pi.common.net.client.PacketInputStream;
+import com.pi.common.net.client.PacketOutputStream;
 
 public class Packet6BlankSector extends Packet {
     public int baseX;
@@ -8,14 +11,14 @@ public class Packet6BlankSector extends Packet {
     public int baseZ;
 
     @Override
-    protected void writeData(DataOutputStream dOut) throws IOException {
+    protected void writeData(PacketOutputStream dOut) throws IOException {
 	dOut.writeInt(baseX);
 	dOut.writeInt(baseY);
 	dOut.writeInt(baseZ);
     }
 
     @Override
-    protected void readData(DataInputStream dIn) throws IOException {
+    protected void readData(PacketInputStream dIn) throws IOException {
 	baseX = dIn.readInt();
 	baseY = dIn.readInt();
 	baseZ = dIn.readInt();

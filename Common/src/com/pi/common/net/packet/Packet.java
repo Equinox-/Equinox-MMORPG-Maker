@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pi.common.net.client.PacketInputStream;
+import com.pi.common.net.client.PacketOutputStream;
+
 public abstract class Packet {
     public final static Map<Integer, Class<? extends Packet>> idMapping = new HashMap<Integer, Class<? extends Packet>>();
     public final static Map<Class<? extends Packet>, Integer> classMapping = new HashMap<Class<? extends Packet>, Integer>();
@@ -45,26 +48,6 @@ public abstract class Packet {
 	}
     }
 
-    protected static String readString(DataInputStream dIn) throws IOException {
-	int strlen = dIn.readInt();
-	if (strlen < 0)
-	    throw new IOException("Invalid String Length: " + strlen);
-	if (strlen == 0)
-	    return "";
-	char[] chars = new char[strlen];
-	for (int i = 0; i < strlen; i++)
-	    chars[i] = dIn.readChar();
-	return new String(chars);
-    }
-
-    protected static void writeString(DataOutputStream dOut, String s)
-	    throws IOException {
-	dOut.writeInt(s.length());
-	char[] data = s.toCharArray();
-	for (char c : data)
-	    dOut.writeChar(c);
-    }
-
     public String getName() {
 	return idMapping.get(getID()).getSimpleName();
     }
@@ -73,22 +56,22 @@ public abstract class Packet {
 	return 4 + (str.length() * 2);
     }
 
-    public static Packet getPacket(DataInputStream dIn) throws IOException {
+    public static Packet getPacket(PacketInputStream pIn) throws IOException {
 	try {
-	    int id = dIn.readInt();
+	    int id = pIn.readInt();
 	    Packet packet = getPacket(id);
 	    if (packet == null)
 		throw new IOException("Bad packet id: " + id);
-	    packet.readData(dIn);
+	    packet.readData(pIn);
 	    return packet;
 	} catch (EOFException e) {
 	    return null;
 	}
     }
 
-    public void writePacket(DataOutputStream dOut) throws IOException {
-	dOut.writeInt(getID());
-	writeData(dOut);
+    public void writePacket(PacketOutputStream pOut) throws IOException {
+	pOut.writeInt(getID());
+	writeData(pOut);
     }
 
     public int getID() {
@@ -99,7 +82,7 @@ public abstract class Packet {
 	    throw new NullPointerException("This packet is not registered!");
     }
 
-    protected abstract void writeData(DataOutputStream dOut) throws IOException;
+    protected abstract void writeData(PacketOutputStream pOut) throws IOException;
 
-    protected abstract void readData(DataInputStream dIn) throws IOException;
+    protected abstract void readData(PacketInputStream pIn) throws IOException;
 }

@@ -14,6 +14,7 @@ public abstract class NetClient {
     protected int id;
     protected Socket sock;
     protected DataInputStream dIn;
+    private Integer readLength;
     protected DataOutputStream dOut;
     protected boolean connected = true;
     protected boolean quitting = false;
@@ -75,13 +76,23 @@ public abstract class NetClient {
     public boolean readPacket() {
 	boolean read = false;
 	try {
-	    Packet packet = Packet.getPacket(dIn);
-	    if (packet != null) {
-		processQueue.add(packet);
-		getLog().finest("Reading packet " + packet.getName());
-		read = true;
-	    } else {
-		error("End Of Stream", "");
+	    int avaliable = dIn.available();
+	    if (avaliable > 4 && readLength == null)
+		readLength = dIn.readInt();
+	    avaliable = dIn.available();
+	    if (readLength != null && avaliable >= readLength) {
+		byte[] data = new byte[readLength];
+		dIn.readFully(data);
+		readLength = null;
+		Packet packet = Packet.getPacket(new PacketInputStream(
+			new ByteArrayInputStream(data)));
+		if (packet != null) {
+		    processQueue.add(packet);
+		    getLog().finest("Reading packet " + packet.getName());
+		    read = true;
+		} else {
+		    error("End Of Stream", "");
+		}
 	    }
 	} catch (Exception exception) {
 	    if (!hasErrored) {
@@ -102,7 +113,15 @@ public abstract class NetClient {
 		    packet = (Packet) sendQueue.remove(0);
 		}
 		getLog().finest("Sending packet " + packet.getName());
-		packet.writePacket(dOut);
+		byte[] data;
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		PacketOutputStream pOut = new PacketOutputStream(bOut);
+		packet.writePacket(pOut);
+		pOut.close();
+		data = bOut.toByteArray();
+		bOut.close();
+		dOut.writeInt(data.length);
+		dOut.write(data);
 		sent = true;
 	    }
 	} catch (Exception e) {
@@ -196,6 +215,40 @@ public abstract class NetClient {
     public void dispose() {
 	quitting = true;
 	new NetClientDisposalThread(this).start();
+    }
+
+    @SuppressWarnings("deprecation")
+    public void forceDispose() {
+	quitting = true;
+	if (getNetReader() != null && getNetReader().isAlive())
+	    try {
+		getNetReader().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetReader().stop();
+	    }
+	if (getNetWriter() != null && getNetWriter().isAlive())
+	    try {
+		getNetWriter().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetWriter().stop();
+	    }
+	while (shouldProcessPacket()) {
+	    try {
+		Thread.sleep(100l);
+	    } catch (InterruptedException e) {
+		e.printStackTrace(getLog().getErrorStream());
+	    }
+	}
+	if (getNetProcessor() != null && getNetProcessor().isAlive())
+	    try {
+		getNetProcessor().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetProcessor().stop();
+	    }
+	closeStreams();
     }
 
     public void dispose(String reason, String details) {

@@ -13,54 +13,33 @@ import com.pi.common.net.packet.Packet0Disconnect;
 public class NetClientClient extends NetClient {
     private final Client client;
 
-    public NetClientClient(Client client) {
+    public NetClientClient(Client client, String ip, int port) {
 	this.client = client;
-    }
-
-    public boolean connect(String ip, int port) {
-	dispose();
 	try {
 	    Socket sock = new Socket(ip, port);
 	    connect(0, sock, new NetClientHandler(this, client));
-	    return true;
 	} catch (ConnectException e) {
-	    return false;
+	    client.getLog().severe(e.toString());
 	} catch (IOException e) {
 	    e.printStackTrace(client.getLog().getErrorStream());
-	    return false;
 	} catch (SecurityException e) {
 	    e.printStackTrace(client.getLog().getErrorStream());
-	    return false;
 	}
     }
 
     @Override
     public void dispose() {
-	if (sock != null && sock.isConnected() && dOut != null
-		&& !sock.isOutputShutdown()) {
-	    try {
-		Packet p = new Packet0Disconnect("", "");
-		p.writePacket(dOut);
-		dOut.flush();
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    }
-	}
-	super.dispose();
+	dispose("", "");
     }
 
     @Override
     public void dispose(String reason, String details) {
-	if (sock != null && sock.isConnected() && dOut != null
-		&& !sock.isOutputShutdown()) {
-	    try {
-		Packet p = new Packet0Disconnect(reason, details);
-		p.writePacket(dOut);
-		dOut.flush();
-	    } catch (Exception e) {
-		e.printStackTrace();
-	    }
-	}
+	/*
+	 * if (sock != null && sock.isConnected() && dOut != null &&
+	 * !sock.isOutputShutdown()) { try { Packet p = new
+	 * Packet0Disconnect(reason, details); p.writePacket(dOut);
+	 * dOut.flush(); } catch (Exception e) { e.printStackTrace(); } }
+	 */
 	super.dispose();
     }
 

@@ -19,6 +19,10 @@ public class ClientLoader {
 	}
 	return null;
     }
+    
+    public static boolean canRun(){
+	return Binaries.hasBinaries() && Natives.hasNatives();
+    }
 
     public static void runClientFrame() {
 	ClientClassLoader cLoader = ClientClassLoader.getClientClassLoader();
