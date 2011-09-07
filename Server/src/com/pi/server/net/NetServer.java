@@ -11,10 +11,10 @@ import com.pi.common.net.client.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
 import com.pi.server.Server;
+import com.pi.server.constants.ServerConstants;
 import com.pi.server.net.client.NetServerClient;
 
 public class NetServer extends Thread {
-    public static int MAX_CLIENTS = 10;
     private final Server server;
     private ServerSocket sock;
     private Map<Integer, NetClient> clientMap;
@@ -58,7 +58,7 @@ public class NetServer extends Thread {
 	    try {
 		Packet0Disconnect p = new Packet0Disconnect("Max Clients",
 			"The server has reached the maximum client amount, "
-				+ MAX_CLIENTS);
+				+ ServerConstants.MAX_CLIENTS);
 		PacketOutputStream d = new PacketOutputStream(
 			src.getOutputStream());
 		p.writePacket(d);
@@ -87,7 +87,7 @@ public class NetServer extends Thread {
     }
 
     private int getAvaliableID() {
-	for (int id = 0; id < MAX_CLIENTS; id++) {
+	for (int id = 0; id < ServerConstants.MAX_CLIENTS; id++) {
 	    if (!clientMap.containsKey(id))
 		return id;
 	}

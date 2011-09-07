@@ -1,8 +1,12 @@
 package com.pi.common.database;
 
+import java.io.Serializable;
+
+import com.pi.common.contants.GlobalConstants;
 import com.pi.common.contants.SectorConstants;
 
-public class Location {
+public class Location implements Serializable {
+    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     public float x, z;
     public int plane;
 

@@ -9,6 +9,7 @@ public class Account implements Serializable {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private String username;
     private String passwordHash;
+    private EntityDef savedEntity;
 
     public void setUsername(String username) {
 	this.username = username;
@@ -21,12 +22,20 @@ public class Account implements Serializable {
     public void setPasswordHash(String passwordHash) {
 	this.passwordHash = passwordHash;
     }
-    
-    public String getUsername(){
+
+    public void setSavedEntity(EntityDef def) {
+	this.savedEntity = def;
+    }
+
+    public EntityDef getEntityDef() {
+	return this.savedEntity;
+    }
+
+    public String getUsername() {
 	return username;
     }
-    
-    public String getPasswordHash(){
+
+    public String getPasswordHash() {
 	return passwordHash;
     }
 }

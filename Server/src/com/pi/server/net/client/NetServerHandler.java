@@ -1,14 +1,16 @@
 package com.pi.server.net.client;
 
 import com.pi.common.database.Account;
-import com.pi.common.database.Sector;
+import com.pi.common.database.EntityDef;
+import com.pi.common.game.Entity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.*;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
 import com.pi.server.Server;
+import com.pi.server.client.Client;
+import com.pi.server.constants.Configuration;
 
 public class NetServerHandler extends NetHandler {
-
     private final NetServerClient netClient;
     private final Server server;
 
@@ -30,6 +32,11 @@ public class NetServerHandler extends NetHandler {
 	if (acc != null) {
 	    if (acc.getPasswordHash().equals(p.password)) {
 		netClient.bindAccount(acc);
+		if (acc.getEntityDef() == null) {
+		    EntityDef def = Configuration.spawn_def;
+		    acc.setSavedEntity(def);
+		}
+		server.getClientManager().registerClient(new Client(server, netClient, acc));
 		netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
 			"Login sucessfull"));
 	    } else {

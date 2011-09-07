@@ -11,7 +11,7 @@ import com.pi.client.gui.GUIKit;
 import com.pi.client.net.NetClientClient;
 import com.pi.client.world.World;
 import com.pi.common.*;
-import com.pi.common.database.Entity;
+import com.pi.common.game.Entity;
 
 public class Client implements Disposable {
     static {

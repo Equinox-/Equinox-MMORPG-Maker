@@ -24,4 +24,13 @@ public class PacketInputStream extends DataInputStream {
 	readFully(read);
 	return read;
     }
+    
+    public Object readObject() throws IOException, ClassNotFoundException {
+  	ByteArrayInputStream bIn = new ByteArrayInputStream(readByteArray());
+  	ObjectInputStream objIn = new ObjectInputStream(bIn);
+  	Object o = objIn.readObject();
+  	objIn.close();
+  	bIn.close();
+  	return o;
+      }
 }

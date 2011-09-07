@@ -13,9 +13,18 @@ public class PacketOutputStream extends DataOutputStream {
 	for (char c : data)
 	    writeChar(c);
     }
-    
-    public void writeByteArray(byte[] data) throws IOException{
+
+    public void writeByteArray(byte[] data) throws IOException {
 	writeInt(data.length);
 	write(data);
+    }
+
+    public void writeObject(Object o) throws IOException {
+	ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+	ObjectOutputStream objOut = new ObjectOutputStream(bOut);
+	objOut.writeObject(o);
+	objOut.close();
+	writeByteArray(bOut.toByteArray());
+	bOut.close();
     }
 }

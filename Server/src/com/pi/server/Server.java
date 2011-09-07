@@ -2,17 +2,13 @@ package com.pi.server;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.PrintStream;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.JTextPane;
 
 import com.pi.common.PILogViewer;
 import com.pi.common.PILogger;
+import com.pi.server.client.ClientManager;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
+import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
 
@@ -22,6 +18,8 @@ public class Server {
     private World world;
     private PILogger log;
     private ServerDatabase database;
+    private ServerEntityManager entityManager;
+    private ClientManager clientManager;
 
     public NetServer getNetwork() {
 	return network;
@@ -29,6 +27,10 @@ public class Server {
 
     public ServerDatabase getDatabase() {
 	return database;
+    }
+
+    public ClientManager getClientManager() {
+	return clientManager;
     }
 
     public PILogger getLog() {
@@ -45,11 +47,12 @@ public class Server {
 		    dispose();
 		}
 	    });
-	    log = new PILogger(Paths.getLogFile(),f.pane.logOut);
+	    log = new PILogger(Paths.getLogFile(), f.pane.logOut);
 	    int port = Integer.valueOf(9999);
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
 	    world = new World(this);
+	    entityManager = new ServerEntityManager(this);
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
@@ -65,6 +68,10 @@ public class Server {
 	    world.dispose();
     }
 
+    public ServerEntityManager getServerEntityManager() {
+	return entityManager;
+    }
+
     public static void main(String[] args) {
 	new Server();
     }
@@ -72,8 +79,8 @@ public class Server {
     public World getWorld() {
 	return world;
     }
-    
-    public ThreadGroup getThreadGroup(){
+
+    public ThreadGroup getThreadGroup() {
 	return serverThreads;
     }
 }

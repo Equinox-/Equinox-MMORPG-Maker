@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project Client2D">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="/home/westin/Desktop/workspace/EMMORPG/ClientLauncher/EquinoxLauncher.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com.pi.launcher.LauncherViewerFrame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="/home/westin/Desktop/workspace/EMMORPG/Common/bin"/>
+        	<fileset dir="/home/westin/Desktop/workspace/EMMORPG/ClientLauncher/bin"/>
+        </jar>
+    	<signjar jar="/home/westin/Desktop/workspace/EMMORPG/ClientLauncher/EquinoxLauncher.jar" signedjar="/home/westin/Desktop/workspace/EMMORPG/ClientLauncher/SignedEquinoxLauncher.jar" alias="equinox" keystore="/home/westin/Desktop/workspace/java-keystore" storepass="qwerty1234"/>
+    </target>
+</project>

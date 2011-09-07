@@ -4,9 +4,8 @@ import java.net.Socket;
 
 import com.pi.common.PILogger;
 import com.pi.common.database.Account;
+import com.pi.common.game.Entity;
 import com.pi.common.net.client.NetClient;
-import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet0Disconnect;
 import com.pi.server.Server;
 
 public class NetServerClient extends NetClient {
@@ -40,16 +39,13 @@ public class NetServerClient extends NetClient {
 
     @Override
     public void dispose(String reason, String details) {
-	/*if (sock != null && isConnected() && dOut != null
-		&& !sock.isOutputShutdown()) {
-	    try {
-		Packet p = new Packet0Disconnect(reason, details);
-		p.writePacket(dOut);
-		dOut.flush();
-	    } catch (Exception e) {
-		e.printStackTrace(server.getLog().getErrorStream());
-	    }
-	}*/
+	/*
+	 * if (sock != null && isConnected() && dOut != null &&
+	 * !sock.isOutputShutdown()) { try { Packet p = new
+	 * Packet0Disconnect(reason, details); p.writePacket(dOut);
+	 * dOut.flush(); } catch (Exception e) {
+	 * e.printStackTrace(server.getLog().getErrorStream()); } }
+	 */
 	dispose();
     }
 
