@@ -6,7 +6,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import com.pi.common.PILogger;
+import com.pi.common.debug.PILogger;
 
 public class Natives {
     public static String getNativeJar() {

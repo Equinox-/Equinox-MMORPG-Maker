@@ -1,9 +1,14 @@
 package com.pi.client.graphics.device;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 import com.pi.client.Client;
+import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
 import com.pi.common.database.GraphicsObject;
 
 public abstract class IGraphics {
@@ -205,4 +210,6 @@ public abstract class IGraphics {
     public void setClip(int x, int y, int width, int height) {
 	setClip(new Rectangle(x, y, width, height));
     }
+    
+    public abstract Map<String, ? extends GraphicsStorage> loadedGraphics();
 }

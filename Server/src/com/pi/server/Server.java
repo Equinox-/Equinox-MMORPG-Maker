@@ -3,8 +3,9 @@ package com.pi.server;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import com.pi.common.PILogViewer;
-import com.pi.common.PILogger;
+import com.pi.common.debug.PILogger;
+import com.pi.common.debug.PILoggerPane;
+import com.pi.common.debug.PIResourceViewer;
 import com.pi.server.client.ClientManager;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
@@ -40,14 +41,16 @@ public class Server {
     public Server() {
 	serverThreads = new ThreadGroup("Server");
 	try {
-	    PILogViewer f = new PILogViewer("Server");
-	    f.addWindowListener(new WindowAdapter() {
+	    PIResourceViewer rcView = new PIResourceViewer("Server");
+	    rcView.addWindowListener(new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
 		    dispose();
 		}
 	    });
-	    log = new PILogger(Paths.getLogFile(), f.pane.logOut);
+	    PILoggerPane pn = new PILoggerPane();
+	    rcView.add(pn);
+	    log = new PILogger(Paths.getLogFile(), pn.logOut);
 	    int port = Integer.valueOf(9999);
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);

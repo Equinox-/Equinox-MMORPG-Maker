@@ -2,13 +2,23 @@ package com.pi.launcher;
 
 import java.io.IOException;
 
-import com.pi.common.PILogViewer;
-import com.pi.common.PILogger;
+import javax.swing.JFrame;
+
+import com.pi.common.debug.PILogger;
+import com.pi.common.debug.PILoggerPane;
 
 public class LauncherViewerFrame {
     public static void main(String[] args) {
-	PILogViewer plv = new PILogViewer("Launcher");
-	PILogger log = new PILogger(plv.pane.logOut);
+	JFrame plv = new JFrame("Launcher");
+	plv.setSize(500,500);
+	plv.setLocation(0,0);
+	plv.setVisible(true);
+	plv.setLayout(null);
+	PILoggerPane plp = new PILoggerPane();
+	plv.add(plp);
+	plp.setSize(500,500);
+	plp.setLocation(0,0);
+	PILogger log = new PILogger(plp.logOut);
 	try {
 	    Updater.update(log);
 	} catch (IOException e) {

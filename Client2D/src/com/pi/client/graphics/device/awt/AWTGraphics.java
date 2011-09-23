@@ -1,11 +1,19 @@
 package com.pi.client.graphics.device.awt;
 
 import java.applet.Applet;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 import com.pi.client.graphics.device.DisplayManager;
+import com.pi.client.graphics.device.GraphicsStorage;
 import com.pi.client.graphics.device.IGraphics;
 
 public class AWTGraphics extends IGraphics {
@@ -177,4 +185,9 @@ public class AWTGraphics extends IGraphics {
 	    r = mgr.getClient().getApplet().getBounds();
 	return r;
     }
+
+	@Override
+	public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+		return imageManager.loadedMap();
+	}
 }

@@ -1,4 +1,4 @@
-package com.pi.common;
+package com.pi.common.debug;
 
 import java.io.*;
 import java.text.DateFormat;

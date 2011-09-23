@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.pi.common.PILogger;
+import com.pi.common.debug.PILogger;
 
 public class Updater {
     public static void update(PILogger log) throws IOException {

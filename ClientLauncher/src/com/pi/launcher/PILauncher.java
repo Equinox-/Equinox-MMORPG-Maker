@@ -1,21 +1,31 @@
 package com.pi.launcher;
 
 import java.applet.Applet;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 
-import com.pi.common.*;
+import com.pi.common.Disposable;
+import com.pi.common.debug.PILogger;
+import com.pi.common.debug.PILoggerPane;
 
 public class PILauncher extends Applet {
     private static final long serialVersionUID = 1L;
     PILogger log;
-    PILogViewer.LogPane pane;
+    PILoggerPane pane;
     Disposable bound;
 
     public PILauncher() {
 	setSize(500, 500);
 	setLayout(null);
-	pane = new PILogViewer.LogPane();
+	pane = new PILoggerPane();
 	pane.setSize(500, 500);
 	pane.setLocation(0, 0);
 	add(pane);

@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.pi.common.PILogger;
+import com.pi.common.debug.PILogger;
 
 public class Binaries {
     public final static String jogl_jar = "jogl.all.jar";

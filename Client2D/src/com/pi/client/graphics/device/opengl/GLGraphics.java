@@ -2,6 +2,7 @@ package com.pi.client.graphics.device.opengl;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
@@ -10,6 +11,7 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.pi.client.graphics.device.DisplayManager;
+import com.pi.client.graphics.device.GraphicsStorage;
 import com.pi.client.graphics.device.IGraphics;
 
 public class GLGraphics extends IGraphics implements GLEventListener {
@@ -238,4 +240,9 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     public Rectangle getClip() {
 	return cliparea;
     }
+
+	@Override
+	public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+		return textureManager.loadedMap();
+	}
 }
