@@ -6,9 +6,12 @@ import java.awt.event.WindowEvent;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
+import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.server.client.ClientManager;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
+import com.pi.server.debug.ClientMonitorPanel;
+import com.pi.server.debug.SectorMonitorPanel;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
@@ -42,19 +45,24 @@ public class Server {
 	serverThreads = new ThreadGroup("Server");
 	try {
 	    PIResourceViewer rcView = new PIResourceViewer("Server");
+	    PILoggerPane pn = new PILoggerPane();
+	    rcView.addTab("Logger",pn);
+	    rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
 	    rcView.addWindowListener(new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
 		    dispose();
 		}
 	    });
-	    PILoggerPane pn = new PILoggerPane();
-	    rcView.add(pn);
 	    log = new PILogger(Paths.getLogFile(), pn.logOut);
 	    int port = Integer.valueOf(9999);
+	    clientManager = new ClientManager();
 	    database = new ServerDatabase(this);
 	    network = new NetServer(this, port, null);
+	    rcView.addTab("Network Clients", new ClientMonitorPanel(network));
 	    world = new World(this);
+	    rcView.addTab("Sectors",
+		    new SectorMonitorPanel(world.getSectorManager()));
 	    entityManager = new ServerEntityManager(this);
 	} catch (Exception e) {
 	    e.printStackTrace();

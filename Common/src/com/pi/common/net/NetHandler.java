@@ -9,17 +9,12 @@ public abstract class NetHandler {
 
     public final void processPacket(Packet p) {
 	Class<? extends NetHandler> myClass = getClass();
-	for (Class<? extends Packet> clazz : Packet.idMapping.values()) {
-	    if (p.getClass().equals(clazz)) {
-		try {
-		    Method m = myClass.getMethod("process", clazz);
-		    m.invoke(this, clazz.cast(p));
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    process(p);
-		}
-		return;
-	    }
+	try {
+	    Method m = myClass.getMethod("process", p.getClass());
+	    m.invoke(this, p.getClass().cast(p));
+	    return;
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
 	process(p);
     }

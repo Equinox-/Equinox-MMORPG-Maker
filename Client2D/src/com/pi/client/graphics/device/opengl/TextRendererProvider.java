@@ -1,6 +1,7 @@
 package com.pi.client.graphics.device.opengl;
 
 import java.awt.Font;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,8 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.pi.client.Client;
 
 public class TextRendererProvider extends Thread {
-    private Map<Font, TextRendererStorage> map = new HashMap<Font, TextRendererStorage>();
+    private Map<Font, TextRendererStorage> map = Collections
+	    .synchronizedMap(new HashMap<Font, TextRendererStorage>());
     private boolean running = true;
     private Object syncObject = new Object();
     private final Client client;

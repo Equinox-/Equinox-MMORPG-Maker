@@ -42,9 +42,9 @@ public class Client implements Disposable {
 		logger = new PILogger(Paths.getLogFile(), plp.logOut);
 		reView.addTab("Logger", plp);
 		reView.addTab("Threads", new ThreadMonitorPanel(clientThreads));
-		ip = JOptionPane.showInputDialog("IP?");
+		ip = "127.0.0.1"/*JOptionPane.showInputDialog("IP?")*/;
 		try {
-			port = Integer.valueOf(JOptionPane.showInputDialog("Port?"));
+			port = 9999/*Integer.valueOf(JOptionPane.showInputDialog("Port?"))*/;
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Bad port number");
 			System.exit(0);
@@ -56,7 +56,7 @@ public class Client implements Disposable {
 		this.player.plane = 0;
 		this.displayManager = new DisplayManager(this);
 		reView.addTab("Graphics",
-				new GraphicsMonitorPanel(this.displayManager.getGraphics()));
+				new GraphicsMonitorPanel(this.displayManager));
 		GraphicsLoader.load(this);
 		this.world = new World(this);
 		reView.addTab("Sectors",

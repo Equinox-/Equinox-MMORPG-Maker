@@ -1,6 +1,10 @@
 package com.pi.client.graphics.device;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
@@ -16,11 +20,9 @@ public class DisplayManager {
     private RenderLoop renderLoop;
     private Client client;
     private boolean showFps = false;
-
-    public IGraphics getGraphics() {
-	return graphics;
+    public Map<String, ? extends GraphicsStorage> loadedGraphics(){
+	return graphics!=null?graphics.loadedGraphics():new HashMap<String,GraphicsStorage>();
     }
-
     public boolean hasOpenGL() {
 	return hasOpenGL;
     }

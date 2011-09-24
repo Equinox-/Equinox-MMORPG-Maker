@@ -13,7 +13,8 @@ import com.pi.server.client.Client;
 import com.pi.server.constants.ServerConstants;
 
 public class ServerEntityManager implements EntityListener {
-    private final Map<Integer, Entity> entityMap = new HashMap<Integer, Entity>();
+    private final Map<Integer, Entity> entityMap = Collections
+	    .synchronizedMap(new HashMap<Integer, Entity>());
     private final Server server;
 
     public ServerEntityManager(Server server) {

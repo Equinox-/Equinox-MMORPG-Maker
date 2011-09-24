@@ -2,6 +2,7 @@ package com.pi.client.world;
 
 import java.awt.Point;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +15,12 @@ import com.pi.common.database.io.SectorIO;
 public class SectorWriter extends Thread {
     private final Client client;
     private boolean running = true;
-    private Map<SectorLocation, WritableRequest> writeQueue = new HashMap<SectorLocation, WritableRequest>();
+    private Map<SectorLocation, WritableRequest> writeQueue = Collections
+	    .synchronizedMap(new HashMap<SectorLocation, WritableRequest>());
     private Object syncObject = new Object();
 
     public SectorWriter(Client client) {
-	super(client.getThreadGroup(),null,"SectorWriter");
+	super(client.getThreadGroup(), null, "SectorWriter");
 	this.client = client;
 	start();
     }

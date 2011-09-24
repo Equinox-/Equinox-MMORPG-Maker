@@ -30,10 +30,12 @@ public abstract class NetClient {
     protected Object syncObject = new Object();
     protected NetHandler netHandle;
     protected NetClientProcessingThread netProcessor;
+    protected NetClientSpeedMonitor netSpeedMonitor;
 
     protected void connect(int id, Socket sock, NetHandler netHandle) {
 	this.sock = sock;
 	this.id = id;
+	netSpeedMonitor = new NetClientSpeedMonitor(this);
 	if (sock != null && sock.isConnected()) {
 	    try {
 		this.dIn = new DataInputStream(this.sock.getInputStream());
@@ -82,6 +84,7 @@ public abstract class NetClient {
 	    avaliable = dIn.available();
 	    if (readLength != null && avaliable >= readLength) {
 		byte[] data = new byte[readLength];
+		netSpeedMonitor.addRecieve(readLength);
 		dIn.readFully(data);
 		readLength = null;
 		Packet packet = Packet.getPacket(new PacketInputStream(
@@ -122,6 +125,7 @@ public abstract class NetClient {
 		bOut.close();
 		dOut.writeInt(data.length);
 		dOut.write(data);
+		netSpeedMonitor.addSent(data.length + 4);
 		sent = true;
 	    }
 	} catch (Exception e) {
@@ -272,5 +276,13 @@ public abstract class NetClient {
 			+ sock.getInetAddress().getHostAddress() + " port="
 			+ sock.getPort() + " localport=" + sock.getLocalPort() + ")")
 			: "null") + ")";
+    }
+
+    public int getUploadSpeed() {
+	return netSpeedMonitor.getUploadSpeed();
+    }
+
+    public int getDownloadSpeed() {
+	return netSpeedMonitor.getDownloadSpeed();
     }
 }

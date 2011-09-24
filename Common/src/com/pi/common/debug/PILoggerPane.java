@@ -4,25 +4,30 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
-public class PILoggerPane extends JScrollPane {
+public class PILoggerPane extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public PrintStream logOut;
-
+	private JTextPane tPane;
+	private JScrollPane scrlPane;
 	public PILoggerPane() {
 		super();
-		final JTextPane tPane = new JTextPane();
+		setLayout(null);
+		tPane = new JTextPane();
 		setSize(500, 450);
-		setAutoscrolls(true);
-		tPane.setAutoscrolls(true);
 		setLocation(0, 0);
 		tPane.setSize(500, 450);
 		tPane.setLocation(0, 0);
 		setSize(500, 450);
 		setLocation(0, 0);
-		add(tPane);
+		scrlPane = new JScrollPane(tPane);
+		scrlPane.setAutoscrolls(true);
+		scrlPane.setSize(500,450);
+		scrlPane.setLocation(0,0);
+		add(scrlPane);
 		logOut = new PrintStream(new OutputStream() {
 
 			@Override

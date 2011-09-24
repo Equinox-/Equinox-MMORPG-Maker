@@ -1,6 +1,7 @@
 package com.pi.server.world;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,11 +14,12 @@ import com.pi.server.database.Paths;
 public class SectorWriter extends Thread {
     private final Server server;
     private boolean running = true;
-    private Map<SectorLocation, WritableRequest> writeQueue = new HashMap<SectorLocation, WritableRequest>();
+    private Map<SectorLocation, WritableRequest> writeQueue = Collections
+	    .synchronizedMap(new HashMap<SectorLocation, WritableRequest>());
     private Object syncObject = new Object();
 
     public SectorWriter(Server server) {
-	super(server.getThreadGroup(), null,"SectorWriter");
+	super(server.getThreadGroup(), null, "SectorWriter");
 	this.server = server;
 	start();
     }

@@ -1,21 +1,22 @@
-package com.pi.client.debug;
+package com.pi.server.debug;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.graphics.device.GraphicsStorage;
 import com.pi.common.contants.GlobalConstants;
+import com.pi.common.database.SectorLocation;
+import com.pi.server.world.SectorManager;
+import com.pi.server.world.SectorManager.SectorStorage;
 
-public class GraphicsMonitorPanel extends JPanel {
+public class SectorMonitorPanel extends JPanel {
 	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-	private final DisplayManager ig;
+	private final SectorManager sm;
 	private ThreadTableModel table_model = new ThreadTableModel();
 	private JTable tbl;
 
-	public GraphicsMonitorPanel(DisplayManager displayManager) {
-		this.ig = displayManager;
+	public SectorMonitorPanel(SectorManager sm) {
+		this.sm = sm;
 		setLocation(0, 0);
 		setSize(500, 500);
 		setLayout(null);
@@ -30,12 +31,13 @@ public class GraphicsMonitorPanel extends JPanel {
 
 	private class ThreadTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-		String[] colName = { "Name", "Last used", "Object" };
-		Class<?>[] colClass = { String.class, String.class, String.class };
+		String[] colName = { "X", "Plane", "Z", "Last used" };
+		Class<?>[] colClass = { String.class, String.class, String.class,
+				String.class };
 
 		@Override
 		public int getRowCount() {
-			return ig.loadedGraphics().size();
+			return sm.loadedMap().size();
 		}
 
 		@Override
@@ -45,19 +47,22 @@ public class GraphicsMonitorPanel extends JPanel {
 
 		@Override
 		public Object getValueAt(int row, int col) {
-			String[] keyArr = ig.loadedGraphics().keySet()
-					.toArray(new String[ig.loadedGraphics().keySet().size()]);
+			SectorLocation[] keyArr = sm
+					.loadedMap()
+					.keySet()
+					.toArray(new SectorLocation[sm.loadedMap().keySet().size()]);
 			if (row < keyArr.length) {
-				String key = keyArr[row];
-				GraphicsStorage ss = ig.loadedGraphics().get(key);
+				SectorLocation key = keyArr[row];
+				SectorStorage ss = sm.loadedMap().get(key);
 				switch (col) {
 				case 0:
-					return key;
+					return key.x + "";
 				case 1:
-					return ss != null ? "" + (System.currentTimeMillis()-ss.lastUsed) : -1 + "";
+					return key.plane + "";
 				case 2:
-					return ss != null ? ss.getGraphic() != null ? ss
-							.getGraphic().toString() : "null" : "null";
+					return key.z + "";
+				case 3:
+					return "" + (System.currentTimeMillis()-ss.lastUsed);
 				default:
 					return "";
 				}

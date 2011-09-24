@@ -3,6 +3,7 @@ package com.pi.server.net;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,8 @@ public class NetServer extends Thread {
 	super(server.getThreadGroup(), null, "ClientListener");
 	this.server = server;
 	this.cl = cl;
-	this.clientMap = new HashMap<Integer, NetClient>();
+	this.clientMap = Collections
+		.synchronizedMap(new HashMap<Integer, NetClient>());
 	sock = new ServerSocket(port);
 	start();
     }
