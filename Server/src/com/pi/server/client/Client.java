@@ -3,31 +3,43 @@ package com.pi.server.client;
 import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.client.NetClient;
+import com.pi.common.net.packet.Packet10LocalEntityID;
 import com.pi.server.Server;
 
 public class Client {
-    private final Account acc;
-    private final Entity entity;
+    private Account acc;
+    private Entity entity;
     private final NetClient network;
     private final Server server;
     private final int clientID;
 
-    public Client(Server server, NetClient client, Account account) {
+    public Client(Server server, NetClient client) {
 	this.server = server;
 	this.network = client;
+	server.getClientManager().registerClient(this);
+	clientID = server.getClientManager().getClientID(this);
+	client.bindToID(clientID);
+    }
+
+    public void bindAccount(Account account) {
+	if (this.entity != null) {
+	    server.getServerEntityManager().deRegisterEntity(
+		    this.entity.getEntityID());
+	}
 	this.acc = account;
 	this.entity = new Entity(account.getEntityDef());
 	server.getServerEntityManager().registerEntity(entity);
-	server.getClientManager().registerClient(this);
-	clientID = server.getClientManager().getClientID(this);
+	network.send(Packet10LocalEntityID.getPacket(entity.getEntityID()));
     }
 
     public void dispose() {
+	String desc = this.toString();
 	if (entity != null && entity.getEntityID() != -1)
 	    server.getServerEntityManager().deRegisterEntity(
 		    entity.getEntityID());
 	if (network != null && !network.isQuitting())
 	    network.dispose();
+	server.getLog().info("Client disconnected: " + desc);
     }
 
     public boolean isRegistered() {
@@ -44,5 +56,13 @@ public class Client {
 
     public NetClient getNetClient() {
 	return network;
+    }
+
+    @Override
+    public String toString() {
+	return "Client(id=" + clientID
+		+ (network != null ? " ,network=" + network.toString() : "")
+		+ (acc != null ? " ,account=" + acc.toString() : "")
+		+ (entity != null ? " ,entity=" + entity.toString() : "");
     }
 }

@@ -11,7 +11,7 @@ import com.pi.common.net.packet.Packet;
 public abstract class NetClient {
     protected static long packetTimeout = 0; // 0 to disable
 
-    protected int id;
+    protected int id = -1;
     protected Socket sock;
     protected DataInputStream dIn;
     private Integer readLength;
@@ -32,9 +32,8 @@ public abstract class NetClient {
     protected NetClientProcessingThread netProcessor;
     protected NetClientSpeedMonitor netSpeedMonitor;
 
-    protected void connect(int id, Socket sock, NetHandler netHandle) {
+    protected void connect(Socket sock, NetHandler netHandle) {
 	this.sock = sock;
-	this.id = id;
 	netSpeedMonitor = new NetClientSpeedMonitor(this);
 	if (sock != null && sock.isConnected()) {
 	    try {
@@ -54,12 +53,21 @@ public abstract class NetClient {
 	}
     }
 
-    public NetHandler getHandle() {
-	return netHandle;
+    public boolean bindToID(int id) {
+	if (this.id == -1) {
+	    this.id = id;
+	    getLog().info("Bound client to " + id);
+	    return true;
+	}
+	return false;
     }
 
     public int getID() {
 	return id;
+    }
+
+    public NetHandler getHandle() {
+	return netHandle;
     }
 
     public boolean isConnected() {
@@ -83,9 +91,10 @@ public abstract class NetClient {
 		readLength = dIn.readInt();
 	    avaliable = dIn.available();
 	    if (readLength != null && avaliable >= readLength) {
+		getLog().finest("Read pack: " + readLength);
 		byte[] data = new byte[readLength];
 		netSpeedMonitor.addRecieve(readLength);
-		dIn.readFully(data);
+		dIn.read(data);
 		readLength = null;
 		Packet packet = Packet.getPacket(new PacketInputStream(
 			new ByteArrayInputStream(data)));
@@ -125,6 +134,8 @@ public abstract class NetClient {
 		bOut.close();
 		dOut.writeInt(data.length);
 		dOut.write(data);
+		dOut.flush();
+		getLog().finest("Write pack: " + data.length);
 		netSpeedMonitor.addSent(data.length + 4);
 		sent = true;
 	    }
@@ -269,9 +280,7 @@ public abstract class NetClient {
 
     @Override
     public String toString() {
-	return "NetClient: (id="
-		+ id
-		+ " socket="
+	return "NetClient: (socket="
 		+ (sock != null ? ("(addr="
 			+ sock.getInetAddress().getHostAddress() + " port="
 			+ sock.getPort() + " localport=" + sock.getLocalPort() + ")")

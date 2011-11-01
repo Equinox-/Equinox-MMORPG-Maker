@@ -59,6 +59,10 @@ public class Entity extends Location {
 	super.setLocation(x, plane, z);
     }
 
+    public void setLocation(Location l) {
+	setLocation(l.x, l.plane, l.z);
+    }
+
     public void setLayer(TileLayer t) {
 	if (listener != null && getEntityID() != -1)
 	    listener.entityLayerChange(getEntityID(), getLayer(), t);

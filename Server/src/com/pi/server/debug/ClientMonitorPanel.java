@@ -6,15 +6,16 @@ import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.contants.GlobalConstants;
 import com.pi.common.net.client.NetClient;
-import com.pi.server.net.NetServer;
+import com.pi.server.client.Client;
+import com.pi.server.client.ClientManager;
 
 public class ClientMonitorPanel extends JPanel {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-    private final NetServer svr;
-    private ThreadTableModel table_model = new ThreadTableModel();
+    private final ClientManager svr;
+    private ClientTableModel table_model = new ClientTableModel();
     private JTable tbl;
 
-    public ClientMonitorPanel(NetServer svr) {
+    public ClientMonitorPanel(ClientManager svr) {
 	this.svr = svr;
 	setLocation(0, 0);
 	setSize(500, 500);
@@ -28,7 +29,7 @@ public class ClientMonitorPanel extends JPanel {
 	setVisible(true);
     }
 
-    private class ThreadTableModel extends AbstractTableModel {
+    private class ClientTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
 	String[] colName = { "ID", "IP", "Account", "Upload", "Download" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
@@ -36,7 +37,7 @@ public class ClientMonitorPanel extends JPanel {
 
 	@Override
 	public int getRowCount() {
-	    return svr.getClientMap().size();
+	    return svr.registeredClients().size();
 	}
 
 	@Override
@@ -46,19 +47,24 @@ public class ClientMonitorPanel extends JPanel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-	    Integer[] keyArr = svr.getClientMap().keySet()
-		    .toArray(new Integer[svr.getClientMap().keySet().size()]);
+	    Integer[] keyArr = svr
+		    .registeredClients()
+		    .keySet()
+		    .toArray(
+			    new Integer[svr.registeredClients().keySet().size()]);
 	    if (row < keyArr.length) {
 		Integer key = keyArr[row];
-		NetClient c = svr.getClientMap().get(key);
+		Client cli = svr.getClient(key);
+		if (cli == null || cli.getNetClient() == null)
+		    return "";
+		NetClient c = cli.getNetClient();
 		switch (col) {
 		case 0:
 		    return c.getID() + "";
 		case 1:
 		    return c.getSocket() != null
 			    && c.getSocket().getInetAddress() != null ? c
-			    .getSocket().getInetAddress().getHostAddress()
-			    : "";
+			    .getSocket().getInetAddress().getHostAddress() : "";
 		case 2:
 		    return "";
 		case 3:

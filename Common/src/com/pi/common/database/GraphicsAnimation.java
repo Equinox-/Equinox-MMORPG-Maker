@@ -26,7 +26,7 @@ public class GraphicsAnimation extends GraphicsObject {
     }
 
     @Override
-    public void setPosition(int x, int y, int width, int height) {
+    public void setPosition(float x, float y, float width, float height) {
 	super.setPosition(x, y, width, height);
 	this.frameWidth = (int) (super.getPositionWidth() / frames);
     }

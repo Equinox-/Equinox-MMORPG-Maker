@@ -9,7 +9,7 @@ import com.pi.common.contants.GlobalConstants;
 
 public class PIResourceViewer extends JFrame {
 	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-	private final JTabbedPane tabs;
+	public final JTabbedPane tabs;
 
 	public PIResourceViewer(String type) {
 		super("Resource Viewer - " + type);

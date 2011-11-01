@@ -1,9 +1,9 @@
 package com.pi.server.net;
 
-import com.pi.common.net.client.NetClient;
+import com.pi.server.client.Client;
 
 public interface ClientListener {
-    public void clientConnected(NetClient client);
+    public void clientConnected(Client client);
 
-    public void clientDisconnected(NetClient client);
+    public void clientDisconnected(Client client);
 }

@@ -7,22 +7,14 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
 import com.pi.common.net.client.NetClient;
 import com.pi.server.Server;
+import com.pi.server.client.Client;
 
 public class NetServerClient extends NetClient {
     private final Server server;
-    private Account boundAccount;
 
-    public NetServerClient(Server server, int id, Socket sock) {
+    public NetServerClient(Server server, Socket sock) {
 	this.server = server;
-	connect(id, sock, new NetServerHandler(server, this));
-    }
-
-    public void bindAccount(Account acc) {
-	this.boundAccount = acc;
-    }
-
-    public Account getBoundAccount() {
-	return boundAccount;
+	connect(sock, new NetServerHandler(server, this));
     }
 
     @Override
@@ -33,8 +25,11 @@ public class NetServerClient extends NetClient {
     @Override
     public void dispose() {
 	super.dispose();
-	server.getNetwork().getClientMap().remove(id);
-	server.getLog().info("Client disconnected: " + this.toString());
+	for (Client cli:server.getClientManager().registeredClients().values()){
+	    if (cli.getNetClient()!=null && cli.getNetClient().equals(this)){
+		server.getClientManager().disposeClient(cli);
+	    }
+	}
     }
 
     @Override

@@ -19,6 +19,10 @@ public class NetServerHandler extends NetHandler {
 	this.server = server;
     }
 
+    private Client getClient() {
+	return this.server.getClientManager().getClient(netClient.getID());
+    }
+
     @Override
     public void process(Packet p) {
     }
@@ -28,24 +32,28 @@ public class NetServerHandler extends NetHandler {
     }
 
     public void process(Packet1Login p) {
-	Account acc = server.getDatabase().getAccounts().getAccount(p.username);
-	if (acc != null) {
-	    if (acc.getPasswordHash().equals(p.password)) {
-		netClient.bindAccount(acc);
-		if (acc.getEntityDef() == null) {
-		    EntityDef def = Configuration.spawn_def;
-		    acc.setSavedEntity(def);
+	try {
+	    Account acc = server.getDatabase().getAccounts()
+		    .getAccount(p.username);
+	    if (acc != null) {
+		if (acc.getPasswordHash().equals(p.password)) {
+		    if (acc.getEntityDef() == null) {
+			EntityDef def = Configuration.spawn_def;
+			acc.setSavedEntity(def);
+		    }
+		    getClient().bindAccount(acc);
+		    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
+			    "Login sucessfull"));
+		} else {
+		    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
+			    "Invalid password"));
 		}
-		server.getClientManager().registerClient(new Client(server, netClient, acc));
-		netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
-			"Login sucessfull"));
 	    } else {
 		netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
-			"Invalid password"));
+			"That account does not exist"));
 	    }
-	} else {
-	    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
-		    "That account does not exist"));
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
     }
 

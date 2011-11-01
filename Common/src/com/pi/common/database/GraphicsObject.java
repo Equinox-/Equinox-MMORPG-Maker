@@ -8,7 +8,7 @@ import com.pi.common.contants.GlobalConstants;
 public class GraphicsObject implements Serializable {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private String graphic;
-    private int tX, tY, tWidth, tHeight;
+    private float tX, tY, tWidth, tHeight;
 
     public GraphicsObject() {
     }
@@ -17,7 +17,7 @@ public class GraphicsObject implements Serializable {
 	this.graphic = graphic;
     }
 
-    public GraphicsObject(String graphic, int x, int y, int width, int height) {
+    public GraphicsObject(String graphic, float x, float y, float width, float height) {
 	this.graphic = graphic;
 	setPosition(x, y, width, height);
     }
@@ -26,7 +26,7 @@ public class GraphicsObject implements Serializable {
 	this.graphic = graphic;
     }
 
-    public void setPosition(int x, int y, int width, int height) {
+    public void setPosition(float x, float y, float width, float height) {
 	this.tX = x;
 	this.tY = y;
 	this.tWidth = width;

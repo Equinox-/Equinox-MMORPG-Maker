@@ -1,45 +1,62 @@
 package com.pi.server.client;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.pi.common.net.client.NetClient;
 import com.pi.server.constants.ServerConstants;
 
 public class ClientManager {
-    private Client[] clients = new Client[ServerConstants.MAX_CLIENTS];
+    private Map<Integer, Client> clientMap = Collections
+	    .synchronizedMap(new HashMap<Integer, Client>());
 
     public Client getClient(int id) {
-	if (id >= 0 && id < clients.length)
-	    return clients[id];
-	return null;
+	return clientMap.get(id);
     }
 
     public void disposeClient(int id) {
 	Client c = getClient(id);
 	if (c != null)
 	    c.dispose();
+	clientMap.remove(id);
+    }
+
+    public void disposeClient(Client client) {
+	if (client != null)
+	    client.dispose();
+	clientMap.remove(client);
     }
 
     private int getAvaliableID() {
-	for (int i = 0; i < clients.length; i++)
-	    if (clients[i] == null)
+	for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++)
+	    if (clientMap.get(i) == null)
 		return i;
 	return -1;
     }
 
-    public boolean registerClient(Client c) {
-	if (isRegistered(c))
-	    return true;
-	int id = getAvaliableID();
+    public int registerClient(Client c) {
+	int id;
+	if ((id = getClientID(c)) >= 0)
+	    return id;
+	id = getAvaliableID();
 	if (id != -1) {
-	    clients[id] = c;
-	    return true;
+	    clientMap.put(id, c);
+	    return id;
 	}
-	return false;
+	return -1;
+    }
+
+    public boolean hasAvaliableSlot() {
+	return getAvaliableID() != -1;
     }
 
     public int getClientID(Client c) {
-	for (int id = 0; id < clients.length; id++) {
-	    Client cli = clients[id];
-	    if (cli != null && cli.equals(c))
-		return id;
+	for (int it : clientMap.keySet()) {
+	    Client client = clientMap.get(it);
+	    if (client != null && client == c) {
+		return it;
+	    }
 	}
 	return -1;
     }
@@ -47,4 +64,9 @@ public class ClientManager {
     public boolean isRegistered(Client c) {
 	return getClientID(c) != -1;
     }
+
+    public Map<Integer, Client> registeredClients() {
+	return Collections.unmodifiableMap(clientMap);
+    }
+
 }

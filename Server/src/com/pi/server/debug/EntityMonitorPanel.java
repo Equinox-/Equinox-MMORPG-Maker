@@ -5,18 +5,18 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.contants.GlobalConstants;
-import com.pi.common.database.SectorLocation;
-import com.pi.server.world.SectorManager;
-import com.pi.server.world.SectorManager.SectorStorage;
+import com.pi.common.game.Entity;
+import com.pi.common.net.client.NetClient;
+import com.pi.server.entity.ServerEntityManager;
 
-public class SectorMonitorPanel extends JPanel {
+public class EntityMonitorPanel extends JPanel {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-    private final SectorManager sm;
+    private final ServerEntityManager svr;
     private ThreadTableModel table_model = new ThreadTableModel();
     private JTable tbl;
 
-    public SectorMonitorPanel(SectorManager sm) {
-	this.sm = sm;
+    public EntityMonitorPanel(ServerEntityManager svr) {
+	this.svr = svr;
 	setLocation(0, 0);
 	setSize(500, 500);
 	setLayout(null);
@@ -31,14 +31,13 @@ public class SectorMonitorPanel extends JPanel {
 
     private class ThreadTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-	String[] colName = { "X", "Plane", "Z", "Last used", "Empty Sector",
-		"Revision" };
+	String[] colName = { "ID", "X", "Plane", "Z", "Layer","Dir" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
-		String.class };
+		String.class, String.class,String.class };
 
 	@Override
 	public int getRowCount() {
-	    return sm.loadedMap().size();
+	    return svr.registeredEntities().size();
 	}
 
 	@Override
@@ -48,30 +47,31 @@ public class SectorMonitorPanel extends JPanel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-	    SectorLocation[] keyArr = sm
-		    .loadedMap()
+	    Integer[] keyArr = svr
+		    .registeredEntities()
 		    .keySet()
-		    .toArray(new SectorLocation[sm.loadedMap().keySet().size()]);
+		    .toArray(
+			    new Integer[svr.registeredEntities().keySet().size()]);
 	    if (row < keyArr.length) {
-		SectorLocation key = keyArr[row];
-		SectorStorage ss = sm.loadedMap().get(key);
-		if (ss != null) {
-		    switch (col) {
-		    case 0:
-			return key.x + "";
-		    case 1:
-			return key.plane + "";
-		    case 2:
-			return key.z + "";
-		    case 3:
-			return "" + (System.currentTimeMillis() - ss.lastUsed);
-		    case 4:
-			return ss.empty ? "True" : "False";
-		    case 5:
-			return ss.data != null ? ss.data.getRevision() : -1;
-		    default:
-			return "";
-		    }
+		Integer key = keyArr[row];
+		Entity ent = svr.getEntity(key);
+		if (ent == null)
+		    return "";
+		switch (col) {
+		case 0:
+		    return ent.getEntityID() + "";
+		case 1:
+		    return ent.getGlobalX() + "";
+		case 2:
+		    return ent.getPlane() + "";
+		case 3:
+		    return ent.getGlobalZ()+"";
+		case 4:
+		    return ent.getLayer().name().toLowerCase();
+		case 5:
+		    return ent.getDir() + "";
+		default:
+		    return "";
 		}
 	    }
 	    return "";

@@ -17,7 +17,7 @@ public class NetClientClient extends NetClient {
 	this.client = client;
 	try {
 	    Socket sock = new Socket(ip, port);
-	    connect(0, sock, new NetClientHandler(this, client));
+	    connect(sock, new NetClientHandler(this, client));
 	} catch (ConnectException e) {
 	    client.getLog().severe(e.toString());
 	} catch (IOException e) {

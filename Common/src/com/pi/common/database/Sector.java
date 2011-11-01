@@ -11,6 +11,10 @@ public class Sector implements Serializable {
     private int baseX, baseY, baseZ;
     private Tile[][] tiles = new Tile[SectorConstants.SECTOR_WIDTH][SectorConstants.SECTOR_HEIGHT];
     private int revision = 0;
+    
+    public Tile[][] getTileArray(){
+	return tiles;
+    }
 
     public Tile getLocalTile(int x, int z) {
 	if (x >= 0 && z >= 0 && x < tiles.length && z < tiles[x].length)

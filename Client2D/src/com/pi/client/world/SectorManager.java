@@ -2,6 +2,7 @@ package com.pi.client.world;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,9 +18,7 @@ import com.pi.common.net.packet.Packet5SectorRequest;
 
 public class SectorManager extends Thread {
     public final static int sectorExpiry = 60000; // 1 Minute
-    public final static int serverRequestExpiry = 30000; // 30 seconds
-    private List<SectorLocation> blankSectors = Collections
-	    .synchronizedList(new ArrayList<SectorLocation>());
+    public final static int serverRequestExpiry = 60000; // 30 seconds
     private final Client client;
     private boolean running = true;
 
@@ -45,7 +44,7 @@ public class SectorManager extends Thread {
 	synchronized (syncObject) {
 	    SectorLocation p = new SectorLocation(x, y, z);
 	    SectorStorage sS = map.get(p);
-	    if ((sS == null || sS.data == null) && !blankSectors.contains(p)) {
+	    if (sS == null || (sS.data == null && !sS.empty)) {
 		loadQueue.put(p, System.currentTimeMillis());
 		return null;
 	    }
@@ -62,6 +61,9 @@ public class SectorManager extends Thread {
 	    sec.data = sector;
 	    map.put(sector.getSectorLocation(), sec);
 	    client.getWorld().getSectorWriter().writeSector(sector);
+	    client.getLog().info(
+		    "Loaded client sector: "
+			    + sector.getSectorLocation().toString());
 	}
     }
 
@@ -109,7 +111,10 @@ public class SectorManager extends Thread {
 			sX.data = SectorIO.read(f);
 			revision = sX.data.getRevision();
 		    } catch (IOException e) {
-			e.printStackTrace();
+			client.getLog().severe(
+				"Corrupted sector cache: "
+					+ oldestSector.toString());
+			f.delete();
 		    }
 		}
 		if (client.getNetwork() != null
@@ -146,12 +151,14 @@ public class SectorManager extends Thread {
     }
 
     public void flagSectorAsBlack(SectorLocation p) {
-	if (!blankSectors.contains(p))
-	    blankSectors.add(p);
+	if (!map.containsKey(p))
+	    map.put(p, new SectorStorage());
+	map.get(p).empty = true;
     }
 
     public static class SectorStorage {
 	public long lastUsed;
 	public Sector data;
+	public boolean empty;
     }
 }

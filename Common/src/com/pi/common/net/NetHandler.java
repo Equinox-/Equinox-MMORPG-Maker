@@ -14,6 +14,8 @@ public abstract class NetHandler {
 	    m.invoke(this, p.getClass().cast(p));
 	    return;
 	} catch (Exception e) {
+	    System.err.println("Error for packet: "
+		    + myClass.getCanonicalName());
 	    e.printStackTrace();
 	}
 	process(p);

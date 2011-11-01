@@ -21,6 +21,8 @@ public class SectorLocation {
 	if (o instanceof SectorLocation) {
 	    SectorLocation l = (SectorLocation) o;
 	    return l.x == x && l.plane == plane && l.z == z;
+	} else if (o instanceof Location) {
+	    return containsLocation((Location) o);
 	}
 	return false;
     }
@@ -30,6 +32,11 @@ public class SectorLocation {
 		&& l.getSectorZ() == this.z;
     }
 
+    @Override
+    public int hashCode(){
+	return (x << 18) ^ (z << 4) ^ plane;
+    }
+    @Override
     public String toString() {
 	return "SectorLocation[x=" + x + ", z=" + z + ", plane=" + plane + "]";
     }

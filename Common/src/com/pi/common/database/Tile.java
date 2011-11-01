@@ -10,6 +10,10 @@ public class Tile implements Serializable {
     private int flags = 0;
     private Map<TileLayer, GraphicsObject> layers = new HashMap<TileLayer, GraphicsObject>();
 
+    public Map<TileLayer, GraphicsObject> layerMap() {
+	return Collections.unmodifiableMap(layers);
+    }
+
     public int getFlags() {
 	return flags;
     }

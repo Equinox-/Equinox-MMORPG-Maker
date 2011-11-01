@@ -1,6 +1,13 @@
 package com.pi.common.database.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import com.pi.common.database.Sector;
 
@@ -16,7 +23,7 @@ public class SectorIO {
 	    f.createNewFile();
 	write(new FileOutputStream(f), sec);
     }
-    
+
     public static Sector read(InputStream in) throws IOException {
 	try {
 	    ObjectInputStream objIn = new ObjectInputStream(in);

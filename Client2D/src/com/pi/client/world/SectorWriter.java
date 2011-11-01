@@ -1,6 +1,6 @@
 package com.pi.client.world;
 
-import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,7 +56,10 @@ public class SectorWriter extends Thread {
 	    if (oldestSector != null) {
 		WritableRequest wr = writeQueue.remove(oldestSector);
 		try {
-		    SectorIO.write(Paths.getSectorFile(oldestSector), wr.data);
+		    File fin = Paths.getSectorFile(oldestSector);
+		    File dest = new File(fin.getAbsolutePath() + ".tmp");
+		    SectorIO.write(dest, wr.data);
+		    dest.renameTo(fin);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}

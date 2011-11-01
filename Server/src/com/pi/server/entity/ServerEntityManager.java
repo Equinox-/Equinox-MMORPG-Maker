@@ -74,19 +74,18 @@ public class ServerEntityManager implements EntityListener {
 		    int nDist = Location.dist(cli.getEntity(), to);
 		    int oDist = Location.dist(cli.getEntity(), from);
 		    if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
-			if (oDist > ServerConstants.ENTITY_UPDATE_DIST) {
-			    // Send entity data TODO
-			} else {
-			    cli.getNetClient()
-				    .send(Packet7EntityMove.create(e));
-			}
-		    } else if (oDist <= ServerConstants.ENTITY_UPDATE_DIST) {
+			cli.getNetClient().send(Packet7EntityMove.create(e));
+		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 			cli.getNetClient().send(
 				Packet8EntityDispose.create(entity));
 		    }
 		}
 	    }
 	}
+    }
+
+    public Map<Integer, Entity> registeredEntities() {
+	return Collections.unmodifiableMap(entityMap);
     }
 
     @Override

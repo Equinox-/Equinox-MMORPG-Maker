@@ -20,6 +20,10 @@ public abstract class Packet {
 	registerPacket(4, Packet4Sector.class);
 	registerPacket(5, Packet5SectorRequest.class);
 	registerPacket(6, Packet6BlankSector.class);
+	registerPacket(7, Packet7EntityMove.class);
+	registerPacket(8, Packet8EntityDispose.class);
+	registerPacket(9, Packet9EntityData.class);
+	registerPacket(10, Packet10LocalEntityID.class);
     }
 
     public Packet() {
@@ -82,7 +86,8 @@ public abstract class Packet {
 	    throw new NullPointerException("This packet is not registered!");
     }
 
-    protected abstract void writeData(PacketOutputStream pOut) throws IOException;
+    protected abstract void writeData(PacketOutputStream pOut)
+	    throws IOException;
 
     protected abstract void readData(PacketInputStream pIn) throws IOException;
 }
