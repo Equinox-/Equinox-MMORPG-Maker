@@ -1,14 +1,17 @@
 package com.pi.server.net.client;
 
 import com.pi.common.database.Account;
-import com.pi.common.database.EntityDef;
-import com.pi.common.game.Entity;
 import com.pi.common.net.NetHandler;
-import com.pi.common.net.packet.*;
+import com.pi.common.net.packet.Packet;
+import com.pi.common.net.packet.Packet0Disconnect;
+import com.pi.common.net.packet.Packet11EntityDefRequest;
+import com.pi.common.net.packet.Packet1Login;
+import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
+import com.pi.common.net.packet.Packet3Register;
+import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
-import com.pi.server.constants.Configuration;
 
 public class NetServerHandler extends NetHandler {
     private final NetServerClient netClient;
@@ -37,10 +40,10 @@ public class NetServerHandler extends NetHandler {
 		    .getAccount(p.username);
 	    if (acc != null) {
 		if (acc.getPasswordHash().equals(p.password)) {
-		    if (acc.getEntityDef() == null) {
-			EntityDef def = Configuration.spawn_def;
-			acc.setSavedEntity(def);
-		    }
+		    /*
+		     * if (acc.getEntityDef() == null) { EntityDef def =
+		     * Configuration.spawn_def; acc.setSavedEntity(def); }TODO
+		     */
 		    getClient().bindAccount(acc);
 		    netClient.send(Packet2Alert.create(AlertType.MAIN_MENU,
 			    "Login sucessfull"));
@@ -71,5 +74,9 @@ public class NetServerHandler extends NetHandler {
     public void process(Packet5SectorRequest p) {
 	server.getWorld().getSectorManager()
 		.requestSector(netClient.getID(), p);
+    }
+
+    public void process(Packet11EntityDefRequest p) {
+	server.getDefs().getEntityLoader().requestDef(netClient.getID(), p);
     }
 }

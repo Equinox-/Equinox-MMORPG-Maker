@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
@@ -14,23 +13,17 @@ import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.common.net.packet.Packet6BlankSector;
 import com.pi.server.Server;
+import com.pi.server.ServerThread;
 import com.pi.server.client.Client;
 import com.pi.server.database.Paths;
 
-public class SectorManager extends Thread {
+public class SectorManager extends ServerThread {
     public final static int sectorExpiry = 300000; // 5 Minutes
-    private final Server server;
-    private boolean running = true;
 
-    private Map<SectorLocation, Long> loadQueue = /*
-						   * Collections
-						   * .synchronizedMap
-						   */(new HashMap<SectorLocation, Long>());
-    private Map<SectorLocation, SectorStorage> map = /*
-						      * Collections
-						      * .synchronizedMap
-						      */(new HashMap<SectorLocation, SectorStorage>());
-
+    private Map<SectorLocation, Long> loadQueue = Collections
+	    .synchronizedMap(new HashMap<SectorLocation, Long>());
+    private Map<SectorLocation, SectorStorage> map = Collections
+	    .synchronizedMap(new HashMap<SectorLocation, SectorStorage>());
     /*
      * private List<ClientSectorRequest> requests = Collections
      * .synchronizedList(new ArrayList<ClientSectorRequest>());
@@ -38,8 +31,7 @@ public class SectorManager extends Thread {
     private Object mutex = new Object();
 
     public SectorManager(Server server) {
-	super(server.getThreadGroup(), null, "SectorManager");
-	this.server = server;
+	super(server);
 	start();
     }
 
@@ -110,13 +102,9 @@ public class SectorManager extends Thread {
     }
 
     @Override
-    public void run() {
-	server.getLog().finer("Started Sector Manager Thread");
-	while (running) {
-	    doRequest();
-	    removeExpired();
-	}
-	server.getLog().finer("Killed Sector Manager Thread");
+    public void loop() {
+	doRequest();
+	removeExpired();
     }
 
     private void removeExpired() {
@@ -207,16 +195,6 @@ public class SectorManager extends Thread {
 		    }
 		}
 	    }
-	}
-    }
-
-    public void dispose() {
-	running = false;
-	try {
-	    join();
-	} catch (InterruptedException e) {
-	    e.printStackTrace(server.getLog().getErrorStream());
-	    System.exit(0);
 	}
     }
 

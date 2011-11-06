@@ -7,8 +7,6 @@ import java.net.Socket;
 import com.pi.client.Client;
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.client.NetClient;
-import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet0Disconnect;
 
 public class NetClientClient extends NetClient {
     private final Client client;

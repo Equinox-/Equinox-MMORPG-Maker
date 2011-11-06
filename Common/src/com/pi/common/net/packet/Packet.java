@@ -1,6 +1,7 @@
 package com.pi.common.net.packet;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public abstract class Packet {
 	registerPacket(8, Packet8EntityDispose.class);
 	registerPacket(9, Packet9EntityData.class);
 	registerPacket(10, Packet10LocalEntityID.class);
+	registerPacket(11, Packet11EntityDefRequest.class);
+	registerPacket(12, Packet12EntityDef.class);
     }
 
     public Packet() {

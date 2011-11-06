@@ -7,9 +7,9 @@ import com.pi.client.graphics.device.IGraphics;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.Sector;
-import com.pi.common.database.SectorLocation;
 import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
 
 public class GameRenderLoop implements Renderable {
@@ -33,50 +33,12 @@ public class GameRenderLoop implements Renderable {
 		    .getSector(0, 0, 0), g, TileLayer.values());
 	    if (client.getEntityManager().getLocalEntity() != null) {
 		Entity ent = client.getEntityManager().getLocalEntity();
-		g.drawImage("char_1", (int)(ent.x * TileConstants.TILE_WIDTH), (int)(ent.z
-			* TileConstants.TILE_HEIGHT), 0, 0, 30, 50);
-	    }
-	}
-    }
-
-    private static void renderSectorSurround(Rectangle clip, IGraphics g,
-	    Client client, int plane) {
-	SectorLocation mySector = client.getEntityManager().getLocalEntity()
-		.getSectorLocation();
-	Sector[][] sec = new Sector[3][3];
-	for (int x = 0; x < 3; x++)
-	    for (int y = 0; y < 3; y++) {
-		sec[x][y] = client
-			.getWorld()
-			.getSectorManager()
-			.getSector(mySector.x - 1 + x, plane,
-				mySector.z - 1 + y);
-	    }
-	int sec11X = (int) (clip.getCenterX()
-		- client.getEntityManager().getLocalEntity().getLocalX()
-		* TileConstants.TILE_WIDTH - (TileConstants.TILE_WIDTH / 2));
-	int sec11Y = (int) (clip.getCenterY()
-		- client.getEntityManager().getLocalEntity().getLocalZ()
-		* TileConstants.TILE_HEIGHT - (TileConstants.TILE_HEIGHT / 2));
-	for (TileLayer l : TileLayer.values()) {
-	    for (int x = 0; x < 3; x++)
-		for (int y = 0; y < 3; y++) {
-		    renderSectorLayer(
-			    sec11X
-				    - ((x - 1) * (TileConstants.TILE_WIDTH * SectorConstants.SECTOR_WIDTH)),
-			    sec11Y
-				    - ((y - 1) * (TileConstants.TILE_HEIGHT * SectorConstants.SECTOR_HEIGHT)),
-			    sec[x][y], g, l);
+		EntityDef def = client.getDefs().getEntityLoader()
+			.getDef(ent.getEntityDef());
+		if (def != null) {
+		    g.drawImage(def, (int) (ent.x * TileConstants.TILE_WIDTH),
+			    (int) (ent.z * TileConstants.TILE_HEIGHT));
 		}
-	    if (client.getEntityManager().getLocalEntity().getLayer().equals(l)) {
-		g.drawImage(
-			"char_1",
-			(int) (clip.getCenterX() - (TileConstants.TILE_WIDTH / 2)),
-			(int) (clip.getCenterY()
-				+ (TileConstants.TILE_HEIGHT / 2) - 50),
-			0,
-			client.getEntityManager().getLocalEntity().getDir() * 50,
-			32, 50);
 	    }
 	}
     }

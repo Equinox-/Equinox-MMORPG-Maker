@@ -83,4 +83,8 @@ public class ClientEntityManager {
     public Map<Integer, Entity> registeredEntities() {
 	return Collections.unmodifiableMap(entityMap);
     }
+
+    public Client getClient() {
+	return client;
+    }
 }

@@ -18,6 +18,7 @@ import com.pi.server.database.ServerDatabase;
 import com.pi.server.debug.ClientMonitorPanel;
 import com.pi.server.debug.EntityMonitorPanel;
 import com.pi.server.debug.SectorMonitorPanel;
+import com.pi.server.def.Definitions;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
@@ -30,6 +31,7 @@ public class Server {
     private ServerDatabase database;
     private ServerEntityManager entityManager;
     private ClientManager clientManager;
+    private Definitions defs;
 
     public NetServer getNetwork() {
 	return network;
@@ -77,6 +79,7 @@ public class Server {
 	    world = new World(this);
 	    rcView.addTab("Sectors",
 		    new SectorMonitorPanel(world.getSectorManager()));
+	    defs = new Definitions(this);
 	    rcView.tabs.addMouseListener(new MouseAdapter() {
 		public void mouseClicked(MouseEvent e) {
 		    if (e.getButton() == MouseEvent.BUTTON3) {
@@ -99,6 +102,7 @@ public class Server {
 	    database.save();
 	if (world != null)
 	    world.dispose();
+	defs.dispose();
 	// while (serverThreads.activeCount() > 0)
 	// serverThreads.destroy();
     }
@@ -113,6 +117,10 @@ public class Server {
 
     public World getWorld() {
 	return world;
+    }
+
+    public Definitions getDefs() {
+	return defs;
     }
 
     public ThreadGroup getThreadGroup() {

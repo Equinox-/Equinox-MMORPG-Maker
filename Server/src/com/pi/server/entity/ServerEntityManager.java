@@ -8,6 +8,7 @@ import com.pi.common.game.Entity;
 import com.pi.common.game.EntityListener;
 import com.pi.common.net.packet.Packet7EntityMove;
 import com.pi.common.net.packet.Packet8EntityDispose;
+import com.pi.common.net.packet.Packet9EntityData;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 import com.pi.server.constants.ServerConstants;
@@ -99,5 +100,29 @@ public class ServerEntityManager implements EntityListener {
 
     @Override
     public void entityDispose(int entity) {
+    }
+
+    public void clientMove(Client cli, Location from, Location to) {
+	if (cli != null && cli.getEntity() != null
+		&& cli.getNetClient() != null) {
+	    for (Entity e : entityMap.values()) {
+		if (e != null) {
+		    int nDist = Location.dist(e, to);
+		    int oDist = from != null ? Location.dist(e, from) : -1;
+		    if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
+			if (from == null) {
+			    cli.getNetClient()
+				    .send(Packet9EntityData.create(e));
+			} else {
+			    cli.getNetClient()
+				    .send(Packet7EntityMove.create(e));
+			}
+		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
+			cli.getNetClient().send(
+				Packet8EntityDispose.create(e.getEntityID()));
+		    }
+		}
+	    }
+	}
     }
 }

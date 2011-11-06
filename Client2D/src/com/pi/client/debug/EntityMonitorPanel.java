@@ -30,9 +30,9 @@ public class EntityMonitorPanel extends JPanel {
 
     private class ThreadTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-	String[] colName = { "ID", "X", "Plane", "Z", "Layer","Dir" };
+	String[] colName = { "ID", "X", "Plane", "Z", "Layer", "Dir", "Def" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
-		String.class, String.class,String.class };
+		String.class, String.class, String.class };
 
 	@Override
 	public int getRowCount() {
@@ -50,7 +50,8 @@ public class EntityMonitorPanel extends JPanel {
 		    .registeredEntities()
 		    .keySet()
 		    .toArray(
-			    new Integer[svr.registeredEntities().keySet().size()]);
+			    new Integer[svr.registeredEntities().keySet()
+				    .size()]);
 	    if (row < keyArr.length) {
 		Integer key = keyArr[row];
 		Entity ent = svr.getEntity(key);
@@ -64,11 +65,19 @@ public class EntityMonitorPanel extends JPanel {
 		case 2:
 		    return ent.getPlane() + "";
 		case 3:
-		    return ent.getGlobalZ()+"";
+		    return ent.getGlobalZ() + "";
 		case 4:
 		    return ent.getLayer().name().toLowerCase();
 		case 5:
 		    return ent.getDir() + "";
+		case 6:
+		    return ent.getEntityDef()
+			    + "-"
+			    + svr.getClient().getDefs().getEntityLoader()
+				    .getDef(ent.getEntityDef()) != null ? "Loaded"
+			    : (svr.getClient().getDefs().getEntityLoader()
+				    .isEmpty(ent.getEntityDef()) ? "Empty"
+				    : "Unloaded");
 		default:
 		    return "";
 		}

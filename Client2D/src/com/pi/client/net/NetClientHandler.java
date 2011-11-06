@@ -9,12 +9,14 @@ import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
 import com.pi.common.net.packet.Packet10LocalEntityID;
+import com.pi.common.net.packet.Packet12EntityDef;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
 import com.pi.common.net.packet.Packet7EntityMove;
 import com.pi.common.net.packet.Packet8EntityDispose;
+import com.pi.common.net.packet.Packet9EntityData;
 
 public class NetClientHandler extends NetHandler {
     private final NetClientClient netClient;
@@ -73,8 +75,22 @@ public class NetClientHandler extends NetHandler {
 	client.getEntityManager().deRegisterEntity(p.entityID);
     }
 
+    public void process(Packet9EntityData p) {
+	Entity ent = client.getEntityManager().getEntity(p.entID);
+	if (ent == null)
+	    ent = new Entity();
+	ent.setEntityDef(p.defID);
+	ent.setLocation(p.loc);
+	ent.setLayer(p.layer);
+	client.getEntityManager().saveEntity(ent);
+    }
+
     public void process(Packet10LocalEntityID p) {
 	client.getLog().info("LocalID: " + p.entityID);
 	client.getEntityManager().setLocalEntityID(p.entityID);
+    }
+
+    public void process(Packet12EntityDef p) {
+	client.getDefs().getEntityLoader().setDef(p.entityID, p.def);
     }
 }

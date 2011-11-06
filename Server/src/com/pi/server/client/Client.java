@@ -30,6 +30,8 @@ public class Client {
 	this.entity = new Entity(account.getEntityDef());
 	server.getServerEntityManager().registerEntity(entity);
 	network.send(Packet10LocalEntityID.getPacket(entity.getEntityID()));
+	// TODO Find a better way to request entities for clients on move
+	server.getServerEntityManager().clientMove(this, null, entity);
     }
 
     public void dispose() {

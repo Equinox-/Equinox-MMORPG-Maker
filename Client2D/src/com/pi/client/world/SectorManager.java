@@ -2,25 +2,21 @@ package com.pi.client.world;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StreamCorruptedException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.pi.client.Client;
+import com.pi.client.ClientThread;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
-public class SectorManager extends Thread {
+public class SectorManager extends ClientThread {
     public final static int sectorExpiry = 60000; // 1 Minute
     public final static int serverRequestExpiry = 60000; // 30 seconds
-    private final Client client;
-    private boolean running = true;
 
     private Map<SectorLocation, Long> loadQueue = Collections
 	    .synchronizedMap(new HashMap<SectorLocation, Long>());
@@ -35,8 +31,7 @@ public class SectorManager extends Thread {
     }
 
     public SectorManager(Client client) {
-	super(client.getThreadGroup(), null, "SectorManager");
-	this.client = client;
+	super(client);
 	start();
     }
 
@@ -68,12 +63,9 @@ public class SectorManager extends Thread {
     }
 
     @Override
-    public void run() {
-	while (running) {
-	    doRequest();
-	    removeExpired();
-	}
-	client.getLog().fine("Killing Sector Manager Thread");
+    public void loop() {
+	doRequest();
+	removeExpired();
     }
 
     private void removeExpired() {
@@ -137,16 +129,6 @@ public class SectorManager extends Thread {
 		    }
 		}
 	    }
-	}
-    }
-
-    public void dispose() {
-	running = false;
-	try {
-	    join();
-	} catch (InterruptedException e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
-	    System.exit(0);
 	}
     }
 

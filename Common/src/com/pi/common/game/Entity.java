@@ -1,8 +1,9 @@
 package com.pi.common.game;
 
 import com.pi.common.contants.GlobalConstants;
-import com.pi.common.database.*;
+import com.pi.common.database.Location;
 import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.def.EntityDef;
 
 public class Entity extends Location {
     public static final long serialVersionUID = GlobalConstants.serialVersionUID;
@@ -10,14 +11,15 @@ public class Entity extends Location {
     private TileLayer aboveLayer = TileLayer.MASK1;
     private int entityID = -1;
     private EntityListener listener = null;
+    private int defID = 0;
 
-    public Entity(EntityDef def) {
-	setLocation(def.getGlobalX(), def.getPlane(), def.getGlobalZ());
+    public Entity(int def) {
+	this.defID = def;
     }
 
-    public Entity(EntityListener listen, EntityDef def) {
+    public Entity(EntityListener listen, int def) {
 	this(listen);
-	setLocation(def.getGlobalX(), def.getPlane(), def.getGlobalZ());
+	this.defID = def;
     }
 
     public Entity() {
@@ -25,6 +27,14 @@ public class Entity extends Location {
 
     public Entity(EntityListener listen) {
 	this.listener = listen;
+    }
+    
+    public void setEntityDef(int entityDef){
+	this.defID = entityDef;
+    }
+    
+    public int getEntityDef(){
+	return this.defID;
     }
 
     public boolean setEntityID(int id) {

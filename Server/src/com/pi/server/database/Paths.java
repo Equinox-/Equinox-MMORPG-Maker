@@ -19,6 +19,13 @@ public class Paths {
 	return f;
     }
 
+    public static File getDefDirectory() {
+	File f = new File(getHomeDirectory(), "def");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+
     public static File getDatabaseFolder() {
 	File f = new File(getHomeDirectory(), "database");
 	if (!f.exists())
@@ -45,6 +52,17 @@ public class Paths {
 
     public static File getSectorFile(SectorLocation l) {
 	return getSectorFile(l.x, l.plane, l.z);
+    }
+
+    public static File getEntityDefDirectory() {
+	File f = new File(getDefDirectory(), "entity");
+	if (!f.exists())
+	    f.mkdir();
+	return f;
+    }
+
+    public static File getEntityDef(int def) {
+	return new File(getEntityDefDirectory(), def + ".def");
     }
 
     public static File getLogDirectory() {

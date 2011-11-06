@@ -7,21 +7,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.client.Client;
+import com.pi.client.ClientThread;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 
-public class SectorWriter extends Thread {
-    private final Client client;
-    private boolean running = true;
+public class SectorWriter extends ClientThread {
     private Map<SectorLocation, WritableRequest> writeQueue = Collections
 	    .synchronizedMap(new HashMap<SectorLocation, WritableRequest>());
     private Object syncObject = new Object();
 
     public SectorWriter(Client client) {
-	super(client.getThreadGroup(), null, "SectorWriter");
-	this.client = client;
+	super(client);
 	start();
     }
 
@@ -35,14 +33,7 @@ public class SectorWriter extends Thread {
     }
 
     @Override
-    public void run() {
-	while (running) {
-	    doRequest();
-	}
-	client.getLog().fine("Killing Sector Writer Thread");
-    }
-
-    private void doRequest() {
+    protected void loop() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
 	    SectorLocation oldestSector = null;
@@ -64,16 +55,6 @@ public class SectorWriter extends Thread {
 		    e.printStackTrace();
 		}
 	    }
-	}
-    }
-
-    public void dispose() {
-	running = false;
-	try {
-	    join();
-	} catch (InterruptedException e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
-	    System.exit(0);
 	}
     }
 

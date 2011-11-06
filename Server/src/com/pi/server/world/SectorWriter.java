@@ -9,18 +9,16 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.SectorIO;
 import com.pi.server.Server;
+import com.pi.server.ServerThread;
 import com.pi.server.database.Paths;
 
-public class SectorWriter extends Thread {
-    private final Server server;
-    private boolean running = true;
+public class SectorWriter extends ServerThread {
     private Map<SectorLocation, WritableRequest> writeQueue = Collections
 	    .synchronizedMap(new HashMap<SectorLocation, WritableRequest>());
     private Object syncObject = new Object();
 
     public SectorWriter(Server server) {
-	super(server.getThreadGroup(), null, "SectorWriter");
-	this.server = server;
+	super(server);
 	start();
     }
 
@@ -34,12 +32,8 @@ public class SectorWriter extends Thread {
     }
 
     @Override
-    public void run() {
-	server.getLog().finer("Started Sector Writer Thread");
-	while (running) {
-	    doRequest();
-	}
-	server.getLog().finer("Killed Sector Writer Thread");
+    public void loop() {
+	doRequest();
     }
 
     private void doRequest() {
@@ -61,16 +55,6 @@ public class SectorWriter extends Thread {
 		    e.printStackTrace(server.getLog().getErrorStream());
 		}
 	    }
-	}
-    }
-
-    public void dispose() {
-	running = false;
-	try {
-	    join();
-	} catch (InterruptedException e) {
-	    e.printStackTrace(server.getLog().getErrorStream());
-	    System.exit(0);
 	}
     }
 

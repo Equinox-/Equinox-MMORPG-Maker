@@ -1,8 +1,6 @@
 package com.pi.client;
 
 import java.applet.Applet;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,6 +11,7 @@ import com.pi.client.database.Paths;
 import com.pi.client.debug.EntityMonitorPanel;
 import com.pi.client.debug.GraphicsMonitorPanel;
 import com.pi.client.debug.SectorMonitorPanel;
+import com.pi.client.def.Definitions;
 import com.pi.client.entity.ClientEntityManager;
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.gui.GUIKit;
@@ -39,6 +38,7 @@ public class Client implements Disposable {
     private ClientEntityManager entityManager;
     private final PILogger logger;
     PIResourceViewer reView;
+    private Definitions defs;
 
     public Client(Applet applet) {
 	clientThreads = new ThreadGroup("ClientThreads");
@@ -68,6 +68,7 @@ public class Client implements Disposable {
 	this.world = new World(this);
 	reView.addTab("Sectors",
 		new SectorMonitorPanel(this.world.getSectorManager()));
+	this.defs = new Definitions(this);
 	network = new NetClientClient(this, ip, port);
 	this.entityManager = new ClientEntityManager(this);
 	reView.addTab("Entities", new EntityMonitorPanel(entityManager));
@@ -102,6 +103,7 @@ public class Client implements Disposable {
 	}
 	displayManager.dispose();
 	world.dispose();
+	defs.dispose();
 	if (network != null)
 	    network.dispose();
     }
@@ -134,5 +136,9 @@ public class Client implements Disposable {
 
     public ClientEntityManager getEntityManager() {
 	return entityManager;
+    }
+
+    public Definitions getDefs() {
+	return defs;
     }
 }
