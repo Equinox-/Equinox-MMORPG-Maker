@@ -36,4 +36,8 @@ public class RenderLoop implements Renderable {
     public MainMenu getMainMenu() {
 	return menu;
     }
+
+    public MainGame getMainGame() {
+	return mainGame;
+    }
 }

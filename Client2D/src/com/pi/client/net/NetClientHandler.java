@@ -8,8 +8,9 @@ import com.pi.common.game.Entity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
-import com.pi.common.net.packet.Packet10LocalEntityID;
-import com.pi.common.net.packet.Packet12EntityDef;
+import com.pi.common.net.packet.Packet10EntityDataRequest;
+import com.pi.common.net.packet.Packet11LocalEntityID;
+import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
 import com.pi.common.net.packet.Packet4Sector;
@@ -64,8 +65,12 @@ public class NetClientHandler extends NetHandler {
 
     public void process(Packet7EntityMove p) {
 	Entity ent = client.getEntityManager().getEntity(p.entityID);
-	if (ent == null)
+	if (ent == null) {
 	    ent = new Entity();
+	    ent.setEntityID(p.entityID);
+	    client.getNetwork().send(
+		    Packet10EntityDataRequest.create(p.entityID));
+	}
 	ent.setLocation(p.moved);
 	ent.setLayer(p.entityLayer);
 	client.getEntityManager().saveEntity(ent);
@@ -77,20 +82,22 @@ public class NetClientHandler extends NetHandler {
 
     public void process(Packet9EntityData p) {
 	Entity ent = client.getEntityManager().getEntity(p.entID);
-	if (ent == null)
+	if (ent == null) {
 	    ent = new Entity();
+	    client.getLog().info("setid:" + ent.setEntityID(p.entID));
+	}
 	ent.setEntityDef(p.defID);
 	ent.setLocation(p.loc);
 	ent.setLayer(p.layer);
 	client.getEntityManager().saveEntity(ent);
     }
 
-    public void process(Packet10LocalEntityID p) {
+    public void process(Packet11LocalEntityID p) {
 	client.getLog().info("LocalID: " + p.entityID);
 	client.getEntityManager().setLocalEntityID(p.entityID);
     }
 
-    public void process(Packet12EntityDef p) {
+    public void process(Packet13EntityDef p) {
 	client.getDefs().getEntityLoader().setDef(p.entityID, p.def);
     }
 }

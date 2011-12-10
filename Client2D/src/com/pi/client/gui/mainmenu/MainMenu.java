@@ -168,6 +168,13 @@ public class MainMenu implements Renderable, MouseListener,
 	settingsOption.setLocation(menuLocX, menuLocY);
 	serverStatus.setSize(75, 25);
 	serverStatus.setLocation(5, height - 50);
+	
+	loginOption.compile();
+	creditsOption.compile();
+	registerOption.compile();
+	settingsOption.compile();
+	serverStatus.compile();
+	buttonContainer.compile();
     }
 
     public void alert(String message) {

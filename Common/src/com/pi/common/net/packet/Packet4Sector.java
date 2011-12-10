@@ -1,8 +1,6 @@
 package com.pi.common.net.packet;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;

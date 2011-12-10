@@ -114,6 +114,13 @@ public class Client implements Disposable {
 
     public void setInGame(boolean val) {
 	this.inGame = val;
+	if (val){
+	    getDisplayManager().getRenderLoop().getMainMenu().unregisterFromApplet();
+	    getDisplayManager().getRenderLoop().getMainGame().registerToApplet();
+	}else{
+	    getDisplayManager().getRenderLoop().getMainGame().unregisterFromApplet();
+	    getDisplayManager().getRenderLoop().getMainMenu().registerToApplet();
+	}
     }
 
     public boolean isNetworkConnected() {
@@ -140,5 +147,10 @@ public class Client implements Disposable {
 
     public Definitions getDefs() {
 	return defs;
+    }
+
+    public void fatalError(String string) {
+	logger.severe(string);
+	dispose();
     }
 }

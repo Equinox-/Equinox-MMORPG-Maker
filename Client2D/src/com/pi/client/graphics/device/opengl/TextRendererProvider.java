@@ -9,6 +9,7 @@ import javax.media.opengl.GLContext;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.pi.client.Client;
+import com.pi.common.debug.PILogger;
 
 public class TextRendererProvider extends Thread {
     private Map<Font, TextRendererStorage> map = Collections
@@ -41,15 +42,13 @@ public class TextRendererProvider extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
-	    System.exit(0);
+	    client.fatalError(PILogger.exceptionToString(e));
 	}
 	for (TextRendererStorage r : map.values()) {
 	    try {
 		GLContext.getCurrentGL();
 		r.r.dispose();
 	    } catch (Exception e) {
-		e.printStackTrace(client.getLog().getErrorStream());
 	    }
 	}
 	map.clear();
@@ -64,7 +63,13 @@ public class TextRendererProvider extends Thread {
 		    TextRendererStorage r = map.get(f);
 		    if (System.currentTimeMillis() - r.timeUsed > 30000) {// 30
 									  // seconds
-			r.r.dispose();
+			// TODO Actually Dispose. Needs a GL context.
+			// r.r.dispose();
+			try {
+			    GLContext.getCurrentGL();
+			    r.r.dispose();
+			} catch (Exception e) {
+			}
 			map.remove(f);
 		    }
 		}

@@ -1,4 +1,6 @@
-package com.pi.common.net.client;
+package com.pi.client.net;
+
+import com.pi.common.net.client.NetClient;
 
 public class NetClientProcessingThread extends Thread {
     private final NetClient netClient;

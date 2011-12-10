@@ -24,9 +24,11 @@ public abstract class Packet {
 	registerPacket(7, Packet7EntityMove.class);
 	registerPacket(8, Packet8EntityDispose.class);
 	registerPacket(9, Packet9EntityData.class);
-	registerPacket(10, Packet10LocalEntityID.class);
-	registerPacket(11, Packet11EntityDefRequest.class);
-	registerPacket(12, Packet12EntityDef.class);
+	registerPacket(10, Packet10EntityDataRequest.class);
+	registerPacket(11, Packet11LocalEntityID.class);
+	registerPacket(12, Packet12EntityDefRequest.class);
+	registerPacket(13, Packet13EntityDef.class);
+	registerPacket(14, Packet14ClientMove.class);
     }
 
     public Packet() {

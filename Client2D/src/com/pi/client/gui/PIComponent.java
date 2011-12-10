@@ -11,7 +11,7 @@ import com.pi.client.graphics.device.IGraphics;
 
 public class PIComponent implements Renderable, MouseWheelListener,
 	MouseListener, MouseMotionListener, KeyListener {
-    protected Map<PIStyle.StyleType, PIStyle> styles = new HashMap<PIStyle.StyleType, PIStyle>();
+    protected PIStyle[] styles = new PIStyle[PIStyle.StyleType.values().length];
     protected int x, y, width, height;
     protected String content = "";
     protected PIContainer parent;
@@ -24,9 +24,10 @@ public class PIComponent implements Renderable, MouseWheelListener,
     protected boolean isFocused = false;
     protected boolean isActive = false;
     protected boolean clipContents = false;
+    protected int absX, absY;
 
     public PIComponent() {
-	styles.put(PIStyle.StyleType.Normal, GUIKit.defaultStyle);
+	styles[PIStyle.StyleType.Normal.ordinal()] = GUIKit.defaultStyle;
     }
 
     @Override
@@ -37,25 +38,34 @@ public class PIComponent implements Renderable, MouseWheelListener,
     }
 
     public PIStyle getStyle(PIStyle.StyleType type) {
-	if (!styles.containsKey(type))
-	    styles.put(type, new PIStyle());
-	return styles.get(type);
+	if (styles[type.ordinal()] == null)
+	    styles[type.ordinal()] = new PIStyle();
+	return styles[type.ordinal()];
     }
 
     public void setStyle(PIStyle.StyleType type, PIStyle style) {
-	styles.put(type, style);
+	styles[type.ordinal()] = style;
     }
 
     public void update() {
 
     }
 
+    public void compile() {
+	absX = (parent != null ? parent.getAbsoluteX() : 0) + x;
+	absY = (parent != null ? parent.getAbsoluteX() : 0) + y;
+    }
+
+    public boolean containsStyle(PIStyle.StyleType type) {
+	return styles[type.ordinal()] != null;
+    }
+
     public PIStyle getCurrentStyle() {
-	if (hovering && styles.containsKey(PIStyle.StyleType.Hover))
-	    return styles.get(PIStyle.StyleType.Hover);
-	if (isActive && styles.containsKey(PIStyle.StyleType.Active))
-	    return styles.get(PIStyle.StyleType.Active);
-	return styles.get(PIStyle.StyleType.Normal);
+	if (hovering && containsStyle(PIStyle.StyleType.Hover))
+	    return styles[PIStyle.StyleType.Hover.ordinal()];
+	if (isActive && containsStyle(PIStyle.StyleType.Active))
+	    return styles[PIStyle.StyleType.Active.ordinal()];
+	return styles[PIStyle.StyleType.Normal.ordinal()];
     }
 
     public void setActive(boolean active) {
@@ -81,19 +91,23 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	}
     }
 
+    public void putStyle(PIStyle.StyleType type, PIStyle style) {
+	styles[type.ordinal()] = style;
+    }
+
     public void setStyleSet(PIStyle.PIStyleSet set, boolean clones) {
 	if (clones) {
 	    if (set.active != null)
-		styles.put(PIStyle.StyleType.Active, set.active.clone());
+		putStyle(PIStyle.StyleType.Active, set.active.clone());
 	    if (set.hover != null)
-		styles.put(PIStyle.StyleType.Hover, set.hover.clone());
-	    styles.put(PIStyle.StyleType.Normal, set.normal.clone());
+		putStyle(PIStyle.StyleType.Hover, set.hover.clone());
+	    putStyle(PIStyle.StyleType.Normal, set.normal.clone());
 	} else {
 	    if (set.active != null)
-		styles.put(PIStyle.StyleType.Active, set.active);
+		putStyle(PIStyle.StyleType.Active, set.active);
 	    if (set.hover != null)
-		styles.put(PIStyle.StyleType.Hover, set.hover);
-	    styles.put(PIStyle.StyleType.Normal, set.normal);
+		putStyle(PIStyle.StyleType.Hover, set.hover);
+	    putStyle(PIStyle.StyleType.Normal, set.normal);
 	}
     }
 
@@ -148,11 +162,11 @@ public class PIComponent implements Renderable, MouseWheelListener,
     }
 
     public int getAbsoluteX() {
-	return (parent != null ? parent.getAbsoluteX() : 0) + x;
+	return absX;
     }
 
     public int getAbsoluteY() {
-	return (parent != null ? parent.getAbsoluteX() : 0) + y;
+	return absY;
     }
 
     public Rectangle getAbsoluteBounds(Rectangle r) {

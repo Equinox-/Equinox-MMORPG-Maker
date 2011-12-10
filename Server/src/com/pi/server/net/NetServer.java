@@ -3,9 +3,7 @@ package com.pi.server.net;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
 
-import com.pi.common.net.client.NetClient;
 import com.pi.common.net.client.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
@@ -17,6 +15,7 @@ import com.pi.server.net.client.NetServerClient;
 public class NetServer extends Thread {
     private final Server server;
     private ServerSocket sock;
+    private NetServerProcessThread procThread;
     private final ClientListener cl;
 
     public NetServer(Server server, int port, ClientListener cl)
@@ -25,7 +24,10 @@ public class NetServer extends Thread {
 	this.server = server;
 	this.cl = cl;
 	sock = new ServerSocket(port);
+	sock.setPerformancePreferences(0,2,1);
+	procThread = new NetServerProcessThread(server);
 	start();
+	procThread.start();
     }
 
     public boolean isConnected() {
@@ -79,7 +81,6 @@ public class NetServer extends Thread {
 	    e.printStackTrace(server.getLog().getErrorStream());
 	}
     }
-
     public void sendTo(Packet packet, int... ids) throws IOException {
 	for (int id : ids) {
 	    Client nClient = server.getClientManager().getClient(id);

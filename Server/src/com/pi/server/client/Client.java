@@ -3,7 +3,7 @@ package com.pi.server.client;
 import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.client.NetClient;
-import com.pi.common.net.packet.Packet10LocalEntityID;
+import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
 
 public class Client {
@@ -29,7 +29,7 @@ public class Client {
 	this.acc = account;
 	this.entity = new Entity(account.getEntityDef());
 	server.getServerEntityManager().registerEntity(entity);
-	network.send(Packet10LocalEntityID.getPacket(entity.getEntityID()));
+	network.send(Packet11LocalEntityID.getPacket(entity.getEntityID()));
 	// TODO Find a better way to request entities for clients on move
 	server.getServerEntityManager().clientMove(this, null, entity);
     }

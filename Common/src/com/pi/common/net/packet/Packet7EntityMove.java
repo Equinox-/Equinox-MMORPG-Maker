@@ -25,8 +25,8 @@ public class Packet7EntityMove extends Packet {
     @Override
     protected void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(entityID);
-	pOut.writeFloat(moved.x);
-	pOut.writeFloat(moved.z);
+	pOut.writeInt(moved.x);
+	pOut.writeInt(moved.z);
 	pOut.writeInt(moved.plane);
 	pOut.writeInt(entityLayer.ordinal());
     }
@@ -34,8 +34,8 @@ public class Packet7EntityMove extends Packet {
     @Override
     protected void readData(PacketInputStream pIn) throws IOException {
 	entityID = pIn.readInt();
-	float x = pIn.readFloat();
-	float z = pIn.readFloat();
+	int x = pIn.readInt();
+	int z = pIn.readInt();
 	int plane = pIn.readInt();
 	moved = new Location(x, plane, z);
 	entityLayer = TileLayer.values()[pIn.readInt()];

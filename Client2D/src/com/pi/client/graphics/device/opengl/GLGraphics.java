@@ -30,6 +30,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	cliparea = canvas.getBounds();
 	canvas.setLocation(0, 0);
 	animator = new Animator(mgr.getClient().getThreadGroup());
+	animator.setRunAsFastAsPossible(true);
 	animator.add(canvas);
 	animator.start();
 	mgr.getClient().getLog().fine("Started graphics thread");
@@ -122,23 +123,25 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 
     @Override
     public void display(GLAutoDrawable arg0) {
-	if (!canvas.getSize().equals(
-		super.mgr.getClient().getApplet().getSize())) {
-	    canvas.setSize(super.mgr.getClient().getApplet().getSize());
-	    cliparea = canvas.getBounds();
-	    canvas.reshape(0, 0, super.mgr.getClient().getApplet().getWidth(),
-		    super.mgr.getClient().getApplet().getHeight());
+	    if (!canvas.getSize().equals(
+		    super.mgr.getClient().getApplet().getSize())) {
+		canvas.setSize(super.mgr.getClient().getApplet().getSize());
+		cliparea = canvas.getBounds();
+		canvas.reshape(0, 0, super.mgr.getClient().getApplet()
+			.getWidth(), super.mgr.getClient().getApplet()
+			.getHeight());
+	    }
+	    this.gl = arg0.getGL().getGL2();
+	    this.glCore = arg0;
+	    gl.glMatrixMode(GL2.GL_PROJECTION);
+	    gl.glLoadIdentity();
+	    gl.glOrtho(0, canvas.getWidth(), canvas.getHeight(), 0, 1, -1);
+	    gl.glMatrixMode(GL2.GL_MODELVIEW);
+	    gl.glLoadIdentity();
+	    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+	    super.doRender();
 	}
-	this.gl = arg0.getGL().getGL2();
-	this.glCore = arg0;
-	gl.glMatrixMode(GL2.GL_PROJECTION);
-	gl.glLoadIdentity();
-	gl.glOrtho(0, canvas.getWidth(), canvas.getHeight(), 0, 1, -1);
-	gl.glMatrixMode(GL2.GL_MODELVIEW);
-	gl.glLoadIdentity();
-	gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-	super.doRender();
-    }
+
 
     @Override
     public void dispose(GLAutoDrawable arg0) {
@@ -165,7 +168,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     @Override
     public void dispose() {
 	animator.stop();
-	mgr.getClient().getLog().fine("Killed Graphics thread");
+	mgr.getClient().getLog().fine("Killed OpenGL Graphics thread");
 	txtRender.dispose();
 	textureManager.dispose();
 	if (canvas != null)
@@ -241,8 +244,8 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	return cliparea;
     }
 
-	@Override
-	public Map<String, ? extends GraphicsStorage> loadedGraphics() {
-		return textureManager.loadedMap();
-	}
+    @Override
+    public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+	return textureManager.loadedMap();
+    }
 }

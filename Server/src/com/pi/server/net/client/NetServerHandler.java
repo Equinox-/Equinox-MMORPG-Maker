@@ -1,10 +1,13 @@
 package com.pi.server.net.client;
 
 import com.pi.common.database.Account;
+import com.pi.common.game.Entity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
-import com.pi.common.net.packet.Packet11EntityDefRequest;
+import com.pi.common.net.packet.Packet10EntityDataRequest;
+import com.pi.common.net.packet.Packet12EntityDefRequest;
+import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet1Login;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet2Alert.AlertType;
@@ -76,7 +79,21 @@ public class NetServerHandler extends NetHandler {
 		.requestSector(netClient.getID(), p);
     }
 
-    public void process(Packet11EntityDefRequest p) {
+    public void process(Packet10EntityDataRequest p) {
+	server.getServerEntityManager().requestData(netClient.getID(), p);
+    }
+
+    public void process(Packet12EntityDefRequest p) {
 	server.getDefs().getEntityLoader().requestDef(netClient.getID(), p);
+    }
+
+    public void process(Packet14ClientMove p) {
+	Client cli = server.getClientManager().getClient(netClient.getID());
+	if (cli != null) {
+	    Entity ent = cli.getEntity();
+	    if (ent != null) {
+		ent.setLocation(p.to);
+	    }
+	}
     }
 }

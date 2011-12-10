@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -20,7 +21,6 @@ public class ImageManager extends Thread {
 	    .synchronizedMap(new HashMap<String, Long>());
     private boolean running = true;
     private final Client client;
-    private Object syncObject = new Object();
 
     public ImageManager(Client client) {
 	super(client.getThreadGroup(), null, "PiImageManager");
@@ -29,7 +29,7 @@ public class ImageManager extends Thread {
     }
 
     public BufferedImage fetchImage(String id) {
-	synchronized (syncObject) {
+	synchronized (map) {
 	    if (!running)
 		return null;
 	    ImageStorage tS = map.get(id);
@@ -69,7 +69,7 @@ public class ImageManager extends Thread {
     public void run() {
 	client.getLog().fine("Starting Image Manager Thread");
 	while (running) {
-	    synchronized (syncObject) {
+	    synchronized (map) {
 		String oldestRequest = oldestRequest();
 		if (oldestRequest != null) {
 		    ImageStorage tX = new ImageStorage();
@@ -84,7 +84,7 @@ public class ImageManager extends Thread {
     }
 
     private void removeExpired() {
-	synchronized (syncObject) {
+	synchronized (map) {
 	    for (String i : map.keySet()) {
 		if (System.currentTimeMillis() - map.get(i).lastUsed > imageExpiry) {
 		    ImageStorage str = map.remove(i);
@@ -96,7 +96,7 @@ public class ImageManager extends Thread {
     }
 
     private String oldestRequest() {
-	synchronized (syncObject) {
+	synchronized (map) {
 	    long oldestTime = Long.MAX_VALUE;
 	    String oldestID = null;
 	    for (String i : loadQueue.keySet()) {
@@ -125,15 +125,11 @@ public class ImageManager extends Thread {
 	    System.exit(0);
 	}
 	loadQueue.clear();
-	/*synchronized (syncObject) {
-	    for (String s : map.keySet()) {
-		synchronized (syncObject) {
-		    ImageStorage str = map.remove(s);
-		    if (str != null && str.img != null)
-			str.img.flush();
-		}
-	    }
-	}*/
+	/*
+	 * synchronized (map) { for (String s : map.keySet()) {
+	 * synchronized (map) { ImageStorage str = map.remove(s); if (str
+	 * != null && str.img != null) str.img.flush(); } } }
+	 */
     }
 
     public Map<String, ImageStorage> loadedMap() {

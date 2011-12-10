@@ -13,10 +13,14 @@ public abstract class ClientThread extends Thread {
     @Override
     public void run() {
 	client.getLog().fine("Started: " + getClass().getSimpleName());
-	while (running) {
+	while (running && shouldLoop()) {
 	    loop();
 	}
 	client.getLog().fine("Stopped: " + getClass().getSimpleName());
+    }
+    
+    private boolean shouldLoop(){
+	return true;
     }
 
     protected abstract void loop();

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.pi.client.Client;
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.net.packet.Packet11EntityDefRequest;
+import com.pi.common.net.packet.Packet12EntityDefRequest;
 
 public class EntityDefLoader {
     private final Client client;
@@ -23,7 +23,7 @@ public class EntityDefLoader {
 	    Integer p = new Integer(defID);
 	    EntityDefStorage sS = map.get(p);
 	    if (sS == null || (sS.def == null && !sS.empty)) {
-		Packet11EntityDefRequest packet = new Packet11EntityDefRequest();
+		Packet12EntityDefRequest packet = new Packet12EntityDefRequest();
 		packet.defID = defID;
 		client.getNetwork().send(packet);
 		return null;
@@ -37,7 +37,7 @@ public class EntityDefLoader {
 	    Integer p = new Integer(defID);
 	    EntityDefStorage sS = map.get(p);
 	    if (sS == null || (sS.def == null && !sS.empty)) {
-		Packet11EntityDefRequest packet = new Packet11EntityDefRequest();
+		Packet12EntityDefRequest packet = new Packet12EntityDefRequest();
 		packet.defID = defID;
 		client.getNetwork().send(packet);
 		return false;

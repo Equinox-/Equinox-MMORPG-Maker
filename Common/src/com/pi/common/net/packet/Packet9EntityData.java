@@ -17,9 +17,9 @@ public class Packet9EntityData extends Packet {
     @Override
     protected void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(entID);
-	pOut.writeFloat(loc.getGlobalX());
+	pOut.writeInt(loc.getGlobalX());
 	pOut.writeInt(loc.getPlane());
-	pOut.writeFloat(loc.getGlobalZ());
+	pOut.writeInt(loc.getGlobalZ());
 	pOut.writeInt(layer.ordinal());
 	pOut.writeInt(defID);
     }
@@ -27,7 +27,7 @@ public class Packet9EntityData extends Packet {
     @Override
     protected void readData(PacketInputStream pIn) throws IOException {
 	entID = pIn.readInt();
-	loc = new Location(pIn.readFloat(), pIn.readInt(), pIn.readFloat());
+	loc = new Location(pIn.readInt(), pIn.readInt(), pIn.readInt());
 	int layerOrd = pIn.readInt();
 	if (layerOrd >= 0 && layerOrd < TileLayer.values().length)
 	    layer = TileLayer.values()[layerOrd];

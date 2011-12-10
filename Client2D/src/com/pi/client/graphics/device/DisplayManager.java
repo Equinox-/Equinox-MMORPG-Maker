@@ -19,10 +19,13 @@ public class DisplayManager {
     private IGraphics graphics;
     private RenderLoop renderLoop;
     private Client client;
-    private boolean showFps = false;
-    public Map<String, ? extends GraphicsStorage> loadedGraphics(){
-	return graphics!=null?graphics.loadedGraphics():new HashMap<String,GraphicsStorage>();
+    private boolean showFps = true;
+
+    public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+	return graphics != null ? graphics.loadedGraphics()
+		: new HashMap<String, GraphicsStorage>();
     }
+
     public boolean hasOpenGL() {
 	return hasOpenGL;
     }
@@ -65,7 +68,7 @@ public class DisplayManager {
 	    graphics = m.getClazz().getConstructor(DisplayManager.class)
 		    .newInstance(this);
 	} catch (Exception e) {
-	    client.getLog().info("Failed to switch to " + m.name());
+	    client.fatalError("Failed to switch to " + m.name());
 	    e.printStackTrace(client.getLog().getErrorStream());
 	}
     }

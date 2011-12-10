@@ -1,6 +1,5 @@
 package com.pi.common.net.packet;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import com.pi.common.net.client.PacketInputStream;

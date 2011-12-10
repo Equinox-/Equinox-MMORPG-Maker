@@ -62,7 +62,7 @@ public class Entity extends Location {
     }
 
     @Override
-    public void setLocation(float x, int plane, float z) {
+    public void setLocation(int x, int plane, int z) {
 	if (listener != null && getEntityID() != -1)
 	    listener.entityMove(getEntityID(), new Location(getGlobalX(),
 		    getPlane(), getGlobalZ()), new Location(x, plane, z));

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.net.packet.Packet11EntityDefRequest;
-import com.pi.common.net.packet.Packet12EntityDef;
+import com.pi.common.net.packet.Packet12EntityDefRequest;
+import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.server.Server;
 import com.pi.server.ServerThread;
 import com.pi.server.database.Paths;
@@ -26,11 +26,11 @@ public class EntityDefLoader extends ServerThread {
 	start();
     }
 
-    public void requestDef(int clientID, Packet11EntityDefRequest req) {
+    public void requestDef(int clientID, Packet12EntityDefRequest req) {
 	synchronized (mutex) {
 	    EntityDefStorage sec = getEntityDef(req.defID);
 	    if (sec != null && (sec.data != null || sec.empty)) {
-		Packet12EntityDef packet = new Packet12EntityDef();
+		Packet13EntityDef packet = new Packet13EntityDef();
 		packet.def = sec.empty ? null : sec.data;
 		packet.entityID = req.defID;
 		server.getClientManager().getClient(clientID).getNetClient()

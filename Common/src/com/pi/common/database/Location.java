@@ -7,17 +7,17 @@ import com.pi.common.contants.SectorConstants;
 
 public class Location implements Serializable {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-    public float x, z;
+    public int x, z;
     public int plane;
 
     public Location() {
     }
 
-    public Location(float x, int plane, float z) {
+    public Location(int x, int plane, int z) {
 	setLocation(x, plane, z);
     }
 
-    public void setLocation(float x, int plane, float z) {
+    public void setLocation(int x, int plane, int z) {
 	this.x = x;
 	this.plane = plane;
 	this.z = z;
@@ -49,25 +49,25 @@ public class Location implements Serializable {
 	return false;
     }
 
-    public float getLocalX() {
+    public int getLocalX() {
 	return x - (getSectorX() * SectorConstants.SECTOR_WIDTH);
     }
 
-    public float getGlobalX() {
+    public int getGlobalX() {
 	return x;
     }
 
-    public float getLocalZ() {
+    public int getLocalZ() {
 	return z - (getSectorZ() * SectorConstants.SECTOR_HEIGHT);
     }
 
-    public float getGlobalZ() {
+    public int getGlobalZ() {
 	return z;
     }
 
     public static int dist(Location a, Location b) {
-	float dX = a.getGlobalX() - b.getGlobalX();
-	float dZ = a.getGlobalZ() - b.getGlobalZ();
+	int dX = a.getGlobalX() - b.getGlobalX();
+	int dZ = a.getGlobalZ() - b.getGlobalZ();
 	return (int) Math.sqrt((dX * dX) + (dZ * dZ));
     }
 }

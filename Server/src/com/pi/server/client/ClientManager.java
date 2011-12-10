@@ -69,4 +69,13 @@ public class ClientManager {
 	return Collections.unmodifiableMap(clientMap);
     }
 
+    public void processPacketLoop() {
+	synchronized (clientMap) {
+	    for (Client c : clientMap.values()) {
+		if (c.getNetClient() != null) {
+		    c.getNetClient().processPacket();
+		}
+	    }
+	}
+    }
 }

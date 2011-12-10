@@ -20,12 +20,12 @@ public class PITextField extends PIComponent {
 
     @Override
     public PIStyle getCurrentStyle() {
-	if (hovering && styles.containsKey(PIStyle.StyleType.Hover))
-	    return styles.get(PIStyle.StyleType.Hover);
+	if (hovering && containsStyle(PIStyle.StyleType.Hover))
+	    return getStyle(PIStyle.StyleType.Hover);
 	if ((isFocused || isActive)
-		&& styles.containsKey(PIStyle.StyleType.Active))
-	    return styles.get(PIStyle.StyleType.Active);
-	return styles.get(PIStyle.StyleType.Normal);
+		&& containsStyle(PIStyle.StyleType.Active))
+	    return getStyle(PIStyle.StyleType.Active);
+	return getStyle(PIStyle.StyleType.Normal);
     }
 
     @Override

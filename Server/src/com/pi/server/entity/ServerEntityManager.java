@@ -1,11 +1,17 @@
 package com.pi.server.entity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.pi.common.database.*;
+import com.pi.common.database.Location;
+import com.pi.common.database.SectorLocation;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityListener;
+import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet7EntityMove;
 import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
@@ -22,7 +28,18 @@ public class ServerEntityManager implements EntityListener {
 	this.server = server;
     }
 
+    public void requestData(int id, Packet10EntityDataRequest p) {
+	Entity ent = getEntity(p.entityID);
+	if (ent != null) {
+	    Client cli = server.getClientManager().getClient(id);
+	    if (cli != null && cli.getNetClient() != null) {
+		cli.getNetClient().send(Packet9EntityData.create(ent));
+	    }
+	}
+    }
+
     public boolean registerEntity(Entity e) {
+	e.setListener(this);
 	int id = 0;
 	while (true) {
 	    if (!entityMap.containsKey(id))

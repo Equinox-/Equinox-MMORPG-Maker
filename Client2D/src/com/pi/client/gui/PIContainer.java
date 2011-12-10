@@ -18,6 +18,13 @@ public class PIContainer extends PIComponent {
     public List<PIComponent> getChildren() {
 	return children;
     }
+    
+    public void compile(){
+	super.compile();
+	for (PIComponent p:children){
+	    p.compile();
+	}
+    }
 
     @Override
     public void render(IGraphics g) {

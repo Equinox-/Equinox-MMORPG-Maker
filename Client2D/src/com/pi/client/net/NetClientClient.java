@@ -6,22 +6,34 @@ import java.net.Socket;
 
 import com.pi.client.Client;
 import com.pi.common.debug.PILogger;
+import com.pi.common.net.NetHandler;
 import com.pi.common.net.client.NetClient;
 
 public class NetClientClient extends NetClient {
     private final Client client;
+    private NetClientProcessingThread processingThread;
 
     public NetClientClient(Client client, String ip, int port) {
 	this.client = client;
 	try {
 	    Socket sock = new Socket(ip, port);
 	    connect(sock, new NetClientHandler(this, client));
+
 	} catch (ConnectException e) {
 	    client.getLog().severe(e.toString());
 	} catch (IOException e) {
 	    e.printStackTrace(client.getLog().getErrorStream());
 	} catch (SecurityException e) {
 	    e.printStackTrace(client.getLog().getErrorStream());
+	}
+    }
+
+    @Override
+    public void connect(Socket sock, NetHandler netHandle) {
+	super.connect(sock, netHandle);
+	if (sock != null && sock.isConnected()) {
+	    processingThread = new NetClientProcessingThread(this);
+	    processingThread.start();
 	}
     }
 
@@ -39,6 +51,45 @@ public class NetClientClient extends NetClient {
 	 * dOut.flush(); } catch (Exception e) { e.printStackTrace(); } }
 	 */
 	super.dispose();
+    }
+
+    public NetClientProcessingThread getNetProcessor() {
+	return processingThread;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void forceDispose() {
+	quitting = true;
+	if (getNetReader() != null && getNetReader().isAlive())
+	    try {
+		getNetReader().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetReader().stop();
+	    }
+	if (getNetWriter() != null && getNetWriter().isAlive())
+	    try {
+		getNetWriter().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetWriter().stop();
+	    }
+	while (shouldProcessPacket()) {
+	    try {
+		Thread.sleep(100l);
+	    } catch (InterruptedException e) {
+		e.printStackTrace(getLog().getErrorStream());
+	    }
+	}
+	if (getNetProcessor() != null && getNetProcessor().isAlive())
+	    try {
+		getNetProcessor().join();
+	    } catch (Exception e) {
+		e.printStackTrace(getLog().getErrorStream());
+		getNetProcessor().stop();
+	    }
+	closeStreams();
     }
 
     @Override

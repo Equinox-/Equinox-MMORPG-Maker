@@ -1,8 +1,16 @@
 package com.pi.common.net.client;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.*;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetHandler;
@@ -29,7 +37,6 @@ public abstract class NetClient {
 	    .synchronizedList(new ArrayList<Packet>());
     protected Object syncObject = new Object();
     protected NetHandler netHandle;
-    protected NetClientProcessingThread netProcessor;
     protected NetClientSpeedMonitor netSpeedMonitor;
 
     protected void connect(Socket sock, NetHandler netHandle) {
@@ -37,6 +44,12 @@ public abstract class NetClient {
 	netSpeedMonitor = new NetClientSpeedMonitor(this);
 	if (sock != null && sock.isConnected()) {
 	    try {
+		sock.setTrafficClass(24);
+	    } catch (SocketException e) {
+
+	    }
+	    try {
+		sock.setSoTimeout(30000);
 		this.dIn = new DataInputStream(this.sock.getInputStream());
 		this.dOut = new DataOutputStream(new BufferedOutputStream(
 			this.sock.getOutputStream(), 5120)); // 5kb buffer
@@ -46,10 +59,8 @@ public abstract class NetClient {
 	    this.netHandle = netHandle;
 	    this.netReader = new NetReaderThread(this);
 	    this.netWriter = new NetWriterThread(this);
-	    this.netProcessor = new NetClientProcessingThread(this);
 	    this.netReader.start();
 	    this.netWriter.start();
-	    this.netProcessor.start();
 	}
     }
 
@@ -200,10 +211,6 @@ public abstract class NetClient {
 	return netWriter;
     }
 
-    public NetClientProcessingThread getNetProcessor() {
-	return netProcessor;
-    }
-
     public void send(Packet packet) {
 	if (!quitting) {
 	    synchronized (syncObject) {
@@ -256,13 +263,6 @@ public abstract class NetClient {
 		e.printStackTrace(getLog().getErrorStream());
 	    }
 	}
-	if (getNetProcessor() != null && getNetProcessor().isAlive())
-	    try {
-		getNetProcessor().join();
-	    } catch (Exception e) {
-		e.printStackTrace(getLog().getErrorStream());
-		getNetProcessor().stop();
-	    }
 	closeStreams();
     }
 

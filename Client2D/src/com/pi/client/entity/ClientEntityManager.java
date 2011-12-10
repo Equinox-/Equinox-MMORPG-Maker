@@ -35,7 +35,7 @@ public class ClientEntityManager {
 
     public boolean saveEntity(Entity e) {
 	int id = e.getEntityID();
-	if (id != -1) {
+	if (id == -1) {
 	    while (true) {
 		if (!entityMap.containsKey(id))
 		    break;
