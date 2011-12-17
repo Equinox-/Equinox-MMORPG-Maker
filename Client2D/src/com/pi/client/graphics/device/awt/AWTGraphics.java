@@ -10,11 +10,11 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Map;
 
 import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.graphics.device.GraphicsStorage;
+import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.IGraphics;
+import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
 
 public class AWTGraphics extends IGraphics {
     private boolean graphicsRunning = true;
@@ -97,7 +97,7 @@ public class AWTGraphics extends IGraphics {
     }
 
     @Override
-    public void drawImage(String img, int dx, int dy, int dwidth, int dheight,
+    public void drawImage(int img, int dx, int dy, int dwidth, int dheight,
 	    int sx, int sy, int swidth, int sheight) {
 	Image image = imageManager.fetchImage(img);
 	if (image != null)
@@ -151,7 +151,7 @@ public class AWTGraphics extends IGraphics {
     }
 
     @Override
-    public int getImageWidth(String graphic) {
+    public int getImageWidth(int graphic) {
 	BufferedImage image = imageManager.fetchImage(graphic);
 	if (image != null)
 	    return image.getWidth();
@@ -159,7 +159,7 @@ public class AWTGraphics extends IGraphics {
     }
 
     @Override
-    public int getImageHeight(String graphic) {
+    public int getImageHeight(int graphic) {
 	BufferedImage image = imageManager.fetchImage(graphic);
 	if (image != null)
 	    return image.getHeight();
@@ -187,7 +187,7 @@ public class AWTGraphics extends IGraphics {
     }
 
 	@Override
-	public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+	public GraphicsHeap<ImageStorage> loadedGraphics() {
 		return imageManager.loadedMap();
 	}
 }

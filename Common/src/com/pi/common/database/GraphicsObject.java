@@ -7,22 +7,22 @@ import com.pi.common.contants.GlobalConstants;
 
 public class GraphicsObject implements Serializable {
     private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-    private String graphic;
+    private int graphic;
     private float tX, tY, tWidth, tHeight;
 
     public GraphicsObject() {
     }
 
-    public GraphicsObject(String graphic) {
+    public GraphicsObject(int graphic) {
 	this.graphic = graphic;
     }
 
-    public GraphicsObject(String graphic, float x, float y, float width, float height) {
+    public GraphicsObject(int graphic, float x, float y, float width, float height) {
 	this.graphic = graphic;
 	setPosition(x, y, width, height);
     }
 
-    public void setGraphic(String graphic) {
+    public void setGraphic(int graphic) {
 	this.graphic = graphic;
     }
 
@@ -33,7 +33,7 @@ public class GraphicsObject implements Serializable {
 	this.tHeight = height;
     }
 
-    public String getGraphic() {
+    public int getGraphic() {
 	return graphic;
     }
 

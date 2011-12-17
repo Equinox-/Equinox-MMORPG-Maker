@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.media.opengl.GLProfile;
 
@@ -12,15 +13,14 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
+import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
 
 public class TextureManager extends Thread {
     private static long textureExpiry = 30000; // 30 seconds
     private GLGraphics glGraphics;
-    private Map<String, TextureStorage> map = Collections
-	    .synchronizedMap(new HashMap<String, TextureStorage>());
-    private Map<String, Long> loadQueue = Collections
-	    .synchronizedMap(new HashMap<String, Long>());
+    private GraphicsHeap<TextureStorage> map = new GraphicsHeap<TextureStorage>();
+    private Vector<Integer> loadQueue = new Vector<Integer>();
     private boolean running = true;
     private final Client client;
     private Object syncObject = new Object();
@@ -37,20 +37,20 @@ public class TextureManager extends Thread {
      * thread has a GLContext bound to it. Will also add the graphic to the
      * loadQueue if it isn't loaded.
      * 
-     * @param id
+     * @param texID
      * @return the texture object, or null if not loaded
      */
-    public Texture fetchTexture(String id) {
+    public Texture fetchTexture(int texID) {
 	synchronized (syncObject) {
-	    TextureStorage tS = map.get(id);
+	    TextureStorage tS = map.get(texID);
 	    if (tS == null || tS.texData == null) {
-		loadQueue.put(id, System.currentTimeMillis());
+		loadQueue.add(texID);
 		return null;
 	    }
 	    tS.lastUsed = System.currentTimeMillis();
 	    if (tS.texData != null && tS.tex == null)
 		tS.tex = TextureIO.newTexture(tS.texData);
-	    map.put(id, tS);
+	    map.set(texID, tS);
 	    return tS.tex;
 	}
     }
@@ -65,8 +65,8 @@ public class TextureManager extends Thread {
 	}
     }
 
-    private TextureData getTextureData(String id) {
-	File tex = Paths.getGraphicsFile(id);
+    private TextureData getTextureData(Integer oldestID) {
+	File tex = Paths.getGraphicsFile(oldestID);
 	if (tex == null) {
 	    return null;
 	} else {
@@ -99,15 +99,18 @@ public class TextureManager extends Thread {
 
     private void removeExpired() {
 	synchronized (syncObject) {
-	    for (String i : map.keySet()) {
-		if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
-		    if (glGraphics.getCore() != null
-			    && glGraphics.getCore().getGL() != null
-			    && map.get(i).tex != null) {
-			map.get(i).tex.destroy(glGraphics.getCore().getGL());
+	    for (int i = 0; i < map.size(); i++) {
+		if (map.get(i) != null) {
+		    if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
+			if (glGraphics.getCore() != null
+				&& glGraphics.getCore().getGL() != null
+				&& map.get(i).tex != null) {
+			    map.get(i).tex
+				    .destroy(glGraphics.getCore().getGL());
+			}
+			map.get(i).texData.flush();
+			map.remove(i);
 		    }
-		    map.get(i).texData.flush();
-		    map.remove(i);
 		}
 	    }
 	}
@@ -116,24 +119,13 @@ public class TextureManager extends Thread {
     private void doRequest() {
 	synchronized (syncObject) {
 	    long oldestTime = Long.MAX_VALUE;
-	    String oldestID = null;
-	    for (String i : loadQueue.keySet()) {
-		long requestTime = loadQueue.get(i);
-		if (System.currentTimeMillis() - requestTime > textureExpiry) {
-		    loadQueue.remove(i);
-		} else {
-		    if (oldestTime > requestTime && i != null) {
-			oldestTime = requestTime;
-			oldestID = i;
-		    }
-		}
-	    }
-	    if (oldestID != null) {
+	    int oldestID = loadQueue.size() > 0 ? loadQueue.get(0) : -1;
+	    if (oldestID != -1) {
 		loadQueue.remove(oldestID);
 		TextureStorage tX = new TextureStorage();
 		tX.texData = getTextureData(oldestID);
 		tX.lastUsed = System.currentTimeMillis();
-		map.put(oldestID, tX);
+		map.set(oldestID, tX);
 	    }
 	}
     }
@@ -148,7 +140,7 @@ public class TextureManager extends Thread {
 	}
     }
 
-    public Map<String, TextureStorage> loadedMap() {
-	return Collections.unmodifiableMap(map);
+    public GraphicsHeap<? extends GraphicsStorage> loadedMap() {
+	return map;
     }
 }

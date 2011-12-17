@@ -5,20 +5,23 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
+import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
 
 public class ImageManager extends Thread {
     private static long imageExpiry = 30000; // 30 seconds
-    private Map<String, ImageStorage> map = Collections
-	    .synchronizedMap(new HashMap<String, ImageStorage>());
-    private Map<String, Long> loadQueue = Collections
-	    .synchronizedMap(new HashMap<String, Long>());
+    private GraphicsHeap<ImageStorage> map = new GraphicsHeap<ImageStorage>();
+    private Vector<Integer> loadQueue = new Vector<Integer>();
+    /*
+     * private Map<Integer, Long> loadQueue = Collections .synchronizedMap(new
+     * HashMap<Integer, Long>());
+     */
     private boolean running = true;
     private final Client client;
 
@@ -28,17 +31,18 @@ public class ImageManager extends Thread {
 	super.start();
     }
 
-    public BufferedImage fetchImage(String id) {
+    public BufferedImage fetchImage(int graphic) {
 	synchronized (map) {
 	    if (!running)
 		return null;
-	    ImageStorage tS = map.get(id);
+	    ImageStorage tS = map.get(graphic);
 	    if (tS == null) {
-		loadQueue.put(id, System.currentTimeMillis());
+		// loadQueue.put(graphic, System.currentTimeMillis());
+		loadQueue.add(graphic);
 		return null;
 	    }
 	    tS.lastUsed = System.currentTimeMillis();
-	    map.put(id, tS);
+	    map.set(graphic, tS);
 	    return tS.img;
 	}
     }
@@ -52,7 +56,7 @@ public class ImageManager extends Thread {
 	}
     }
 
-    private synchronized BufferedImage loadImage(String id) {
+    private synchronized BufferedImage loadImage(Integer id) {
 	File img = Paths.getGraphicsFile(id);
 	if (img == null) {
 	    return null;
@@ -69,14 +73,12 @@ public class ImageManager extends Thread {
     public void run() {
 	client.getLog().fine("Starting Image Manager Thread");
 	while (running) {
-	    synchronized (map) {
-		String oldestRequest = oldestRequest();
-		if (oldestRequest != null) {
-		    ImageStorage tX = new ImageStorage();
-		    tX.img = loadImage(oldestRequest);
-		    tX.lastUsed = System.currentTimeMillis();
-		    map.put(oldestRequest, tX);
-		}
+	    int oldestRequest = oldestRequest();
+	    if (oldestRequest != -1) {
+		ImageStorage tX = new ImageStorage();
+		tX.img = loadImage(oldestRequest);
+		tX.lastUsed = System.currentTimeMillis();
+		map.set(oldestRequest, tX);
 	    }
 	    removeExpired();
 	}
@@ -84,8 +86,8 @@ public class ImageManager extends Thread {
     }
 
     private void removeExpired() {
-	synchronized (map) {
-	    for (String i : map.keySet()) {
+	for (int i = 0; i < map.capacity(); i++) {
+	    if (map.get(i) != null) {
 		if (System.currentTimeMillis() - map.get(i).lastUsed > imageExpiry) {
 		    ImageStorage str = map.remove(i);
 		    if (str != null && str.img != null)
@@ -95,24 +97,19 @@ public class ImageManager extends Thread {
 	}
     }
 
-    private String oldestRequest() {
+    private int oldestRequest() {
 	synchronized (map) {
-	    long oldestTime = Long.MAX_VALUE;
-	    String oldestID = null;
-	    for (String i : loadQueue.keySet()) {
-		long requestTime = loadQueue.get(i);
-		if (System.currentTimeMillis() - requestTime > imageExpiry) {
-		    loadQueue.remove(i);
-		} else {
-		    if (oldestTime > requestTime) {
-			oldestTime = requestTime;
-			oldestID = i;
-		    }
-		}
-	    }
-	    if (oldestID != null)
-		loadQueue.remove(oldestID);
-	    return oldestID;
+	    /*
+	     * long oldestTime = Long.MAX_VALUE; int oldestID = -1; for (Integer
+	     * i : loadQueue.keySet()) { long requestTime = loadQueue.get(i); if
+	     * (System.currentTimeMillis() - requestTime > imageExpiry) {
+	     * loadQueue.remove(i); } else { if (oldestTime > requestTime) {
+	     * oldestTime = requestTime; oldestID = i; } } } if (oldestID != -1)
+	     * loadQueue.remove(oldestID); return oldestID;
+	     */
+	    if (loadQueue.size() > 0)
+		return loadQueue.remove(0);
+	    return -1;
 	}
     }
 
@@ -125,14 +122,14 @@ public class ImageManager extends Thread {
 	    System.exit(0);
 	}
 	loadQueue.clear();
-	/*
-	 * synchronized (map) { for (String s : map.keySet()) {
-	 * synchronized (map) { ImageStorage str = map.remove(s); if (str
-	 * != null && str.img != null) str.img.flush(); } } }
-	 */
+	for (int i = 0; i < map.capacity(); i++) {
+	    ImageStorage str = map.remove(i);
+	    if (str != null && str.img != null)
+		str.img.flush();
+	}
     }
 
-    public Map<String, ImageStorage> loadedMap() {
-	return Collections.unmodifiableMap(map);
+    public GraphicsHeap<ImageStorage> loadedMap() {
+	return map;
     }
 }

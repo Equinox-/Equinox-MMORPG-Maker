@@ -16,11 +16,11 @@ public class GraphicsAnimation extends GraphicsObject {
 	this.lastFrame = System.currentTimeMillis();
     }
 
-    public GraphicsAnimation(int frames, long frameTime, String graphic) {
+    public GraphicsAnimation(int frames, long frameTime, int graphic) {
 	this(frames, frameTime);
 	setGraphic(graphic);
     }
-    public GraphicsAnimation(int frames, long frameTime, String graphic, int x, int y, int width, int height) {
+    public GraphicsAnimation(int frames, long frameTime, int graphic, int x, int y, int width, int height) {
 	this(frames, frameTime, graphic);
 	setPosition(x, y, width, height);
     }

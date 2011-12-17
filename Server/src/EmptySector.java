@@ -19,7 +19,7 @@ public class EmptySector {
 	    for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
 		Tile t = new Tile();
 		GraphicsObject obj = new GraphicsObject();
-		obj.setGraphic("tiles_1");
+		obj.setGraphic(2);
 		obj.setPosition(0, 32, 32, 32);
 		t.setLayer(TileLayer.GROUND, obj);
 		sec.setLocalTile(x, y, t);
@@ -27,7 +27,7 @@ public class EmptySector {
 	for (int x = 0; x < 4; x++)
 	    for (int y = 0; y < 5; y++) {
 		GraphicsObject obj = new GraphicsObject();
-		obj.setGraphic("tiles_1");
+		obj.setGraphic(2);
 		obj.setPosition(x * TileConstants.TILE_WIDTH, (5 + y)
 			* TileConstants.TILE_HEIGHT, 32, 32);
 		sec.getLocalTile(5 + x, 5 + y).setLayer(TileLayer.FRINGE1, obj);
@@ -36,13 +36,13 @@ public class EmptySector {
     }
 
     public static void main(String[] args) throws IOException {
-	/*try {
+	try {
 	    SectorIO.write(Paths.getSectorFile(0, 0, 0), create());
 	} catch (IOException e) {
 	    e.printStackTrace();
-	}*/
+	}
 	EntityDef d =new EntityDef();
-	d.setGraphic("char_1");
+	d.setGraphic(3);
 	d.setPosition(0,0,128,192);
 	EntityDefIO.write(Paths.getEntityDef(0),d);
     }

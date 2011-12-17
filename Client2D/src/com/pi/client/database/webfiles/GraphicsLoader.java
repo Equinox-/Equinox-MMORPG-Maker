@@ -17,13 +17,16 @@ public class GraphicsLoader {
 		    "filelist");
 	    client.getLog().info("Downloading filelist...");
 	    download(new URL(ServerConfiguration.fileList), filelistNew);
-	    Map<String, Float> currentVersions = new HashMap<String, Float>();
+	    Map<Integer, Float> currentVersions = new HashMap<Integer, Float>();
 	    if (filelistCurrent.exists()) {
 		BufferedReader reader = new BufferedReader(new FileReader(
 			filelistCurrent));
 		while (reader.ready()) {
 		    String[] line = reader.readLine().split("\t");
-		    String name = line[0];
+		    String cleanedName = line[0];
+		    for (String s:Paths.imageFiles)
+			cleanedName = cleanedName.replace("." + s,"");
+		    Integer name = Integer.valueOf(line[0]);
 		    float ver;
 		    try {
 			ver = Float.valueOf(line[1]);

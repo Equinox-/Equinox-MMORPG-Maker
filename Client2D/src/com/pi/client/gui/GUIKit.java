@@ -7,7 +7,7 @@ import com.pi.common.database.GraphicsAnimation;
 public class GUIKit {
     public static class Graphics {
 	public static final GraphicsAnimation loader = new GraphicsAnimation(
-		12, 150, "loader", 0, 0, 126 * 12, 22);
+		12, 150, 1/*loader*/, 0, 0, 126 * 12, 22);
     }
 
     public static final PIStyle defaultStyle = new PIStyle();

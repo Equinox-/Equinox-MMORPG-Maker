@@ -1,16 +1,22 @@
 package com.pi.client.graphics.device.opengl;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
 
-import javax.media.opengl.*;
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
+import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.pi.client.graphics.device.DisplayManager;
+import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
 import com.pi.client.graphics.device.IGraphics;
 
@@ -85,7 +91,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     }
 
     @Override
-    public void drawImage(String texID, int dx, int dy, int dwidth,
+    public void drawImage(int texID, int dx, int dy, int dwidth,
 	    int dheight, int sx, int sy, int swidth, int sheight) {
 	Texture tex = textureManager.fetchTexture(texID);
 	if (tex != null) {
@@ -201,7 +207,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     }
 
     @Override
-    public int getImageWidth(String graphic) {
+    public int getImageWidth(int graphic) {
 	Texture tex = textureManager.fetchTexture(graphic);
 	if (tex != null)
 	    return tex.getWidth();
@@ -209,7 +215,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     }
 
     @Override
-    public int getImageHeight(String graphic) {
+    public int getImageHeight(int graphic) {
 	Texture tex = textureManager.fetchTexture(graphic);
 	if (tex != null)
 	    return tex.getHeight();
@@ -245,7 +251,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     }
 
     @Override
-    public Map<String, ? extends GraphicsStorage> loadedGraphics() {
+    public GraphicsHeap<? extends GraphicsStorage> loadedGraphics() {
 	return textureManager.loadedMap();
     }
 }

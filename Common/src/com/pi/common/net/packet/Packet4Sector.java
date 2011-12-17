@@ -35,7 +35,7 @@ public class Packet4Sector extends Packet {
 		for (TileLayer lyr : t.layerMap().keySet()) {
 		    o.writeInt(lyr.ordinal());
 		    GraphicsObject gO = t.layerMap().get(lyr);
-		    o.writeString(gO.getGraphic());
+		    o.writeInt(gO.getGraphic());
 		    o.writeFloat(gO.getPositionX());
 		    o.writeFloat(gO.getPositionY());
 		    o.writeFloat(gO.getPositionWidth());
@@ -69,7 +69,7 @@ public class Packet4Sector extends Packet {
 		    if (layer >= 0 && layer < TileLayer.values().length) {
 			t.setLayer(
 				TileLayer.values()[layer],
-				new GraphicsObject(o.readString(), o
+				new GraphicsObject(o.readInt(), o
 					.readFloat(), o.readFloat(), o
 					.readFloat(), o.readFloat()));
 		    }

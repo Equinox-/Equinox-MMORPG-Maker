@@ -5,10 +5,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Map;
 
 import com.pi.client.Client;
-import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
 import com.pi.common.database.GraphicsObject;
 
 public abstract class IGraphics {
@@ -53,10 +51,10 @@ public abstract class IGraphics {
 	fillRect(r.x, r.y, r.width, r.height);
     }
 
-    public abstract void drawImage(String graphic, int dx, int dy, int dwidth,
+    public abstract void drawImage(int graphic, int dx, int dy, int dwidth,
 	    int dheight, int sx, int sy, int swidth, int sheight);
 
-    public void drawImage(String graphic, int dx, int dy, int sx, int sy,
+    public void drawImage(int graphic, int dx, int dy, int sx, int sy,
 	    int swidth, int sheight) {
 	drawImage(graphic, dx, dy, swidth, sheight, sx, sy, swidth, sheight);
     }
@@ -73,7 +71,7 @@ public abstract class IGraphics {
 		(int) obj.getPositionHeight());
     }
 
-    public void drawImage(String graphic, int dx, int dy) {
+    public void drawImage(int graphic, int dx, int dy) {
 	drawImage(graphic, dx, dy, 0, 0, getImageWidth(graphic),
 		getImageHeight(graphic));
     }
@@ -113,9 +111,9 @@ public abstract class IGraphics {
 	}
     }
 
-    public abstract int getImageWidth(String graphic);
+    public abstract int getImageWidth(int graphic);
 
-    public abstract int getImageHeight(String graphic);
+    public abstract int getImageHeight(int graphic);
 
     public abstract void drawPoint(int x, int y);
 
@@ -211,5 +209,5 @@ public abstract class IGraphics {
 	setClip(new Rectangle(x, y, width, height));
     }
     
-    public abstract Map<String, ? extends GraphicsStorage> loadedGraphics();
+    public abstract GraphicsHeap<? extends GraphicsStorage> loadedGraphics();
 }

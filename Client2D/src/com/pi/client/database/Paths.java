@@ -7,7 +7,7 @@ import javax.swing.filechooser.FileSystemView;
 import com.pi.common.database.SectorLocation;
 
 public class Paths {
-    private static String[] imageFiles = { "gif", "jpg", "jpeg", "png" };
+    public final static String[] imageFiles = { "gif", "jpg", "jpeg", "png" };
 
     public enum OperatingSystem {
 	MAC, WINDOWS, LINUX, UNKNOWN;
@@ -68,14 +68,14 @@ public class Paths {
 	return f;
     }
 
-    public static File getGraphicsFile(final String id) {
+    public static File getGraphicsFile(final int id) {
 	File gDir = getGraphicsDirectory();
 	for (String ext : imageFiles) {
 	    File f = new File(gDir, id + "." + ext);
 	    if (f.exists())
 		return f;
-	    if (id.endsWith(ext))
-		return new File(gDir, id);
+	    /*if (oldestID.endsWith(ext))
+		return new File(gDir, oldestID);*/
 	}
 	return null;
     }
