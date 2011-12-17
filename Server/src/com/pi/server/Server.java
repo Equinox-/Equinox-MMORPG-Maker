@@ -1,7 +1,5 @@
 package com.pi.server;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -11,7 +9,6 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
-import com.pi.common.game.Entity;
 import com.pi.server.client.ClientManager;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
@@ -32,6 +29,8 @@ public class Server {
     private ServerEntityManager entityManager;
     private ClientManager clientManager;
     private Definitions defs;
+    private PIResourceViewer rcView;
+    private boolean disposing = false;
 
     public NetServer getNetwork() {
 	return network;
@@ -52,7 +51,7 @@ public class Server {
     public Server() {
 	serverThreads = new ThreadGroup("Server");
 	try {
-	    final PIResourceViewer rcView = new PIResourceViewer("Server");
+	    rcView = new PIResourceViewer("Server");
 	    PILoggerPane pn = new PILoggerPane();
 	    rcView.addTab("Logger", pn);
 	    rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
@@ -60,11 +59,8 @@ public class Server {
 	    rcView.addWindowListener(new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
-		    if (serverThreads.activeCount() <= 0) {
-			serverThreads.destroy();
-			rcView.dispose();
-		    }
-		    dispose();
+		    if (!disposing)
+			dispose();
 		}
 	    });
 	    log = new PILogger(Paths.getLogFile(), pn.logOut);
@@ -80,21 +76,13 @@ public class Server {
 	    rcView.addTab("Sectors",
 		    new SectorMonitorPanel(world.getSectorManager()));
 	    defs = new Definitions(this);
-	    rcView.tabs.addMouseListener(new MouseAdapter() {
-		public void mouseClicked(MouseEvent e) {
-		    if (e.getButton() == MouseEvent.BUTTON3) {
-			Entity ent = entityManager.getEntity(0);
-			ent.x += 1;
-			ent.z += 1;
-		    }
-		}
-	    });
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
     }
 
     public void dispose() {
+	disposing = true;
 	log.close();
 	if (network != null)
 	    network.dispose();
@@ -102,9 +90,21 @@ public class Server {
 	    database.save();
 	if (world != null)
 	    world.dispose();
-	defs.dispose();
-	// while (serverThreads.activeCount() > 0)
-	// serverThreads.destroy();
+	if (defs != null)
+	    defs.dispose();
+	long timeout = System.currentTimeMillis() + 10000;
+	while (serverThreads.activeCount() > 0) {
+	    try {
+		Thread.sleep(100);
+	    } catch (InterruptedException e) {
+	    }
+	    if (System.currentTimeMillis() > timeout)
+		break;
+	}
+	if (serverThreads.activeCount() == 0)
+	    serverThreads.destroy();
+	if (rcView != null)
+	    rcView.dispose();
     }
 
     public ServerEntityManager getServerEntityManager() {

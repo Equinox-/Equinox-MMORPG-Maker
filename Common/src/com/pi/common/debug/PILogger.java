@@ -7,7 +7,7 @@ import java.util.logging.*;
 
 public class PILogger {
     String lastMessage = "Loading...";
-    private final Level level = Level.FINE;
+    private final Level level = Level.ALL;
     private final Handler handler;
     private final Formatter formatter;
     public boolean showDate = false, showTime = false, showCode = false,

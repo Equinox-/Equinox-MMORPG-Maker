@@ -35,13 +35,18 @@ public class Packet9EntityData extends Packet {
 	    layer = TileLayer.MASK1;
 	defID = pIn.readInt();
     }
-    
-    public static Packet9EntityData create(Entity e){
+
+    public static Packet9EntityData create(Entity e) {
 	Packet9EntityData pack = new Packet9EntityData();
 	pack.defID = e.getEntityDef();
 	pack.entID = e.getEntityID();
 	pack.layer = e.getLayer();
 	pack.loc = e;
 	return pack;
+    }
+
+    @Override
+    public int getID() {
+	return 9;
     }
 }

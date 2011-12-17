@@ -23,4 +23,8 @@ public class Packet11LocalEntityID extends Packet {
 	pack.entityID = entity;
 	return pack;
     }
+    @Override
+    public int getID() {
+	return 11;
+    }
 }

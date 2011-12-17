@@ -33,4 +33,9 @@ public class Packet0Disconnect extends Packet {
 	reason = dIn.readString();
 	details = dIn.readString();
     }
+
+    @Override
+    public int getID() {
+	return 0;
+    }
 }

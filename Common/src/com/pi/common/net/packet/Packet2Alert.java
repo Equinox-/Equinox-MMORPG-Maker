@@ -52,4 +52,8 @@ public class Packet2Alert extends Packet {
 	    alertType = AlertType.NONE;
 	}
     }
+    @Override
+    public int getID() {
+	return 2;
+    }
 }

@@ -20,4 +20,8 @@ public class Packet1Login extends Packet {
 	username = dIn.readString();
 	password = dIn.readString();
     }
+    @Override
+    public int getID() {
+	return 1;
+    }
 }

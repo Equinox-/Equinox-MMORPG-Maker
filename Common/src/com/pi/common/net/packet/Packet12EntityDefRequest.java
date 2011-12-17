@@ -17,5 +17,8 @@ public class Packet12EntityDefRequest extends Packet {
     protected void readData(PacketInputStream pIn) throws IOException {
 	defID = pIn.readInt();
     }
-
+    @Override
+    public int getID() {
+	return 12;
+    }
 }

@@ -40,5 +40,8 @@ public class Packet7EntityMove extends Packet {
 	moved = new Location(x, plane, z);
 	entityLayer = TileLayer.values()[pIn.readInt()];
     }
-
+    @Override
+    public int getID() {
+	return 7;
+    }
 }

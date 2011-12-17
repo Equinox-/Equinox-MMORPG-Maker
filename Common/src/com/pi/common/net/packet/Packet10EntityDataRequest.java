@@ -23,4 +23,8 @@ public class Packet10EntityDataRequest extends Packet {
 	r.entityID = entity;
 	return r;
     }
+    @Override
+    public int getID() {
+	return 10;
+    }
 }

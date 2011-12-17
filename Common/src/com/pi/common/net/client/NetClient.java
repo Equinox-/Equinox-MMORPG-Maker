@@ -8,9 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Vector;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetHandler;
@@ -31,10 +29,10 @@ public abstract class NetClient {
     protected NetWriterThread netWriter;
     protected String errorReason;
     protected String errorDetails;
-    protected List<Packet> processQueue = Collections
-	    .synchronizedList(new ArrayList<Packet>());
-    protected List<Packet> sendQueue = Collections
-	    .synchronizedList(new ArrayList<Packet>());
+    protected Vector<Packet> l_processQueue = new Vector<Packet>();
+    protected Vector<Packet> l_sendQueue = new Vector<Packet>();
+    protected Vector<Packet> h_processQueue = new Vector<Packet>();
+    protected Vector<Packet> h_sendQueue = new Vector<Packet>();
     protected Object syncObject = new Object();
     protected NetHandler netHandle;
     protected NetClientSpeedMonitor netSpeedMonitor;
@@ -102,16 +100,24 @@ public abstract class NetClient {
 		readLength = dIn.readInt();
 	    avaliable = dIn.available();
 	    if (readLength != null && avaliable >= readLength) {
-		getLog().finest("Read pack: " + readLength);
+		long cTime = System.currentTimeMillis();
+		String print = "read " + readLength + " bytes @" + cTime;
 		byte[] data = new byte[readLength];
 		netSpeedMonitor.addRecieve(readLength);
-		dIn.read(data);
+		dIn.readFully(data);
+		print += " read in " + (System.currentTimeMillis() - cTime)
+			+ "ms";
+		cTime = System.currentTimeMillis();
 		readLength = null;
 		Packet packet = Packet.getPacket(new PacketInputStream(
 			new ByteArrayInputStream(data)));
+		/*getLog().info(
+			print + " and id in "
+				+ (System.currentTimeMillis() - cTime) + "ms");*/
 		if (packet != null) {
-		    processQueue.add(packet);
-		    getLog().finest("Reading packet " + packet.getName());
+		    (packet.isHighPriority() ? h_processQueue : l_processQueue)
+			    .add(packet);
+		    getLog().finest("Reading packet " + packet.getName() + ": " + packet.isHighPriority());
 		    read = true;
 		} else {
 		    error("End Of Stream", "");
@@ -129,12 +135,15 @@ public abstract class NetClient {
 	boolean sent = false;
 	try {
 	    Packet packet;
+	    Vector<Packet> sendQueue = (!h_sendQueue.isEmpty() ? h_sendQueue
+		        : l_sendQueue);
 	    if (!sendQueue.isEmpty()
 		    && (packetTimeout == 0 || System.currentTimeMillis()
 			    - sendQueue.get(0).timeStamp >= packetTimeout)) {
 		synchronized (syncObject) {
 		    packet = (Packet) sendQueue.remove(0);
 		}
+		long cTime = System.currentTimeMillis();
 		getLog().finest("Sending packet " + packet.getName());
 		byte[] data;
 		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -146,9 +155,13 @@ public abstract class NetClient {
 		dOut.writeInt(data.length);
 		dOut.write(data);
 		dOut.flush();
-		getLog().finest("Write pack: " + data.length);
+		/*getLog().info(
+			"Sent Packet @" + cTime + " in "
+				+ (System.currentTimeMillis() - cTime) + "ms");*/
 		netSpeedMonitor.addSent(data.length + 4);
 		sent = true;
+	    } else if (!l_sendQueue.isEmpty()) {
+
 	    }
 	} catch (Exception e) {
 	    if (!hasErrored) {
@@ -214,23 +227,42 @@ public abstract class NetClient {
     public void send(Packet packet) {
 	if (!quitting) {
 	    synchronized (syncObject) {
-		sendQueue.add(packet);
+		(packet.isHighPriority() ? h_sendQueue : l_sendQueue)
+			.add(packet);
 	    }
 	}
     }
 
     public boolean shouldProcessPacket() {
-	return !processQueue.isEmpty();
+	return !l_processQueue.isEmpty() || !h_processQueue.isEmpty();
     }
 
-    public void processPacket() {
-	for (int i = 0; i < 100 && !processQueue.isEmpty(); i++) {
-	    Packet packet = (Packet) processQueue.remove(0);
+    public void processLowPacket() {
+	// for (int i = 0; i < 100 && !processQueue.isEmpty(); i++) {
+	if (h_processQueue.isEmpty() && !l_processQueue.isEmpty()) {
+	    Packet packet = (Packet) l_processQueue.remove(0);
+	    long cTime = System.currentTimeMillis();
 	    getHandle().processPacket(packet);
-	    getLog().finest("Processing packet " + packet.getName());
+	    /*getLog().info(
+		    "Processed " + packet.getName() + " @" + cTime + " in "
+			    + (System.currentTimeMillis() - cTime) + "ms");*/
 	}
+	if (hasErrored() && h_processQueue.isEmpty()
+		&& l_processQueue.isEmpty())
+	    dispose(errorReason, errorDetails);
+    }
 
-	if (hasErrored() && processQueue.isEmpty())
+    public void processHighPacket() {
+	if (!h_processQueue.isEmpty()) {
+	    Packet packet = (Packet) h_processQueue.remove(0);
+	    long cTime = System.currentTimeMillis();
+	    getHandle().processPacket(packet);
+	    /*getLog().info(
+		    "Processed " + packet.getName() + " @" + cTime + " in "
+			    + (System.currentTimeMillis() - cTime) + "ms");*/
+	}
+	if (hasErrored() && h_processQueue.isEmpty()
+		&& l_processQueue.isEmpty())
 	    dispose(errorReason, errorDetails);
     }
 

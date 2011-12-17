@@ -23,4 +23,8 @@ public class Packet6BlankSector extends Packet {
 	baseY = dIn.readInt();
 	baseZ = dIn.readInt();
     }
+    @Override
+    public int getID() {
+	return 6;
+    }
 }

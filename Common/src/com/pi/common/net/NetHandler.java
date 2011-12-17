@@ -8,15 +8,12 @@ public abstract class NetHandler {
     protected abstract void process(Packet p);
 
     public final void processPacket(Packet p) {
-	Class<? extends NetHandler> myClass = getClass();
 	try {
-	    Method m = myClass.getMethod("process", p.getClass());
-	    m.invoke(this, p.getClass().cast(p));
+	    Method m = getClass().getMethod("process", p.getClass());
+	    m.invoke(this, p);
 	    return;
 	} catch (Exception e) {
-	    System.err.println("Error for packet: "
-		    + myClass.getCanonicalName());
-	    e.printStackTrace();
+	    System.err.println("No custom method for packet: " + p.getName());
 	}
 	process(p);
     }

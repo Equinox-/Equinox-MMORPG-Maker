@@ -34,5 +34,8 @@ public class Packet13EntityDef extends Packet {
 	    throw new IOException("Bad Class: " + e.toString());
 	}
     }
-
+    @Override
+    public int getID() {
+	return 13;
+    }
 }

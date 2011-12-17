@@ -19,6 +19,7 @@ import com.pi.common.net.packet.Packet14ClientMove;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
 	MouseMotionListener, MouseWheelListener {
+    private final static boolean localUpdate = false;
     private final Client client;
     private final GameRenderLoop gameRenderLoop;
 
@@ -56,22 +57,22 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 	    if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 		Location nL = new Location(ent.x + 1, ent.plane, ent.z);
 		client.getNetwork().send(Packet14ClientMove.create(nL));
-		if (client.getEntityManager().getLocalEntity() != null)
+		if (localUpdate && client.getEntityManager().getLocalEntity() != null)
 		    client.getEntityManager().getLocalEntity().setLocation(nL);
 	    } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 		Location nL = new Location(ent.x - 1, ent.plane, ent.z);
 		client.getNetwork().send(Packet14ClientMove.create(nL));
-		if (client.getEntityManager().getLocalEntity() != null)
+		if (localUpdate && client.getEntityManager().getLocalEntity() != null)
 		    client.getEntityManager().getLocalEntity().setLocation(nL);
 	    } else if (e.getKeyCode() == KeyEvent.VK_UP) {
 		Location nL = new Location(ent.x, ent.plane, ent.z - 1);
 		client.getNetwork().send(Packet14ClientMove.create(nL));
-		if (client.getEntityManager().getLocalEntity() != null)
+		if (localUpdate && client.getEntityManager().getLocalEntity() != null)
 		    client.getEntityManager().getLocalEntity().setLocation(nL);
 	    } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 		Location nL = new Location(ent.x, ent.plane, ent.z + 1);
 		client.getNetwork().send(Packet14ClientMove.create(nL));
-		if (client.getEntityManager().getLocalEntity() != null)
+		if (localUpdate && client.getEntityManager().getLocalEntity() != null)
 		    client.getEntityManager().getLocalEntity().setLocation(nL);
 	    }
 	}

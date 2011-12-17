@@ -2,6 +2,7 @@ package com.pi.common.net.packet;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +10,10 @@ import com.pi.common.net.client.PacketInputStream;
 import com.pi.common.net.client.PacketOutputStream;
 
 public abstract class Packet {
-    public final static Map<Integer, Class<? extends Packet>> idMapping = new HashMap<Integer, Class<? extends Packet>>();
-    public final static Map<Class<? extends Packet>, Integer> classMapping = new HashMap<Class<? extends Packet>, Integer>();
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Packet>[] idMapping = new Class[0];
+    public static boolean[] priorityMapping = new boolean[0];
+    //public final static Map<Class<? extends Packet>, Integer> classMapping = new HashMap<Class<? extends Packet>, Integer>();
     public final long timeStamp = System.currentTimeMillis();
 
     static {
@@ -21,34 +24,48 @@ public abstract class Packet {
 	registerPacket(4, Packet4Sector.class);
 	registerPacket(5, Packet5SectorRequest.class);
 	registerPacket(6, Packet6BlankSector.class);
-	registerPacket(7, Packet7EntityMove.class);
+	registerPacket(7, Packet7EntityMove.class, true);
 	registerPacket(8, Packet8EntityDispose.class);
-	registerPacket(9, Packet9EntityData.class);
+	registerPacket(9, Packet9EntityData.class, true);
 	registerPacket(10, Packet10EntityDataRequest.class);
 	registerPacket(11, Packet11LocalEntityID.class);
 	registerPacket(12, Packet12EntityDefRequest.class);
 	registerPacket(13, Packet13EntityDef.class);
-	registerPacket(14, Packet14ClientMove.class);
+	registerPacket(14, Packet14ClientMove.class, true);
     }
 
     public Packet() {
     }
 
     public static void registerPacket(int id, Class<? extends Packet> pClass) {
-	if (idMapping.containsKey(Integer.valueOf(id))) {
+	registerPacket(id, pClass, false);
+    }
+
+    public static void registerPacket(int id, Class<? extends Packet> pClass,
+	    boolean highPriority) {
+	if (id < idMapping.length && idMapping[id] != null) {
 	    throw new IllegalArgumentException("Duplicate packet id: " + id);
-	} else if (classMapping.containsKey(pClass)) {
+	}/* else if (classMapping.containsKey(pClass)) {
 	    throw new IllegalArgumentException("Duplicate packet class: "
 		    + pClass.getName());
-	} else {
-	    idMapping.put(Integer.valueOf(id), pClass);
-	    classMapping.put(pClass, Integer.valueOf(id));
+	}*/ else {
+	    if (id >= idMapping.length) {
+		idMapping = Arrays.copyOf(idMapping.clone(),
+			Math.max(id + 1, idMapping.length));
+	    }
+	    if (id >= priorityMapping.length) {
+		priorityMapping = Arrays.copyOf(priorityMapping.clone(),
+			Math.max(id + 1, idMapping.length));
+	    }
+	    idMapping[id] = pClass;
+	    priorityMapping[id] = highPriority;
+	    //classMapping.put(pClass, Integer.valueOf(id));
 	}
     }
 
     public static Packet getPacket(int id) {
 	try {
-	    Class<? extends Packet> clazz = idMapping.get(Integer.valueOf(id));
+	    Class<? extends Packet> clazz = idMapping[id];
 	    return clazz != null ? clazz.newInstance() : null;
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -57,8 +74,12 @@ public abstract class Packet {
 	}
     }
 
+    public boolean isHighPriority() {
+	return priorityMapping[getID()];
+    }
+
     public String getName() {
-	return idMapping.get(getID()).getSimpleName();
+	return getClass().getSimpleName();
     }
 
     protected static int stringByteLength(String str) {
@@ -83,13 +104,7 @@ public abstract class Packet {
 	writeData(pOut);
     }
 
-    public int getID() {
-	Integer id = classMapping.get(getClass());
-	if (id != null)
-	    return id.intValue();
-	else
-	    throw new NullPointerException("This packet is not registered!");
-    }
+    public abstract int getID();
 
     protected abstract void writeData(PacketOutputStream pOut)
 	    throws IOException;

@@ -17,7 +17,8 @@ public class NetClientProcessingThread extends Thread {
 		"Starting client " + netClient.getID() + " processing thread");
 	while (netClient.isConnected()
 		&& (!netClient.isQuitting() || netClient.shouldProcessPacket())) {
-	    netClient.processPacket();
+	    netClient.processHighPacket();
+	    netClient.processLowPacket();
 	}
 	netClient.getLog().finer(
 		"Quit client " + netClient.getID() + " processing thread");

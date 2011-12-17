@@ -78,5 +78,8 @@ public class Packet4Sector extends Packet {
 	    }
 	}
     }
-
+    @Override
+    public int getID() {
+	return 4;
+    }
 }

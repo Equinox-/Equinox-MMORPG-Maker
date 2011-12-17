@@ -26,4 +26,8 @@ public class Packet5SectorRequest extends Packet {
 	baseZ = dIn.readInt();
 	revision = dIn.readInt();
     }
+    @Override
+    public int getID() {
+	return 5;
+    }
 }

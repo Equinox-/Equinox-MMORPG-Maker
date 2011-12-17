@@ -73,7 +73,8 @@ public class ClientManager {
 	synchronized (clientMap) {
 	    for (Client c : clientMap.values()) {
 		if (c.getNetClient() != null) {
-		    c.getNetClient().processPacket();
+		    c.getNetClient().processHighPacket();
+		    c.getNetClient().processLowPacket();
 		}
 	    }
 	}

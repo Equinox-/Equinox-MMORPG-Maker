@@ -23,5 +23,8 @@ public class Packet8EntityDispose extends Packet {
     protected void readData(PacketInputStream pIn) throws IOException {
 	entityID = pIn.readInt();
     }
-
+    @Override
+    public int getID() {
+	return 8;
+    }
 }

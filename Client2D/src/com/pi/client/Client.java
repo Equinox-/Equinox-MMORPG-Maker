@@ -1,6 +1,8 @@
 package com.pi.client;
 
 import java.applet.Applet;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -22,6 +24,9 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
+import com.pi.common.game.Entity;
+import com.pi.common.net.packet.Packet2Alert;
+import com.pi.common.net.packet.Packet2Alert.AlertType;
 
 public class Client implements Disposable {
     static {
@@ -101,9 +106,12 @@ public class Client implements Disposable {
 	if (reView != null) {
 	    reView.dispose();
 	}
-	displayManager.dispose();
-	world.dispose();
-	defs.dispose();
+	if (displayManager != null)
+	    displayManager.dispose();
+	if (world != null)
+	    world.dispose();
+	if (defs != null)
+	    defs.dispose();
 	if (network != null)
 	    network.dispose();
     }
@@ -114,12 +122,16 @@ public class Client implements Disposable {
 
     public void setInGame(boolean val) {
 	this.inGame = val;
-	if (val){
-	    getDisplayManager().getRenderLoop().getMainMenu().unregisterFromApplet();
-	    getDisplayManager().getRenderLoop().getMainGame().registerToApplet();
-	}else{
-	    getDisplayManager().getRenderLoop().getMainGame().unregisterFromApplet();
-	    getDisplayManager().getRenderLoop().getMainMenu().registerToApplet();
+	if (val) {
+	    getDisplayManager().getRenderLoop().getMainMenu()
+		    .unregisterFromApplet();
+	    getDisplayManager().getRenderLoop().getMainGame()
+		    .registerToApplet();
+	} else {
+	    getDisplayManager().getRenderLoop().getMainGame()
+		    .unregisterFromApplet();
+	    getDisplayManager().getRenderLoop().getMainMenu()
+		    .registerToApplet();
 	}
     }
 
