@@ -1,9 +1,9 @@
-package com.pi.client.graphics.device;
+package com.pi.common.game;
 
 import java.util.Arrays;
 import java.util.Enumeration;
 
-public class GraphicsHeap<E> {
+public class ObjectHeap<E> {
     private static final int capacityIncrement = 10;
     private Object[] elementData = new Object[10];
     private int elements = 0;

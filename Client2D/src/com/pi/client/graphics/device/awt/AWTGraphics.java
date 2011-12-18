@@ -12,9 +12,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.IGraphics;
 import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
+import com.pi.common.game.ObjectHeap;
 
 public class AWTGraphics extends IGraphics {
     private boolean graphicsRunning = true;
@@ -187,7 +187,7 @@ public class AWTGraphics extends IGraphics {
     }
 
 	@Override
-	public GraphicsHeap<ImageStorage> loadedGraphics() {
+	public ObjectHeap<ImageStorage> loadedGraphics() {
 		return imageManager.loadedMap();
 	}
 }

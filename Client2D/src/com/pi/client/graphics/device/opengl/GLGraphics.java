@@ -16,9 +16,9 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
 import com.pi.client.graphics.device.IGraphics;
+import com.pi.common.game.ObjectHeap;
 
 public class GLGraphics extends IGraphics implements GLEventListener {
     private final Animator animator;
@@ -251,7 +251,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     }
 
     @Override
-    public GraphicsHeap<? extends GraphicsStorage> loadedGraphics() {
+    public ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
 	return textureManager.loadedMap();
     }
 }

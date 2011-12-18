@@ -11,6 +11,7 @@ import com.pi.client.Client;
 import com.pi.client.graphics.RenderLoop;
 import com.pi.client.graphics.device.awt.AWTGraphics;
 import com.pi.client.graphics.device.opengl.GLGraphics;
+import com.pi.common.game.ObjectHeap;
 
 public class DisplayManager {
     private boolean hasOpenGL = false;
@@ -19,7 +20,7 @@ public class DisplayManager {
     private Client client;
     private boolean showFps = true;
 
-    public GraphicsHeap<? extends GraphicsStorage> loadedGraphics() {
+    public ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
 	return graphics != null ? graphics.loadedGraphics() : null;
     }
 

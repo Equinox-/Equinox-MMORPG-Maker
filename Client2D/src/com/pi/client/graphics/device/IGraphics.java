@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 
 import com.pi.client.Client;
 import com.pi.common.database.GraphicsObject;
+import com.pi.common.game.ObjectHeap;
 
 public abstract class IGraphics {
     protected final DisplayManager mgr;
@@ -209,5 +210,5 @@ public abstract class IGraphics {
 	setClip(new Rectangle(x, y, width, height));
     }
     
-    public abstract GraphicsHeap<? extends GraphicsStorage> loadedGraphics();
+    public abstract ObjectHeap<? extends GraphicsStorage> loadedGraphics();
 }

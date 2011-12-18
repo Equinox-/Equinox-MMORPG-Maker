@@ -2,21 +2,19 @@ package com.pi.client.graphics.device.awt;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
-import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
+import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
+import com.pi.common.game.ObjectHeap;
 
 public class ImageManager extends Thread {
     private static long imageExpiry = 30000; // 30 seconds
-    private GraphicsHeap<ImageStorage> map = new GraphicsHeap<ImageStorage>();
+    private ObjectHeap<ImageStorage> map = new ObjectHeap<ImageStorage>();
     private Vector<Integer> loadQueue = new Vector<Integer>();
     /*
      * private Map<Integer, Long> loadQueue = Collections .synchronizedMap(new
@@ -129,7 +127,7 @@ public class ImageManager extends Thread {
 	}
     }
 
-    public GraphicsHeap<ImageStorage> loadedMap() {
+    public ObjectHeap<ImageStorage> loadedMap() {
 	return map;
     }
 }

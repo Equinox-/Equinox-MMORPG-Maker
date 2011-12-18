@@ -1,9 +1,6 @@
 package com.pi.client.graphics.device.opengl;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.media.opengl.GLProfile;
@@ -13,13 +10,13 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
-import com.pi.client.graphics.device.GraphicsHeap;
 import com.pi.client.graphics.device.GraphicsStorage;
+import com.pi.common.game.ObjectHeap;
 
 public class TextureManager extends Thread {
     private static long textureExpiry = 30000; // 30 seconds
     private GLGraphics glGraphics;
-    private GraphicsHeap<TextureStorage> map = new GraphicsHeap<TextureStorage>();
+    private ObjectHeap<TextureStorage> map = new ObjectHeap<TextureStorage>();
     private Vector<Integer> loadQueue = new Vector<Integer>();
     private boolean running = true;
     private final Client client;
@@ -140,7 +137,7 @@ public class TextureManager extends Thread {
 	}
     }
 
-    public GraphicsHeap<? extends GraphicsStorage> loadedMap() {
+    public ObjectHeap<? extends GraphicsStorage> loadedMap() {
 	return map;
     }
 }
