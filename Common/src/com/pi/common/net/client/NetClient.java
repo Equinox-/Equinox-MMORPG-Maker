@@ -29,9 +29,9 @@ public abstract class NetClient {
 	protected NetWriterThread netWriter;
 	protected String errorReason;
 	protected String errorDetails;
-	protected Vector<Packet> l_processQueue = new Vector<Packet>();
+	// protected Vector<Packet> l_processQueue = new Vector<Packet>();
 	protected Vector<Packet> l_sendQueue = new Vector<Packet>();
-	protected Vector<Packet> h_processQueue = new Vector<Packet>();
+	// protected Vector<Packet> h_processQueue = new Vector<Packet>();
 	protected Vector<Packet> h_sendQueue = new Vector<Packet>();
 	protected Object syncObject = new Object();
 	protected NetHandler netHandle;
@@ -108,8 +108,9 @@ public abstract class NetClient {
 				Packet packet = Packet.getPacket(new PacketInputStream(
 						new ByteArrayInputStream(data)));
 				if (packet != null) {
-					(packet.isHighPriority() ? h_processQueue : l_processQueue)
-							.add(packet);
+					(packet.isHighPriority() ? getHighProcessQueue()
+							: getLowProcessQueue()).add(new ClientPacket(this,
+							packet));
 					getLog().finest(
 							"Reading packet " + packet.getName() + ": "
 									+ packet.isHighPriority());
@@ -227,38 +228,31 @@ public abstract class NetClient {
 		}
 	}
 
-	public boolean shouldProcessPacket() {
-		return !l_processQueue.isEmpty() || !h_processQueue.isEmpty();
-	}
+	protected abstract Vector<ClientPacket> getLowProcessQueue();
 
-	public void processLowPacket() {
-		// for (int i = 0; i < 100 && !processQueue.isEmpty(); i++) {
-		if (h_processQueue.isEmpty() && !l_processQueue.isEmpty()) {
-			Packet packet = (Packet) l_processQueue.remove(0);
-			getHandle().processPacket(packet);
-			/*
-			 * getLog().info( "Processed " + packet.getName() + " @" + cTime +
-			 * " in " + (System.currentTimeMillis() - cTime) + "ms");
-			 */
-		}
-		if (hasErrored() && h_processQueue.isEmpty()
-				&& l_processQueue.isEmpty())
+	protected abstract Vector<ClientPacket> getHighProcessQueue();
+
+	public void processPacket(Packet p) {
+		if (p != null)
+			getHandle().processPacket(p);
+		if (hasErrored())
 			dispose(errorReason, errorDetails);
 	}
 
-	public void processHighPacket() {
-		if (!h_processQueue.isEmpty()) {
-			Packet packet = (Packet) h_processQueue.remove(0);
-			getHandle().processPacket(packet);
-			/*
-			 * getLog().info( "Processed " + packet.getName() + " @" + cTime +
-			 * " in " + (System.currentTimeMillis() - cTime) + "ms");
-			 */
-		}
-		if (hasErrored() && h_processQueue.isEmpty()
-				&& l_processQueue.isEmpty())
-			dispose(errorReason, errorDetails);
-	}
+	/*
+	 * public void processLowPacket() { // for (int i = 0; i < 100 &&
+	 * !processQueue.isEmpty(); i++) { if (h_processQueue.isEmpty() &&
+	 * !l_processQueue.isEmpty()) { Packet packet = (Packet)
+	 * l_processQueue.remove(0); getHandle().processPacket(packet); } if
+	 * (hasErrored() && h_processQueue.isEmpty() && l_processQueue.isEmpty())
+	 * dispose(errorReason, errorDetails); }
+	 * 
+	 * public void processHighPacket() { if (!h_processQueue.isEmpty()) { Packet
+	 * packet = (Packet) h_processQueue.remove(0);
+	 * getHandle().processPacket(packet); } if (hasErrored() &&
+	 * h_processQueue.isEmpty() && l_processQueue.isEmpty())
+	 * dispose(errorReason, errorDetails); }
+	 */
 
 	public void dispose() {
 		quitting = true;
@@ -282,13 +276,6 @@ public abstract class NetClient {
 				e.printStackTrace(getLog().getErrorStream());
 				getNetWriter().stop();
 			}
-		while (shouldProcessPacket()) {
-			try {
-				Thread.sleep(100l);
-			} catch (InterruptedException e) {
-				e.printStackTrace(getLog().getErrorStream());
-			}
-		}
 		shutdownSocket();
 	}
 

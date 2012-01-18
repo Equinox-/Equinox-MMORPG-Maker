@@ -59,17 +59,4 @@ public class ClientManager {
 	public ObjectHeap<Client> registeredClients() {
 		return clientMap;
 	}
-
-	public void processPacketLoop() {
-		synchronized (clientMap) {
-			Client c;
-			for (int i = 0; i < clientMap.size(); i++) {
-				c = clientMap.get(i);
-				if (c != null && c.getNetClient() != null) {
-					c.getNetClient().processHighPacket();
-					c.getNetClient().processLowPacket();
-				}
-			}
-		}
-	}
 }

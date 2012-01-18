@@ -7,7 +7,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 import com.pi.client.database.Paths;
-import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.debug.EntityMonitorPanel;
 import com.pi.client.debug.GraphicsMonitorPanel;
 import com.pi.client.debug.SectorMonitorPanel;
@@ -77,7 +76,7 @@ public class Client implements Disposable {
 		this.displayManager = new DisplayManager(this);
 
 		// PRE POST INIT
-		GraphicsLoader.load(this);
+		//GraphicsLoader.load(this);
 
 		reView.addTab("Graphics", new GraphicsMonitorPanel(this.displayManager));
 		this.world = new World(this);
