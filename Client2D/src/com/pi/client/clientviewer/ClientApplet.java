@@ -12,6 +12,7 @@ public class ClientApplet extends Applet {
 	setVisible(true);
 	setSize(500, 500);
 	setLayout(null);
+	setFocusTraversalKeysEnabled(false);
     }
 
     @Override

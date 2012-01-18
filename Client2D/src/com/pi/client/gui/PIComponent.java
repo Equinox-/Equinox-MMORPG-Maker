@@ -63,7 +63,7 @@ public class PIComponent implements Renderable, MouseWheelListener,
     public PIStyle getCurrentStyle() {
 	if (hovering && containsStyle(PIStyle.StyleType.Hover))
 	    return styles[PIStyle.StyleType.Hover.ordinal()];
-	if (isActive && containsStyle(PIStyle.StyleType.Active))
+	if ((isFocused || isActive) && containsStyle(PIStyle.StyleType.Active))
 	    return styles[PIStyle.StyleType.Active.ordinal()];
 	return styles[PIStyle.StyleType.Normal.ordinal()];
     }

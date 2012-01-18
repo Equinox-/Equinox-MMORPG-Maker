@@ -9,6 +9,7 @@ import com.pi.client.graphics.device.IGraphics;
 
 public class PIContainer extends PIComponent {
     protected List<PIComponent> children = new ArrayList<PIComponent>();
+    protected List<Integer> tabIndex = new ArrayList<Integer>();
 
     public void add(PIComponent child) {
 	children.add(child);
@@ -18,11 +19,25 @@ public class PIContainer extends PIComponent {
     public List<PIComponent> getChildren() {
 	return children;
     }
-    
-    public void compile(){
+
+    @Override
+    public void compile() {
 	super.compile();
-	for (PIComponent p:children){
+	for (PIComponent p : children) {
 	    p.compile();
+	}
+    }
+
+    public void setTabIndex(PIComponent p, int idx) {
+	int inIDX = children.indexOf(p);
+	if (inIDX != -1) {
+	    int tCIDX = tabIndex.indexOf(inIDX);
+	    if (tCIDX != -1)
+		tabIndex.remove(tCIDX);
+	    if (idx >= tabIndex.size())
+		tabIndex.add(inIDX);
+	    else if (idx >= 0)
+		tabIndex.add(idx, inIDX);
 	}
     }
 
@@ -100,8 +115,40 @@ public class PIContainer extends PIComponent {
 
     @Override
     public void keyTyped(KeyEvent e) {
-	super.keyTyped(e);
-	for (PIComponent child : children)
-	    child.keyTyped(e);
+	boolean consumed = false;
+
+	if (e.getKeyChar() == '\t') {
+	    int newIDX = getCurrentTabIndex() + 1;
+	    if (newIDX >= tabIndex.size())
+		newIDX = 0;
+	    if (newIDX < tabIndex.size()) {
+		for (PIComponent c : children)
+		    c.setFocused(false);
+		PIComponent c = children.get(tabIndex.get(newIDX));
+		if (c != null) {
+		    c.setFocused(true);
+		    consumed = true;
+		}
+	    }
+	}
+	if (!consumed) {
+	    super.keyTyped(e);
+	    for (PIComponent child : children) {
+		child.keyTyped(e);
+	    }
+	}
+    }
+
+    public int getCurrentTabIndex() {
+	int idx = -1;
+	for (int i = 0; i < children.size(); i++) {
+	    PIComponent c = children.get(i);
+	    if (c.isFocused) {
+		int nI = tabIndex.indexOf(i);
+		if (nI != -1)
+		    idx = nI;
+	    }
+	}
+	return idx;
     }
 }

@@ -1,6 +1,8 @@
 package com.pi.client.gui;
 
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import com.pi.client.graphics.device.IGraphics;
 
@@ -49,5 +51,15 @@ public class PICheckbox extends PIComponent {
 	bounds.setBounds(bounds.x + bounds.height + 4, bounds.y, bounds.width,
 		bounds.height);
 	return bounds;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+	super.keyPressed(e);
+	if (e.getKeyChar() == '\n' && isFocused) {
+	    mouseClicked(new MouseEvent(e.getComponent(), MouseEvent.MOUSE_CLICKED,
+		    System.currentTimeMillis(), 0, absX + (width / 2), absY
+			    + (height / 2), 1, false));
+	}
     }
 }

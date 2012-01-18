@@ -9,7 +9,7 @@ import com.pi.common.PICryptUtils;
 import com.pi.common.net.packet.Packet1Login;
 
 public class LoginContainer extends PIContainer {
-	PIComponent loginButton = new PIComponent();
+	PIComponent loginButton = new PIButton();
 	PIComponent usernameLabel = new PIComponent();
 	PIComponent passwordLabel = new PIComponent();
 	PITextField usernameField = new PITextField();
@@ -59,6 +59,9 @@ public class LoginContainer extends PIContainer {
 		add(passwordLabel);
 		add(usernameField);
 		add(passwordField);
+		setTabIndex(usernameField,0);
+		setTabIndex(passwordField,1);
+		setTabIndex(loginButton,2);
 	}
 
 	@Override
