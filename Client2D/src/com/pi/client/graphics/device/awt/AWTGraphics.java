@@ -10,6 +10,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.graphics.device.IGraphics;
@@ -17,8 +19,9 @@ import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
 import com.pi.common.game.ObjectHeap;
 
 public class AWTGraphics extends IGraphics {
-	private boolean graphicsRunning = true;
-	private final Thread graphicsLoop;
+	private volatile boolean graphicsRunning = false;
+	private final Timer timer;
+	private final TimerTask task;
 	private final Applet applet;
 	private long startTime;
 	private int frameCont = 0;
@@ -30,25 +33,16 @@ public class AWTGraphics extends IGraphics {
 		this.applet = mgr.getClient().getApplet();
 		startTime = System.currentTimeMillis();
 		imageManager = new ImageManager(mgr.getClient());
-		graphicsLoop = new Thread(mgr.getClient().getThreadGroup(), null,
-				"PI Graphics Thread") {
+
+		timer = new Timer();
+		// Create Timer Task
+		task = new TimerTask() {
 			private Image backBuffer;
 			private int width, height;
 
 			@Override
 			public void run() {
-				long lastFrame = -1;
-				mgr.getClient().getLog().fine("Starting Graphics Thread");
-				while (graphicsRunning) {
-					long time = mgr.minMSPerFrame
-							- (System.currentTimeMillis() - lastFrame);
-					if (lastFrame != -1 && time <= mgr.minMSPerFrame
-							&& time > 0)
-						try {
-							sleep(time);
-						} catch (InterruptedException e) {
-						}
-					lastFrame = System.currentTimeMillis();
+				if (graphicsRunning) {
 					width = applet.getWidth();
 					height = applet.getHeight();
 					if (width > 0 && height > 0) {
@@ -57,6 +51,8 @@ public class AWTGraphics extends IGraphics {
 						if (backBuffer == null
 								|| backBuffer.getWidth(null) != width
 								|| backBuffer.getHeight(null) != height) {
+							if (backBuffer != null)
+								backBuffer.flush();
 							backBuffer = mgr.getClient().getApplet()
 									.createImage(width, height);
 						}
@@ -83,10 +79,10 @@ public class AWTGraphics extends IGraphics {
 						}
 					}
 				}
-				mgr.getClient().getLog().fine("Killing Graphics Thread");
 			}
 		};
-		graphicsLoop.start();
+		graphicsRunning = true;
+		timer.schedule(task, 0, mgr.minMSPerFrame);
 	}
 
 	private Graphics2D graphics;
@@ -136,12 +132,8 @@ public class AWTGraphics extends IGraphics {
 	@Override
 	public void dispose() {
 		graphicsRunning = false;
-		try {
-			graphicsLoop.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace(client.getLog().getErrorStream());
-			System.exit(0);
-		}
+		task.cancel();
+		timer.cancel();
 		imageManager.dispose();
 	}
 

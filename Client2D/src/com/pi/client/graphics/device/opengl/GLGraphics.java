@@ -12,6 +12,7 @@ import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 
+import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.pi.client.graphics.device.DisplayManager;
@@ -20,7 +21,7 @@ import com.pi.client.graphics.device.IGraphics;
 import com.pi.common.game.ObjectHeap;
 
 public class GLGraphics extends IGraphics implements GLEventListener {
-	private final GLFPSAnimator animator;
+	private final FPSAnimator animator;
 	private final TextRendererProvider txtRender;
 	private final TextureManager textureManager;
 	private Rectangle cliparea;
@@ -34,7 +35,7 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 		canvas.setSize(super.mgr.getClient().getApplet().getSize());
 		cliparea = canvas.getBounds();
 		canvas.setLocation(0, 0);
-		animator = new GLFPSAnimator(mgr, mgr.getClient().getThreadGroup());
+		animator = new FPSAnimator(mgr.maxFPS);
 		animator.add(canvas);
 		animator.start();
 		mgr.getClient().getLog().fine("Started graphics thread");
