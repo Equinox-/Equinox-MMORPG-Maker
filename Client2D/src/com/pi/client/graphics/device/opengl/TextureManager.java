@@ -115,9 +115,8 @@ public class TextureManager extends Thread {
 
     private void doRequest() {
 	synchronized (syncObject) {
-	    long oldestTime = Long.MAX_VALUE;
-	    int oldestID = loadQueue.size() > 0 ? loadQueue.get(0) : -1;
-	    if (oldestID != -1) {
+	    int oldestID = loadQueue.size() > 0 ? loadQueue.remove(0) : -1;
+	    if (oldestID != -1 && map.get(oldestID) == null) {
 		loadQueue.remove(oldestID);
 		TextureStorage tX = new TextureStorage();
 		tX.texData = getTextureData(oldestID);

@@ -61,20 +61,6 @@ public class NetClientClient extends NetClient {
     @SuppressWarnings("deprecation")
     public void forceDispose() {
 	quitting = true;
-	if (getNetReader() != null && getNetReader().isAlive())
-	    try {
-		getNetReader().join();
-	    } catch (Exception e) {
-		e.printStackTrace(getLog().getErrorStream());
-		getNetReader().stop();
-	    }
-	if (getNetWriter() != null && getNetWriter().isAlive())
-	    try {
-		getNetWriter().join();
-	    } catch (Exception e) {
-		e.printStackTrace(getLog().getErrorStream());
-		getNetWriter().stop();
-	    }
 	while (shouldProcessPacket()) {
 	    try {
 		Thread.sleep(100l);
@@ -89,7 +75,7 @@ public class NetClientClient extends NetClient {
 		e.printStackTrace(getLog().getErrorStream());
 		getNetProcessor().stop();
 	    }
-	closeStreams();
+	super.forceDispose();
     }
 
     @Override

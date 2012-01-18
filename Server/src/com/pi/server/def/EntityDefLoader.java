@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.common.database.def.EntityDef;
+import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet12EntityDefRequest;
 import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.server.Server;
@@ -17,8 +18,7 @@ import com.pi.server.database.io.EntityDefIO;
 public class EntityDefLoader extends ServerThread {
     private Map<Integer, Long> loadQueue = Collections
 	    .synchronizedMap(new HashMap<Integer, Long>());
-    private Map<Integer, EntityDefStorage> map = Collections
-	    .synchronizedMap(new HashMap<Integer, EntityDefStorage>());
+    private ObjectHeap<EntityDefStorage> map = new ObjectHeap<EntityDefStorage>();
     private Object mutex = new Object();
 
     public EntityDefLoader(Server server) {
@@ -72,7 +72,7 @@ public class EntityDefLoader extends ServerThread {
 	    if (sec == null)
 		sec = new EntityDefStorage();
 	    sec.data = eDef;
-	    map.put(eDef.getDefID(), sec);
+	    map.set(eDef.getDefID(), sec);
 	    // TODO server.getWorld().getDefWriter().writeDef(eDef);
 	}
     }
@@ -106,12 +106,12 @@ public class EntityDefLoader extends ServerThread {
 			sX.data = EntityDefIO.read(Paths
 				.getEntityDef(oldestDef));
 			sX.empty = false;
-			map.put(oldestDef, sX);
+			map.set(oldestDef, sX);
 			server.getLog().info("Loaded: " + oldestDef.toString());
 		    } catch (FileNotFoundException e) {
 			sX.data = null;
 			sX.empty = true;
-			map.put(oldestDef, sX);
+			map.set(oldestDef, sX);
 			server.getLog().info(
 				"Flagged as empty: " + oldestDef.toString());
 		    } catch (IOException e) {
@@ -127,9 +127,7 @@ public class EntityDefLoader extends ServerThread {
 	public boolean empty = false;
     }
 
-    public Map<Integer, EntityDefStorage> loadedMap() {
-	synchronized (mutex) {
-	    return Collections.unmodifiableMap(map);
-	}
+    public ObjectHeap<EntityDefStorage> loadedMap() {
+	return map;
     }
 }

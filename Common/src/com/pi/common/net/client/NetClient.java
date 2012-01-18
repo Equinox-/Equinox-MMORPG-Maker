@@ -111,13 +111,16 @@ public abstract class NetClient {
 		readLength = null;
 		Packet packet = Packet.getPacket(new PacketInputStream(
 			new ByteArrayInputStream(data)));
-		/*getLog().info(
-			print + " and id in "
-				+ (System.currentTimeMillis() - cTime) + "ms");*/
+		/*
+		 * getLog().info( print + " and id in " +
+		 * (System.currentTimeMillis() - cTime) + "ms");
+		 */
 		if (packet != null) {
 		    (packet.isHighPriority() ? h_processQueue : l_processQueue)
 			    .add(packet);
-		    getLog().finest("Reading packet " + packet.getName() + ": " + packet.isHighPriority());
+		    getLog().finest(
+			    "Reading packet " + packet.getName() + ": "
+				    + packet.isHighPriority());
 		    read = true;
 		} else {
 		    error("End Of Stream", "");
@@ -136,7 +139,7 @@ public abstract class NetClient {
 	try {
 	    Packet packet;
 	    Vector<Packet> sendQueue = (!h_sendQueue.isEmpty() ? h_sendQueue
-		        : l_sendQueue);
+		    : l_sendQueue);
 	    if (!sendQueue.isEmpty()
 		    && (packetTimeout == 0 || System.currentTimeMillis()
 			    - sendQueue.get(0).timeStamp >= packetTimeout)) {
@@ -155,9 +158,10 @@ public abstract class NetClient {
 		dOut.writeInt(data.length);
 		dOut.write(data);
 		dOut.flush();
-		/*getLog().info(
-			"Sent Packet @" + cTime + " in "
-				+ (System.currentTimeMillis() - cTime) + "ms");*/
+		/*
+		 * getLog().info( "Sent Packet @" + cTime + " in " +
+		 * (System.currentTimeMillis() - cTime) + "ms");
+		 */
 		netSpeedMonitor.addSent(data.length + 4);
 		sent = true;
 	    } else if (!l_sendQueue.isEmpty()) {
@@ -189,7 +193,7 @@ public abstract class NetClient {
 	}
     }
 
-    public void closeStreams() {
+    public void shutdownSocket() {
 	connected = false;
 	try {
 	    if (dIn != null)
@@ -198,12 +202,18 @@ public abstract class NetClient {
 	} catch (Exception e) {
 	}
 	try {
-	    if (dOut != null)
+	    if (dOut != null) {
+		dOut.flush();
 		dOut.close();
+	    }
 	    dOut = null;
 	} catch (Exception e) {
 	}
 	try {
+	    if (!sock.isInputShutdown())
+		sock.shutdownInput();
+	    if (!sock.isOutputShutdown())
+		sock.shutdownOutput();
 	    if (sock != null && !sock.isClosed())
 		sock.close();
 	    sock = null;
@@ -243,9 +253,10 @@ public abstract class NetClient {
 	    Packet packet = (Packet) l_processQueue.remove(0);
 	    long cTime = System.currentTimeMillis();
 	    getHandle().processPacket(packet);
-	    /*getLog().info(
-		    "Processed " + packet.getName() + " @" + cTime + " in "
-			    + (System.currentTimeMillis() - cTime) + "ms");*/
+	    /*
+	     * getLog().info( "Processed " + packet.getName() + " @" + cTime +
+	     * " in " + (System.currentTimeMillis() - cTime) + "ms");
+	     */
 	}
 	if (hasErrored() && h_processQueue.isEmpty()
 		&& l_processQueue.isEmpty())
@@ -257,9 +268,10 @@ public abstract class NetClient {
 	    Packet packet = (Packet) h_processQueue.remove(0);
 	    long cTime = System.currentTimeMillis();
 	    getHandle().processPacket(packet);
-	    /*getLog().info(
-		    "Processed " + packet.getName() + " @" + cTime + " in "
-			    + (System.currentTimeMillis() - cTime) + "ms");*/
+	    /*
+	     * getLog().info( "Processed " + packet.getName() + " @" + cTime +
+	     * " in " + (System.currentTimeMillis() - cTime) + "ms");
+	     */
 	}
 	if (hasErrored() && h_processQueue.isEmpty()
 		&& l_processQueue.isEmpty())
@@ -295,7 +307,7 @@ public abstract class NetClient {
 		e.printStackTrace(getLog().getErrorStream());
 	    }
 	}
-	closeStreams();
+	shutdownSocket();
     }
 
     public void dispose(String reason, String details) {

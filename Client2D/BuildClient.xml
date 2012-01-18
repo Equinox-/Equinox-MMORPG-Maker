@@ -3,15 +3,13 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="/home/westin/Desktop/workspace/EMMORPG/Client2D/EquinoxClient.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="/home/westin/java-workspace/EMMORPG/ClientLauncher/lib/EquinoxClient.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="com.pi.client.clientviewer.ClientViewerFrame"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="/home/westin/Desktop/workspace/EMMORPG/Client2D/bin"/>
-            <fileset dir="/home/westin/Desktop/workspace/EMMORPG/Common/bin"/>
+            <fileset dir="/home/westin/java-workspace/EMMORPG/Client2D/bin"/>
+            <fileset dir="/home/westin/java-workspace/EMMORPG/Common/bin"/>
         </jar>
-    	<signjar jar="/home/westin/Desktop/workspace/EMMORPG/Client2D/EquinoxClient.jar" signedjar="/home/westin/Desktop/workspace/EMMORPG/Client2D/SignedEquinoxClient.jar" alias="equinox" keystore="/home/westin/Desktop/workspace/java-keystore" storepass="qwerty1234"/>
-    	<signjar jar="/home/westin/Desktop/workspace/EMMORPG/Client2D/EquinoxClient.jar" signedjar="/home/westin/Desktop/workspace/EMMORPG/ClientLauncher/lib/EquinoxClient.jar" alias="equinox" keystore="/home/westin/Desktop/workspace/java-keystore" storepass="qwerty1234"/>
     </target>
 </project>

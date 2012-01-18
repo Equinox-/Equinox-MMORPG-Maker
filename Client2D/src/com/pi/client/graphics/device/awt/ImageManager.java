@@ -72,7 +72,7 @@ public class ImageManager extends Thread {
 	client.getLog().fine("Starting Image Manager Thread");
 	while (running) {
 	    int oldestRequest = oldestRequest();
-	    if (oldestRequest != -1) {
+	    if (oldestRequest != -1 && map.get(oldestRequest) == null) {
 		ImageStorage tX = new ImageStorage();
 		tX.img = loadImage(oldestRequest);
 		tX.lastUsed = System.currentTimeMillis();
@@ -97,14 +97,6 @@ public class ImageManager extends Thread {
 
     private int oldestRequest() {
 	synchronized (map) {
-	    /*
-	     * long oldestTime = Long.MAX_VALUE; int oldestID = -1; for (Integer
-	     * i : loadQueue.keySet()) { long requestTime = loadQueue.get(i); if
-	     * (System.currentTimeMillis() - requestTime > imageExpiry) {
-	     * loadQueue.remove(i); } else { if (oldestTime > requestTime) {
-	     * oldestTime = requestTime; oldestID = i; } } } if (oldestID != -1)
-	     * loadQueue.remove(oldestID); return oldestID;
-	     */
 	    if (loadQueue.size() > 0)
 		return loadQueue.remove(0);
 	    return -1;

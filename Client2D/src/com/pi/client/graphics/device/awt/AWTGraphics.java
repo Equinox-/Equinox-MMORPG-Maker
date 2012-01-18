@@ -22,6 +22,7 @@ public class AWTGraphics extends IGraphics {
     private final Applet applet;
     private long startTime;
     private int frameCont = 0;
+    private int cFPS = 0;
     private ImageManager imageManager;
 
     public AWTGraphics(final DisplayManager mgr) {
@@ -29,7 +30,8 @@ public class AWTGraphics extends IGraphics {
 	this.applet = mgr.getClient().getApplet();
 	startTime = System.currentTimeMillis();
 	imageManager = new ImageManager(mgr.getClient());
-	graphicsLoop = new Thread(mgr.getClient().getThreadGroup(),null,"PI Graphics Thread") {
+	graphicsLoop = new Thread(mgr.getClient().getThreadGroup(), null,
+		"PI Graphics Thread") {
 	    private Image backBuffer;
 	    private int width, height;
 
@@ -57,6 +59,11 @@ public class AWTGraphics extends IGraphics {
 					.getClient().getApplet().getHeight());
 				doRender();
 				frameCont++;
+				if (System.currentTimeMillis()-startTime>=1000){
+				    cFPS = (int)(frameCont/((System.currentTimeMillis()-startTime)/1000f));
+				    startTime = System.currentTimeMillis();
+				    frameCont = 0;
+				}
 				frontBuffer.drawImage(backBuffer, 0, 0, null);
 			    }
 			}
@@ -143,11 +150,7 @@ public class AWTGraphics extends IGraphics {
 
     @Override
     public int getFPS() {
-	long duration = (System.currentTimeMillis() - startTime) / 1000;
-	if (duration != 0) {
-	    return (int) (frameCont / duration);
-	}
-	return 0;
+	return cFPS;
     }
 
     @Override
@@ -186,8 +189,8 @@ public class AWTGraphics extends IGraphics {
 	return r;
     }
 
-	@Override
-	public ObjectHeap<ImageStorage> loadedGraphics() {
-		return imageManager.loadedMap();
-	}
+    @Override
+    public ObjectHeap<ImageStorage> loadedGraphics() {
+	return imageManager.loadedMap();
+    }
 }

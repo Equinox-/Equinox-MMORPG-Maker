@@ -8,10 +8,6 @@ import com.pi.common.net.client.PacketOutputStream;
 public class Packet2Alert extends Packet {
     public static enum AlertType {
 	MAIN_MENU, NONE;
-	private String getMessage(String message) {
-	    return name() + ((char) 128) + message;
-	}
-
 	public static AlertType matchType(String name) {
 	    for (AlertType t : values())
 		if (t.name().equalsIgnoreCase(name))
@@ -32,26 +28,20 @@ public class Packet2Alert extends Packet {
 
     @Override
     protected void writeData(PacketOutputStream dOut) throws IOException {
-	dOut.writeString(alertType.getMessage(message));
+	dOut.writeInt(alertType.ordinal());
+	dOut.writeString(message);
     }
 
     @Override
     protected void readData(PacketInputStream dIn) throws IOException {
-	String[] data = dIn.readString().split(new String(new char[] { 128 }),2);
-	if (data.length > 1) {
-	    message = "";
-	    for (int i = 1; i < data.length; i++) {
-		message += data[i];
-		if (i < data.length - 1) {
-		    message += (char) 128;
-		}
-	    }
-	    alertType = AlertType.matchType(data[0]);
-	} else {
-	    message = data[0];
+	int al = dIn.readInt();
+	if (al >= 0 && al < AlertType.values().length)
+	    alertType = AlertType.values()[al];
+	else
 	    alertType = AlertType.NONE;
-	}
+	message = dIn.readString();
     }
+
     @Override
     public int getID() {
 	return 2;
