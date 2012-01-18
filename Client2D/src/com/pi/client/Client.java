@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
 import com.pi.client.database.Paths;
+import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.debug.EntityMonitorPanel;
 import com.pi.client.debug.GraphicsMonitorPanel;
 import com.pi.client.debug.SectorMonitorPanel;
@@ -34,6 +35,7 @@ public class Client implements Disposable {
 	private World world;
 	private ClientEntityManager entityManager;
 	private Definitions defs;
+	private boolean disposing = false;
 
 	// Network Start
 	private String ip = "127.0.0.1";
@@ -55,7 +57,6 @@ public class Client implements Disposable {
 	// Debug Start
 	private final PILogger logger;
 	private PIResourceViewer reView;
-
 	// Debug End
 
 	public Client(Applet applet) {
@@ -74,8 +75,11 @@ public class Client implements Disposable {
 		reView.addTab("Threads", new ThreadMonitorPanel(clientThreads));
 		this.cApplet = applet;
 		this.displayManager = new DisplayManager(this);
+
+		// PRE POST INIT
+		GraphicsLoader.load(this);
+
 		reView.addTab("Graphics", new GraphicsMonitorPanel(this.displayManager));
-		// GraphicsLoader.load(this);
 		this.world = new World(this);
 		reView.addTab("Sectors",
 				new SectorMonitorPanel(this.world.getSectorManager()));
@@ -83,6 +87,8 @@ public class Client implements Disposable {
 		network = new NetClientClient(this, ip, port);
 		this.entityManager = new ClientEntityManager(this);
 		reView.addTab("Entities", new EntityMonitorPanel(entityManager));
+
+		// Post INIT
 		this.displayManager.postInititation();
 		this.mainMenu = new MainMenu(this);
 		this.mainGame = new MainGame(this);
@@ -111,18 +117,20 @@ public class Client implements Disposable {
 
 	@Override
 	public void dispose() {
-		logger.close();
-		if (reView != null) {
-			reView.dispose();
+		disposing = true;
+		if (!disposing) {
+			if (displayManager != null)
+				displayManager.dispose();
+			if (world != null)
+				world.dispose();
+			if (defs != null)
+				defs.dispose();
+			if (network != null)
+				network.dispose();
+			if (reView != null)
+				reView.dispose();
+			logger.close();
 		}
-		if (displayManager != null)
-			displayManager.dispose();
-		if (world != null)
-			world.dispose();
-		if (defs != null)
-			defs.dispose();
-		if (network != null)
-			network.dispose();
 	}
 
 	public boolean isNetworkConnected() {
@@ -166,5 +174,11 @@ public class Client implements Disposable {
 
 	public MainMenu getMainMenu() {
 		return mainMenu;
+	}
+
+	public void setGameState(GameState state) {
+		gameState = state;
+		if (gameState == GameState.MAIN_GAME)
+			getDisplayManager().getRenderLoop().hideAlert();
 	}
 }

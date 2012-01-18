@@ -1,6 +1,5 @@
 package com.pi.client.game;
 
-import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -19,7 +18,7 @@ import com.pi.common.net.packet.Packet14ClientMove;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
 		MouseMotionListener, MouseWheelListener {
-	private final static boolean localUpdate = false;
+	private final static boolean localUpdate = true;
 	private final Client client;
 	private final GameRenderLoop gameRenderLoop;
 
@@ -31,22 +30,6 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 	@Override
 	public void render(IGraphics g) {
 		this.gameRenderLoop.render(g);
-	}
-
-	public void registerToApplet() {
-		Component c = client.getDisplayManager().getListenerRegistration();
-		c.addMouseListener(this);
-		c.addKeyListener(this);
-		c.addMouseMotionListener(this);
-		c.addMouseWheelListener(this);
-	}
-
-	public void unregisterFromApplet() {
-		Component c = client.getDisplayManager().getListenerRegistration();
-		c.removeMouseListener(this);
-		c.removeKeyListener(this);
-		c.removeMouseMotionListener(this);
-		c.removeMouseWheelListener(this);
 	}
 
 	@Override

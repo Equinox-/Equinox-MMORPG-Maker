@@ -11,6 +11,7 @@ import com.pi.common.net.packet.Packet0Disconnect;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.common.net.packet.Packet13EntityDef;
+import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -88,5 +89,10 @@ public class NetClientHandler extends NetHandler {
 
 	public void process(Packet13EntityDef p) {
 		client.getDefs().getEntityLoader().setDef(p.entityID, p.def);
+	}
+
+	public void process(Packet15GameState p) {
+		if (p.state != null)
+			client.setGameState(p.state);
 	}
 }

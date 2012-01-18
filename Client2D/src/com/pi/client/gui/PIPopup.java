@@ -68,14 +68,8 @@ public class PIPopup implements MouseListener {
 				g.drawText("X", container.x + container.width - 18,
 						container.y + 2, GUIKit.containerNormal.font,
 						GUIKit.containerNormal.foreground);
-				/*
-				 * g.drawString(closeButton = new Rectangle(container.x +
-				 * container.width - 18, container.y + 2, 16, 16),
-				 * GUIKit.containerNormal.font, "X",
-				 * GUIKit.containerNormal.foreground,
-				 * GUIKit.containerNormal.hAlign,
-				 * GUIKit.containerNormal.vAlign);
-				 */
+				closeButton = new Rectangle(container.x + container.width - 18,
+						container.y + 2, 16, 16);
 			}
 		}
 	}
