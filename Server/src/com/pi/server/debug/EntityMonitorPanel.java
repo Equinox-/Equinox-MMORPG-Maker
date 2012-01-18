@@ -6,7 +6,6 @@ import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.contants.GlobalConstants;
 import com.pi.common.game.Entity;
-import com.pi.common.net.client.NetClient;
 import com.pi.server.entity.ServerEntityManager;
 
 public class EntityMonitorPanel extends JPanel {

@@ -1,13 +1,12 @@
 package com.pi.common.database;
 
-import java.awt.Point;
 import java.io.Serializable;
 
 import com.pi.common.contants.GlobalConstants;
 import com.pi.common.contants.SectorConstants;
 
 public class Sector implements Serializable {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private int baseX, baseY, baseZ;
     private Tile[][] tiles = new Tile[SectorConstants.SECTOR_WIDTH][SectorConstants.SECTOR_HEIGHT];
     private int revision = 0;

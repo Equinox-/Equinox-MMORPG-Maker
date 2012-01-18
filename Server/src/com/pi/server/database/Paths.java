@@ -6,29 +6,29 @@ import com.pi.common.database.SectorLocation;
 
 public class Paths {
     public static File getHomeDirectory() {
-	File f = new File("/home/westin/equinox-server");
-	if (!f.exists())
+	File f = new File("equinox-server");
+	if (!f.isDirectory())
 	    f.mkdir();
 	return f;
     }
 
     public static File getSectorDirectory() {
 	File f = new File(getHomeDirectory(), "world");
-	if (!f.exists())
+	if (!f.isDirectory())
 	    f.mkdir();
 	return f;
     }
 
     public static File getDefDirectory() {
 	File f = new File(getHomeDirectory(), "def");
-	if (!f.exists())
+	if (!f.isDirectory())
 	    f.mkdir();
 	return f;
     }
 
     public static File getDatabaseFolder() {
 	File f = new File(getHomeDirectory(), "database");
-	if (!f.exists())
+	if (!f.isDirectory())
 	    f.mkdir();
 	return f;
     }

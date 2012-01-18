@@ -25,7 +25,6 @@ public class GameRenderLoop implements Renderable {
     @Override
     public void render(IGraphics g) {
 	gI = g;
-	Rectangle clip = g.getClip();
 	if (client.getWorld() != null) {
 	    for (TileLayer t : TileLayer.values()) {
 		renderSectorSurround(t);

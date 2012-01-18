@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 

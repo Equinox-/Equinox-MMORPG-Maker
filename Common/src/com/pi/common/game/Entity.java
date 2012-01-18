@@ -3,7 +3,6 @@ package com.pi.common.game;
 import com.pi.common.contants.GlobalConstants;
 import com.pi.common.database.Location;
 import com.pi.common.database.Tile.TileLayer;
-import com.pi.common.database.def.EntityDef;
 
 public class Entity extends Location {
     public static final long serialVersionUID = GlobalConstants.serialVersionUID;
