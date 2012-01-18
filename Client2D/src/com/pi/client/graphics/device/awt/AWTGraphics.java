@@ -23,7 +23,6 @@ public class AWTGraphics extends IGraphics {
 	private long startTime;
 	private int frameCont = 0;
 	private int cFPS = 0;
-	private long minMSPerFrame = 20; // Minimum MS per frame
 	private ImageManager imageManager;
 
 	public AWTGraphics(final DisplayManager mgr) {
@@ -41,9 +40,10 @@ public class AWTGraphics extends IGraphics {
 				long lastFrame = -1;
 				mgr.getClient().getLog().fine("Starting Graphics Thread");
 				while (graphicsRunning) {
-					long time = System.currentTimeMillis() - lastFrame
-							- minMSPerFrame;
-					if (time > 0)
+					long time = mgr.minMSPerFrame
+							- (System.currentTimeMillis() - lastFrame);
+					if (lastFrame != -1 && time <= mgr.minMSPerFrame
+							&& time > 0)
 						try {
 							sleep(time);
 						} catch (InterruptedException e) {

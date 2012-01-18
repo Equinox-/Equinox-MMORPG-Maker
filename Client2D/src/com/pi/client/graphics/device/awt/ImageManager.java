@@ -9,17 +9,12 @@ import javax.imageio.ImageIO;
 import com.pi.client.Client;
 import com.pi.client.database.Paths;
 import com.pi.client.graphics.device.GraphicsStorage;
-import com.pi.client.graphics.device.awt.ImageManager.ImageStorage;
 import com.pi.common.game.ObjectHeap;
 
 public class ImageManager extends Thread {
     private static long imageExpiry = 30000; // 30 seconds
     private ObjectHeap<ImageStorage> map = new ObjectHeap<ImageStorage>();
     private Vector<Integer> loadQueue = new Vector<Integer>();
-    /*
-     * private Map<Integer, Long> loadQueue = Collections .synchronizedMap(new
-     * HashMap<Integer, Long>());
-     */
     private boolean running = true;
     private final Client client;
 

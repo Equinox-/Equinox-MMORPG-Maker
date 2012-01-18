@@ -30,21 +30,7 @@ public class PILogger {
 	this.streamOut = streamOutt;
 	this.handler = getHandler();
 	this.formatter = getFormatter();
-	errorStream = new PrintStream(new OutputStream() {
-	    @Override
-	    public void write(int arg0) throws IOException {
-		streamOut.write(arg0);
-		if (fileOut != null)
-		    fileOut.write(arg0);
-	    }
-
-	    @Override
-	    public void write(byte[] byts, int off, int len) {
-		streamOut.write(byts, off, len);
-		if (fileOut != null)
-		    fileOut.write(byts, off, len);
-	    }
-	});
+	errorStream = new PrintStream(streamOut){};
     }
 
     public PILogger(PrintStream out) {

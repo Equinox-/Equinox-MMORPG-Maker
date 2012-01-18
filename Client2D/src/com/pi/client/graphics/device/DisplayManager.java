@@ -23,6 +23,8 @@ public class DisplayManager {
 	private RenderLoop renderLoop;
 	private Client client;
 	private boolean showFps = true;
+	public final int maxFPS = 50;  //-1 will not limit
+	public final long minMSPerFrame = 1000 / maxFPS;
 
 	public ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
 		return graphics != null ? graphics.loadedGraphics() : null;
@@ -93,17 +95,17 @@ public class DisplayManager {
 
 			if (mouse != null)
 				for (MouseListener l : mouse)
-					getListenerRegistration().removeMouseListener(l);
+					getListenerRegistration().addMouseListener(l);
 			if (mouseW != null)
 				for (MouseWheelListener l : mouseW)
-					getListenerRegistration().removeMouseWheelListener(l);
+					getListenerRegistration().addMouseWheelListener(l);
 			if (mouseM != null)
 				for (MouseMotionListener l : mouseM)
-					getListenerRegistration().removeMouseMotionListener(l);
+					getListenerRegistration().addMouseMotionListener(l);
 			if (key != null)
 				for (KeyListener l : key)
-					getListenerRegistration().removeKeyListener(l);
-			
+					getListenerRegistration().addKeyListener(l);
+
 		} catch (Exception e) {
 			client.fatalError("Failed to switch to " + m.name());
 			e.printStackTrace(client.getLog().getErrorStream());
