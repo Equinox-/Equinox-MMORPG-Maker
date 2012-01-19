@@ -1,9 +1,9 @@
 package com.pi.server.net.client;
 
 import java.net.Socket;
-import java.util.Vector;
 
 import com.pi.common.debug.PILogger;
+import com.pi.common.net.PacketHeap;
 import com.pi.common.net.client.ClientPacket;
 import com.pi.common.net.client.NetClient;
 import com.pi.common.net.client.NetProcessingThread;
@@ -36,12 +36,12 @@ public class NetServerClient extends NetClient {
 	}
 
 	@Override
-	protected Vector<ClientPacket> getLowProcessQueue() {
+	protected PacketHeap<ClientPacket> getLowProcessQueue() {
 		return procThread.lowQueue;
 	}
 
 	@Override
-	protected Vector<ClientPacket> getHighProcessQueue() {
+	protected PacketHeap<ClientPacket> getHighProcessQueue() {
 		return procThread.highQueue;
 	}
 

@@ -115,6 +115,7 @@ public class Client implements Disposable {
 	return logger;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void dispose() {
 	if (!disposing) {
@@ -130,6 +131,8 @@ public class Client implements Disposable {
 	    if (reView != null)
 		reView.dispose();
 	    logger.close();
+
+	    clientThreads.stop();
 	}
     }
 

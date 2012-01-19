@@ -41,7 +41,6 @@ public class LoginContainer extends PIContainer {
 					} else {
 						Packet1Login pack = new Packet1Login();
 						pack.username = usernameField.getContent();
-						System.out.println(passwordField.getContent());
 						pack.password = PICryptUtils.crypt(passwordField
 								.getContent());
 						menu.client.getNetwork().send(pack);

@@ -81,6 +81,7 @@ public class Server {
 	}
     }
 
+    @SuppressWarnings("deprecation")
     public void dispose() {
 	if (!disposing) {
 	    disposing = true;
@@ -92,19 +93,10 @@ public class Server {
 		world.dispose();
 	    if (defs != null)
 		defs.dispose();
-	    long timeout = System.currentTimeMillis() + 10000;
-	    while (serverThreads.activeCount() > 0) {
-		try {
-		    Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-		if (System.currentTimeMillis() > timeout)
-		    break;
-	    }
-	    if (serverThreads.activeCount() == 0)
-		serverThreads.destroy();
 	    if (rcView != null)
 		rcView.dispose();
+
+	    serverThreads.stop();
 	    log.close();
 	}
     }

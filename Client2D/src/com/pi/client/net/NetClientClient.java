@@ -8,6 +8,7 @@ import java.util.Vector;
 import com.pi.client.Client;
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetHandler;
+import com.pi.common.net.PacketHeap;
 import com.pi.common.net.client.ClientPacket;
 import com.pi.common.net.client.NetClient;
 import com.pi.common.net.client.NetProcessingThread;
@@ -78,12 +79,12 @@ public class NetClientClient extends NetClient {
 	}
 
 	@Override
-	protected Vector<ClientPacket> getLowProcessQueue() {
+	protected PacketHeap<ClientPacket> getLowProcessQueue() {
 		return getNetProcessor().lowQueue;
 	}
 
 	@Override
-	protected Vector<ClientPacket> getHighProcessQueue() {
+	protected PacketHeap<ClientPacket> getHighProcessQueue() {
 		return getNetProcessor().highQueue;
 	}
 }
