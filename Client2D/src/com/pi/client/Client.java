@@ -77,7 +77,7 @@ public class Client implements Disposable {
 	this.displayManager = new DisplayManager(this);
 
 	// PRE POST INIT
-	// GraphicsLoader.load(this);
+	GraphicsLoader.load(this);
 
 	reView.addTab("Graphics", new GraphicsMonitorPanel(this.displayManager));
 	this.world = new World(this);
