@@ -1,13 +1,13 @@
 package com.pi.common.net.client;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetHandler;
@@ -19,13 +19,11 @@ public abstract class NetClient {
 
     protected int id = -1;
     protected Socket sock;
-    protected DataInputStream dIn;
     private Integer readLength;
     protected DataOutputStream dOut;
     protected boolean connected = true;
     protected boolean quitting = false;
     protected boolean hasErrored = false;
-    protected NetReaderThread netReader;
     protected NetWriterThread netWriter;
     protected String errorReason;
     protected String errorDetails;
@@ -34,6 +32,8 @@ public abstract class NetClient {
     protected Object syncObject = new Object();
     protected NetHandler netHandle;
     protected NetClientSpeedMonitor netSpeedMonitor;
+    protected ByteBuffer readBuffer = ByteBuffer.allocate(10240); // 10
+								  // kilobytes
 
     protected void connect(Socket sock, NetHandler netHandle) {
 	this.sock = sock;
@@ -46,16 +46,13 @@ public abstract class NetClient {
 	    }
 	    try {
 		sock.setSoTimeout(30000);
-		this.dIn = new DataInputStream(this.sock.getInputStream());
 		this.dOut = new DataOutputStream(new BufferedOutputStream(
 			this.sock.getOutputStream(), 5120)); // 5kb buffer
 	    } catch (IOException e) {
 		e.printStackTrace(getLog().getErrorStream());
 	    }
 	    this.netHandle = netHandle;
-	    this.netReader = new NetReaderThread(this);
 	    this.netWriter = new NetWriterThread(this);
-	    this.netReader.start();
 	    this.netWriter.start();
 	}
     }
@@ -63,7 +60,6 @@ public abstract class NetClient {
     public boolean bindToID(int id) {
 	if (this.id == -1) {
 	    this.id = id;
-	    netReader.setName(getID() + " reader thread");
 	    netWriter.setName(getID() + " writer thread");
 	    getLog().info("Bound client to " + id);
 	    return true;
@@ -92,37 +88,46 @@ public abstract class NetClient {
 	return hasErrored;
     }
 
-    public boolean readPacket() {
+    /**
+     * Reads a packet from the socket channel
+     * 
+     * @param sc
+     * @return int (0 if no errors and no packets, 1 if read packet, -1 if
+     *         errors
+     */
+    public int readPacket(SocketChannel sc) {
 	try {
-	    int avaliable = dIn.available();
-	    if (avaliable > 4 && readLength == null)
-		readLength = dIn.readInt();
-	    avaliable = dIn.available();
-	    if (readLength != null && avaliable >= readLength) {
-		byte[] data = new byte[readLength];
+	    sc.read(readBuffer);
+	    if (readBuffer.position() > 4)
+		readLength = readBuffer.getInt(0);
+	    if (readLength != null && readBuffer.position() >= readLength) {
+		readBuffer.flip();
 		netSpeedMonitor.addRecieve(readLength);
-		dIn.readFully(data);
 		readLength = null;
 		Packet packet = Packet.getPacket(new PacketInputStream(
-			new ByteArrayInputStream(data)));
+			readBuffer));
 		if (packet != null) {
 		    (packet.isHighPriority() ? getHighProcessQueue()
-			    : getLowProcessQueue()).addLast(new ClientPacket(this,
-			    packet));
+			    : getLowProcessQueue()).addLast(new ClientPacket(
+			    this, packet));
 		    getLog().finest(
 			    "Reading packet " + packet.getName() + ": "
 				    + packet.isHighPriority());
-		    return true;
+		    readBuffer.clear();
+		    return 1;
 		} else {
 		    error("End Of Stream", "");
+		    return -1;
 		}
 	    }
 	} catch (Exception exception) {
 	    if (!hasErrored) {
 		error(exception);
 	    }
+	    readBuffer.clear();
+	    return -1;
 	}
-	return false;
+	return 0;
     }
 
     public boolean sendQueuedPacket() {
@@ -179,12 +184,6 @@ public abstract class NetClient {
     public void shutdownSocket() {
 	connected = false;
 	try {
-	    if (dIn != null)
-		dIn.close();
-	    dIn = null;
-	} catch (Exception e) {
-	}
-	try {
 	    if (dOut != null) {
 		dOut.flush();
 		dOut.close();
@@ -207,10 +206,6 @@ public abstract class NetClient {
     public void flushOutput() throws IOException {
 	if (dOut != null)
 	    dOut.flush();
-    }
-
-    public NetReaderThread getNetReader() {
-	return netReader;
     }
 
     public NetWriterThread getNetWriter() {
@@ -260,13 +255,6 @@ public abstract class NetClient {
     @SuppressWarnings("deprecation")
     public void forceDispose() {
 	quitting = true;
-	if (getNetReader() != null && getNetReader().isAlive())
-	    try {
-		getNetReader().join();
-	    } catch (Exception e) {
-		e.printStackTrace(getLog().getErrorStream());
-		getNetReader().stop();
-	    }
 	if (getNetWriter() != null && getNetWriter().isAlive())
 	    try {
 		getNetWriter().join();
@@ -293,9 +281,10 @@ public abstract class NetClient {
     public String toString() {
 	return "NetClient: (socket="
 		+ (sock != null ? ("(addr="
-			+ sock.getInetAddress().getHostAddress() + " port="
-			+ sock.getPort() + " localport=" + sock.getLocalPort() + ")")
-			: "null") + ")";
+			+ (sock.getInetAddress() != null ? sock
+				.getInetAddress().getHostAddress() : "null")
+			+ " port=" + sock.getPort() + " localport="
+			+ sock.getLocalPort() + ")") : "null") + ")";
     }
 
     public int getUploadSpeed() {

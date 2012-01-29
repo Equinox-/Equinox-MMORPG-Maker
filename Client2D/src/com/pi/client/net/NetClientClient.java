@@ -3,7 +3,7 @@ package com.pi.client.net;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.Vector;
+import java.nio.channels.SocketChannel;
 
 import com.pi.client.Client;
 import com.pi.common.debug.PILogger;
