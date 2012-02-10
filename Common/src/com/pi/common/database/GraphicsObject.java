@@ -81,9 +81,4 @@ public class GraphicsObject implements DatabaseObject {
 	tWidth = pIn.readFloat();
 	tHeight = pIn.readFloat();
     }
-
-    @Override
-    public int getLength() {
-	return 20;
-    }
 }

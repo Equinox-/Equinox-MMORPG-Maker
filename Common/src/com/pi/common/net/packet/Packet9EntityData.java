@@ -3,14 +3,13 @@ package com.pi.common.net.packet;
 import java.io.IOException;
 
 import com.pi.common.database.Location;
-import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public class Packet9EntityData extends Packet {
     public Location loc;
-    public TileLayer layer;
+    public int layer;
     public int defID;
     public int entID;
 
@@ -20,7 +19,7 @@ public class Packet9EntityData extends Packet {
 	pOut.writeInt(loc.getGlobalX());
 	pOut.writeInt(loc.getPlane());
 	pOut.writeInt(loc.getGlobalZ());
-	pOut.writeInt(layer.ordinal());
+	pOut.writeInt(layer);
 	pOut.writeInt(defID);
     }
 
@@ -28,11 +27,7 @@ public class Packet9EntityData extends Packet {
     protected void readData(PacketInputStream pIn) throws IOException {
 	entID = pIn.readInt();
 	loc = new Location(pIn.readInt(), pIn.readInt(), pIn.readInt());
-	int layerOrd = pIn.readInt();
-	if (layerOrd >= 0 && layerOrd < TileLayer.values().length)
-	    layer = TileLayer.values()[layerOrd];
-	else
-	    layer = TileLayer.MASK1;
+	layer = pIn.readInt();
 	defID = pIn.readInt();
     }
 
@@ -48,10 +43,5 @@ public class Packet9EntityData extends Packet {
     @Override
     public int getID() {
 	return 9;
-    }
-
-    @Override
-    public int getLength() {
-	return 12 + loc.getLength();
     }
 }

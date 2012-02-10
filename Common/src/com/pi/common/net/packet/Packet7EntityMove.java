@@ -3,7 +3,6 @@ package com.pi.common.net.packet;
 import java.io.IOException;
 
 import com.pi.common.database.Location;
-import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
@@ -11,7 +10,7 @@ import com.pi.common.net.PacketOutputStream;
 public class Packet7EntityMove extends Packet {
     public int entityID;
     public Location moved;
-    public TileLayer entityLayer;
+    public int entityLayer;
 
     public static Packet7EntityMove create(Entity ent) {
 	Packet7EntityMove p = new Packet7EntityMove();
@@ -28,7 +27,7 @@ public class Packet7EntityMove extends Packet {
 	pOut.writeInt(moved.x);
 	pOut.writeInt(moved.z);
 	pOut.writeInt(moved.plane);
-	pOut.writeInt(entityLayer.ordinal());
+	pOut.writeInt(entityLayer);
     }
 
     @Override
@@ -38,16 +37,11 @@ public class Packet7EntityMove extends Packet {
 	int z = pIn.readInt();
 	int plane = pIn.readInt();
 	moved = new Location(x, plane, z);
-	entityLayer = TileLayer.values()[pIn.readInt()];
+	entityLayer = pIn.readInt();
     }
 
     @Override
     public int getID() {
 	return 7;
-    }
-
-    @Override
-    public int getLength() {
-	return 8 + moved.getLength();
     }
 }

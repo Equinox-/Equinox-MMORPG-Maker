@@ -30,9 +30,4 @@ public class Packet5SectorRequest extends Packet {
     public int getID() {
 	return 5;
     }
-
-    @Override
-    public int getLength() {
-	return 16;
-    }
 }

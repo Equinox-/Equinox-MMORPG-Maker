@@ -97,15 +97,4 @@ public class Sector implements DatabaseObject {
 	    }
 	}
     }
-
-    @Override
-    public int getLength() {
-	int length = 16; // Integers
-	for (int x = 0; x < tiles.length; x++) {
-	    for (int y = 0; y < tiles[x].length; y++) {
-		length += tiles[x][y].getLength();
-	    }
-	}
-	return length;
-    }
 }

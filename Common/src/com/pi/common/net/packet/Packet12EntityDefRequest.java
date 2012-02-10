@@ -21,9 +21,4 @@ public class Packet12EntityDefRequest extends Packet {
     public int getID() {
 	return 12;
     }
-
-    @Override
-    public int getLength() {
-	return 4;
-    }
 }

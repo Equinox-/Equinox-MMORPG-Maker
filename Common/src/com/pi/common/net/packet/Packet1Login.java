@@ -25,9 +25,4 @@ public class Packet1Login extends Packet {
     public int getID() {
 	return 1;
     }
-
-    @Override
-    public int getLength() {
-	return 8 + username.length() + password.length();
-    }
 }

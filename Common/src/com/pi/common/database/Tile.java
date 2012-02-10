@@ -1,19 +1,19 @@
 package com.pi.common.database;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
+import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public class Tile implements DatabaseObject {
     private int flags = 0;
-    private Map<TileLayer, GraphicsObject> layers = new HashMap<TileLayer, GraphicsObject>();
+    private ObjectHeap<GraphicsObject> layers = new ObjectHeap<GraphicsObject>();
 
-    public Map<TileLayer, GraphicsObject> layerMap() {
-	return Collections.unmodifiableMap(layers);
+    public ObjectHeap<GraphicsObject> layerMap() {
+	return layers;
     }
 
     public int getFlags() {
@@ -28,35 +28,42 @@ public class Tile implements DatabaseObject {
 	return (flags & flag) == flag;
     }
 
-    public void setLayer(TileLayer layer, GraphicsObject tile) {
-	layers.put(layer, tile);
+    public void setLayer(Integer layer, GraphicsObject tile) {
+	layers.set(layer, tile);
     }
 
-    public GraphicsObject getLayer(TileLayer layer) {
+    public GraphicsObject getLayer(int layer) {
 	return layers.get(layer);
     }
 
-    public static enum TileLayer {
-	GROUND, MASK1, FRINGE1;
+    public static class TileLayer {
+	public static final int GROUND = 0;
+	public static final int MASK1 = 1;
+	public static final int FRINGE1 = 2;
+	public static final int MAX_VALUE = 3;
     }
 
     @Override
     public void write(PacketOutputStream pOut) throws IOException {
-	// TODO Auto-generated method stub
-
+	pOut.writeInt(flags);
+	pOut.writeInt(layers.size());
+	Iterator<Entry<Integer, GraphicsObject>> iterator = layers.iterator();
+	while (iterator.hasNext()) {
+	    Entry<Integer, GraphicsObject> ent = iterator.next();
+	    pOut.writeInt(ent.getKey());
+	    ent.getValue().write(pOut);
+	}
     }
 
     @Override
     public void read(PacketInputStream pIn) throws IOException {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int getLength() {
-	int layerSize = 0;
-	for (GraphicsObject o : layers.values())
-	    layerSize += 4 + o.getLength();
-	return layerSize + 4;
+	flags = pIn.readInt();
+	int size = pIn.readInt();
+	for (int i = 0; i < size; i++) {
+	    int layer = pIn.readInt();
+	    GraphicsObject obj = new GraphicsObject();
+	    obj.read(pIn);
+	    layers.set(layer, obj);
+	}
     }
 }

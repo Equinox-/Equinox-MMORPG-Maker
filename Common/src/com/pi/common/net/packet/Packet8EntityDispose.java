@@ -27,9 +27,4 @@ public class Packet8EntityDispose extends Packet {
     public int getID() {
 	return 8;
     }
-
-    @Override
-    public int getLength() {
-	return 4;
-    }
 }

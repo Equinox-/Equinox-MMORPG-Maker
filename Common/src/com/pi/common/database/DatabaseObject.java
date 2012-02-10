@@ -9,6 +9,4 @@ public interface DatabaseObject {
     public void write(PacketOutputStream pOut) throws IOException;
 
     public void read(PacketInputStream pIn) throws IOException;
-
-    public int getLength();
 }

@@ -30,9 +30,4 @@ public class Packet14ClientMove extends Packet {
     public int getID() {
 	return 14;
     }
-
-    @Override
-    public int getLength() {
-	return 12;
-    }
 }

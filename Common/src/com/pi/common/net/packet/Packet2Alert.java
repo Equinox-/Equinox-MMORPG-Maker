@@ -28,9 +28,4 @@ public class Packet2Alert extends Packet {
     public int getID() {
 	return 2;
     }
-
-    @Override
-    public int getLength() {
-	return 4 + message.length();
-    }
 }

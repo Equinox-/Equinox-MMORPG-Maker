@@ -84,9 +84,4 @@ public class Location implements DatabaseObject {
 	z = pIn.readInt();
 	plane = pIn.readInt();
     }
-
-    @Override
-    public int getLength() {
-	return 12;
-    }
 }

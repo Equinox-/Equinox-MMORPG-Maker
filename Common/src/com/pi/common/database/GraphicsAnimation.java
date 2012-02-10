@@ -57,13 +57,6 @@ public class GraphicsAnimation extends GraphicsObject {
 	    lastFrame = System.currentTimeMillis();
 	}
     }
-
-    @Override
-    public int getLength() {
-	return super.getLength() + 16; // 8 for frameDur, 4 for frames, 4 for
-				       // width
-    }
-
     @Override
     public void write(PacketOutputStream pOut) throws IOException {
 	super.write(pOut);

@@ -98,7 +98,6 @@ public abstract class Packet {
     }
 
     public abstract int getID();
-    public abstract int getLength();
     protected abstract void writeData(PacketOutputStream pOut)
 	    throws IOException;
 

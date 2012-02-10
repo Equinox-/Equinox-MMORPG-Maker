@@ -38,10 +38,4 @@ public class Packet0Disconnect extends Packet {
     public int getID() {
 	return 0;
     }
-
-    @Override
-    public int getLength() {
-	return 8 + (reason != null ? reason.length() : 0)
-		+ (details != null ? details.length() : 0);
-    }
 }

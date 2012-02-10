@@ -31,9 +31,4 @@ public class Packet15GameState extends Packet {
 	state = idx >= 0 && idx < GameState.values().length ? GameState
 		.values()[idx] : null;
     }
-
-    @Override
-    public int getLength() {
-	return 4;
-    }
 }

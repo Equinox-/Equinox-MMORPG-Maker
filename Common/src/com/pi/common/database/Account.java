@@ -52,9 +52,4 @@ public class Account implements DatabaseObject {
 	username = pIn.readString();
 	passwordHash = pIn.readString();
     }
-
-    @Override
-    public int getLength() {
-	return 12 + passwordHash.length() + username.length();
-    }
 }

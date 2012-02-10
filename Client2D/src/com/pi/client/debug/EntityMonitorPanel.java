@@ -66,7 +66,7 @@ public class EntityMonitorPanel extends JPanel {
 		case 3:
 		    return ent.getGlobalZ() + "";
 		case 4:
-		    return ent.getLayer().name().toLowerCase();
+		    return ent.getLayer() + "";
 		case 5:
 		    return ent.getDir() + "";
 		case 6:

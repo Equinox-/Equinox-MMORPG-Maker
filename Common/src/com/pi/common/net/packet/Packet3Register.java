@@ -25,9 +25,4 @@ public class Packet3Register extends Packet {
     public int getID() {
 	return 3;
     }
-
-    @Override
-    public int getLength() {
-	return 8 + username.length() + password.length();
-    }
 }

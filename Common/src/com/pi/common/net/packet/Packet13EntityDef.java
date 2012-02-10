@@ -28,9 +28,4 @@ public class Packet13EntityDef extends Packet {
     public int getID() {
 	return 13;
     }
-
-    @Override
-    public int getLength() {
-	return 0;
-    }
 }

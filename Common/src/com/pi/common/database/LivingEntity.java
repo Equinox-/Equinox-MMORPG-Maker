@@ -13,11 +13,6 @@ public abstract class LivingEntity extends Entity {
     }
 
     @Override
-    public int getLength() {
-	return super.getLength() + 4;
-    }
-
-    @Override
     public void read(PacketInputStream pIn) throws IOException {
 	super.read(pIn);
 	health = pIn.readInt();

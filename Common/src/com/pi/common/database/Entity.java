@@ -8,7 +8,7 @@ import com.pi.common.net.PacketOutputStream;
 
 public class Entity extends Location {
     private byte dir;
-    private TileLayer aboveLayer = TileLayer.MASK1;
+    private int aboveLayer = TileLayer.MASK1;
     private int entityID = -1;
 
     public boolean setEntityID(int id) {
@@ -27,25 +27,18 @@ public class Entity extends Location {
 	return entityID;
     }
 
-    public TileLayer getLayer() {
+    public int getLayer() {
 	return aboveLayer;
     }
 
-    public void setLayer(TileLayer l) {
+    public void setLayer(int l) {
 	aboveLayer = l;
-    }
-
-    @Override
-    public int getLength() {
-	return super.getLength() + 9;
     }
 
     @Override
     public void read(PacketInputStream pIn) throws IOException {
 	super.read(pIn);
-	int layer = pIn.readInt();
-	aboveLayer = (layer >= 0 && layer < TileLayer.values().length) ? TileLayer
-		.values()[layer] : null;
+	aboveLayer = pIn.readInt();
 	entityID = pIn.readInt();
 	dir = pIn.readByte();
     }
@@ -53,7 +46,7 @@ public class Entity extends Location {
     @Override
     public void write(PacketOutputStream pOut) throws IOException {
 	super.write(pOut);
-	pOut.writeInt(aboveLayer.ordinal());
+	pOut.writeInt(aboveLayer);
 	pOut.writeInt(entityID);
 	pOut.writeByte(dir);
     }
