@@ -1,18 +1,15 @@
 package com.pi.common.database;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
-import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public class Tile implements DatabaseObject {
     private int flags = 0;
-    private ObjectHeap<GraphicsObject> layers = new ObjectHeap<GraphicsObject>();
+    private GraphicsObject[] layers = new GraphicsObject[TileLayer.MAX_VALUE];
 
-    public ObjectHeap<GraphicsObject> layerMap() {
+    public GraphicsObject[] layerMap() {
 	return layers;
     }
 
@@ -28,12 +25,12 @@ public class Tile implements DatabaseObject {
 	return (flags & flag) == flag;
     }
 
-    public void setLayer(Integer layer, GraphicsObject tile) {
-	layers.set(layer, tile);
+    public void setLayer(int layer, GraphicsObject tile) {
+	layers[layer] = tile;
     }
 
     public GraphicsObject getLayer(int layer) {
-	return layers.get(layer);
+	return layers[layer];
     }
 
     public static class TileLayer {
@@ -46,26 +43,27 @@ public class Tile implements DatabaseObject {
     @Override
     public void write(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(flags);
-	pOut.writeInt(layers.size());
-	Iterator<Entry<Integer, GraphicsObject>> iterator = layers.iterator();
-	while (iterator.hasNext()) {
-	    Entry<Integer, GraphicsObject> ent = iterator.next();
-	    if (ent == null)
-		break;
-	    pOut.writeInt(ent.getKey());
-	    ent.getValue().write(pOut);
+	for (int i = 0; i < layers.length; i++) {
+	    if (layers[i] == null) {
+		pOut.writeBoolean(false);
+	    } else {
+		pOut.writeBoolean(true);
+		layers[i].write(pOut);
+	    }
 	}
     }
 
     @Override
     public void read(PacketInputStream pIn) throws IOException {
 	flags = pIn.readInt();
-	int size = pIn.readInt();
-	for (int i = 0; i < size; i++) {
-	    int layer = pIn.readInt();
-	    GraphicsObject obj = new GraphicsObject();
-	    obj.read(pIn);
-	    layers.set(layer, obj);
+	for (int i = 0; i < layers.length; i++) {
+	    if (pIn.readBoolean()) {
+		if (layers[i] == null)
+		    layers[i] = new GraphicsObject();
+		layers[i].read(pIn);
+	    } else {
+		layers[i] = null;
+	    }
 	}
     }
 }
