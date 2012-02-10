@@ -64,12 +64,11 @@ public class Server {
 	});
 	log = new PILogger(Paths.getLogFile(), pn.logOut);
 	
-	int port = Integer.valueOf(9999);
 	entityManager = new ServerEntityManager(this);
 	rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
 	clientManager = new ClientManager();
 	database = new ServerDatabase(this);
-	network = new NetServer(this, port);
+	network = new NetServer(this, 9999);
 	rcView.addTab("Network Clients", new ClientMonitorPanel(clientManager));
 	world = new World(this);
 	rcView.addTab("Sectors",

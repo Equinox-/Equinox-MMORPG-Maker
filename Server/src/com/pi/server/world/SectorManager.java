@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
-import com.pi.common.database.io.SectorIO;
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -143,8 +143,8 @@ public class SectorManager extends ServerThread {
 		    if (sX == null)
 			sX = new SectorStorage();
 		    try {
-			sX.data = SectorIO.read(Paths
-				.getSectorFile(oldestSector));
+			sX.data = (Sector) DatabaseIO.read(Paths
+				.getSectorFile(oldestSector), Sector.class);
 			sX.empty = false;
 			sX.lastUsed = System.currentTimeMillis();
 			map.put(oldestSector, sX);

@@ -11,7 +11,7 @@ import com.pi.client.ClientThread;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
-import com.pi.common.database.io.SectorIO;
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
 public class SectorManager extends ClientThread {
@@ -100,7 +100,7 @@ public class SectorManager extends ClientThread {
 		int revision = -1;
 		if (f.exists()) {
 		    try {
-			sX.data = SectorIO.read(f);
+			sX.data = (Sector) DatabaseIO.read(f,Sector.class);
 			revision = sX.data.getRevision();
 		    } catch (IOException e) {
 			client.getLog().severe(

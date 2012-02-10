@@ -53,6 +53,8 @@ public class NetClient extends Thread {
 
     public void send(Packet pack) {
 	try {
+	    this.pendingChanges.add(new NetChangeRequest(socket,
+		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
 	    synchronized (this.writeQueue) {
 		ByteArrayOutputStream bO = new ByteArrayOutputStream();
 		PacketOutputStream pO = new PacketOutputStream(bO);
@@ -78,12 +80,11 @@ public class NetClient extends Thread {
 			NetChangeRequest change = changes.next();
 			switch (change.type) {
 			case NetChangeRequest.CHANGEOPS:
-			    SelectionKey key = change.socket
-				    .keyFor(this.selector);
+			    SelectionKey key = socket.keyFor(this.selector);
 			    key.interestOps(change.ops);
 			    break;
 			case NetChangeRequest.REGISTER:
-			    change.socket.register(this.selector, change.ops);
+			    socket.register(this.selector, change.ops);
 			    break;
 			}
 		    }

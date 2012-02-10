@@ -7,13 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet12EntityDefRequest;
 import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.server.Server;
 import com.pi.server.ServerThread;
 import com.pi.server.database.Paths;
-import com.pi.server.database.io.EntityDefIO;
 
 public class EntityDefLoader extends ServerThread {
     private Map<Integer, Long> loadQueue = Collections
@@ -103,8 +103,8 @@ public class EntityDefLoader extends ServerThread {
 		    if (sX == null)
 			sX = new EntityDefStorage();
 		    try {
-			sX.data = EntityDefIO.read(Paths
-				.getEntityDef(oldestDef));
+			sX.data = (EntityDef) DatabaseIO.read(Paths
+				.getEntityDef(oldestDef), EntityDef.class);
 			sX.empty = false;
 			map.set(oldestDef, sX);
 			server.getLog().info("Loaded: " + oldestDef.toString());

@@ -10,12 +10,9 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetChangeRequest;
@@ -23,20 +20,17 @@ import com.pi.server.Server;
 import com.pi.server.client.Client;
 
 public class NetServer extends Thread {
-    private InetAddress hostAddress;
     private int port;
     private ServerSocketChannel serverChannel;
     private Selector selector;
     private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
     private DataWorker worker;
     private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
-    private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
     private Server server;
 
     public NetServer(Server server, int port) {
 	super(server.getThreadGroup(), "NetSelector");
 	try {
-	    this.hostAddress = InetAddress.getLocalHost();
 	    this.server = server;
 	    this.port = port;
 	    this.selector = this.initSelector();
@@ -47,24 +41,9 @@ public class NetServer extends Thread {
 	}
     }
 
-    public void send(SocketChannel socket, byte[] data) {
-	synchronized (this.pendingChanges) {
-	    this.pendingChanges.add(new NetChangeRequest(socket,
-		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
-	    synchronized (this.pendingData) {
-		List<ByteBuffer> queue = this.pendingData.get(socket);
-		if (queue == null) {
-		    queue = new ArrayList<ByteBuffer>();
-		    this.pendingData.put(socket, queue);
-		}
-		queue.add(ByteBuffer.wrap(data));
-	    }
-	}
-	this.selector.wakeup();
-    }
-
     @Override
     public void run() {
+	server.getLog().info("Started selector");
 	while (true) {
 	    try {
 		// Process any pending changes
@@ -88,16 +67,9 @@ public class NetServer extends Thread {
 		while (selectedKeys.hasNext()) {
 		    SelectionKey key = selectedKeys.next();
 		    selectedKeys.remove();
-
 		    if (!key.isValid()) {
 			continue;
 		    }
-		    String data = (key.isAcceptable() ? "Accept;" : "")
-			    + (key.isConnectable() ? "Connect;" : "")
-			    + (key.isReadable() ? "Read;" : "")
-			    + (key.isWritable() ? "Write" : "");
-		    if (data.length() > 0)
-			server.getLog().info(data);
 		    if (key.isAcceptable()) {
 			this.accept(key);
 		    } else if (key.isReadable()) {
@@ -107,15 +79,16 @@ public class NetServer extends Thread {
 		    }
 		}
 	    } catch (ClosedSelectorException e) {
+		server.getLog().info("Closed selector");
 		break;
 	    } catch (Exception e) {
-		e.printStackTrace();
+		server.getLog().printStackTrace(e);
 	    }
 	}
+	server.getLog().info("Stopped selector");
     }
 
     private void accept(SelectionKey key) throws IOException {
-	server.getLog().info("ACCEPT");
 	ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key
 		.channel();
 	SocketChannel socketChannel = serverSocketChannel.accept();
@@ -142,25 +115,24 @@ public class NetServer extends Thread {
 	    key.cancel();
 	    return;
 	}
-	this.worker.processData((NetServerClient) key.attachment(),
+	this.worker.processData(((Client) key.attachment()).getNetClient(),
 		this.readBuffer.array(), numRead);
     }
 
     private void write(SelectionKey key) throws IOException {
 	SocketChannel socketChannel = (SocketChannel) key.channel();
-
-	synchronized (this.pendingData) {
-	    List<ByteBuffer> queue = this.pendingData.get(socketChannel);
-	    while (!queue.isEmpty()) {
-		ByteBuffer buf = (ByteBuffer) queue.get(0);
+	NetServerClient c = ((Client) key.attachment()).getNetClient();
+	synchronized (c.getSendQueue()) {
+	    while (!c.getSendQueue().isEmpty()) {
+		ByteBuffer buf = (ByteBuffer) c.getSendQueue().get(0);
 		socketChannel.write(buf);
 		if (buf.remaining() > 0) {
 		    break;
 		}
-		queue.remove(0);
+		c.getSendQueue().remove(0);
 	    }
 
-	    if (queue.isEmpty()) {
+	    if (c.getSendQueue().isEmpty()) {
 		key.interestOps(SelectionKey.OP_READ);
 	    }
 	}
@@ -170,7 +142,7 @@ public class NetServer extends Thread {
 	Selector socketSelector = SelectorProvider.provider().openSelector();
 	this.serverChannel = ServerSocketChannel.open();
 	serverChannel.configureBlocking(false);
-	InetSocketAddress isa = new InetSocketAddress(this.hostAddress,
+	InetSocketAddress isa = new InetSocketAddress((InetAddress) null,
 		this.port);
 	serverChannel.socket().bind(isa);
 	serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
@@ -196,5 +168,13 @@ public class NetServer extends Thread {
 
     public PILogger getLog() {
 	return server.getLog();
+    }
+
+    public void wakeSelector() {
+	selector.wakeup();
+    }
+
+    public void addChangeRequest(NetChangeRequest netChangeRequest) {
+	pendingChanges.add(netChangeRequest);
     }
 }

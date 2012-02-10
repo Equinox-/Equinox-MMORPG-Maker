@@ -7,9 +7,8 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.database.io.SectorIO;
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.server.database.Paths;
-import com.pi.server.database.io.EntityDefIO;
 
 public class EmptySector {
     public static Sector create() {
@@ -37,13 +36,13 @@ public class EmptySector {
 
     public static void main(String[] args) throws IOException {
 	try {
-	    SectorIO.write(Paths.getSectorFile(0, 0, 0), create());
+	    DatabaseIO.write(Paths.getSectorFile(0, 0, 0), create());
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
 	EntityDef d =new EntityDef();
 	d.setGraphic(3);
 	d.setPosition(0,0,128,192);
-	EntityDefIO.write(Paths.getEntityDef(0),d);
+	DatabaseIO.write(Paths.getEntityDef(0),d);
     }
 }

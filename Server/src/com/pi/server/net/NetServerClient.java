@@ -1,6 +1,7 @@
 package com.pi.server.net;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -8,8 +9,10 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.pi.common.net.NetChangeRequest;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
 import com.pi.server.Server;
 
@@ -29,6 +32,21 @@ public class NetServerClient {
     }
 
     public void send(Packet pack) {
+	try {
+	    server.getNetwork().addChangeRequest(new NetChangeRequest(socket,
+		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+	    synchronized (this.sendQueue) {
+		ByteArrayOutputStream bO = new ByteArrayOutputStream();
+		PacketOutputStream pO = new PacketOutputStream(bO);
+		pack.writePacket(pO);
+		pO.close();
+		bO.flush();
+		sendQueue.add(ByteBuffer.wrap(bO.toByteArray()));
+	    }
+	    server.getNetwork().wakeSelector();
+	} catch (Exception e) {
+	    server.getLog().printStackTrace(e);
+	}
     }
 
     public void bindToID(int id) {
@@ -103,5 +121,9 @@ public class NetServerClient {
 
     public NetHandler getNetHandler() {
 	return handler;
+    }
+
+    public List<ByteBuffer> getSendQueue() {
+	return sendQueue;
     }
 }

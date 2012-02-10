@@ -11,7 +11,7 @@ import com.pi.client.ClientThread;
 import com.pi.client.database.Paths;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
-import com.pi.common.database.io.SectorIO;
+import com.pi.common.database.io.DatabaseIO;
 
 public class SectorWriter extends ClientThread {
     private Map<SectorLocation, WritableRequest> writeQueue = Collections
@@ -49,7 +49,7 @@ public class SectorWriter extends ClientThread {
 		try {
 		    File fin = Paths.getSectorFile(oldestSector);
 		    File dest = new File(fin.getAbsolutePath() + ".tmp");
-		    SectorIO.write(dest, wr.data);
+		    DatabaseIO.write(dest, wr.data);
 		    dest.renameTo(fin);
 		} catch (IOException e) {
 		    client.getLog().printStackTrace(e);

@@ -1,11 +1,9 @@
 package com.pi.client.net;
 
 import java.io.ByteArrayInputStream;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.pi.client.Client;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.packet.Packet;
 
