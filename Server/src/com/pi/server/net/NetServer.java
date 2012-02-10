@@ -1,173 +1,200 @@
 package com.pi.server.net;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.spi.SelectorProvider;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import com.pi.common.net.client.NetProcessingThread;
-import com.pi.common.net.client.PacketOutputStream;
-import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet0Disconnect;
+import com.pi.common.debug.PILogger;
+import com.pi.common.net.NetChangeRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
-import com.pi.server.constants.ServerConstants;
-import com.pi.server.net.client.NetServerClient;
 
 public class NetServer extends Thread {
-    private final Server server;
-    private final Selector selector;
-    private final ClientListener cl;
-    private final ServerSocketChannel socketChannel;
-    private final ServerSocket socket;
-    private final NetProcessingThread procThread;
+    private InetAddress hostAddress;
+    private int port;
+    private ServerSocketChannel serverChannel;
+    private Selector selector;
+    private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
+    private DataWorker worker;
+    private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
+    private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
+    private Server server;
 
-    public NetServer(Server server, int port, ClientListener cl)
-	    throws IOException {
-	super(server.getThreadGroup(), null, "NetworkServer");
-	this.server = server;
-	this.cl = cl;
-	this.procThread = new NetProcessingThread(server.getThreadGroup(),
-		"Server Packet Processor");
-
-	// Create Selector
-	selector = Selector.open();
-
-	// Create Server Socket Channel
-	socketChannel = ServerSocketChannel.open();
-	socketChannel.configureBlocking(false);
-	socketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-	// Get and bind server socket
-	socket = socketChannel.socket();
-	socket.bind(new InetSocketAddress(port));
-
-	start();
-	procThread.start();
+    public NetServer(Server server, int port) {
+	super(server.getThreadGroup(), "NetSelector");
+	try {
+	    this.hostAddress = InetAddress.getLocalHost();
+	    this.server = server;
+	    this.port = port;
+	    this.selector = this.initSelector();
+	    this.worker = new DataWorker(this);
+	    start();
+	} catch (IOException e) {
+	    server.getLog().printStackTrace(e);
+	}
     }
 
-    public boolean isConnected() {
-	return socket != null && selector.isOpen() && socketChannel.isOpen()
-		&& socket.isBound();
+    public void send(SocketChannel socket, byte[] data) {
+	synchronized (this.pendingChanges) {
+	    this.pendingChanges.add(new NetChangeRequest(socket,
+		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+	    synchronized (this.pendingData) {
+		List<ByteBuffer> queue = this.pendingData.get(socket);
+		if (queue == null) {
+		    queue = new ArrayList<ByteBuffer>();
+		    this.pendingData.put(socket, queue);
+		}
+		queue.add(ByteBuffer.wrap(data));
+	    }
+	}
+	this.selector.wakeup();
     }
 
     @Override
     public void run() {
-	server.getLog().finer("Starting client listener thread");
-	while (isConnected()) {
+	while (true) {
 	    try {
-		if (selector.select() == 0)
-		    continue;
-
-		Iterator<SelectionKey> keys = selector.selectedKeys()
-			.iterator();
-		while (keys.hasNext()) {
-		    SelectionKey key = keys.next();
-		    if ((key.readyOps() & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
-			addClient(socket.accept());
-		    } else if ((key.readyOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
-			SocketChannel sc = null;
-			sc = (SocketChannel) key.channel();
-			Object cl = key.attachment();
-			if (cl instanceof Client) {
-			    Client client = (Client) cl;
-			    int ok = client.getNetClient().readPacket(sc);
-			    // If the connection is dead, then remove it
-			    // from the selector and close it
-			    if (ok == -1) {
-				server.getLog().severe("Packet ERROR: (Unable to read)");
-				key.cancel();
-				client.dispose();
-			    }
+		// Process any pending changes
+		synchronized (this.pendingChanges) {
+		    Iterator<NetChangeRequest> changes = this.pendingChanges
+			    .iterator();
+		    while (changes.hasNext()) {
+			NetChangeRequest change = changes.next();
+			switch (change.type) {
+			case NetChangeRequest.CHANGEOPS:
+			    SelectionKey key = change.socket
+				    .keyFor(this.selector);
+			    key.interestOps(change.ops);
 			}
 		    }
+		    this.pendingChanges.clear();
 		}
-	    } catch (IOException e) {
-		e.printStackTrace(server.getLog().getErrorStream());
+		this.selector.select();
+		Iterator<SelectionKey> selectedKeys = this.selector
+			.selectedKeys().iterator();
+		while (selectedKeys.hasNext()) {
+		    SelectionKey key = selectedKeys.next();
+		    selectedKeys.remove();
+
+		    if (!key.isValid()) {
+			continue;
+		    }
+		    String data = (key.isAcceptable() ? "Accept;" : "")
+			    + (key.isConnectable() ? "Connect;" : "")
+			    + (key.isReadable() ? "Read;" : "")
+			    + (key.isWritable() ? "Write" : "");
+		    if (data.length() > 0)
+			server.getLog().info(data);
+		    if (key.isAcceptable()) {
+			this.accept(key);
+		    } else if (key.isReadable()) {
+			this.read(key);
+		    } else if (key.isWritable()) {
+			this.write(key);
+		    }
+		}
+	    } catch (ClosedSelectorException e) {
+		break;
+	    } catch (Exception e) {
+		e.printStackTrace();
 	    }
 	}
-	server.getLog().finer("Killed client listener thread");
     }
 
-    private void addClient(Socket src) {
-	int clientID = server.getClientManager().getAvaliableID();
+    private void accept(SelectionKey key) throws IOException {
+	server.getLog().info("ACCEPT");
+	ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key
+		.channel();
+	SocketChannel socketChannel = serverSocketChannel.accept();
+	socketChannel.configureBlocking(false);
+	Client c = new Client(server,
+		new NetServerClient(server, socketChannel));
+	socketChannel.register(this.selector, SelectionKey.OP_READ).attach(c);
+    }
+
+    private void read(SelectionKey key) throws IOException {
+	SocketChannel socketChannel = (SocketChannel) key.channel();
+	this.readBuffer.clear();
+	int numRead;
 	try {
-	    if (clientID >= 0) {
-		Client client = new Client(server, new NetServerClient(server,
-			procThread, src), clientID);
-		SocketChannel channel = src.getChannel();
-		channel.register(selector, SelectionKey.OP_READ, client);
-		if (server.getClientManager().registerClient(client) >= 0) {
-		    server.getLog().info(
-			    "Client connected: " + client.toString());
-		    if (cl != null)
-			cl.clientConnected(client);
-		} else {
-		    throw new Exception(
-			    "The server was unable to register you as a client!");
+	    numRead = socketChannel.read(this.readBuffer);
+	} catch (IOException e) {
+	    key.cancel();
+	    socketChannel.close();
+	    return;
+	}
+
+	if (numRead == -1) {
+	    key.channel().close();
+	    key.cancel();
+	    return;
+	}
+	this.worker.processData((NetServerClient) key.attachment(),
+		this.readBuffer.array(), numRead);
+    }
+
+    private void write(SelectionKey key) throws IOException {
+	SocketChannel socketChannel = (SocketChannel) key.channel();
+
+	synchronized (this.pendingData) {
+	    List<ByteBuffer> queue = this.pendingData.get(socketChannel);
+	    while (!queue.isEmpty()) {
+		ByteBuffer buf = (ByteBuffer) queue.get(0);
+		socketChannel.write(buf);
+		if (buf.remaining() > 0) {
+		    break;
 		}
-	    } else {
-		throw new Exception(
-			"The server has reached the maximum client amount, "
-				+ ServerConstants.MAX_CLIENTS);
+		queue.remove(0);
 	    }
-	} catch (Exception e) {
-	    try {
-		Packet0Disconnect p = new Packet0Disconnect("Error",
-			e.getMessage());
-		PacketOutputStream d = new PacketOutputStream(
-			src.getOutputStream());
-		p.writePacket(d);
-		d.flush();
-		d.close();
-		src.close();
-	    } catch (IOException fatal) {
-		fatal.printStackTrace(server.getLog().getErrorStream());
+
+	    if (queue.isEmpty()) {
+		key.interestOps(SelectionKey.OP_READ);
 	    }
 	}
+    }
+
+    private Selector initSelector() throws IOException {
+	Selector socketSelector = SelectorProvider.provider().openSelector();
+	this.serverChannel = ServerSocketChannel.open();
+	serverChannel.configureBlocking(false);
+	InetSocketAddress isa = new InetSocketAddress(this.hostAddress,
+		this.port);
+	serverChannel.socket().bind(isa);
+	serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
+	return socketSelector;
     }
 
     public void dispose() {
 	try {
-	    socket.close();
-	    socketChannel.close();
 	    selector.close();
-	    Client c;
-	    for (int i = 0; i < server.getClientManager().registeredClients()
-		    .size(); i++) {
-		c = server.getClientManager().getClient(i);
-		if (c != null)
-		    c.dispose();
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace(server.getLog().getErrorStream());
+	    serverChannel.close();
+	    notify();
+	    join();
+	    worker.notify();
+	    worker.join();
+	} catch (Exception e) {
+	    server.getLog().printStackTrace(e);
 	}
     }
 
-    public void sendTo(Packet packet, int... ids) throws IOException {
-	for (int id : ids) {
-	    Client nClient = server.getClientManager().getClient(id);
-	    if (nClient != null && nClient.getNetClient() != null)
-		nClient.getNetClient().send(packet);
-	}
+    public boolean isConnected() {
+	return selector.isOpen() && serverChannel.isOpen();
     }
 
-    public void sendToAll(Packet packet) throws IOException {
-	Client c;
-	for (int i = 0; i < server.getClientManager().registeredClients()
-		.size(); i++) {
-	    c = server.getClientManager().getClient(i);
-	    if (c != null && c.getNetClient() != null)
-		c.getNetClient().send(packet);
-	}
-    }
-
-    public NetProcessingThread getNetProcessor() {
-	return procThread;
+    public PILogger getLog() {
+	return server.getLog();
     }
 }

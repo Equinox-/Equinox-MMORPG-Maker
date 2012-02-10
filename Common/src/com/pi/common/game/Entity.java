@@ -1,11 +1,9 @@
 package com.pi.common.game;
 
-import com.pi.common.contants.GlobalConstants;
 import com.pi.common.database.Location;
 import com.pi.common.database.Tile.TileLayer;
 
 public class Entity extends Location {
-    public static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private byte dir;
     private TileLayer aboveLayer = TileLayer.MASK1;
     private int entityID = -1;

@@ -3,8 +3,11 @@ package com.pi.client.gui.mainmenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.pi.client.gui.*;
+import com.pi.client.gui.GUIKit;
+import com.pi.client.gui.PIComponent;
+import com.pi.client.gui.PIContainer;
 import com.pi.client.gui.PIStyle.StyleType;
+import com.pi.client.gui.PITextField;
 import com.pi.common.PICryptUtils;
 import com.pi.common.net.packet.Packet3Register;
 

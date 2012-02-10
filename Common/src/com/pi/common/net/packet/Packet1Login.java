@@ -2,8 +2,8 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.net.client.PacketInputStream;
-import com.pi.common.net.client.PacketOutputStream;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class Packet1Login extends Packet {
     public String username;
@@ -20,8 +20,14 @@ public class Packet1Login extends Packet {
 	username = dIn.readString();
 	password = dIn.readString();
     }
+
     @Override
     public int getID() {
 	return 1;
+    }
+
+    @Override
+    public int getLength() {
+	return 8 + username.length() + password.length();
     }
 }

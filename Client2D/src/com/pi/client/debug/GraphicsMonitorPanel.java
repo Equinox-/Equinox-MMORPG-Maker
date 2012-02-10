@@ -6,10 +6,9 @@ import javax.swing.table.AbstractTableModel;
 
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.graphics.device.GraphicsStorage;
-import com.pi.common.contants.GlobalConstants;
 
 public class GraphicsMonitorPanel extends JPanel {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+    private static final long serialVersionUID = 1L;
     private final DisplayManager ig;
     private ThreadTableModel table_model = new ThreadTableModel();
     private JTable tbl;
@@ -29,7 +28,7 @@ public class GraphicsMonitorPanel extends JPanel {
     }
 
     private class ThreadTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+	private static final long serialVersionUID = 1L;
 	String[] colName = { "Name", "Last used", "Object" };
 	Class<?>[] colClass = { String.class, String.class, String.class };
 

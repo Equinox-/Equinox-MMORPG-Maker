@@ -2,8 +2,8 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.net.client.PacketInputStream;
-import com.pi.common.net.client.PacketOutputStream;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class Packet12EntityDefRequest extends Packet {
     public int defID;
@@ -20,5 +20,10 @@ public class Packet12EntityDefRequest extends Packet {
     @Override
     public int getID() {
 	return 12;
+    }
+
+    @Override
+    public int getLength() {
+	return 4;
     }
 }

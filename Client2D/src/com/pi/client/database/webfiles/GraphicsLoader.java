@@ -1,6 +1,11 @@
 package com.pi.client.database.webfiles;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +52,7 @@ public class GraphicsLoader {
 		try {
 		    ver = Float.valueOf(line[1]);
 		} catch (Exception e) {
-		    e.printStackTrace(client.getLog().getErrorStream());
+		    client.getLog().printStackTrace(e);
 		    continue;
 		}
 		Float cVer = currentVersions.get(name);
@@ -62,7 +67,7 @@ public class GraphicsLoader {
 			download(new URL(ServerConfiguration.graphicsFolder
 				+ name), dest);
 		    } catch (IOException e) {
-			e.printStackTrace(client.getLog().getErrorStream());
+			client.getLog().printStackTrace(e);
 		    }
 		}
 	    }

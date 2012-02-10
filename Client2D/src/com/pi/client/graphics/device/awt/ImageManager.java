@@ -103,7 +103,7 @@ public class ImageManager extends Thread {
 	try {
 	    super.join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace();
+	    client.getLog().printStackTrace(e);
 	    System.exit(0);
 	}
 	loadQueue.clear();

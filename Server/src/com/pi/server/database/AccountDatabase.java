@@ -1,31 +1,33 @@
 package com.pi.server.database;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import com.pi.common.contants.GlobalConstants;
 import com.pi.common.database.Account;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class AccountDatabase {
-    private AccountsList list;
+    private ArrayList<Account> list;
 
-    private static class AccountsList extends ArrayList<Account> {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
-    }
+    public AccountDatabase() throws IOException {
 
-    public AccountDatabase() throws IOException, ClassNotFoundException {
+	list = new ArrayList<Account>();
 	try {
-	    ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+	    PacketInputStream fIn = new PacketInputStream(new FileInputStream(
 		    Paths.getAccountsDatabase()));
-	    list = (AccountsList) in.readObject();
-	    in.close();
+	    int num = fIn.readInt();
+	    for (int i = 0; i < num; i++) {
+		Account acc = new Account();
+		acc.read(fIn);
+		list.add(acc);
+	    }
 	} catch (EOFException e) {
-	}
-	if (list == null)
-	    list = new AccountsList();
-	for (Account acc : list) {
-	    System.out.println(acc.getUsername() + " -- "
-		    + acc.getPasswordHash());
+	    if (Paths.getAccountsDatabase().exists())
+		Paths.getAccountsDatabase().delete();
 	}
     }
 
@@ -48,9 +50,11 @@ public class AccountDatabase {
     }
 
     public void writeData() throws IOException {
-	ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
+	PacketOutputStream fOut = new PacketOutputStream(new FileOutputStream(
 		Paths.getAccountsDatabase()));
-	out.writeObject(list);
-	out.close();
+	fOut.writeInt(list.size());
+	for (int i = 0; i < list.size(); i++)
+	    list.get(i).write(fOut);
+	fOut.close();
     }
 }

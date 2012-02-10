@@ -36,7 +36,6 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 	public void keyPressed(KeyEvent e) {
 		Entity ent = client.getEntityManager().getLocalEntity();
 		if (ent != null) {
-			System.out.println("Pressed: " + e.getKeyCode());
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				Location nL = new Location(ent.x + 1, ent.plane, ent.z);
 				client.getNetwork().send(Packet14ClientMove.create(nL));

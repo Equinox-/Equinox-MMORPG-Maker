@@ -1,17 +1,17 @@
 package com.pi.common.database;
 
-import java.io.Serializable;
+import java.io.IOException;
 
-import com.pi.common.contants.GlobalConstants;
 import com.pi.common.contants.SectorConstants;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
-public class Sector implements Serializable {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+public class Sector implements DatabaseObject {
     private int baseX, baseY, baseZ;
     private Tile[][] tiles = new Tile[SectorConstants.SECTOR_WIDTH][SectorConstants.SECTOR_HEIGHT];
     private int revision = 0;
-    
-    public Tile[][] getTileArray(){
+
+    public Tile[][] getTileArray() {
 	return tiles;
     }
 
@@ -68,5 +68,44 @@ public class Sector implements Serializable {
 
     public int getRevision() {
 	return revision;
+    }
+
+    @Override
+    public void write(PacketOutputStream pOut) throws IOException {
+	pOut.writeInt(baseX);
+	pOut.writeInt(baseY);
+	pOut.writeInt(baseZ);
+	pOut.writeInt(revision);
+	for (int x = 0; x < tiles.length; x++) {
+	    for (int y = 0; y < tiles[x].length; y++) {
+		tiles[x][y].write(pOut);
+	    }
+	}
+    }
+
+    @Override
+    public void read(PacketInputStream pIn) throws IOException {
+	baseX = pIn.readInt();
+	baseY = pIn.readInt();
+	baseZ = pIn.readInt();
+	revision = pIn.readInt();
+	for (int x = 0; x < tiles.length; x++) {
+	    for (int y = 0; y < tiles[x].length; y++) {
+		if (tiles[x][y] == null)
+		    tiles[x][y] = new Tile();
+		tiles[x][y].read(pIn);
+	    }
+	}
+    }
+
+    @Override
+    public int getLength() {
+	int length = 16; // Integers
+	for (int x = 0; x < tiles.length; x++) {
+	    for (int y = 0; y < tiles[x].length; y++) {
+		length += tiles[x][y].getLength();
+	    }
+	}
+	return length;
     }
 }

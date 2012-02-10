@@ -1,12 +1,12 @@
 package com.pi.common.database;
 
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
+import java.io.IOException;
 
-import com.pi.common.contants.GlobalConstants;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
-public class GraphicsObject implements Serializable {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+public class GraphicsObject implements DatabaseObject {
     private int graphic;
     private float tX, tY, tWidth, tHeight;
 
@@ -17,7 +17,8 @@ public class GraphicsObject implements Serializable {
 	this.graphic = graphic;
     }
 
-    public GraphicsObject(int graphic, float x, float y, float width, float height) {
+    public GraphicsObject(int graphic, float x, float y, float width,
+	    float height) {
 	this.graphic = graphic;
 	setPosition(x, y, width, height);
     }
@@ -61,5 +62,28 @@ public class GraphicsObject implements Serializable {
 
     public float getPositionHeight() {
 	return tHeight;
+    }
+
+    @Override
+    public void write(PacketOutputStream pOut) throws IOException {
+	pOut.writeInt(graphic);
+	pOut.writeFloat(tX);
+	pOut.writeFloat(tY);
+	pOut.writeFloat(tWidth);
+	pOut.writeFloat(tHeight);
+    }
+
+    @Override
+    public void read(PacketInputStream pIn) throws IOException {
+	graphic = pIn.readInt();
+	tX = pIn.readFloat();
+	tY = pIn.readFloat();
+	tWidth = pIn.readFloat();
+	tHeight = pIn.readFloat();
+    }
+
+    @Override
+    public int getLength() {
+	return 20;
     }
 }

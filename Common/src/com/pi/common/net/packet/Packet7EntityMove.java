@@ -5,8 +5,8 @@ import java.io.IOException;
 import com.pi.common.database.Location;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
-import com.pi.common.net.client.PacketInputStream;
-import com.pi.common.net.client.PacketOutputStream;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class Packet7EntityMove extends Packet {
     public int entityID;
@@ -40,8 +40,14 @@ public class Packet7EntityMove extends Packet {
 	moved = new Location(x, plane, z);
 	entityLayer = TileLayer.values()[pIn.readInt()];
     }
+
     @Override
     public int getID() {
 	return 7;
+    }
+
+    @Override
+    public int getLength() {
+	return 8 + moved.getLength();
     }
 }

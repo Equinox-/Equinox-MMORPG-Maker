@@ -5,11 +5,10 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import com.pi.client.entity.ClientEntityManager;
-import com.pi.common.contants.GlobalConstants;
 import com.pi.common.game.Entity;
 
 public class EntityMonitorPanel extends JPanel {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+    private static final long serialVersionUID = 1L;
     private final ClientEntityManager svr;
     private ThreadTableModel table_model = new ThreadTableModel();
     private JTable tbl;
@@ -29,7 +28,7 @@ public class EntityMonitorPanel extends JPanel {
     }
 
     private class ThreadTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+	private static final long serialVersionUID = 1L;
 	String[] colName = { "ID", "X", "Plane", "Z", "Layer", "Dir", "Def" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
 		String.class, String.class, String.class };

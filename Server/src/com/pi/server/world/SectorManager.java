@@ -191,7 +191,7 @@ public class SectorManager extends ServerThread {
 			 * requests.remove(req); } }
 			 */
 		    } catch (IOException e) {
-			e.printStackTrace(server.getLog().getErrorStream());
+			server.getLog().printStackTrace(e);
 		    }
 		}
 	    }

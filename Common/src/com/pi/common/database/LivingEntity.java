@@ -1,12 +1,31 @@
 package com.pi.common.database;
 
-import com.pi.common.contants.GlobalConstants;
+import java.io.IOException;
+
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public abstract class LivingEntity extends Entity {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private int health;
 
     public int getHealth() {
 	return health;
+    }
+
+    @Override
+    public int getLength() {
+	return super.getLength() + 4;
+    }
+
+    @Override
+    public void read(PacketInputStream pIn) throws IOException {
+	super.read(pIn);
+	health = pIn.readInt();
+    }
+
+    @Override
+    public void write(PacketOutputStream pOut) throws IOException {
+	super.write(pOut);
+	pOut.writeInt(health);
     }
 }

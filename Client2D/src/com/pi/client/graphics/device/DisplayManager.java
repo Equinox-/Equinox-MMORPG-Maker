@@ -8,9 +8,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLProfile;
-
 import com.pi.client.Client;
 import com.pi.client.graphics.RenderLoop;
 import com.pi.client.graphics.device.awt.AWTGraphics;
@@ -35,15 +32,15 @@ public class DisplayManager {
     }
 
     public void postInititation() {
-	try {
+	/*try {
 	    client.getLog().info("Checking for opengl...");
 	    new GLCapabilities(GLProfile.getDefault());
 	    hasOpenGL = true;
 	} catch (Exception e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
+	    client.getLog().printStackTrace(e);
 	}
 	client.getLog().info(
-		"We " + (hasOpenGL ? "" : "don't ") + "have OpenGL");
+		"We " + (hasOpenGL ? "" : "don't ") + "have OpenGL");*/
     }
 
     public DisplayManager(Client client) {
@@ -109,7 +106,7 @@ public class DisplayManager {
 	    getListenerRegistration().setFocusTraversalKeysEnabled(false);
 	} catch (Exception e) {
 	    client.fatalError("Failed to switch to " + m.name());
-	    e.printStackTrace(client.getLog().getErrorStream());
+	    client.getLog().printStackTrace(e);
 	}
     }
 

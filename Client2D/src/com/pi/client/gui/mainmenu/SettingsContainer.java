@@ -4,7 +4,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import com.pi.client.graphics.device.DisplayManager.GraphicsMode;
-import com.pi.client.gui.*;
+import com.pi.client.gui.GUIKit;
+import com.pi.client.gui.PICheckbox;
+import com.pi.client.gui.PIContainer;
 import com.pi.client.gui.PIStyle.StyleType;
 
 public class SettingsContainer extends PIContainer {

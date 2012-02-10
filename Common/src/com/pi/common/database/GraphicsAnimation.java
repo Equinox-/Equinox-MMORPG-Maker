@@ -1,9 +1,11 @@
 package com.pi.common.database;
 
-import com.pi.common.contants.GlobalConstants;
+import java.io.IOException;
+
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class GraphicsAnimation extends GraphicsObject {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
     private int frames;
     private int currentFrame = 0;
     private long lastFrame = 0;
@@ -20,7 +22,9 @@ public class GraphicsAnimation extends GraphicsObject {
 	this(frames, frameTime);
 	setGraphic(graphic);
     }
-    public GraphicsAnimation(int frames, long frameTime, int graphic, int x, int y, int width, int height) {
+
+    public GraphicsAnimation(int frames, long frameTime, int graphic, int x,
+	    int y, int width, int height) {
 	this(frames, frameTime, graphic);
 	setPosition(x, y, width, height);
     }
@@ -52,5 +56,27 @@ public class GraphicsAnimation extends GraphicsObject {
 	    }
 	    lastFrame = System.currentTimeMillis();
 	}
+    }
+
+    @Override
+    public int getLength() {
+	return super.getLength() + 16; // 8 for frameDur, 4 for frames, 4 for
+				       // width
+    }
+
+    @Override
+    public void write(PacketOutputStream pOut) throws IOException {
+	super.write(pOut);
+	pOut.writeInt(frames);
+	pOut.writeInt(frameWidth);
+	pOut.writeLong(frameDuration);
+    }
+
+    @Override
+    public void read(PacketInputStream pIn) throws IOException {
+	super.read(pIn);
+	frames = pIn.readInt();
+	frameWidth = pIn.readInt();
+	frameDuration = pIn.readLong();
     }
 }

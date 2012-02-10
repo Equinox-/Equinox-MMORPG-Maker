@@ -115,7 +115,7 @@ public class EntityDefLoader extends ServerThread {
 			server.getLog().info(
 				"Flagged as empty: " + oldestDef.toString());
 		    } catch (IOException e) {
-			e.printStackTrace(server.getLog().getErrorStream());
+			server.getLog().printStackTrace(e);
 		    }
 		}
 	    }

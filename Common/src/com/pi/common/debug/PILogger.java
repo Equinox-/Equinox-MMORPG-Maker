@@ -21,7 +21,6 @@ public class PILogger {
     public boolean showDate = false, showTime = false, showCode = false,
 	    showLevel = true;
     public PrintStream streamOut;
-    private PrintStream errorStream;
     private PrintStream fileOut;
 
     public PILogger(File f, PrintStream streamOutt) {
@@ -38,7 +37,6 @@ public class PILogger {
 	this.streamOut = streamOutt;
 	this.handler = getHandler();
 	this.formatter = getFormatter();
-	errorStream = new PrintStream(streamOut);
     }
 
     public PILogger(PrintStream out) {
@@ -69,6 +67,13 @@ public class PILogger {
 	getHandler().publish(new LogRecord(Level.WARNING, s));
     }
 
+    public void printStackTrace(Throwable throwable){
+	severe(throwable.toString());
+	StackTraceElement[] elements = throwable.getStackTrace();
+	for (int i = 0; i<Math.min(elements.length, 5); i++){
+	    severe(elements[i].toString());
+	}
+    }
     public static String exceptionToString(Exception e) {
 	String s = e.toString();
 	int i;
@@ -79,10 +84,6 @@ public class PILogger {
 	    s += "\n...";
 	}
 	return s;
-    }
-
-    public PrintStream getErrorStream() {
-	return errorStream;
     }
 
     public String getLastMessage() {
@@ -170,7 +171,6 @@ public class PILogger {
     }
 
     public void close() {
-	errorStream.close();
 	streamOut.close();
 	if (fileOut != null)
 	    fileOut.close();

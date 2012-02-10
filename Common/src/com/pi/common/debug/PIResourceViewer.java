@@ -5,10 +5,8 @@ import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import com.pi.common.contants.GlobalConstants;
-
 public class PIResourceViewer extends JFrame {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+	private static final long serialVersionUID = 1L;
 	public final JTabbedPane tabs;
 
 	public PIResourceViewer(String type) {

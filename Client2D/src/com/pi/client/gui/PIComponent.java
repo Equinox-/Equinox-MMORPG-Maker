@@ -1,9 +1,16 @@
 package com.pi.client.gui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.pi.client.graphics.Renderable;

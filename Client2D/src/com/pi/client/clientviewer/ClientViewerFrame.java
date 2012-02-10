@@ -1,13 +1,14 @@
 package com.pi.client.clientviewer;
 
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
-import com.pi.common.contants.GlobalConstants;
-
 public class ClientViewerFrame extends JFrame {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+    private static final long serialVersionUID = 1L;
     private final ClientApplet cApplet;
 
     public ClientViewerFrame() {

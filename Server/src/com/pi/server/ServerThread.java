@@ -31,7 +31,7 @@ public abstract class ServerThread extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace(server.getLog().getErrorStream());
+	    server.getLog().printStackTrace(e);
 	    System.exit(0);
 	}
     }

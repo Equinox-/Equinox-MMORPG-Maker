@@ -78,7 +78,7 @@ public class TextureManager extends Thread {
 		return TextureIO.newTextureData(GLProfile.getDefault(), tex,
 			false, suffix);
 	    } catch (Exception e) {
-		e.printStackTrace(client.getLog().getErrorStream());
+		client.getLog().printStackTrace(e);
 		return null;
 	    }
 	}
@@ -131,7 +131,7 @@ public class TextureManager extends Thread {
 	try {
 	    super.join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
+	    client.getLog().printStackTrace(e);
 	    System.exit(0);
 	}
     }

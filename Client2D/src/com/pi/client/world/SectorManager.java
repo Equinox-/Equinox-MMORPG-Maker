@@ -109,9 +109,7 @@ public class SectorManager extends ClientThread {
 			f.delete();
 		    }
 		}
-		if (client.getNetwork() != null
-			&& client.getNetwork().getSocket() != null
-			&& client.getNetwork().getSocket().isConnected()) {
+		if (client.isNetworkConnected()) {
 		    if (sentRequests.get(oldestSector) == null
 			    || sentRequests.get(oldestSector).longValue()
 				    + serverRequestExpiry < System

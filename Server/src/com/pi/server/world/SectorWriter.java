@@ -52,7 +52,7 @@ public class SectorWriter extends ServerThread {
 		try {
 		    SectorIO.write(Paths.getSectorFile(oldestSector), wr.data);
 		} catch (IOException e) {
-		    e.printStackTrace(server.getLog().getErrorStream());
+		    server.getLog().printStackTrace(e);
 		}
 	    }
 	}

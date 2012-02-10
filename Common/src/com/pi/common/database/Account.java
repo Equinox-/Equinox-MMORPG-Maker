@@ -1,12 +1,12 @@
 package com.pi.common.database;
 
-import java.io.Serializable;
+import java.io.IOException;
 
 import com.pi.common.PICryptUtils;
-import com.pi.common.contants.GlobalConstants;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
-public class Account implements Serializable {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+public class Account implements DatabaseObject {
     private String username;
     private String passwordHash;
     private int entityDef;
@@ -37,5 +37,24 @@ public class Account implements Serializable {
 
     public String getPasswordHash() {
 	return passwordHash;
+    }
+
+    @Override
+    public void write(PacketOutputStream pOut) throws IOException {
+	pOut.writeInt(entityDef);
+	pOut.writeString(username);
+	pOut.writeString(passwordHash);
+    }
+
+    @Override
+    public void read(PacketInputStream pIn) throws IOException {
+	entityDef = pIn.readInt();
+	username = pIn.readString();
+	passwordHash = pIn.readString();
+    }
+
+    @Override
+    public int getLength() {
+	return 12 + passwordHash.length() + username.length();
     }
 }

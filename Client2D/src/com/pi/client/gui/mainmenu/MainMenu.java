@@ -1,12 +1,25 @@
 package com.pi.client.gui.mainmenu;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
 import com.pi.client.graphics.Renderable;
 import com.pi.client.graphics.device.IGraphics;
-import com.pi.client.gui.*;
+import com.pi.client.gui.GUIKit;
+import com.pi.client.gui.PIButton;
+import com.pi.client.gui.PIComponent;
+import com.pi.client.gui.PIContainer;
+import com.pi.client.gui.PIStyle;
 import com.pi.client.gui.PIStyle.StyleType;
 
 public class MainMenu implements Renderable, MouseListener,

@@ -1,6 +1,10 @@
-package com.pi.common.net.client;
+package com.pi.common.net;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 public class PacketOutputStream extends DataOutputStream {
     public PacketOutputStream(OutputStream out) {

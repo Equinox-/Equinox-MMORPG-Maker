@@ -52,7 +52,7 @@ public class SectorWriter extends ClientThread {
 		    SectorIO.write(dest, wr.data);
 		    dest.renameTo(fin);
 		} catch (IOException e) {
-		    e.printStackTrace();
+		    client.getLog().printStackTrace(e);
 		}
 	    }
 	}

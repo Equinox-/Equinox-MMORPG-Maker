@@ -2,8 +2,8 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.net.client.PacketInputStream;
-import com.pi.common.net.client.PacketOutputStream;
+import com.pi.common.net.PacketInputStream;
+import com.pi.common.net.PacketOutputStream;
 
 public class Packet0Disconnect extends Packet {
     public String reason;
@@ -37,5 +37,11 @@ public class Packet0Disconnect extends Packet {
     @Override
     public int getID() {
 	return 0;
+    }
+
+    @Override
+    public int getLength() {
+	return 8 + (reason != null ? reason.length() : 0)
+		+ (details != null ? details.length() : 0);
     }
 }

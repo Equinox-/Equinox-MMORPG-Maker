@@ -30,7 +30,7 @@ public abstract class ClientThread extends Thread {
 	try {
 	    join();
 	} catch (InterruptedException e) {
-	    e.printStackTrace(client.getLog().getErrorStream());
+	    client.getLog().printStackTrace(e);
 	    System.exit(0);
 	}
     }

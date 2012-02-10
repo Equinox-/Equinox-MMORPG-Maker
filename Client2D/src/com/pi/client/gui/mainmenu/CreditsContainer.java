@@ -1,6 +1,8 @@
 package com.pi.client.gui.mainmenu;
 
-import com.pi.client.gui.*;
+import com.pi.client.gui.GUIKit;
+import com.pi.client.gui.PIComponent;
+import com.pi.client.gui.PIContainer;
 import com.pi.client.gui.PIStyle.StyleType;
 
 public class CreditsContainer extends PIContainer {

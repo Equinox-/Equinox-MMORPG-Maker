@@ -17,7 +17,7 @@ import com.pi.client.game.MainGame;
 import com.pi.client.graphics.device.DisplayManager;
 import com.pi.client.gui.GUIKit;
 import com.pi.client.gui.mainmenu.MainMenu;
-import com.pi.client.net.NetClientClient;
+import com.pi.client.net.NetClient;
 import com.pi.client.world.World;
 import com.pi.common.Disposable;
 import com.pi.common.debug.PILogger;
@@ -40,7 +40,7 @@ public class Client implements Disposable {
     // Network Start
     private String ip = "127.0.0.1";
     private int port = 9999;
-    private NetClientClient network;
+    private NetClient network;
     // Network End
 
     // Graphics start
@@ -78,14 +78,14 @@ public class Client implements Disposable {
 	this.displayManager = new DisplayManager(this);
 
 	// PRE POST INIT
-	GraphicsLoader.load(this);
+	//GraphicsLoader.load(this);
 
 	reView.addTab("Graphics", new GraphicsMonitorPanel(this.displayManager));
 	this.world = new World(this);
 	reView.addTab("Sectors",
 		new SectorMonitorPanel(this.world.getSectorManager()));
 	this.defs = new Definitions(this);
-	network = new NetClientClient(this, ip, port);
+	network = new NetClient(this, ip, port);
 	this.entityManager = new ClientEntityManager(this);
 	reView.addTab("Entities", new EntityMonitorPanel(entityManager));
 
@@ -96,7 +96,7 @@ public class Client implements Disposable {
 	gameState = GameState.MAIN_MENU;
     }
 
-    public NetClientClient getNetwork() {
+    public NetClient getNetwork() {
 	return network;
     }
 
@@ -138,9 +138,7 @@ public class Client implements Disposable {
     }
 
     public boolean isNetworkConnected() {
-	return getNetwork() != null && getNetwork().getSocket() != null
-		&& getNetwork().getSocket().isConnected()
-		&& !getNetwork().getSocket().isClosed();
+	return getNetwork() != null && getNetwork().isConnected();
     }
 
     public String getNetworkIP() {

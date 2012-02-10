@@ -50,35 +50,31 @@ public class Server {
 
     public Server() {
 	serverThreads = new ThreadGroup("Server");
-	try {
-	    rcView = new PIResourceViewer("Server");
-	    PILoggerPane pn = new PILoggerPane();
-	    rcView.addTab("Logger", pn);
-	    rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
-	    rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	    rcView.addWindowListener(new WindowAdapter() {
-		@Override
-		public void windowClosing(WindowEvent e) {
-		    if (!disposing)
-			dispose();
-		}
-	    });
-	    log = new PILogger(Paths.getLogFile(), pn.logOut);
-	    int port = Integer.valueOf(9999);
-	    entityManager = new ServerEntityManager(this);
-	    rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
-	    clientManager = new ClientManager();
-	    database = new ServerDatabase(this);
-	    network = new NetServer(this, port, null);
-	    rcView.addTab("Network Clients", new ClientMonitorPanel(
-		    clientManager));
-	    world = new World(this);
-	    rcView.addTab("Sectors",
-		    new SectorMonitorPanel(world.getSectorManager()));
-	    defs = new Definitions(this);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+	rcView = new PIResourceViewer("Server");
+	PILoggerPane pn = new PILoggerPane();
+	rcView.addTab("Logger", pn);
+	rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
+	rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	rcView.addWindowListener(new WindowAdapter() {
+	    @Override
+	    public void windowClosing(WindowEvent e) {
+		if (!disposing)
+		    dispose();
+	    }
+	});
+	log = new PILogger(Paths.getLogFile(), pn.logOut);
+	
+	int port = Integer.valueOf(9999);
+	entityManager = new ServerEntityManager(this);
+	rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
+	clientManager = new ClientManager();
+	database = new ServerDatabase(this);
+	network = new NetServer(this, port);
+	rcView.addTab("Network Clients", new ClientMonitorPanel(clientManager));
+	world = new World(this);
+	rcView.addTab("Sectors",
+		new SectorMonitorPanel(world.getSectorManager()));
+	defs = new Definitions(this);
     }
 
     @SuppressWarnings("deprecation")
@@ -119,5 +115,9 @@ public class Server {
 
     public ThreadGroup getThreadGroup() {
 	return serverThreads;
+    }
+
+    public boolean isNetworkConnected() {
+	return network.isConnected();
     }
 }

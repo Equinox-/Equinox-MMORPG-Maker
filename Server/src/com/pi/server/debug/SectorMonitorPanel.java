@@ -4,13 +4,12 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.common.contants.GlobalConstants;
 import com.pi.common.database.SectorLocation;
 import com.pi.server.world.SectorManager;
 import com.pi.server.world.SectorManager.SectorStorage;
 
 public class SectorMonitorPanel extends JPanel {
-    private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+    private static final long serialVersionUID = 1L;
     private final SectorManager sm;
     private ThreadTableModel table_model = new ThreadTableModel();
     private JTable tbl;
@@ -30,7 +29,7 @@ public class SectorMonitorPanel extends JPanel {
     }
 
     private class ThreadTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = GlobalConstants.serialVersionUID;
+	private static final long serialVersionUID = 1L;
 	String[] colName = { "X", "Plane", "Z", "Last used", "Empty Sector",
 		"Revision" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
