@@ -42,8 +42,12 @@ public class DataWorker extends Thread {
 			dataEvent = queue.remove(0);
 			PacketInputStream pIn = new PacketInputStream(
 				new ByteArrayInputStream(dataEvent.data));
-			dataEvent.socket.getNetHandler().processPacket(
-				Packet.getPacket(server.getLog(), pIn));
+			Packet pack = Packet.getPacket(server.getLog(), pIn);
+			pIn.close();
+			server.getLog().finest(
+				"Recieved " + pack.getName() + " on "
+					+ dataEvent.socket.getID());
+			dataEvent.socket.getNetHandler().processPacket(pack);
 		    } catch (Exception e) {
 			server.getLog().printStackTrace(e);
 		    }

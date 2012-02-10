@@ -41,8 +41,11 @@ public class DataWorker extends Thread {
 			dataEvent = (byte[]) queue.remove(0);
 			PacketInputStream pIn = new PacketInputStream(
 				new ByteArrayInputStream(dataEvent));
+			Packet pack = Packet.getPacket(client.getLog(), pIn);
+			pIn.close();
+			client.getLog().finest("Recieved " + pack.getName());
 			client.getNetHandler().processPacket(
-				Packet.getPacket(client.getLog(), pIn));
+				pack);
 		    } catch (Exception e) {
 			client.getLog().printStackTrace(e);
 		    }

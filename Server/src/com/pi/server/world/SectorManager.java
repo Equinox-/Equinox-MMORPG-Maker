@@ -24,10 +24,7 @@ public class SectorManager extends ServerThread {
 	    .synchronizedMap(new HashMap<SectorLocation, Long>());
     private Map<SectorLocation, SectorStorage> map = Collections
 	    .synchronizedMap(new HashMap<SectorLocation, SectorStorage>());
-    /*
-     * private List<ClientSectorRequest> requests = Collections
-     * .synchronizedList(new ArrayList<ClientSectorRequest>());
-     */
+
     private Object mutex = new Object();
 
     public SectorManager(Server server) {
@@ -57,12 +54,6 @@ public class SectorManager extends ServerThread {
 			cli.getNetClient().send(packet);
 		    }
 		}
-	    } else {
-		/*
-		 * ClientSectorRequest request = new
-		 * ClientSectorRequest(clientID, req); requests.remove(request);
-		 * requests.add(request);
-		 */
 	    }
 	}
     }
@@ -143,29 +134,14 @@ public class SectorManager extends ServerThread {
 		    if (sX == null)
 			sX = new SectorStorage();
 		    try {
-			sX.data = (Sector) DatabaseIO.read(Paths
-				.getSectorFile(oldestSector), Sector.class);
+			sX.data = (Sector) DatabaseIO
+				.read(Paths.getSectorFile(oldestSector),
+					Sector.class);
 			sX.empty = false;
 			sX.lastUsed = System.currentTimeMillis();
 			map.put(oldestSector, sX);
 			server.getLog().info(
 				"Loaded: " + oldestSector.toString());
-			// Go through the requests, grabbing the correct ones
-			// Packet4Sector secPack = null;
-			/*
-			 * for (ClientSectorRequest req : requests) { if
-			 * (req.baseX == oldestSector.x && req.baseY ==
-			 * oldestSector.plane && req.baseZ == oldestSector.z) {
-			 * if (secPack == null) { secPack = new Packet4Sector();
-			 * secPack.sector = sX.data; } NetClient nC =
-			 * server.getClientManager()
-			 * .getClient(req.clientId).getNetClient(); if (nC !=
-			 * null && nC.isConnected()) { nC.send(secPack);
-			 * server.getLog().fine( "Sending sector " +
-			 * oldestSector.x + "," + oldestSector.plane +
-			 * " to client " + req.clientId); }
-			 * requests.remove(req); } }
-			 */
 		    } catch (FileNotFoundException e) {
 			sX.data = null;
 			sX.empty = true;
@@ -173,23 +149,6 @@ public class SectorManager extends ServerThread {
 			map.put(oldestSector, sX);
 			server.getLog().info(
 				"Flagged as empty: " + oldestSector.toString());
-			/*
-			 * Packet6BlankSector blankPack = null; for
-			 * (ClientSectorRequest req : requests) { if (req.baseX
-			 * == oldestSector.x && req.baseY == oldestSector.plane
-			 * && req.baseZ == oldestSector.z) { if (blankPack ==
-			 * null) { blankPack = new Packet6BlankSector();
-			 * blankPack.baseX = oldestSector.x; blankPack.baseY =
-			 * oldestSector.plane; blankPack.baseZ = oldestSector.z;
-			 * } Client c; if ((c =
-			 * server.getClientManager().getClient( req.clientId))
-			 * != null) { NetClient nC = c.getNetClient(); if (nC !=
-			 * null && nC.isConnected()) { nC.send(blankPack);
-			 * server.getLog().fine( "Sending sector " +
-			 * oldestSector.x + "," + oldestSector.plane +
-			 * " to client " + req.clientId); } }
-			 * requests.remove(req); } }
-			 */
 		    } catch (IOException e) {
 			server.getLog().printStackTrace(e);
 		    }

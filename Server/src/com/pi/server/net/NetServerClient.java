@@ -1,6 +1,5 @@
 package com.pi.server.net;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -11,7 +10,6 @@ import java.util.List;
 
 import com.pi.common.net.NetChangeRequest;
 import com.pi.common.net.NetHandler;
-import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
 import com.pi.server.Server;
@@ -32,9 +30,11 @@ public class NetServerClient {
     }
 
     public void send(Packet pack) {
+	server.getLog().finest("Send " + pack.getName() + " on " + getID());
 	try {
-	    server.getNetwork().addChangeRequest(new NetChangeRequest(socket,
-		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+	    server.getNetwork().addChangeRequest(
+		    new NetChangeRequest(socket, NetChangeRequest.CHANGEOPS,
+			    SelectionKey.OP_WRITE));
 	    synchronized (this.sendQueue) {
 		ByteArrayOutputStream bO = new ByteArrayOutputStream();
 		PacketOutputStream pO = new PacketOutputStream(bO);
@@ -102,9 +102,15 @@ public class NetServerClient {
 	    key.cancel();
 	    return;
 	}
-	PacketInputStream pIn = new PacketInputStream(new ByteArrayInputStream(
-		readBuffer.array()));
-	handler.processPacket(Packet.getPacket(server.getLog(), pIn));
+	/*
+	 * PacketInputStream pIn = new PacketInputStream(new
+	 * ByteArrayInputStream( readBuffer.array())); Packet pack =
+	 * Packet.getPacket(server.getLog(), pIn);
+	 * server.getLog().finest("Read " + pack.getName() + " on " + getID());
+	 * pIn.close(); handler.processPacket(pack);
+	 */
+	server.getNetwork().getWorker()
+		.processData(this, readBuffer.array(), numRead);
     }
 
     public int getID() {

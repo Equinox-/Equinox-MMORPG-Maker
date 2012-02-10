@@ -52,6 +52,7 @@ public class NetClient extends Thread {
     }
 
     public void send(Packet pack) {
+	getLog().finest("Send " + pack.getName());
 	try {
 	    this.pendingChanges.add(new NetChangeRequest(socket,
 		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));

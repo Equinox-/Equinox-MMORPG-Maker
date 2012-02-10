@@ -75,7 +75,7 @@ public class ObjectHeap<E> {
 
 	@Override
 	public boolean hasNext() {
-	    return head < heap.capacity();
+	    return next() != null;
 	}
 
 	@Override

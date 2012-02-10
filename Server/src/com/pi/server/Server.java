@@ -1,5 +1,7 @@
 package com.pi.server;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -62,8 +64,14 @@ public class Server {
 		    dispose();
 	    }
 	});
+	rcView.tabs.addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e) {
+		world.getSectorManager().getSector(0,0,0);
+	    }
+	});
 	log = new PILogger(Paths.getLogFile(), pn.logOut);
-	
+
 	entityManager = new ServerEntityManager(this);
 	rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
 	clientManager = new ClientManager();

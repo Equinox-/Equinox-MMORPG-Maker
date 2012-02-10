@@ -1,6 +1,7 @@
 package com.pi.server.net;
 
 import com.pi.common.database.Account;
+import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
 import com.pi.common.game.GameState;
 import com.pi.common.net.NetHandler;
@@ -24,6 +25,11 @@ public class NetServerHandler extends NetHandler {
     public NetServerHandler(final Server server, final NetServerClient netClient) {
 	this.netClient = netClient;
 	this.server = server;
+    }
+
+    @Override
+    protected PILogger getLog() {
+	return server.getLog();
     }
 
     private Client getClient() {

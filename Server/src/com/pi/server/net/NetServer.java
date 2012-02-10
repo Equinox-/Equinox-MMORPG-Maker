@@ -88,6 +88,10 @@ public class NetServer extends Thread {
 	server.getLog().info("Stopped selector");
     }
 
+    public DataWorker getWorker() {
+	return worker;
+    }
+
     private void accept(SelectionKey key) throws IOException {
 	ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key
 		.channel();

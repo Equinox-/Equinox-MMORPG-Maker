@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import com.pi.client.Client;
 import com.pi.common.database.SectorLocation;
+import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
@@ -28,6 +29,11 @@ public class NetClientHandler extends NetHandler {
 	this.netClient = netClient;
     }
 
+    @Override
+    protected PILogger getLog() {
+	return client.getLog();
+    }
+    
     @Override
     public void process(Packet p) {
     }

@@ -50,6 +50,8 @@ public class Tile implements DatabaseObject {
 	Iterator<Entry<Integer, GraphicsObject>> iterator = layers.iterator();
 	while (iterator.hasNext()) {
 	    Entry<Integer, GraphicsObject> ent = iterator.next();
+	    if (ent == null)
+		break;
 	    pOut.writeInt(ent.getKey());
 	    ent.getValue().write(pOut);
 	}
