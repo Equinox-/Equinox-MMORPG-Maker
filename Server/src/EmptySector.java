@@ -40,9 +40,9 @@ public class EmptySector {
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
-	EntityDef d =new EntityDef();
+	EntityDef d = new EntityDef();
 	d.setGraphic(3);
-	d.setPosition(0,0,128,192);
-	DatabaseIO.write(Paths.getEntityDef(0),d);
+	d.setPosition(0, 0, 128, 192);
+	DatabaseIO.write(Paths.getEntityDef(0), d);
     }
 }

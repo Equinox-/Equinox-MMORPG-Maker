@@ -10,7 +10,8 @@ import com.pi.common.net.PacketOutputStream;
 
 public class Tile implements DatabaseObject {
     private int flags = 0;
-    private ObjectHeap<GraphicsObject> layers = new ObjectHeap<GraphicsObject>(0,1);
+    private ObjectHeap<GraphicsObject> layers = new ObjectHeap<GraphicsObject>(
+	    0, 1);
 
     public ObjectHeap<GraphicsObject> layerMap() {
 	return layers;
@@ -28,7 +29,7 @@ public class Tile implements DatabaseObject {
 	return (flags & flag) == flag;
     }
 
-    public void setLayer(Integer layer, GraphicsObject tile) {
+    public void setLayer(int layer, GraphicsObject tile) {
 	layers.set(layer, tile);
     }
 
@@ -63,7 +64,7 @@ public class Tile implements DatabaseObject {
 	int size = pIn.readInt();
 	for (int i = 0; i < size; i++) {
 	    int layer = pIn.readInt();
-	    if (layer>=TileLayer.MAX_VALUE)
+	    if (layer >= TileLayer.MAX_VALUE)
 		continue;
 	    GraphicsObject obj = new GraphicsObject();
 	    obj.read(pIn);
