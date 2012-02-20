@@ -2,13 +2,41 @@
 [FINE] Started: SectorManager
 [FINE] Started: SectorWriter
 [FINE] Started: EntityDefLoader
-[INFO] Closed selector
+[INFO] Loaded: SectorLocation[x=0, z=0, plane=0]
+[FINEST] Recieved Packet1Login on 0
+[FINEST] Send Packet11LocalEntityID on 0
+[FINEST] Send Packet9EntityData on 0
+[FINEST] Send Packet15GameState on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Send Packet4Sector on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
+[INFO] Flagged as empty: SectorLocation[x=0, z=1, plane=0]
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=1, z=0, plane=0]
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=1, z=-1, plane=0]
+[INFO] Flagged as empty: SectorLocation[x=1, z=1, plane=0]
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[INFO] Loaded: 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Flagged as empty: SectorLocation[x=-1, z=1, plane=0]
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef on 0
 [SEVERE] java.lang.IllegalMonitorStateException
-[INFO] Stopped selector
+[INFO] Closed selector
 [SEVERE] java.lang.Object.notify(Native Method)
+[INFO] Stopped selector
 [SEVERE] com.pi.server.net.NetServer.dispose(NetServer.java:160)
 [SEVERE] com.pi.server.Server.dispose(Server.java:92)
 [SEVERE] com.pi.server.Server$1.windowClosing(Server.java:64)
 [SEVERE] java.awt.AWTEventMulticaster.windowClosing(AWTEventMulticaster.java:333)
+[FINE] Stopped: SectorManager
 [FINE] Stopped: SectorWriter
 [FINE] Stopped: EntityDefLoader

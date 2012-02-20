@@ -34,7 +34,7 @@ public class GraphicsMonitorPanel extends JPanel {
 
 	@Override
 	public int getRowCount() {
-	    return ig.loadedGraphics().size();
+	    return ig.loadedGraphics().capacity();
 	}
 
 	@Override

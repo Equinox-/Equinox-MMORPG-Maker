@@ -5,8 +5,24 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 public class ObjectHeap<E> {
-    private static final int capacityIncrement = 10;
-    protected Object[] elementData = new Object[10];
+    private static final int defaultCapacityIncrement = 10;
+    private static final int defaultStartLength = 10;
+    private int capacityIncrement;
+    private int numElements = 0;
+    protected Object[] elementData;
+
+    public ObjectHeap(int startLength, int increment) {
+	elementData = new Object[startLength];
+	capacityIncrement = increment;
+    }
+
+    public ObjectHeap(int startLength) {
+	this(startLength, defaultCapacityIncrement);
+    }
+
+    public ObjectHeap() {
+	this(defaultStartLength);
+    }
 
     private void grow(int capacity) {
 	// overflow-conscious code
@@ -34,6 +50,12 @@ public class ObjectHeap<E> {
 
     public synchronized void set(int index, E element) {
 	grow(index + 1);
+	if (elementData[index] != null){
+	    if (element==null)
+		numElements--;
+	}else {
+	    numElements++;
+	}
 	elementData[index] = element;
     }
 
@@ -45,8 +67,8 @@ public class ObjectHeap<E> {
 	return oldValue;
     }
 
-    public int size() {
-	return capacity();
+    public int numElements() {
+	return numElements;
     }
 
     public Iterator<Entry<Integer, E>> iterator() {
@@ -72,10 +94,17 @@ public class ObjectHeap<E> {
 	    }
 	    return null;
 	}
-
+	
 	@Override
 	public boolean hasNext() {
-	    return next() != null;
+	    int tmpHead = head;
+	    while (tmpHead < heap.capacity()) {
+		E data = heap.get(tmpHead);
+		tmpHead++;
+		if (data != null)
+		    return true;
+	    }
+	    return false;
 	}
 
 	@Override

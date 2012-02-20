@@ -45,7 +45,7 @@ public class ClientManager {
     }
 
     public int getClientID(Client c) {
-	for (int i = 0; i < clientMap.size(); i++) {
+	for (int i = 0; i < clientMap.capacity(); i++) {
 	    Client client = clientMap.get(i);
 	    if (client != null && client == c) {
 		return i;

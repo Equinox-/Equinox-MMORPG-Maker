@@ -96,7 +96,7 @@ public class TextureManager extends Thread {
 
     private void removeExpired() {
 	synchronized (syncObject) {
-	    for (int i = 0; i < map.size(); i++) {
+	    for (int i = 0; i < map.capacity(); i++) {
 		if (map.get(i) != null) {
 		    if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
 			if (glGraphics.getCore() != null

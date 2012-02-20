@@ -36,7 +36,7 @@ public class ClientMonitorPanel extends JPanel {
 
 	@Override
 	public int getRowCount() {
-	    return svr.registeredClients().size();
+	    return svr.registeredClients().numElements();
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class ClientMonitorPanel extends JPanel {
 	public Object getValueAt(int row, int col) {
 	    int key = 0, i = 0;
 	    while (true) {
-		if (key >= svr.registeredClients().size()) {
+		if (key >= svr.registeredClients().capacity()) {
 		    key = -1;
 		    break;
 		}
