@@ -8,7 +8,7 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
-public abstract class Packet {
+public abstract class Packet implements PacketObject {
     @SuppressWarnings("unchecked")
     public static Class<? extends Packet>[] idMapping = new Class[0];
     // public final static Map<Class<? extends Packet>, Integer> classMapping =
@@ -45,17 +45,12 @@ public abstract class Packet {
 	    boolean highPriority) {
 	if (id < idMapping.length && idMapping[id] != null) {
 	    throw new IllegalArgumentException("Duplicate packet id: " + id);
-	}/*
-	  * else if (classMapping.containsKey(pClass)) { throw new
-	  * IllegalArgumentException("Duplicate packet class: " +
-	  * pClass.getName()); }
-	  */else {
+	} else {
 	    if (id >= idMapping.length) {
 		idMapping = Arrays.copyOf(idMapping.clone(),
 			Math.max(id + 1, idMapping.length));
 	    }
 	    idMapping[id] = pClass;
-	    // classMapping.put(pClass, Integer.valueOf(id));
 	}
     }
 
@@ -72,10 +67,6 @@ public abstract class Packet {
 
     public String getName() {
 	return getClass().getSimpleName();
-    }
-
-    protected static int stringByteLength(String str) {
-	return 4 + (str.length() * 2);
     }
 
     public static Packet getPacket(PILogger log, PacketInputStream pIn)
@@ -97,9 +88,9 @@ public abstract class Packet {
 	writeData(pOut);
     }
 
-    public abstract int getID();
-    protected abstract void writeData(PacketOutputStream pOut)
-	    throws IOException;
+    public int getPacketLength() {
+	return 4 + getLength();
+    }
 
-    protected abstract void readData(PacketInputStream pIn) throws IOException;
+    public abstract int getID();
 }

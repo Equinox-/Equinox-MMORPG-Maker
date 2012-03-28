@@ -5,8 +5,9 @@ import java.io.IOException;
 
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class GraphicsObject implements DatabaseObject {
+public class GraphicsObject implements PacketObject {
     private int graphic;
     private float tX, tY, tWidth, tHeight;
 
@@ -65,7 +66,7 @@ public class GraphicsObject implements DatabaseObject {
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(graphic);
 	pOut.writeFloat(tX);
 	pOut.writeFloat(tY);
@@ -74,11 +75,16 @@ public class GraphicsObject implements DatabaseObject {
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	graphic = pIn.readInt();
 	tX = pIn.readFloat();
 	tY = pIn.readFloat();
 	tWidth = pIn.readFloat();
 	tHeight = pIn.readFloat();
+    }
+
+    @Override
+    public int getLength() {
+	return 20;
     }
 }

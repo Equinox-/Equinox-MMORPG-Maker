@@ -5,8 +5,9 @@ import java.io.IOException;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class Sector implements DatabaseObject {
+public class Sector implements PacketObject {
     private int baseX, baseY, baseZ;
     private Tile[][] tiles = new Tile[SectorConstants.SECTOR_WIDTH][SectorConstants.SECTOR_HEIGHT];
     private int revision = 0;
@@ -71,20 +72,22 @@ public class Sector implements DatabaseObject {
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(baseX);
 	pOut.writeInt(baseY);
 	pOut.writeInt(baseZ);
 	pOut.writeInt(revision);
 	for (int x = 0; x < tiles.length; x++) {
 	    for (int y = 0; y < tiles[x].length; y++) {
-		tiles[x][y].write(pOut);
+		if (tiles[x][y] == null)
+		    tiles[x][y] = new Tile();
+		tiles[x][y].writeData(pOut);
 	    }
 	}
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	baseX = pIn.readInt();
 	baseY = pIn.readInt();
 	baseZ = pIn.readInt();
@@ -93,8 +96,21 @@ public class Sector implements DatabaseObject {
 	    for (int y = 0; y < tiles[x].length; y++) {
 		if (tiles[x][y] == null)
 		    tiles[x][y] = new Tile();
-		tiles[x][y].read(pIn);
+		tiles[x][y].readData(pIn);
 	    }
 	}
+    }
+
+    @Override
+    public int getLength() {
+	int size = 16;
+	for (int x = 0; x < tiles.length; x++) {
+	    for (int y = 0; y < tiles[x].length; y++) {
+		if (tiles[x][y] == null)
+		    tiles[x][y] = new Tile();
+		size += tiles[x][y].getLength();
+	    }
+	}
+	return size;
     }
 }

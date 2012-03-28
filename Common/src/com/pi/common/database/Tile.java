@@ -1,21 +1,15 @@
 package com.pi.common.database;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
-import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class Tile implements DatabaseObject {
+public class Tile implements PacketObject {
     private int flags = 0;
-    private ObjectHeap<GraphicsObject> layers = new ObjectHeap<GraphicsObject>(
-	    0, 1);
-
-    public ObjectHeap<GraphicsObject> layerMap() {
-	return layers;
-    }
+    private GraphicsObject[] layers = new GraphicsObject[TileLayer.MAX_VALUE
+	    .ordinal()];
 
     public int getFlags() {
 	return flags;
@@ -29,46 +23,60 @@ public class Tile implements DatabaseObject {
 	return (flags & flag) == flag;
     }
 
-    public void setLayer(int layer, GraphicsObject tile) {
-	layers.set(layer, tile);
+    public void setLayer(TileLayer layer, GraphicsObject tile) {
+	layers[layer.ordinal()] = tile;
     }
 
-    public GraphicsObject getLayer(int layer) {
-	return layers.get(layer);
+    public GraphicsObject getLayer(TileLayer layer) {
+	return layers[layer.ordinal()];
     }
 
-    public static class TileLayer {
-	public static final int GROUND = 0;
-	public static final int MASK1 = 1;
-	public static final int FRINGE1 = 2;
-	public static final int MAX_VALUE = 3;
+    public static enum TileLayer {
+	GROUND, MASK1, FRINGE1, MAX_VALUE
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(flags);
-	pOut.writeInt(layers.numElements());
-	Iterator<Entry<Integer, GraphicsObject>> iterator = layers.iterator();
-	while (iterator.hasNext()) {
-	    Entry<Integer, GraphicsObject> ent = iterator.next();
-	    if (ent == null || ent.getValue() == null)
-		break;
-	    pOut.writeInt(ent.getKey());
-	    ent.getValue().write(pOut);
+	int layerFlags = 0;
+	int stuff = 1;
+	for (int i = 0; i < layers.length; i++) {
+	    if (layers[i] != null) {
+		layerFlags ^= stuff;
+	    }
+	    stuff = stuff << 1;
+	}
+	pOut.writeInt(layerFlags);
+	for (int i = 0; i < layers.length; i++) {
+	    if (layers[i] != null)
+		layers[i].writeData(pOut);
 	}
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	flags = pIn.readInt();
-	int size = pIn.readInt();
-	for (int i = 0; i < size; i++) {
-	    int layer = pIn.readInt();
-	    if (layer >= TileLayer.MAX_VALUE)
-		continue;
-	    GraphicsObject obj = new GraphicsObject();
-	    obj.read(pIn);
-	    layers.set(layer, obj);
+	int layerFlags = pIn.readInt();
+	int stuff = 1;
+	for (int i = 0; i < layers.length; i++) {
+	    if ((layerFlags & stuff) == stuff) {
+		if (layers[i] == null)
+		    layers[i] = new GraphicsObject();
+		layers[i].readData(pIn);
+	    } else {
+		layers[i] = null;
+	    }
+	    stuff = stuff << 1;
 	}
+    }
+
+    @Override
+    public int getLength() {
+	int size = 8;
+	for (int i = 0; i < layers.length; i++) {
+	    if (layers[i] != null)
+		size += layers[i].getLength();
+	}
+	return size;
     }
 }

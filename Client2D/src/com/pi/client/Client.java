@@ -5,7 +5,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import com.pi.client.database.Paths;
 import com.pi.client.debug.EntityMonitorPanel;
@@ -61,18 +60,17 @@ public class Client implements Disposable {
     // Debug End
 
     public Client(Applet applet) {
-	ip = JOptionPane.showInputDialog(applet,
-		"Please input the ip: (xxx.xxx.xxx.xxx)");
-	while (true) {
-	    try {
-		port = Integer.valueOf(JOptionPane.showInputDialog(applet,
-			"Please input the port"));
-		break;
-	    } catch (NumberFormatException e) {
-		JOptionPane.showMessageDialog(applet,
-			"Bad number format, try again");
-	    }
-	}
+	/*
+	 * ip = JOptionPane.showInputDialog(applet,
+	 * "Please input the ip: (xxx.xxx.xxx.xxx)"); while (true) { try { port
+	 * = Integer.valueOf(JOptionPane.showInputDialog(applet,
+	 * "Please input the port")); break; } catch (NumberFormatException e) {
+	 * JOptionPane.showMessageDialog(applet,
+	 * "Bad number format, try again"); } }
+	 */
+	ip = "127.0.0.1";
+	port = 9999;
+	
 	clientThreads = new ThreadGroup("ClientThreads");
 	reView = new PIResourceViewer("Client");
 	reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

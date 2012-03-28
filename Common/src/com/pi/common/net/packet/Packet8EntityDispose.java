@@ -15,16 +15,21 @@ public class Packet8EntityDispose extends Packet {
     }
 
     @Override
-    protected void writeData(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(entityID);
     }
 
     @Override
-    protected void readData(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	entityID = pIn.readInt();
     }
     @Override
     public int getID() {
 	return 8;
+    }
+
+    @Override
+    public int getLength() {
+	return 4;
     }
 }

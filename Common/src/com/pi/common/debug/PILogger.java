@@ -67,21 +67,15 @@ public class PILogger {
 	getHandler().publish(new LogRecord(Level.WARNING, s));
     }
 
-    public void printStackTrace(Throwable throwable){
-	severe(throwable.toString());
-	StackTraceElement[] elements = throwable.getStackTrace();
-	for (int i = 0; i<Math.min(elements.length, 5); i++){
-	    severe(elements[i].toString());
-	}
+    public void printStackTrace(Throwable throwable) {
+	severe("\n" + exceptionToString(throwable));
     }
-    public static String exceptionToString(Exception e) {
+
+    public static String exceptionToString(Throwable e) {
 	String s = e.toString();
 	int i;
-	for (i = 0; i < Math.min(e.getStackTrace().length, 10); i++) {
+	for (i = 0; i < e.getStackTrace().length; i++) {
 	    s += "\n" + e.getStackTrace()[i];
-	}
-	if (i < e.getStackTrace().length - 1) {
-	    s += "\n...";
 	}
 	return s;
     }

@@ -12,10 +12,14 @@ public class PacketOutputStream extends DataOutputStream {
     }
 
     public void writeString(String s) throws IOException {
-	writeInt(s.length());
-	char[] data = s.toCharArray();
-	for (char c : data)
-	    writeChar(c);
+	if (s == null) {
+	    writeInt(0);
+	} else {
+	    writeInt(s.length());
+	    char[] data = s.toCharArray();
+	    for (char c : data)
+		writeChar(c);
+	}
     }
 
     public void writeByteArray(byte[] data) throws IOException {
@@ -30,5 +34,9 @@ public class PacketOutputStream extends DataOutputStream {
 	objOut.close();
 	writeByteArray(bOut.toByteArray());
 	bOut.close();
+    }
+
+    public static int stringByteLength(String str) {
+	return 4 + (str != null ? str.length() * 2 : 0);
     }
 }

@@ -64,12 +64,6 @@ public class Server {
 		    dispose();
 	    }
 	});
-	rcView.tabs.addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		world.getSectorManager().getSector(0,0,0);
-	    }
-	});
 	log = new PILogger(Paths.getLogFile(), pn.logOut);
 
 	entityManager = new ServerEntityManager(this);
@@ -82,6 +76,8 @@ public class Server {
 	rcView.addTab("Sectors",
 		new SectorMonitorPanel(world.getSectorManager()));
 	defs = new Definitions(this);
+
+	world.getSectorManager().getSector(0, 0, 0);
     }
 
     @SuppressWarnings("deprecation")

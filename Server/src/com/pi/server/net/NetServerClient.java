@@ -1,14 +1,14 @@
 package com.pi.server.net;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.pi.common.net.ByteBufferOutputStream;
 import com.pi.common.net.NetChangeRequest;
+import com.pi.common.net.NetConstants;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
@@ -17,7 +17,7 @@ import com.pi.server.Server;
 public class NetServerClient {
     private final List<ByteBuffer> sendQueue = new LinkedList<ByteBuffer>();
     private final SocketChannel socket;
-    private final ByteBuffer readBuffer = ByteBuffer.allocate(8192);
+    private final ByteBuffer readBuffer = ByteBuffer.allocate(NetConstants.MAX_BUFFER);
     private final Server server;
     private final NetHandler handler;
 
@@ -29,19 +29,57 @@ public class NetServerClient {
 	this.handler = new NetServerHandler(server, this);
     }
 
+    public ByteBuffer getReadBuffer() {
+	return readBuffer;
+    }
+
     public void send(Packet pack) {
-	server.getLog().finest("Send " + pack.getName() + " on " + getID());
+	server.getLog().finest(
+		"Send " + pack.getName() + " size: " + pack.getLength()
+			+ " on " + getID());
 	try {
 	    server.getNetwork().addChangeRequest(
 		    new NetChangeRequest(socket, NetChangeRequest.CHANGEOPS,
 			    SelectionKey.OP_WRITE));
 	    synchronized (this.sendQueue) {
-		ByteArrayOutputStream bO = new ByteArrayOutputStream();
+		int size = pack.getPacketLength();
+		ByteBufferOutputStream bO = new ByteBufferOutputStream(size + 4);
+		bO.getByteBuffer().put((byte) (size >>> 24));
+		bO.getByteBuffer().put((byte) (size >>> 16));
+		bO.getByteBuffer().put((byte) (size >>> 8));
+		bO.getByteBuffer().put((byte) (size));
+
 		PacketOutputStream pO = new PacketOutputStream(bO);
 		pack.writePacket(pO);
 		pO.close();
-		bO.flush();
-		sendQueue.add(ByteBuffer.wrap(bO.toByteArray()));
+		bO.getByteBuffer().flip();
+		sendQueue.add(bO.getByteBuffer());
+	    }
+	    server.getNetwork().wakeSelector();
+	} catch (Exception e) {
+	    server.getLog().printStackTrace(e);
+	}
+    }
+
+    public void sendRaw(byte[] packetData) {
+	server.getLog().finest(
+		"Sending raw data length " + packetData.length + " on "
+			+ getID());
+	try {
+	    server.getNetwork().addChangeRequest(
+		    new NetChangeRequest(socket, NetChangeRequest.CHANGEOPS,
+			    SelectionKey.OP_WRITE));
+	    synchronized (this.sendQueue) {
+		ByteBufferOutputStream bO = new ByteBufferOutputStream(
+			packetData.length + 4);
+		bO.getByteBuffer().put((byte) (packetData.length >>> 24));
+		bO.getByteBuffer().put((byte) (packetData.length >>> 16));
+		bO.getByteBuffer().put((byte) (packetData.length >>> 8));
+		bO.getByteBuffer().put((byte) (packetData.length));
+
+		bO.getByteBuffer().put(packetData);
+		bO.getByteBuffer().flip();
+		sendQueue.add(bO.getByteBuffer());
 	    }
 	    server.getNetwork().wakeSelector();
 	} catch (Exception e) {
@@ -62,55 +100,6 @@ public class NetServerClient {
 
     public void dispose() {
 
-    }
-
-    // Thread accessible
-    public void write(SelectionKey key) throws IOException {
-	SocketChannel socketChannel = (SocketChannel) key.channel();
-	if (socketChannel == socket) {
-	    synchronized (sendQueue) {
-		while (!sendQueue.isEmpty()) {
-		    ByteBuffer buf = sendQueue.get(0);
-		    socketChannel.write(buf);
-		    if (buf.remaining() > 0) {
-			break;
-		    }
-		    sendQueue.remove(0);
-		}
-
-		if (sendQueue.isEmpty()) {
-		    key.interestOps(SelectionKey.OP_READ);
-		}
-	    }
-	}
-    }
-
-    public void read(SelectionKey key) throws IOException {
-	SocketChannel socketChannel = (SocketChannel) key.channel();
-	this.readBuffer.clear();
-	int numRead;
-	try {
-	    numRead = socketChannel.read(this.readBuffer);
-	} catch (IOException e) {
-	    key.cancel();
-	    socketChannel.close();
-	    dispose();
-	    return;
-	}
-	if (numRead == -1) {
-	    key.channel().close();
-	    key.cancel();
-	    return;
-	}
-	/*
-	 * PacketInputStream pIn = new PacketInputStream(new
-	 * ByteArrayInputStream( readBuffer.array())); Packet pack =
-	 * Packet.getPacket(server.getLog(), pIn);
-	 * server.getLog().finest("Read " + pack.getName() + " on " + getID());
-	 * pIn.close(); handler.processPacket(pack);
-	 */
-	server.getNetwork().getWorker()
-		.processData(this, readBuffer.array(), numRead);
     }
 
     public int getID() {

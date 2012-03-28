@@ -1,6 +1,5 @@
 package com.pi.client.net;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -16,7 +15,9 @@ import java.util.List;
 
 import com.pi.client.Client;
 import com.pi.common.debug.PILogger;
+import com.pi.common.net.ByteBufferOutputStream;
 import com.pi.common.net.NetChangeRequest;
+import com.pi.common.net.NetConstants;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet;
@@ -26,7 +27,8 @@ public class NetClient extends Thread {
     private int port;
     private Selector selector;
     private SocketChannel socket;
-    private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
+    private ByteBuffer readBuffer = ByteBuffer
+	    .allocate(NetConstants.MAX_BUFFER);
     private boolean isRunning = true;
 
     private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
@@ -52,17 +54,23 @@ public class NetClient extends Thread {
     }
 
     public void send(Packet pack) {
-	getLog().finest("Send " + pack.getName());
+	getLog().finest("Send " + pack.getName() + " len: " + pack.getLength());
 	try {
 	    this.pendingChanges.add(new NetChangeRequest(socket,
 		    NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
 	    synchronized (this.writeQueue) {
-		ByteArrayOutputStream bO = new ByteArrayOutputStream();
+		int size = pack.getPacketLength();
+		ByteBufferOutputStream bO = new ByteBufferOutputStream(size + 4);
+		bO.getByteBuffer().put((byte) (size >>> 24));
+		bO.getByteBuffer().put((byte) (size >>> 16));
+		bO.getByteBuffer().put((byte) (size >>> 8));
+		bO.getByteBuffer().put((byte) (size));
+
 		PacketOutputStream pO = new PacketOutputStream(bO);
 		pack.writePacket(pO);
 		pO.close();
-		bO.flush();
-		writeQueue.add(ByteBuffer.wrap(bO.toByteArray()));
+		bO.getByteBuffer().flip();
+		writeQueue.add(bO.getByteBuffer());
 	    }
 	    this.selector.wakeup();
 	} catch (Exception e) {
@@ -118,22 +126,32 @@ public class NetClient extends Thread {
 
     private void read(SelectionKey key) throws IOException {
 	SocketChannel socketChannel = (SocketChannel) key.channel();
-	this.readBuffer.clear();
 	int numRead;
 	try {
-	    numRead = socketChannel.read(this.readBuffer);
+	    numRead = socketChannel.read(readBuffer);
+	    if (readBuffer.position() > 4) {
+		int len = (readBuffer.get(0) << 24)
+			+ ((readBuffer.get(1) & 0xFF) << 16)
+			+ ((readBuffer.get(2) & 0xFF) << 8)
+			+ (readBuffer.get(3) & 0xFF);
+		getLog().info("size: " + len);
+		readBuffer.limit(len + 4);
+		if (readBuffer.position() >= len + 4) {
+		    this.worker.processData(readBuffer.array(), len);
+		    readBuffer.clear();
+		}
+	    }
+
+	    if (numRead == -1) {
+		key.channel().close();
+		key.cancel();
+		return;
+	    }
 	} catch (IOException e) {
 	    key.cancel();
 	    socketChannel.close();
 	    return;
 	}
-
-	if (numRead == -1) {
-	    key.channel().close();
-	    key.cancel();
-	    return;
-	}
-	worker.processData(readBuffer.array(), numRead);
     }
 
     private void write(SelectionKey key) throws IOException {

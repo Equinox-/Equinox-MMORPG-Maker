@@ -21,14 +21,19 @@ public class Packet15GameState extends Packet {
     }
 
     @Override
-    protected void writeData(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(state != null ? state.ordinal() : -1);
     }
 
     @Override
-    protected void readData(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	int idx = pIn.readInt();
 	state = idx >= 0 && idx < GameState.values().length ? GameState
 		.values()[idx] : null;
+    }
+
+    @Override
+    public int getLength() {
+	return 4;
     }
 }

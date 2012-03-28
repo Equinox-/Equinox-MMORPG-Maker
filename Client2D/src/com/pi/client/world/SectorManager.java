@@ -124,11 +124,7 @@ public class SectorManager extends ClientThread {
 			client.getNetwork().send(pack);
 			sX.lastUsed = System.currentTimeMillis();
 			map.put(oldestSector, sX);
-		    }else{
-			client.getLog().severe("Send request expiry!");
 		    }
-		}else{
-		    client.getLog().severe("No network!");
 		}
 	    }
 	}

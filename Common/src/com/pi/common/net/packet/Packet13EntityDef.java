@@ -11,21 +11,30 @@ public class Packet13EntityDef extends Packet {
     public EntityDef def;
 
     @Override
-    protected void writeData(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(entityID);
-	def.write(pOut);
+	if (def == null)
+	    def = new EntityDef();
+	def.writeData(pOut);
     }
 
     @Override
-    protected void readData(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	entityID = pIn.readInt();
 	if (def == null)
 	    def = new EntityDef();
-	def.read(pIn);
+	def.readData(pIn);
     }
 
     @Override
     public int getID() {
 	return 13;
+    }
+
+    @Override
+    public int getLength() {
+	if (def == null)
+	    def = new EntityDef();
+	return 4 + def.getLength();
     }
 }

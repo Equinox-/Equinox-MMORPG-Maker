@@ -5,7 +5,7 @@ import com.pi.common.database.Tile.TileLayer;
 
 public class Entity extends Location {
     private byte dir;
-    private int aboveLayer = TileLayer.MASK1;
+    private TileLayer aboveLayer = TileLayer.MASK1;
     private int entityID = -1;
     private EntityListener listener = null;
     private int defID = 0;
@@ -50,7 +50,7 @@ public class Entity extends Location {
 	return entityID;
     }
 
-    public int getLayer() {
+    public TileLayer getLayer() {
 	return aboveLayer;
     }
 
@@ -70,7 +70,7 @@ public class Entity extends Location {
 	setLocation(l.x, l.plane, l.z);
     }
 
-    public void setLayer(int t) {
+    public void setLayer(TileLayer t) {
 	if (listener != null && getEntityID() != -1)
 	    listener.entityLayerChange(getEntityID(), getLayer(), t);
 	aboveLayer = t;

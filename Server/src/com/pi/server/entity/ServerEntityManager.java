@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
+import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityListener;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
@@ -106,7 +107,7 @@ public class ServerEntityManager implements EntityListener {
     }
 
     @Override
-    public void entityLayerChange(int entity, int from, int to) {
+    public void entityLayerChange(int entity, TileLayer from, TileLayer to) {
 
     }
 

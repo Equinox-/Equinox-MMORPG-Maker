@@ -13,14 +13,19 @@ public abstract class LivingEntity extends Entity {
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
-	super.read(pIn);
+    public void readData(PacketInputStream pIn) throws IOException {
+	super.readData(pIn);
 	health = pIn.readInt();
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
-	super.write(pOut);
+    public void writeData(PacketOutputStream pOut) throws IOException {
+	super.writeData(pOut);
 	pOut.writeInt(health);
+    }
+
+    @Override
+    public int getLength() {
+	return 4 + super.getLength();
     }
 }

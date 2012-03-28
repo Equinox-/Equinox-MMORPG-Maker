@@ -23,7 +23,6 @@ public class NetServer extends Thread {
     private int port;
     private ServerSocketChannel serverChannel;
     private Selector selector;
-    private ByteBuffer readBuffer = ByteBuffer.allocate(8192);
     private DataWorker worker;
     private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
     private Server server;
@@ -104,23 +103,34 @@ public class NetServer extends Thread {
 
     private void read(SelectionKey key) throws IOException {
 	SocketChannel socketChannel = (SocketChannel) key.channel();
-	this.readBuffer.clear();
 	int numRead;
 	try {
-	    numRead = socketChannel.read(this.readBuffer);
+	    NetServerClient cli = ((Client) key.attachment()).getNetClient();
+	    numRead = socketChannel.read(cli.getReadBuffer());
+	    if (cli.getReadBuffer().position() > 4) {
+		int len = (cli.getReadBuffer().get(0) << 24)
+			+ ((cli.getReadBuffer().get(1) & 0xFF) << 16)
+			+ ((cli.getReadBuffer().get(2) & 0xFF) << 8)
+			+ (cli.getReadBuffer().get(3) & 0xFF);
+		getLog().info("size: " + len);
+		cli.getReadBuffer().limit(len + 4);
+		if (cli.getReadBuffer().position() >= len + 4) {
+		    this.worker.processData(cli, cli.getReadBuffer().array(),
+			    len);
+		    cli.getReadBuffer().clear();
+		}
+	    }
+
+	    if (numRead == -1) {
+		key.channel().close();
+		key.cancel();
+		return;
+	    }
 	} catch (IOException e) {
 	    key.cancel();
 	    socketChannel.close();
 	    return;
 	}
-
-	if (numRead == -1) {
-	    key.channel().close();
-	    key.cancel();
-	    return;
-	}
-	this.worker.processData(((Client) key.attachment()).getNetClient(),
-		this.readBuffer.array(), numRead);
     }
 
     private void write(SelectionKey key) throws IOException {

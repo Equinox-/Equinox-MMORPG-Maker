@@ -10,13 +10,13 @@ public class Packet1Login extends Packet {
     public String password;
 
     @Override
-    protected void writeData(PacketOutputStream dOut) throws IOException {
+    public void writeData(PacketOutputStream dOut) throws IOException {
 	dOut.writeString(username);
 	dOut.writeString(password);
     }
 
     @Override
-    protected void readData(PacketInputStream dIn) throws IOException {
+    public void readData(PacketInputStream dIn) throws IOException {
 	username = dIn.readString();
 	password = dIn.readString();
     }
@@ -24,5 +24,11 @@ public class Packet1Login extends Packet {
     @Override
     public int getID() {
 	return 1;
+    }
+
+    @Override
+    public int getLength() {
+	return PacketOutputStream.stringByteLength(username)
+		+ PacketOutputStream.stringByteLength(password);
     }
 }

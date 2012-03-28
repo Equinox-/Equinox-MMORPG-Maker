@@ -9,16 +9,21 @@ public class Packet12EntityDefRequest extends Packet {
     public int defID;
 
     @Override
-    protected void writeData(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(defID);
     }
 
     @Override
-    protected void readData(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	defID = pIn.readInt();
     }
     @Override
     public int getID() {
 	return 12;
+    }
+
+    @Override
+    public int getLength() {
+	return 4;
     }
 }

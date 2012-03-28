@@ -9,6 +9,8 @@ import java.util.Map;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.net.ByteBufferOutputStream;
+import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -47,11 +49,11 @@ public class SectorManager extends ServerThread {
 		} else {
 		    Sector sector = sec.data;
 		    if (sector.getRevision() != req.revision) {
-			Packet4Sector packet = new Packet4Sector();
-			packet.sector = sector;
+			/*Packet4Sector packet = new Packet4Sector();
+			packet.sector = sector;*/
 			Client cli = server.getClientManager().getClient(
 				clientID);
-			cli.getNetClient().send(packet);
+			cli.getNetClient().sendRaw(sec.pack);
 		    }
 		}
 	    }
@@ -87,6 +89,7 @@ public class SectorManager extends ServerThread {
 		sec = new SectorStorage();
 	    sec.lastUsed = System.currentTimeMillis();
 	    sec.data = sector;
+	    sec.updatePacketData();
 	    map.put(sector.getSectorLocation(), sec);
 	    server.getWorld().getSectorWriter().writeSector(sector);
 	}
@@ -137,17 +140,17 @@ public class SectorManager extends ServerThread {
 			sX.data = (Sector) DatabaseIO
 				.read(Paths.getSectorFile(oldestSector),
 					Sector.class);
+			sX.updatePacketData();
 			sX.empty = false;
 			sX.lastUsed = System.currentTimeMillis();
+			server.getLog().finer("Loaded sector " + oldestSector.toString());
 			map.put(oldestSector, sX);
-			server.getLog().info(
-				"Loaded: " + oldestSector.toString());
 		    } catch (FileNotFoundException e) {
 			sX.data = null;
 			sX.empty = true;
 			sX.lastUsed = System.currentTimeMillis();
 			map.put(oldestSector, sX);
-			server.getLog().info(
+			server.getLog().finest(
 				"Flagged as empty: " + oldestSector.toString());
 		    } catch (IOException e) {
 			server.getLog().printStackTrace(e);
@@ -160,7 +163,22 @@ public class SectorManager extends ServerThread {
     public static class SectorStorage {
 	public long lastUsed;
 	public Sector data;
+	public byte[] pack;
 	public boolean empty = false;
+
+	public void updatePacketData() {
+	    Packet4Sector p = new Packet4Sector();
+	    try {
+		ByteBufferOutputStream bO = new ByteBufferOutputStream(
+			p.getPacketLength());
+		PacketOutputStream pO = new PacketOutputStream(bO);
+		p.writePacket(pO);
+		pO.close();
+		pack = bO.getByteBuffer().array();
+	    } catch (Exception e) {
+		pack = null;
+	    }
+	}
     }
 
     public static class ClientSectorRequest {

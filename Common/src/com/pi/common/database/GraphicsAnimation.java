@@ -57,19 +57,25 @@ public class GraphicsAnimation extends GraphicsObject {
 	    lastFrame = System.currentTimeMillis();
 	}
     }
+
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
-	super.write(pOut);
+    public void writeData(PacketOutputStream pOut) throws IOException {
+	super.writeData(pOut);
 	pOut.writeInt(frames);
 	pOut.writeInt(frameWidth);
 	pOut.writeLong(frameDuration);
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
-	super.read(pIn);
+    public void readData(PacketInputStream pIn) throws IOException {
+	super.readData(pIn);
 	frames = pIn.readInt();
 	frameWidth = pIn.readInt();
 	frameDuration = pIn.readLong();
+    }
+
+    @Override
+    public int getLength() {
+	return super.getLength() + 16;
     }
 }

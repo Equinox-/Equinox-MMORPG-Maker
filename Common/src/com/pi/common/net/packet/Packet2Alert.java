@@ -15,17 +15,22 @@ public class Packet2Alert extends Packet {
     public String message;
 
     @Override
-    protected void writeData(PacketOutputStream dOut) throws IOException {
+    public void writeData(PacketOutputStream dOut) throws IOException {
 	dOut.writeString(message);
     }
 
     @Override
-    protected void readData(PacketInputStream dIn) throws IOException {
+    public void readData(PacketInputStream dIn) throws IOException {
 	message = dIn.readString();
     }
 
     @Override
     public int getID() {
 	return 2;
+    }
+
+    @Override
+    public int getLength() {
+	return PacketOutputStream.stringByteLength(message);
     }
 }

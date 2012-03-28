@@ -1,42 +1,54 @@
 [INFO] Started selector
-[FINE] Started: SectorManager
 [FINE] Started: SectorWriter
+[FINE] Started: SectorManager
 [FINE] Started: EntityDefLoader
-[INFO] Loaded: SectorLocation[x=0, z=0, plane=0]
+[FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
+[INFO] size: 106
 [FINEST] Recieved Packet1Login on 0
-[FINEST] Send Packet11LocalEntityID on 0
-[FINEST] Send Packet9EntityData on 0
-[FINEST] Send Packet15GameState on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Send Packet4Sector on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
-[INFO] Flagged as empty: SectorLocation[x=0, z=1, plane=0]
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=1, z=0, plane=0]
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=1, z=-1, plane=0]
-[INFO] Flagged as empty: SectorLocation[x=1, z=1, plane=0]
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 24 on 0
+[FINEST] Send Packet15GameState size: 4 on 0
+[INFO] size: 8
+[INFO] size: 20
 [FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Loaded: 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Flagged as empty: SectorLocation[x=-1, z=1, plane=0]
+[INFO] size: 8
 [FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef on 0
-[SEVERE] java.lang.IllegalMonitorStateException
+[FINEST] Send Packet13EntityDef size: 32 on 0
 [INFO] Closed selector
-[SEVERE] java.lang.Object.notify(Native Method)
+[SEVERE] 
+java.lang.IllegalMonitorStateException
+java.lang.Object.notify(Native Method)
+com.pi.server.net.NetServer.dispose(NetServer.java:170)
+com.pi.server.Server.dispose(Server.java:88)
+com.pi.server.Server$1.windowClosing(Server.java:64)
+java.awt.Window.processWindowEvent(Unknown Source)
+javax.swing.JFrame.processWindowEvent(Unknown Source)
+java.awt.Window.processEvent(Unknown Source)
+java.awt.Component.dispatchEventImpl(Unknown Source)
+java.awt.Container.dispatchEventImpl(Unknown Source)
+java.awt.Window.dispatchEventImpl(Unknown Source)
+java.awt.Component.dispatchEvent(Unknown Source)
+java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+java.awt.EventQueue.access$000(Unknown Source)
+java.awt.EventQueue$1.run(Unknown Source)
+java.awt.EventQueue$1.run(Unknown Source)
+java.security.AccessController.doPrivileged(Native Method)
+java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+java.awt.EventQueue$2.run(Unknown Source)
+java.awt.EventQueue$2.run(Unknown Source)
+java.security.AccessController.doPrivileged(Native Method)
+java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+java.awt.EventQueue.dispatchEvent(Unknown Source)
+java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+java.awt.EventDispatchThread.run(Unknown Source)
 [INFO] Stopped selector
-[SEVERE] com.pi.server.net.NetServer.dispose(NetServer.java:160)
-[SEVERE] com.pi.server.Server.dispose(Server.java:92)
-[SEVERE] com.pi.server.Server$1.windowClosing(Server.java:64)
-[SEVERE] java.awt.AWTEventMulticaster.windowClosing(AWTEventMulticaster.java:333)
 [FINE] Stopped: SectorManager
 [FINE] Stopped: SectorWriter
 [FINE] Stopped: EntityDefLoader

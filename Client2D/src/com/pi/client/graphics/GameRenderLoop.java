@@ -26,8 +26,13 @@ public class GameRenderLoop implements Renderable {
     public void render(IGraphics g) {
 	gI = g;
 	if (client.getWorld() != null) {
-	    for (int t = 0; t < TileLayer.MAX_VALUE; t++) {
-		renderSectorSurround(t);
+	    TileLayer t;
+	    Sector sec = client.getWorld().getSectorManager()
+		    .getSector(0, 0, 0);
+	    for (int tI = 0; tI < TileLayer.MAX_VALUE.ordinal(); tI++) {
+		t = TileLayer.values()[tI];
+		// renderSectorSurround(t);
+		renderSectorLayer(0, 0, sec, g, TileLayer.values()[tI]);
 		if (client.getEntityManager().getLocalEntity() != null) {
 		    Entity ent = client.getEntityManager().getLocalEntity();
 		    if (ent.getLayer() == t) {
@@ -54,7 +59,7 @@ public class GameRenderLoop implements Renderable {
 	}
     }
 
-    private void renderSectorSurround(int t) {
+    private void renderSectorSurround(TileLayer t) {
 	Entity ent = client.getEntityManager().getLocalEntity();
 	if (ent != null) {
 	    int sX = ent.getSectorX();
@@ -92,7 +97,7 @@ public class GameRenderLoop implements Renderable {
     }
 
     private static void renderSectorLayer(int offX, int offY, Sector sec,
-	    IGraphics g, int layer) {
+	    IGraphics g, TileLayer t2) {
 
 	if (sec != null) {
 	    Rectangle clip = g.getClip();
@@ -117,8 +122,8 @@ public class GameRenderLoop implements Renderable {
 		for (int y = startY; y <= endY; y++) {
 		    Tile t = sec.getLocalTile(x, y);
 		    if (t != null)
-			if (t.getLayer(layer) != null)
-			    g.drawImage(t.getLayer(layer), offX
+			if (t.getLayer(t2) != null)
+			    g.drawImage(t.getLayer(t2), offX
 				    + (x * TileConstants.TILE_WIDTH), offY
 				    + (y * TileConstants.TILE_HEIGHT),
 				    TileConstants.TILE_WIDTH,

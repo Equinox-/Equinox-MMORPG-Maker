@@ -5,8 +5,9 @@ import java.io.IOException;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class Location implements DatabaseObject {
+public class Location implements PacketObject {
     public int x, z;
     public int plane;
 
@@ -72,16 +73,21 @@ public class Location implements DatabaseObject {
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(x);
 	pOut.writeInt(z);
 	pOut.writeInt(plane);
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	x = pIn.readInt();
 	z = pIn.readInt();
 	plane = pIn.readInt();
+    }
+
+    @Override
+    public int getLength() {
+	return 12;
     }
 }

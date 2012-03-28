@@ -74,8 +74,9 @@ public class Paths {
 	    File f = new File(gDir, id + "." + ext);
 	    if (f.exists())
 		return f;
-	    /*if (oldestID.endsWith(ext))
-		return new File(gDir, oldestID);*/
+	    /*
+	     * if (oldestID.endsWith(ext)) return new File(gDir, oldestID);
+	     */
 	}
 	return null;
     }

@@ -22,7 +22,7 @@ public class AccountDatabase {
 	    int num = fIn.readInt();
 	    for (int i = 0; i < num; i++) {
 		Account acc = new Account();
-		acc.read(fIn);
+		acc.readData(fIn);
 		list.add(acc);
 	    }
 	} catch (EOFException e) {
@@ -54,7 +54,7 @@ public class AccountDatabase {
 		Paths.getAccountsDatabase()));
 	fOut.writeInt(list.size());
 	for (int i = 0; i < list.size(); i++)
-	    list.get(i).write(fOut);
+	    list.get(i).writeData(fOut);
 	fOut.close();
     }
 }

@@ -5,8 +5,9 @@ import java.io.IOException;
 import com.pi.common.PICryptUtils;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class Account implements DatabaseObject {
+public class Account implements PacketObject {
     private String username;
     private String passwordHash;
     private int entityDef;
@@ -40,16 +41,22 @@ public class Account implements DatabaseObject {
     }
 
     @Override
-    public void write(PacketOutputStream pOut) throws IOException {
+    public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(entityDef);
 	pOut.writeString(username);
 	pOut.writeString(passwordHash);
     }
 
     @Override
-    public void read(PacketInputStream pIn) throws IOException {
+    public void readData(PacketInputStream pIn) throws IOException {
 	entityDef = pIn.readInt();
 	username = pIn.readString();
 	passwordHash = pIn.readString();
+    }
+
+    @Override
+    public int getLength() {
+	return 4 + PacketOutputStream.stringByteLength(username)
+		+ PacketOutputStream.stringByteLength(passwordHash);
     }
 }

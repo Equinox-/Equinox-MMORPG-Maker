@@ -19,17 +19,13 @@ public class Packet0Disconnect extends Packet {
     }
 
     @Override
-    protected void writeData(PacketOutputStream dOut) throws IOException {
-	if (reason == null)
-	    reason = "";
-	if (details == null)
-	    details = "";
+    public void writeData(PacketOutputStream dOut) throws IOException {
 	dOut.writeString(reason);
 	dOut.writeString(details);
     }
 
     @Override
-    protected void readData(PacketInputStream dIn) throws IOException {
+    public void readData(PacketInputStream dIn) throws IOException {
 	reason = dIn.readString();
 	details = dIn.readString();
     }
@@ -37,5 +33,11 @@ public class Packet0Disconnect extends Packet {
     @Override
     public int getID() {
 	return 0;
+    }
+
+    @Override
+    public int getLength() {
+	return PacketOutputStream.stringByteLength(reason)
+		+ PacketOutputStream.stringByteLength(details);
     }
 }

@@ -10,15 +10,17 @@ public class Packet14ClientMove extends Packet {
     public Location to;
 
     @Override
-    protected void writeData(PacketOutputStream pOut) throws IOException {
-	pOut.writeInt(to.x);
-	pOut.writeInt(to.plane);
-	pOut.writeInt(to.z);
+    public void writeData(PacketOutputStream pOut) throws IOException {
+	if (to == null)
+	    to = new Location();
+	to.writeData(pOut);
     }
 
     @Override
-    protected void readData(PacketInputStream pIn) throws IOException {
-	to = new Location(pIn.readInt(), pIn.readInt(), pIn.readInt());
+    public void readData(PacketInputStream pIn) throws IOException {
+	if (to == null)
+	    to = new Location();
+	to.readData(pIn);
     }
 
     public static Packet14ClientMove create(Location nL) {
@@ -26,8 +28,16 @@ public class Packet14ClientMove extends Packet {
 	pack.to = nL;
 	return pack;
     }
+
     @Override
     public int getID() {
 	return 14;
+    }
+
+    @Override
+    public int getLength() {
+	if (to == null)
+	    to = new Location();
+	return to.getLength();
     }
 }

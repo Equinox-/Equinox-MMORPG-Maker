@@ -11,14 +11,14 @@ public class Packet6BlankSector extends Packet {
     public int baseZ;
 
     @Override
-    protected void writeData(PacketOutputStream dOut) throws IOException {
+    public void writeData(PacketOutputStream dOut) throws IOException {
 	dOut.writeInt(baseX);
 	dOut.writeInt(baseY);
 	dOut.writeInt(baseZ);
     }
 
     @Override
-    protected void readData(PacketInputStream dIn) throws IOException {
+    public void readData(PacketInputStream dIn) throws IOException {
 	baseX = dIn.readInt();
 	baseY = dIn.readInt();
 	baseZ = dIn.readInt();
@@ -26,5 +26,10 @@ public class Packet6BlankSector extends Packet {
     @Override
     public int getID() {
 	return 6;
+    }
+
+    @Override
+    public int getLength() {
+	return 12;
     }
 }
