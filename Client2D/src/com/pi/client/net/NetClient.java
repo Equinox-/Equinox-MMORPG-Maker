@@ -135,10 +135,21 @@ public class NetClient extends Thread {
 			+ ((readBuffer.get(2) & 0xFF) << 8)
 			+ (readBuffer.get(3) & 0xFF);
 		getLog().info("size: " + len);
-		readBuffer.limit(len + 4);
 		if (readBuffer.position() >= len + 4) {
-		    this.worker.processData(readBuffer.array(), len);
-		    readBuffer.clear();
+		    this.worker.processData(readBuffer.array(),
+			    readBuffer.arrayOffset(), len);
+		    if (readBuffer.position() > len + 4) {
+			byte[] temp = new byte[readBuffer.position() - len - 4];
+			System.arraycopy(readBuffer.array(),
+				readBuffer.arrayOffset() + len + 4, temp, 0,
+				temp.length);
+			readBuffer.clear();
+			readBuffer.put(temp);
+		    } else {
+			readBuffer.clear();
+		    }
+		} else {
+		    readBuffer.limit(len + 4);
 		}
 	    }
 

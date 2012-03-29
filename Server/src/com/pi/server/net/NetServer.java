@@ -106,6 +106,17 @@ public class NetServer extends Thread {
 	int numRead;
 	try {
 	    NetServerClient cli = ((Client) key.attachment()).getNetClient();
+	    /*
+	     * numRead = socketChannel.read(cli.getReadBuffer()); if
+	     * (cli.getReadBuffer().position() > 4) { int len =
+	     * (cli.getReadBuffer().get(0) << 24) + ((cli.getReadBuffer().get(1)
+	     * & 0xFF) << 16) + ((cli.getReadBuffer().get(2) & 0xFF) << 8) +
+	     * (cli.getReadBuffer().get(3) & 0xFF); getLog().info("size: " +
+	     * len); cli.getReadBuffer().limit(len + 4); if
+	     * (cli.getReadBuffer().position() >= len + 4) {
+	     * this.worker.processData(cli, cli.getReadBuffer().array(), len);
+	     * cli.getReadBuffer().clear(); } }
+	     */
 	    numRead = socketChannel.read(cli.getReadBuffer());
 	    if (cli.getReadBuffer().position() > 4) {
 		int len = (cli.getReadBuffer().get(0) << 24)
@@ -113,11 +124,22 @@ public class NetServer extends Thread {
 			+ ((cli.getReadBuffer().get(2) & 0xFF) << 8)
 			+ (cli.getReadBuffer().get(3) & 0xFF);
 		getLog().info("size: " + len);
-		cli.getReadBuffer().limit(len + 4);
 		if (cli.getReadBuffer().position() >= len + 4) {
 		    this.worker.processData(cli, cli.getReadBuffer().array(),
-			    len);
-		    cli.getReadBuffer().clear();
+			    cli.getReadBuffer().arrayOffset(), len);
+		    if (cli.getReadBuffer().position() > len + 4) {
+			byte[] temp = new byte[cli.getReadBuffer().position()
+				- len - 4];
+			System.arraycopy(cli.getReadBuffer().array(), cli
+				.getReadBuffer().arrayOffset() + len + 4, temp,
+				0, temp.length);
+			cli.getReadBuffer().clear();
+			cli.getReadBuffer().put(temp);
+		    } else {
+			cli.getReadBuffer().clear();
+		    }
+		} else {
+		    cli.getReadBuffer().limit(len + 4);
 		}
 	    }
 

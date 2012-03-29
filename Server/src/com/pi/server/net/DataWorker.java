@@ -17,9 +17,10 @@ public class DataWorker extends Thread {
 	start();
     }
 
-    public void processData(NetServerClient socket, byte[] data, int count) {
+    public void processData(NetServerClient socket, byte[] data, int off,
+	    int count) {
 	byte[] dataCopy = new byte[count];
-	System.arraycopy(data, 4, dataCopy, 0, count);
+	System.arraycopy(data, off + 4, dataCopy, 0, count);
 	synchronized (queue) {
 	    queue.add(new ServerDataEvent(socket, dataCopy));
 	    queue.notify();

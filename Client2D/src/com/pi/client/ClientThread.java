@@ -3,6 +3,7 @@ package com.pi.client;
 public abstract class ClientThread extends Thread {
     protected boolean running = true;
     protected final Client client;
+    protected Object mutex;
 
     public ClientThread(Client client) {
 	super(client.getThreadGroup(), "ClientThread");
@@ -18,8 +19,8 @@ public abstract class ClientThread extends Thread {
 	}
 	client.getLog().fine("Stopped: " + getClass().getSimpleName());
     }
-    
-    private boolean shouldLoop(){
+
+    private boolean shouldLoop() {
 	return true;
     }
 
@@ -27,6 +28,11 @@ public abstract class ClientThread extends Thread {
 
     public void dispose() {
 	running = false;
+	if (mutex != null) {
+	    synchronized (mutex) {
+		mutex.notify();
+	    }
+	}
 	try {
 	    join();
 	} catch (InterruptedException e) {

@@ -1,9 +1,9 @@
 package com.pi.server;
 
-
 public abstract class ServerThread extends Thread {
     protected boolean running = true;
     protected final Server server;
+    protected Object mutex = null;
 
     public ServerThread(Server server) {
 	super(server.getThreadGroup(), "ServerThread");
@@ -21,13 +21,18 @@ public abstract class ServerThread extends Thread {
     }
 
     public abstract void loop();
-    
-    public boolean shouldLoop(){
+
+    public boolean shouldLoop() {
 	return true;
     }
 
     public void dispose() {
 	running = false;
+	if (mutex != null) {
+	    synchronized (mutex) {
+		mutex.notify();
+	    }
+	}
 	try {
 	    join();
 	} catch (InterruptedException e) {

@@ -15,45 +15,53 @@ import com.pi.server.database.Paths;
 public class SectorWriter extends ServerThread {
     private Map<SectorLocation, WritableRequest> writeQueue = Collections
 	    .synchronizedMap(new HashMap<SectorLocation, WritableRequest>());
-    private Object syncObject = new Object();
 
     public SectorWriter(Server server) {
 	super(server);
+	mutex = new Object();
 	start();
     }
 
     public void writeSector(Sector sec) {
-	synchronized (syncObject) {
+	synchronized (mutex) {
 	    WritableRequest write = new WritableRequest();
 	    write.data = sec;
 	    write.requestTime = System.currentTimeMillis();
 	    writeQueue.put(sec.getSectorLocation(), write);
+	    mutex.notify();
 	}
     }
 
     @Override
     public void loop() {
-	doRequest();
+	synchronized (mutex) {
+	    if (writeQueue.size() <= 0) {
+		try {
+		    mutex.wait();
+		} catch (InterruptedException e) {
+		}
+	    } else {
+		doRequest();
+	    }
+	}
     }
 
     private void doRequest() {
-	synchronized (syncObject) {
-	    long oldestTime = Long.MAX_VALUE;
-	    SectorLocation oldestSector = null;
-	    for (SectorLocation i : writeQueue.keySet()) {
-		long requestTime = writeQueue.get(i).requestTime;
-		if (oldestTime > requestTime) {
-		    oldestTime = requestTime;
-		    oldestSector = i;
-		}
+	long oldestTime = Long.MAX_VALUE;
+	SectorLocation oldestSector = null;
+	for (SectorLocation i : writeQueue.keySet()) {
+	    long requestTime = writeQueue.get(i).requestTime;
+	    if (oldestTime > requestTime) {
+		oldestTime = requestTime;
+		oldestSector = i;
 	    }
-	    if (oldestSector != null) {
-		WritableRequest wr = writeQueue.remove(oldestSector);
-		try {
-		    DatabaseIO.write(Paths.getSectorFile(oldestSector), wr.data);
-		} catch (IOException e) {
-		    server.getLog().printStackTrace(e);
-		}
+	}
+	if (oldestSector != null) {
+	    WritableRequest wr = writeQueue.remove(oldestSector);
+	    try {
+		DatabaseIO.write(Paths.getSectorFile(oldestSector), wr.data);
+	    } catch (IOException e) {
+		server.getLog().printStackTrace(e);
 	    }
 	}
     }
