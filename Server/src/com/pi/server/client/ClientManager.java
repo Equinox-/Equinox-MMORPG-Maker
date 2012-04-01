@@ -14,7 +14,6 @@ public class ClientManager {
 	Client c = getClient(id);
 	if (c != null)
 	    c.dispose();
-	clientMap.remove(id);
     }
 
     public void disposeClient(Client client) {
@@ -26,6 +25,17 @@ public class ClientManager {
 	    if (clientMap.get(i) == null)
 		return i;
 	return -1;
+    }
+
+    public void removeDeadClients() {
+	for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+	    Client c = clientMap.get(i);
+	    if (c != null
+		    && (c.getNetClient() == null || !c.getNetClient()
+			    .isConnected())) {
+		c.dispose();
+	    }
+	}
     }
 
     public int registerClient(Client c) {
@@ -60,5 +70,9 @@ public class ClientManager {
 
     public ObjectHeap<Client> registeredClients() {
 	return clientMap;
+    }
+
+    public void removeFromRegistry(int id) {
+	clientMap.remove(id);
     }
 }

@@ -1,53 +1,126 @@
 [INFO] Started selector
-[FINE] Started: SectorWriter
 [FINE] Started: SectorManager
+[FINE] Started: SectorWriter
 [FINE] Started: EntityDefLoader
 [FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
-[INFO] size: 106
 [FINEST] Recieved Packet1Login on 0
 [FINEST] Send Packet11LocalEntityID size: 4 on 0
 [FINEST] Send Packet9EntityData size: 24 on 0
 [FINEST] Send Packet15GameState size: 4 on 0
-[INFO] size: 8
-[INFO] size: 20
-[FINEST] Recieved Packet12EntityDefRequest on 0
 [FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
 [INFO] Loaded: 0
-[INFO] size: 8
 [FINEST] Recieved Packet12EntityDefRequest on 0
 [FINEST] Send Packet13EntityDef size: 32 on 0
-[INFO] Closed selector
-[SEVERE] 
-java.lang.IllegalMonitorStateException
-java.lang.Object.notify(Native Method)
-com.pi.server.net.NetServer.dispose(NetServer.java:170)
-com.pi.server.Server.dispose(Server.java:88)
-com.pi.server.Server$1.windowClosing(Server.java:64)
-java.awt.Window.processWindowEvent(Unknown Source)
-javax.swing.JFrame.processWindowEvent(Unknown Source)
-java.awt.Window.processEvent(Unknown Source)
-java.awt.Component.dispatchEventImpl(Unknown Source)
-java.awt.Container.dispatchEventImpl(Unknown Source)
-java.awt.Window.dispatchEventImpl(Unknown Source)
-java.awt.Component.dispatchEvent(Unknown Source)
-java.awt.EventQueue.dispatchEventImpl(Unknown Source)
-java.awt.EventQueue.access$000(Unknown Source)
-java.awt.EventQueue$1.run(Unknown Source)
-java.awt.EventQueue$1.run(Unknown Source)
-java.security.AccessController.doPrivileged(Native Method)
-java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
-java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
-java.awt.EventQueue$2.run(Unknown Source)
-java.awt.EventQueue$2.run(Unknown Source)
-java.security.AccessController.doPrivileged(Native Method)
-java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
-java.awt.EventQueue.dispatchEvent(Unknown Source)
-java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
-java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
-java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
-java.awt.EventDispatchThread.pumpEvents(Unknown Source)
-java.awt.EventDispatchThread.pumpEvents(Unknown Source)
-java.awt.EventDispatchThread.run(Unknown Source)
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet7EntityMove size: 20 on 0
+[INFO] Client disconnected: Client(id=0 ,network=com.pi.server.net.NetServerClient@bdccedd ,account=com.pi.common.database.Account@4d911540 ,entity=com.pi.common.game.Entity@700a4488
 [INFO] Stopped selector
 [FINE] Stopped: SectorManager
 [FINE] Stopped: SectorWriter

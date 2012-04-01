@@ -70,7 +70,7 @@ public class Client implements Disposable {
 	 */
 	ip = "127.0.0.1";
 	port = 9999;
-	
+
 	clientThreads = new ThreadGroup("ClientThreads");
 	reView = new PIResourceViewer("Client");
 	reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -139,11 +139,12 @@ public class Client implements Disposable {
 		defs.dispose();
 	    if (network != null)
 		network.dispose();
+	} else {
 	    if (reView != null)
 		reView.dispose();
-	    logger.close();
 
 	    clientThreads.stop();
+	    logger.close();
 	}
     }
 

@@ -89,7 +89,6 @@ public class SectorManager extends ClientThread {
     private void doRequest() {
 	SectorLocation oldestSector = loadQueue.removeFirst();
 	if (oldestSector != null) {
-	    loadQueue.remove(oldestSector);
 	    SectorStorage sX = new SectorStorage();
 	    File f = Paths.getSectorFile(oldestSector);
 	    int revision = -1;
@@ -103,7 +102,10 @@ public class SectorManager extends ClientThread {
 				    + oldestSector.toString());
 		    f.delete();
 		}
+	    } else {
+		sX.empty = true;
 	    }
+	    map.put(oldestSector, sX);
 	    if (client.isNetworkConnected()) {
 		if (sentRequests.get(oldestSector) == null
 			|| sentRequests.get(oldestSector).longValue()
@@ -117,7 +119,6 @@ public class SectorManager extends ClientThread {
 		    pack.revision = revision;
 		    client.getNetwork().send(pack);
 		    sX.lastUsed = System.currentTimeMillis();
-		    map.put(oldestSector, sX);
 		}
 	    }
 	}

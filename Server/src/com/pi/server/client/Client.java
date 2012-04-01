@@ -39,8 +39,9 @@ public class Client {
 	if (entity != null && entity.getEntityID() != -1)
 	    server.getServerEntityManager().deRegisterEntity(
 		    entity.getEntityID());
-	if (network != null && !network.isQuitting())
+	if (network != null)
 	    network.dispose();
+	server.getClientManager().removeFromRegistry(getID());
 	server.getLog().info("Client disconnected: " + desc);
     }
 

@@ -30,7 +30,6 @@ public class ImageManager extends Thread {
 		return null;
 	    ImageStorage tS = map.get(graphic);
 	    if (tS == null) {
-		// loadQueue.put(graphic, System.currentTimeMillis());
 		loadQueue.add(graphic);
 		return null;
 	    }

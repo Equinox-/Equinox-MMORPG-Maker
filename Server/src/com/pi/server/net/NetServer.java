@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.pi.common.debug.PILogger;
+import com.pi.common.net.DataWorker;
 import com.pi.common.net.NetChangeRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
@@ -26,6 +27,7 @@ public class NetServer extends Thread {
     private DataWorker worker;
     private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
     private Server server;
+    private boolean isRunning = true;
 
     public NetServer(Server server, int port) {
 	super(server.getThreadGroup(), "NetSelector");
@@ -33,7 +35,7 @@ public class NetServer extends Thread {
 	    this.server = server;
 	    this.port = port;
 	    this.selector = this.initSelector();
-	    this.worker = new DataWorker(this);
+	    this.worker = new ServerDataWorker(this);
 	    start();
 	} catch (IOException e) {
 	    server.getLog().printStackTrace(e);
@@ -43,7 +45,8 @@ public class NetServer extends Thread {
     @Override
     public void run() {
 	server.getLog().info("Started selector");
-	while (true) {
+	while (isConnected()) {
+	    server.getClientManager().removeDeadClients();
 	    try {
 		// Process any pending changes
 		synchronized (this.pendingChanges) {
@@ -55,7 +58,8 @@ public class NetServer extends Thread {
 			case NetChangeRequest.CHANGEOPS:
 			    SelectionKey key = change.socket
 				    .keyFor(this.selector);
-			    key.interestOps(change.ops);
+			    if (key != null)
+				key.interestOps(change.ops);
 			}
 		    }
 		    this.pendingChanges.clear();
@@ -98,56 +102,15 @@ public class NetServer extends Thread {
 	socketChannel.configureBlocking(false);
 	Client c = new Client(server,
 		new NetServerClient(server, socketChannel));
+	c.getNetClient().bindClient(c);
 	socketChannel.register(this.selector, SelectionKey.OP_READ).attach(c);
     }
 
     private void read(SelectionKey key) throws IOException {
 	SocketChannel socketChannel = (SocketChannel) key.channel();
-	int numRead;
 	try {
 	    NetServerClient cli = ((Client) key.attachment()).getNetClient();
-	    /*
-	     * numRead = socketChannel.read(cli.getReadBuffer()); if
-	     * (cli.getReadBuffer().position() > 4) { int len =
-	     * (cli.getReadBuffer().get(0) << 24) + ((cli.getReadBuffer().get(1)
-	     * & 0xFF) << 16) + ((cli.getReadBuffer().get(2) & 0xFF) << 8) +
-	     * (cli.getReadBuffer().get(3) & 0xFF); getLog().info("size: " +
-	     * len); cli.getReadBuffer().limit(len + 4); if
-	     * (cli.getReadBuffer().position() >= len + 4) {
-	     * this.worker.processData(cli, cli.getReadBuffer().array(), len);
-	     * cli.getReadBuffer().clear(); } }
-	     */
-	    numRead = socketChannel.read(cli.getReadBuffer());
-	    if (cli.getReadBuffer().position() > 4) {
-		int len = (cli.getReadBuffer().get(0) << 24)
-			+ ((cli.getReadBuffer().get(1) & 0xFF) << 16)
-			+ ((cli.getReadBuffer().get(2) & 0xFF) << 8)
-			+ (cli.getReadBuffer().get(3) & 0xFF);
-		getLog().info("size: " + len);
-		if (cli.getReadBuffer().position() >= len + 4) {
-		    this.worker.processData(cli, cli.getReadBuffer().array(),
-			    cli.getReadBuffer().arrayOffset(), len);
-		    if (cli.getReadBuffer().position() > len + 4) {
-			byte[] temp = new byte[cli.getReadBuffer().position()
-				- len - 4];
-			System.arraycopy(cli.getReadBuffer().array(), cli
-				.getReadBuffer().arrayOffset() + len + 4, temp,
-				0, temp.length);
-			cli.getReadBuffer().clear();
-			cli.getReadBuffer().put(temp);
-		    } else {
-			cli.getReadBuffer().clear();
-		    }
-		} else {
-		    cli.getReadBuffer().limit(len + 4);
-		}
-	    }
-
-	    if (numRead == -1) {
-		key.channel().close();
-		key.cancel();
-		return;
-	    }
+	    cli.read(key);
 	} catch (IOException e) {
 	    key.cancel();
 	    socketChannel.close();
@@ -187,19 +150,20 @@ public class NetServer extends Thread {
 
     public void dispose() {
 	try {
+	    isRunning = false;
+	    selector.wakeup();
+	    join();
+	    worker.wakeup();
+	    worker.join();
 	    selector.close();
 	    serverChannel.close();
-	    notify();
-	    join();
-	    worker.notify();
-	    worker.join();
 	} catch (Exception e) {
 	    server.getLog().printStackTrace(e);
 	}
     }
 
     public boolean isConnected() {
-	return selector.isOpen() && serverChannel.isOpen();
+	return selector.isOpen() && serverChannel.isOpen() && isRunning;
     }
 
     public PILogger getLog() {
@@ -212,5 +176,11 @@ public class NetServer extends Thread {
 
     public void addChangeRequest(NetChangeRequest netChangeRequest) {
 	pendingChanges.add(netChangeRequest);
+    }
+
+    public void deregisterSocketChannel(SocketChannel s) {
+	SelectionKey k = s.keyFor(selector);
+	if (k != null)
+	    k.cancel();
     }
 }

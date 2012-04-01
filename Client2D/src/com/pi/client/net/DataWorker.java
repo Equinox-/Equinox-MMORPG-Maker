@@ -17,11 +17,17 @@ public class DataWorker extends Thread {
 	this.start();
     }
 
-    public void processData(byte[] data, int count) {
+    public void processData(byte[] data, int offset, int count) {
 	byte[] dataCopy = new byte[count];
-	System.arraycopy(data, 4, dataCopy, 0, count);
+	System.arraycopy(data, offset + 4, dataCopy, 0, count);
 	synchronized (queue) {
 	    queue.add(dataCopy);
+	    queue.notify();
+	}
+    }
+
+    public void wakeup() {
+	synchronized (queue) {
 	    queue.notify();
 	}
     }
@@ -44,8 +50,7 @@ public class DataWorker extends Thread {
 			Packet pack = Packet.getPacket(client.getLog(), pIn);
 			pIn.close();
 			client.getLog().finest("Recieved " + pack.getName());
-			client.getNetHandler().processPacket(
-				pack);
+			client.getNetHandler().processPacket(pack);
 		    } catch (Exception e) {
 			client.getLog().printStackTrace(e);
 		    }

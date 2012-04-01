@@ -1,7 +1,5 @@
 package com.pi.server;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -92,6 +90,7 @@ public class Server {
 		world.dispose();
 	    if (defs != null)
 		defs.dispose();
+	} else {
 	    if (rcView != null)
 		rcView.dispose();
 

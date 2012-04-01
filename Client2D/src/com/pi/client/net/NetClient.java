@@ -99,21 +99,22 @@ public class NetClient extends Thread {
 		    }
 		    this.pendingChanges.clear();
 		}
-		this.selector.select();
-		Iterator<SelectionKey> selectedKeys = this.selector
-			.selectedKeys().iterator();
-		while (selectedKeys.hasNext()) {
-		    SelectionKey key = selectedKeys.next();
-		    selectedKeys.remove();
-		    if (!key.isValid()) {
-			continue;
-		    }
-		    if (key.isConnectable()) {
-			this.finishConnection(key);
-		    } else if (key.isReadable()) {
-			this.read(key);
-		    } else if (key.isWritable()) {
-			this.write(key);
+		if (this.selector.select() > 0) {
+		    Iterator<SelectionKey> selectedKeys = this.selector
+			    .selectedKeys().iterator();
+		    while (selectedKeys.hasNext()) {
+			SelectionKey key = selectedKeys.next();
+			selectedKeys.remove();
+			if (!key.isValid()) {
+			    continue;
+			}
+			if (key.isConnectable()) {
+			    this.finishConnection(key);
+			} else if (key.isReadable()) {
+			    this.read(key);
+			} else if (key.isWritable()) {
+			    this.write(key);
+			}
 		    }
 		}
 	    } catch (ClosedSelectorException e) {
@@ -197,18 +198,10 @@ public class NetClient extends Thread {
     }
 
     private SocketChannel initiateConnection() throws IOException {
-	// Create a non-blocking socket channel
 	SocketChannel socketChannel = SocketChannel.open();
 	socketChannel.configureBlocking(false);
-
-	// Kick off connection establishment
 	socketChannel
 		.connect(new InetSocketAddress(this.hostAddress, this.port));
-
-	// Queue a channel registration since the caller is not the
-	// selecting thread. As part of the registration we'll register
-	// an interest in connection events. These are raised when a channel
-	// is ready to complete connection establishment.
 	synchronized (this.pendingChanges) {
 	    this.pendingChanges.add(new NetChangeRequest(socketChannel,
 		    NetChangeRequest.REGISTER, SelectionKey.OP_CONNECT));
@@ -218,16 +211,15 @@ public class NetClient extends Thread {
     }
 
     private Selector initSelector() throws IOException {
-	// Create a new selector
 	return SelectorProvider.provider().openSelector();
     }
 
     public void dispose() {
 	try {
 	    isRunning = false;
-	    notify();
+	    selector.wakeup();
 	    join();
-	    worker.notify();
+	    worker.wakeup();
 	    worker.join();
 	    selector.close();
 	    socket.close();

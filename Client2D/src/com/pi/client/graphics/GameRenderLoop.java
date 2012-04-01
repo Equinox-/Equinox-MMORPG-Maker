@@ -29,51 +29,32 @@ public class GameRenderLoop implements Renderable {
 	    TileLayer t;
 	    Sector sec = client.getWorld().getSectorManager()
 		    .getSector(0, 0, 0);
-	    //if (sec != null)
-	//	client.getLog().info("SECHAPPY");
-	    for (int tI = 0; tI < TileLayer.MAX_VALUE.ordinal(); tI++) {
-		t = TileLayer.values()[tI];
-		// renderSectorSurround(t);
-		renderSectorLayer(0, 0, sec, g, t);
-		/*
-		 * if (client.getEntityManager().getLocalEntity() != null) {
-		 * Entity ent = client.getEntityManager().getLocalEntity(); if
-		 * (ent.getLayer() == t) { EntityDef def =
-		 * client.getDefs().getEntityLoader()
-		 * .getDef(ent.getEntityDef()); if (def != null) { float
-		 * frameWidth = def.getPositionWidth() /
-		 * def.getHorizontalFrames(); float frameHeight =
-		 * def.getPositionHeight() / 4; Point p = locationToScreen(ent);
-		 * g.drawImage( def.getGraphic(), p.x, p.y +
-		 * TileConstants.TILE_HEIGHT - (int) frameHeight, (int)
-		 * def.getPositionX(), (int) (def.getPositionY() + (frameHeight
-		 * * ent .getDir())), (int) frameWidth, (int) frameHeight); } }
-		 * }
-		 */
-	    }
-	}
-    }
-
-    private void renderSectorSurround(TileLayer t) {
-	Entity ent = client.getEntityManager().getLocalEntity();
-	if (ent != null) {
-	    int sX = ent.getSectorX();
-	    int sZ = ent.getSectorZ();
-	    for (int xO = sX - 1; xO <= sX + 1; xO++) {
-		for (int zO = sZ - 1; zO <= sZ + 1; zO++) {
-		    Point sectorBase = locationToScreen(new Location(xO
-			    * SectorConstants.SECTOR_WIDTH, ent.getPlane(), zO
-			    * SectorConstants.SECTOR_HEIGHT));
-		    if (sectorBase != null) {
-			Sector sec = client.getWorld().getSectorManager()
-				.getSector(xO, ent.getPlane(), zO);
-			if (sec != null) {
-			    renderSectorLayer(sectorBase.x, sectorBase.y, sec,
-				    gI, t);
+	    if (sec != null)
+		for (int tI = 0; tI < TileLayer.MAX_VALUE.ordinal(); tI++) {
+		    t = TileLayer.values()[tI];
+		    renderSectorLayer(0, 0, sec, g, t);
+		    if (client.getEntityManager().getLocalEntity() != null) {
+			Entity ent = client.getEntityManager().getLocalEntity();
+			if (ent.getLayer() == t) {
+			    EntityDef def = client.getDefs().getEntityLoader()
+				    .getDef(ent.getEntityDef());
+			    if (def != null) {
+				float frameWidth = def.getPositionWidth()
+					/ def.getHorizontalFrames();
+				float frameHeight = def.getPositionHeight() / 4;
+				Point p = locationToScreen(ent);
+				g.drawImage(def.getGraphic(), p.x, p.y
+					+ TileConstants.TILE_HEIGHT
+					- (int) frameHeight, (int) def
+					.getPositionX(), (int) (def
+					.getPositionY() + (frameHeight * ent
+					.getDir())), (int) frameWidth,
+					(int) frameHeight);
+			    }
 			}
 		    }
+
 		}
-	    }
 	}
     }
 
@@ -91,8 +72,8 @@ public class GameRenderLoop implements Renderable {
 	return null;
     }
 
-    private static void renderSectorLayer(int offX, int offY, Sector sec,
-	    IGraphics g, TileLayer t2) {
+    private void renderSectorLayer(int offX, int offY, Sector sec, IGraphics g,
+	    TileLayer t2) {
 
 	if (sec != null) {
 	    Rectangle clip = g.getClip();
@@ -117,12 +98,13 @@ public class GameRenderLoop implements Renderable {
 		for (int y = startY; y <= endY; y++) {
 		    Tile t = sec.getLocalTile(x, y);
 		    if (t != null)
-			if (t.getLayer(t2) != null)
+			if (t.getLayer(t2) != null) {
 			    g.drawImage(t.getLayer(t2), offX
 				    + (x * TileConstants.TILE_WIDTH), offY
 				    + (y * TileConstants.TILE_HEIGHT),
 				    TileConstants.TILE_WIDTH,
 				    TileConstants.TILE_HEIGHT);
+			}
 		}
 	}
     }

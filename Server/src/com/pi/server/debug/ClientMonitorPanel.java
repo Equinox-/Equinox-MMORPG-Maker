@@ -30,7 +30,7 @@ public class ClientMonitorPanel extends JPanel {
 
     private class ClientTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
-	String[] colName = { "ID", "IP", "Account" };
+	String[] colName = { "ID", "IP", "Account", "Upload", "Download" };
 	Class<?>[] colClass = { String.class, String.class, String.class,
 		String.class, String.class };
 
@@ -66,11 +66,16 @@ public class ClientMonitorPanel extends JPanel {
 		NetServerClient c = cli.getNetClient();
 		switch (col) {
 		case 0:
-		    return c.getID() + "";
+		    return c.getID();
 		case 1:
-		    return c.isConnected() ? c.getHostAddress() : "";
+		    return c.isConnected() ? c.getHostAddress() : "NC";
 		case 2:
-		    return "";
+		    return cli.getAccount() != null ? cli.getAccount()
+			    .getUsername() : "";
+		case 3:
+		    return (c.getUploadSpeed() * 8) + "b/s";
+		case 4:
+		    return (c.getDownloadSpeed() * 8) + "b/s";
 		default:
 		    return "";
 		}
