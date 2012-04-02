@@ -76,4 +76,9 @@ public class NetServerClient extends NetClient {
     public NetHandler getHandler() {
 	return handler;
     }
+
+    @Override
+    public String toString() {
+	return "NetClient[" + clientID + "," + super.getHostAddress() + "]";
+    }
 }

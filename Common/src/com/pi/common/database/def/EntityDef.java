@@ -14,6 +14,10 @@ public class EntityDef extends GraphicsObject {
 	return horizFrames;
     }
 
+    public void setHorizontalFrames(int f) {
+	this.horizFrames = f;
+    }
+
     public int getDefID() {
 	return defID;
     }
@@ -21,19 +25,17 @@ public class EntityDef extends GraphicsObject {
     @Override
     public void writeData(PacketOutputStream pOut) throws IOException {
 	super.writeData(pOut);
-	pOut.writeInt(defID);
 	pOut.writeInt(horizFrames);
     }
 
     @Override
     public void readData(PacketInputStream pIn) throws IOException {
 	super.readData(pIn);
-	defID = pIn.readInt();
 	horizFrames = pIn.readInt();
     }
 
     @Override
     public int getLength() {
-	return super.getLength() + 8;
+	return super.getLength() + 4;
     }
 }

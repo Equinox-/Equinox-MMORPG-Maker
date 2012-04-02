@@ -2,30 +2,26 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.database.Location;
+import com.pi.common.contants.Direction;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public class Packet14ClientMove extends Packet {
-    public Location to;
+    public Direction direction;
 
     @Override
     public void writeData(PacketOutputStream pOut) throws IOException {
-	if (to == null)
-	    to = new Location();
-	to.writeData(pOut);
+	pOut.writeByte(direction.ordinal());
     }
 
     @Override
     public void readData(PacketInputStream pIn) throws IOException {
-	if (to == null)
-	    to = new Location();
-	to.readData(pIn);
+	direction = Direction.values()[pIn.readByte()];
     }
 
-    public static Packet14ClientMove create(Location nL) {
+    public static Packet14ClientMove create(Direction dir) {
 	Packet14ClientMove pack = new Packet14ClientMove();
-	pack.to = nL;
+	pack.direction = dir;
 	return pack;
     }
 
@@ -36,8 +32,6 @@ public class Packet14ClientMove extends Packet {
 
     @Override
     public int getLength() {
-	if (to == null)
-	    to = new Location();
-	return to.getLength();
+	return 1;
     }
 }

@@ -1,14 +1,15 @@
 package com.pi.common.game;
 
+import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.Tile.TileLayer;
 
 public class Entity extends Location {
-    private byte dir;
-    private TileLayer aboveLayer = TileLayer.MASK1;
-    private int entityID = -1;
-    private EntityListener listener = null;
-    private int defID = 0;
+    protected Direction dir = Direction.UP;
+    protected TileLayer aboveLayer = TileLayer.MASK1;
+    protected int entityID = -1;
+    protected EntityListener listener = null;
+    protected int defID = 0;
 
     public Entity(int def) {
 	this.defID = def;
@@ -25,12 +26,12 @@ public class Entity extends Location {
     public Entity(EntityListener listen) {
 	this.listener = listen;
     }
-    
-    public void setEntityDef(int entityDef){
+
+    public void setEntityDef(int entityDef) {
 	this.defID = entityDef;
     }
-    
-    public int getEntityDef(){
+
+    public int getEntityDef() {
 	return this.defID;
     }
 
@@ -42,7 +43,7 @@ public class Entity extends Location {
 	return false;
     }
 
-    public byte getDir() {
+    public Direction getDir() {
 	return dir;
     }
 
@@ -61,7 +62,7 @@ public class Entity extends Location {
     @Override
     public void setLocation(int x, int plane, int z) {
 	if (listener != null && getEntityID() != -1)
-	    listener.entityMove(getEntityID(), new Location(getGlobalX(),
+	    listener.entityTeleport(getEntityID(), new Location(getGlobalX(),
 		    getPlane(), getGlobalZ()), new Location(x, plane, z));
 	super.setLocation(x, plane, z);
     }
@@ -74,5 +75,18 @@ public class Entity extends Location {
 	if (listener != null && getEntityID() != -1)
 	    listener.entityLayerChange(getEntityID(), getLayer(), t);
 	aboveLayer = t;
+    }
+
+    public void setDir(Direction dir) {
+	this.dir = dir;
+    }
+
+    public void doMovement() {
+	if (listener != null && getEntityID() != -1)
+	    listener.entityMove(getEntityID(), new Location(getGlobalX(),
+		    getPlane(), getGlobalZ()), new Location(x + dir.getXOff(),
+		    plane, z + dir.getZOff()), dir);
+	x += dir.getXOff();
+	z += dir.getZOff();
     }
 }

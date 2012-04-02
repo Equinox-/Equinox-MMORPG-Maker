@@ -12,95 +12,96 @@ import com.pi.client.Client;
 import com.pi.client.graphics.GameRenderLoop;
 import com.pi.client.graphics.Renderable;
 import com.pi.client.graphics.device.IGraphics;
-import com.pi.common.database.Location;
+import com.pi.common.contants.Direction;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
-		MouseMotionListener, MouseWheelListener {
-	private final static boolean localUpdate = true;
-	private final Client client;
-	private final GameRenderLoop gameRenderLoop;
+	MouseMotionListener, MouseWheelListener {
+    private final static boolean localUpdate = true;
+    private final Client client;
+    private final GameRenderLoop gameRenderLoop;
 
-	public MainGame(final Client client) {
-		this.client = client;
-		this.gameRenderLoop = new GameRenderLoop(client);
-	}
+    public MainGame(final Client client) {
+	this.client = client;
+	this.gameRenderLoop = new GameRenderLoop(client);
+    }
 
-	@Override
-	public void render(IGraphics g) {
-		this.gameRenderLoop.render(g);
-	}
+    @Override
+    public void render(IGraphics g) {
+	this.gameRenderLoop.render(g);
+    }
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		Entity ent = client.getEntityManager().getLocalEntity();
-		if (ent != null) {
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				Location nL = new Location(ent.x + 1, ent.plane, ent.z);
-				client.getNetwork().send(Packet14ClientMove.create(nL));
-				if (localUpdate
-						&& client.getEntityManager().getLocalEntity() != null)
-					client.getEntityManager().getLocalEntity().setLocation(nL);
-			} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				Location nL = new Location(ent.x - 1, ent.plane, ent.z);
-				client.getNetwork().send(Packet14ClientMove.create(nL));
-				if (localUpdate
-						&& client.getEntityManager().getLocalEntity() != null)
-					client.getEntityManager().getLocalEntity().setLocation(nL);
-			} else if (e.getKeyCode() == KeyEvent.VK_UP) {
-				Location nL = new Location(ent.x, ent.plane, ent.z - 1);
-				client.getNetwork().send(Packet14ClientMove.create(nL));
-				if (localUpdate
-						&& client.getEntityManager().getLocalEntity() != null)
-					client.getEntityManager().getLocalEntity().setLocation(nL);
-			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				Location nL = new Location(ent.x, ent.plane, ent.z + 1);
-				client.getNetwork().send(Packet14ClientMove.create(nL));
-				if (localUpdate
-						&& client.getEntityManager().getLocalEntity() != null)
-					client.getEntityManager().getLocalEntity().setLocation(nL);
-			}
+    @Override
+    public void keyPressed(KeyEvent e) {
+	Entity ent = client.getEntityManager().getLocalEntity();
+	if (ent != null) {
+	    Direction dir = null;
+	    switch (e.getKeyCode()) {
+	    case KeyEvent.VK_UP:
+		dir = Direction.UP;
+		break;
+	    case KeyEvent.VK_DOWN:
+		dir = Direction.DOWN;
+		break;
+	    case KeyEvent.VK_LEFT:
+		dir = Direction.LEFT;
+		break;
+	    case KeyEvent.VK_RIGHT:
+		dir = Direction.RIGHT;
+		break;
+	    }
+	    if (dir != null) {
+		if (client.getEntityManager().getLocalEntity() != null
+			&& !client.getEntityManager().getLocalEntity()
+				.isMoving()) {
+		    client.getNetwork().send(Packet14ClientMove.create(dir));
+		    if (localUpdate) {
+			client.getEntityManager().getLocalEntity().setDir(dir);
+			client.getEntityManager().getLocalEntity().doMovement();
+		    }
 		}
+	    }
 	}
+    }
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-	}
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+    }
 
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-	}
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+    }
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {
-	}
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent arg0) {
+    }
 
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseDragged(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseMoved(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-	}
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-	}
+    @Override
+    public void mouseReleased(MouseEvent arg0) {
+    }
 }

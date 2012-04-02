@@ -135,7 +135,6 @@ public class NetClient extends Thread {
 			+ ((readBuffer.get(1) & 0xFF) << 16)
 			+ ((readBuffer.get(2) & 0xFF) << 8)
 			+ (readBuffer.get(3) & 0xFF);
-		getLog().info("size: " + len);
 		if (readBuffer.position() >= len + 4) {
 		    this.worker.processData(readBuffer.array(),
 			    readBuffer.arrayOffset(), len);

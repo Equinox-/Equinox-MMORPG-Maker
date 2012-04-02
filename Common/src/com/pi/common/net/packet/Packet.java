@@ -11,8 +11,6 @@ import com.pi.common.net.PacketOutputStream;
 public abstract class Packet implements PacketObject {
     @SuppressWarnings("unchecked")
     public static Class<? extends Packet>[] idMapping = new Class[0];
-    // public final static Map<Class<? extends Packet>, Integer> classMapping =
-    // new HashMap<Class<? extends Packet>, Integer>();
     public final long timeStamp = System.currentTimeMillis();
 
     static {
@@ -23,7 +21,7 @@ public abstract class Packet implements PacketObject {
 	registerPacket(4, Packet4Sector.class);
 	registerPacket(5, Packet5SectorRequest.class);
 	registerPacket(6, Packet6BlankSector.class);
-	registerPacket(7, Packet7EntityMove.class, true);
+	registerPacket(7, Packet7EntityTeleport.class, true);
 	registerPacket(8, Packet8EntityDispose.class);
 	registerPacket(9, Packet9EntityData.class, true);
 	registerPacket(10, Packet10EntityDataRequest.class);
@@ -32,6 +30,7 @@ public abstract class Packet implements PacketObject {
 	registerPacket(13, Packet13EntityDef.class);
 	registerPacket(14, Packet14ClientMove.class);
 	registerPacket(15, Packet15GameState.class);
+	registerPacket(16, Packet16EntityMove.class);
     }
 
     public Packet() {
@@ -56,8 +55,13 @@ public abstract class Packet implements PacketObject {
 
     public static Packet getPacket(PILogger log, int id) {
 	try {
-	    Class<? extends Packet> clazz = idMapping[id];
-	    return clazz != null ? clazz.newInstance() : null;
+	    if (id >= 0 && id < idMapping.length) {
+		Class<? extends Packet> clazz = idMapping[id];
+		return clazz != null ? clazz.newInstance() : null;
+	    } else {
+		log.severe("Bad packet ID: " + id);
+		return null;
+	    }
 	} catch (Exception e) {
 	    log.printStackTrace(e);
 	    log.severe("Skipping packet by id: " + id);
@@ -71,16 +75,12 @@ public abstract class Packet implements PacketObject {
 
     public static Packet getPacket(PILogger log, PacketInputStream pIn)
 	    throws IOException {
-	try {
-	    int id = pIn.readInt();
-	    Packet packet = getPacket(log, id);
-	    if (packet == null)
-		throw new IOException("Bad packet id: " + id);
-	    packet.readData(pIn);
-	    return packet;
-	} catch (EOFException e) {
-	    return null;
-	}
+	int id = pIn.readInt();
+	Packet packet = getPacket(log, id);
+	if (packet == null)
+	    throw new IOException("Bad packet id: " + id);
+	packet.readData(pIn);
+	return packet;
     }
 
     public void writePacket(PacketOutputStream pOut) throws IOException {

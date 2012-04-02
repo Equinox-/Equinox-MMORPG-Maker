@@ -50,10 +50,10 @@ public class ObjectHeap<E> {
 
     public synchronized void set(int index, E element) {
 	grow(index + 1);
-	if (elementData[index] != null){
-	    if (element==null)
+	if (elementData[index] != null) {
+	    if (element == null)
 		numElements--;
-	}else {
+	} else if (element != null) {
 	    numElements++;
 	}
 	elementData[index] = element;
@@ -62,6 +62,8 @@ public class ObjectHeap<E> {
     public synchronized E remove(int index) {
 	E oldValue = elementData(index);
 	if (index >= 0 && index < elementData.length) {
+	    if (elementData[index] != null)
+		numElements--;
 	    elementData[index] = null;
 	}
 	return oldValue;
@@ -94,7 +96,7 @@ public class ObjectHeap<E> {
 	    }
 	    return null;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 	    int tmpHead = head;

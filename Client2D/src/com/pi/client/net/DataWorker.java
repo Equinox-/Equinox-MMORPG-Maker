@@ -49,8 +49,13 @@ public class DataWorker extends Thread {
 				new ByteArrayInputStream(dataEvent));
 			Packet pack = Packet.getPacket(client.getLog(), pIn);
 			pIn.close();
-			client.getLog().finest("Recieved " + pack.getName());
-			client.getNetHandler().processPacket(pack);
+			if (pack != null) {
+			    client.getLog()
+				    .finest("Recieved " + pack.getName());
+			    client.getNetHandler().processPacket(pack);
+			} else {
+			    client.getLog().severe("Recieved null packet!");
+			}
 		    } catch (Exception e) {
 			client.getLog().printStackTrace(e);
 		    }

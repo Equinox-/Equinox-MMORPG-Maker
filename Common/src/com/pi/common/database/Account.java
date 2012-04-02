@@ -59,4 +59,9 @@ public class Account implements PacketObject {
 	return 4 + PacketOutputStream.stringByteLength(username)
 		+ PacketOutputStream.stringByteLength(passwordHash);
     }
+
+    @Override
+    public String toString() {
+	return username;
+    }
 }

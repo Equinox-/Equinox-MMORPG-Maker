@@ -29,11 +29,17 @@ public class ClientEntityManager {
 	this.localEntityID = id;
     }
 
-    public Entity getLocalEntity() {
+    public ClientEntity getLocalEntity() {
 	return getEntity(localEntityID);
     }
 
-    public boolean saveEntity(Entity e) {
+    public boolean saveEntity(Entity eI) {
+	ClientEntity e;
+	if (eI instanceof ClientEntity) {
+	    e = (ClientEntity) eI;
+	} else {
+	    e = new ClientEntity(eI);
+	}
 	int id = e.getEntityID();
 	if (id == -1) {
 	    while (true) {
@@ -56,28 +62,28 @@ public class ClientEntityManager {
 	return entityMap.remove(id) != null;
     }
 
-    public List<Entity> getEntitiesInSector(SectorLocation loc) {
-	List<Entity> sector = new ArrayList<Entity>();
+    public List<ClientEntity> getEntitiesInSector(SectorLocation loc) {
+	List<ClientEntity> sector = new ArrayList<ClientEntity>();
 	for (Entity e : entityMap.values()) {
 	    if (loc.containsLocation(e)) {
-		sector.add(e);
+		sector.add((ClientEntity) e);
 	    }
 	}
 	return sector;
     }
 
-    public List<Entity> getEntitiesWithin(Location l, int maxDist) {
-	List<Entity> entities = new ArrayList<Entity>();
+    public List<ClientEntity> getEntitiesWithin(Location l, int maxDist) {
+	List<ClientEntity> entities = new ArrayList<ClientEntity>();
 	for (Entity e : entityMap.values()) {
 	    if (Location.dist(l, e) <= maxDist) {
-		entities.add(e);
+		entities.add((ClientEntity) e);
 	    }
 	}
 	return entities;
     }
 
-    public Entity getEntity(int id) {
-	return entityMap.get(id);
+    public ClientEntity getEntity(int id) {
+	return (ClientEntity) entityMap.get(id);
     }
 
     public Map<Integer, Entity> registeredEntities() {

@@ -93,7 +93,8 @@ public class NetServerHandler extends NetHandler {
 	if (cli != null) {
 	    Entity ent = cli.getEntity();
 	    if (ent != null) {
-		ent.setLocation(p.to);
+		ent.setDir(p.direction);
+		ent.doMovement();
 	    }
 	}
     }

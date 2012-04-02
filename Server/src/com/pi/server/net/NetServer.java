@@ -1,6 +1,7 @@
 package com.pi.server.net;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -29,7 +30,7 @@ public class NetServer extends Thread {
     private Server server;
     private boolean isRunning = true;
 
-    public NetServer(Server server, int port) {
+    public NetServer(Server server, int port) throws BindException {
 	super(server.getThreadGroup(), "NetSelector");
 	try {
 	    this.server = server;
@@ -37,6 +38,8 @@ public class NetServer extends Thread {
 	    this.selector = this.initSelector();
 	    this.worker = new ServerDataWorker(this);
 	    start();
+	} catch (BindException e) {
+	    throw e;
 	} catch (IOException e) {
 	    server.getLog().printStackTrace(e);
 	}

@@ -2,6 +2,7 @@ package com.pi.server;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.BindException;
 
 import javax.swing.JFrame;
 
@@ -58,8 +59,7 @@ public class Server {
 	rcView.addWindowListener(new WindowAdapter() {
 	    @Override
 	    public void windowClosing(WindowEvent e) {
-		if (!disposing)
-		    dispose();
+		dispose();
 	    }
 	});
 	log = new PILogger(Paths.getLogFile(), pn.logOut);
@@ -68,14 +68,19 @@ public class Server {
 	rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
 	clientManager = new ClientManager();
 	database = new ServerDatabase(this);
-	network = new NetServer(this, 9999);
-	rcView.addTab("Network Clients", new ClientMonitorPanel(clientManager));
-	world = new World(this);
-	rcView.addTab("Sectors",
-		new SectorMonitorPanel(world.getSectorManager()));
-	defs = new Definitions(this);
+	try {
+	    network = new NetServer(this, 9999);
+	    rcView.addTab("Network Clients", new ClientMonitorPanel(
+		    clientManager));
+	    world = new World(this);
+	    rcView.addTab("Sectors",
+		    new SectorMonitorPanel(world.getSectorManager()));
+	    defs = new Definitions(this);
 
-	world.getSectorManager().getSector(0, 0, 0);
+	    world.getSectorManager().getSector(0, 0, 0);
+	} catch (BindException e1) {
+	    dispose();
+	}
     }
 
     @SuppressWarnings("deprecation")

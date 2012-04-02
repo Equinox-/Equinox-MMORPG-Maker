@@ -63,10 +63,10 @@ public class Client {
 
     @Override
     public String toString() {
-	return "Client(id=" + clientID
-		+ (network != null ? " ,network=" + network.toString() : "")
-		+ (acc != null ? " ,account=" + acc.toString() : "")
-		+ (entity != null ? " ,entity=" + entity.toString() : "");
+	return "Client(id=" + clientID + " ,network="
+		+ (network != null ? network.toString() : "") + " ,account="
+		+ (acc != null ? acc.toString() : "") + " ,entity="
+		+ (entity != null ? entity.toString() : "");
     }
 
     public int getID() {

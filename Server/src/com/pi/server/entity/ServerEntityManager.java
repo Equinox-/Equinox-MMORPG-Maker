@@ -6,13 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityListener;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
-import com.pi.common.net.packet.Packet7EntityMove;
+import com.pi.common.net.packet.Packet16EntityMove;
+import com.pi.common.net.packet.Packet7EntityTeleport;
 import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
 import com.pi.server.Server;
@@ -82,7 +84,7 @@ public class ServerEntityManager implements EntityListener {
     }
 
     @Override
-    public void entityMove(int entity, Location from, Location to) {
+    public void entityTeleport(int entity, Location from, Location to) {
 	Entity e = getEntity(entity);
 	if (e != null) {
 	    for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
@@ -92,7 +94,8 @@ public class ServerEntityManager implements EntityListener {
 		    int nDist = Location.dist(cli.getEntity(), to);
 		    int oDist = Location.dist(cli.getEntity(), from);
 		    if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
-			cli.getNetClient().send(Packet7EntityMove.create(e));
+			cli.getNetClient()
+				.send(Packet7EntityTeleport.create(e));
 		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 			cli.getNetClient().send(
 				Packet8EntityDispose.create(entity));
@@ -131,12 +134,34 @@ public class ServerEntityManager implements EntityListener {
 			    cli.getNetClient()
 				    .send(Packet9EntityData.create(e));
 			} else {
-			    cli.getNetClient()
-				    .send(Packet7EntityMove.create(e));
+			    cli.getNetClient().send(
+				    Packet7EntityTeleport.create(e));
 			}
 		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 			cli.getNetClient().send(
 				Packet8EntityDispose.create(e.getEntityID()));
+		    }
+		}
+	    }
+	}
+    }
+
+    @Override
+    public void entityMove(int entity, Location from, Location to, Direction dir) {
+	Entity e = getEntity(entity);
+	if (e != null) {
+	    for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+		Client cli = server.getClientManager().getClient(i);
+		if (cli != null && cli.getEntity() != null
+			&& cli.getNetClient() != null) {
+		    int nDist = Location.dist(cli.getEntity(), to);
+		    int oDist = Location.dist(cli.getEntity(), from);
+		    if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
+			cli.getNetClient().send(
+				Packet16EntityMove.create(e, dir));
+		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
+			cli.getNetClient().send(
+				Packet8EntityDispose.create(entity));
 		    }
 		}
 	    }

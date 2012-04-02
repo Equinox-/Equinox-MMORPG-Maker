@@ -8,13 +8,13 @@ import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
-public class Packet7EntityMove extends Packet {
+public class Packet7EntityTeleport extends Packet {
     public int entityID;
     public Location moved;
     public TileLayer entityLayer;
 
-    public static Packet7EntityMove create(Entity ent) {
-	Packet7EntityMove p = new Packet7EntityMove();
+    public static Packet7EntityTeleport create(Entity ent) {
+	Packet7EntityTeleport p = new Packet7EntityTeleport();
 	p.entityID = ent.getEntityID();
 	p.moved = new Location(ent.getGlobalX(), ent.getPlane(),
 		ent.getGlobalZ());

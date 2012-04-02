@@ -54,7 +54,10 @@ public class AWTGraphics extends IGraphics {
 			    if (backBuffer != null)
 				backBuffer.flush();
 			    backBuffer = mgr.getClient().getApplet()
-				    .createImage(width, height);
+				    .createVolatileImage(width, height); // TODO
+									 // Volatile
+									 // vs
+									 // Normal
 			}
 			if (backBuffer != null) {
 			    graphics = (Graphics2D) backBuffer.getGraphics();

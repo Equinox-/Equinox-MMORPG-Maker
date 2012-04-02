@@ -13,10 +13,11 @@ import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.common.net.packet.Packet15GameState;
+import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
-import com.pi.common.net.packet.Packet7EntityMove;
+import com.pi.common.net.packet.Packet7EntityTeleport;
 import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
 
@@ -33,7 +34,7 @@ public class NetClientHandler extends NetHandler {
     protected PILogger getLog() {
 	return client.getLog();
     }
-    
+
     @Override
     public void process(Packet p) {
     }
@@ -59,17 +60,30 @@ public class NetClientHandler extends NetHandler {
 			new SectorLocation(p.baseX, p.baseY, p.baseZ));
     }
 
-    public void process(Packet7EntityMove p) {
+    public void process(Packet7EntityTeleport p) {
 	Entity ent = client.getEntityManager().getEntity(p.entityID);
 	if (ent == null) {
 	    ent = new Entity();
 	    ent.setEntityID(p.entityID);
+	    client.getEntityManager().saveEntity(ent);
 	    client.getNetwork().send(
 		    Packet10EntityDataRequest.create(p.entityID));
 	}
 	ent.setLocation(p.moved);
 	ent.setLayer(p.entityLayer);
-	client.getEntityManager().saveEntity(ent);
+    }
+
+    public void process(Packet16EntityMove p) {
+	Entity ent = client.getEntityManager().getEntity(p.entity);
+	if (ent == null) {
+	    ent = new Entity();
+	    ent.setEntityID(p.entity);
+	    client.getEntityManager().saveEntity(ent);
+	    client.getNetwork()
+		    .send(Packet10EntityDataRequest.create(p.entity));
+	}
+	ent.setDir(p.direction);
+	ent.doMovement();
     }
 
     public void process(Packet8EntityDispose p) {
