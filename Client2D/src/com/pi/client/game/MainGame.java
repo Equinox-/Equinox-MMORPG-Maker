@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
+import com.pi.client.entity.ClientEntity;
 import com.pi.client.graphics.GameRenderLoop;
 import com.pi.client.graphics.Renderable;
 import com.pi.client.graphics.device.IGraphics;
@@ -18,7 +19,6 @@ import com.pi.common.net.packet.Packet14ClientMove;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
 	MouseMotionListener, MouseWheelListener {
-    private final static boolean localUpdate = true;
     private final Client client;
     private final GameRenderLoop gameRenderLoop;
 
@@ -52,14 +52,11 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 		break;
 	    }
 	    if (dir != null) {
-		if (client.getEntityManager().getLocalEntity() != null
-			&& !client.getEntityManager().getLocalEntity()
-				.isMoving()) {
-		    client.getNetwork().send(Packet14ClientMove.create(dir));
-		    if (localUpdate) {
-			client.getEntityManager().getLocalEntity().setDir(dir);
-			client.getEntityManager().getLocalEntity().doMovement();
-		    }
+		ClientEntity local = client.getEntityManager().getLocalEntity();
+		if (local != null && !local.isMoving()) {
+		    local.setDir(dir);
+		    local.doMovement();
+		    client.getNetwork().send(Packet14ClientMove.create(local));
 		}
 	    }
 	}

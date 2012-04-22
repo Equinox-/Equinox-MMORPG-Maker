@@ -3,6 +3,8 @@ package com.pi.client.net;
 import javax.swing.JOptionPane;
 
 import com.pi.client.Client;
+import com.pi.client.entity.ClientEntity;
+import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
@@ -74,16 +76,19 @@ public class NetClientHandler extends NetHandler {
     }
 
     public void process(Packet16EntityMove p) {
-	Entity ent = client.getEntityManager().getEntity(p.entity);
+	ClientEntity ent = client.getEntityManager().getEntity(p.entity);
 	if (ent == null) {
-	    ent = new Entity();
+	    ent = new ClientEntity();
 	    ent.setEntityID(p.entity);
 	    client.getEntityManager().saveEntity(ent);
 	    client.getNetwork()
 		    .send(Packet10EntityDataRequest.create(p.entity));
 	}
-	ent.setDir(p.direction);
-	ent.doMovement();
+	Location l = p.apply(ent);
+	ent.teleportShort(l);
+	if (ent != client.getEntityManager().getLocalEntity()
+		|| !ent.isMoving())
+	    ent.forceStartMoveLoop();
     }
 
     public void process(Packet8EntityDispose p) {

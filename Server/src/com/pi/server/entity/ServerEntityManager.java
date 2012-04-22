@@ -158,7 +158,7 @@ public class ServerEntityManager implements EntityListener {
 		    int oDist = Location.dist(cli.getEntity(), from);
 		    if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
 			cli.getNetClient().send(
-				Packet16EntityMove.create(e, dir));
+				Packet16EntityMove.create(entity, to));
 		    } else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 			cli.getNetClient().send(
 				Packet8EntityDispose.create(entity));

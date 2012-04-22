@@ -1,6 +1,7 @@
 package com.pi.server.net;
 
 import com.pi.common.database.Account;
+import com.pi.common.database.Location;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
 import com.pi.common.game.GameState;
@@ -93,8 +94,8 @@ public class NetServerHandler extends NetHandler {
 	if (cli != null) {
 	    Entity ent = cli.getEntity();
 	    if (ent != null) {
-		ent.setDir(p.direction);
-		ent.doMovement();
+		Location l = p.apply(ent);
+		ent.teleportShort(l);
 	    }
 	}
     }

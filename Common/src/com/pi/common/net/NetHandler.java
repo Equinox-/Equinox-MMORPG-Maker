@@ -16,7 +16,7 @@ public abstract class NetHandler {
 	    m.invoke(this, p);
 	    return;
 	} catch (Exception e) {
-	    System.err.println("No custom method for packet: " + p.getName());
+	    System.err.println(getClass().getSimpleName() + ": No custom method for packet: " + p.getName());
 	}
 	process(p);
     }

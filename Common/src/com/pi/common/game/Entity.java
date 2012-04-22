@@ -89,4 +89,17 @@ public class Entity extends Location {
 	x += dir.getXOff();
 	z += dir.getZOff();
     }
+
+    public void teleportShort(Location apply) {
+	// calculate dir
+	int xC = apply.x - x;
+	int zC = apply.z - z;
+	if (xC != 0 || zC != 0)
+	    dir = Direction.getBestDirection(xC, zC);
+	if (listener != null && getEntityID() != -1)
+	    listener.entityMove(getEntityID(), new Location(getGlobalX(),
+		    getPlane(), getGlobalZ()), apply, dir);
+	this.x = apply.x;
+	this.z = apply.z;
+    }
 }

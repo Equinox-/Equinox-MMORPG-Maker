@@ -51,6 +51,12 @@ public class ClientEntity extends Entity {
 	}
     }
 
+    public void forceStartMoveLoop() {
+	xOff = 0;
+	zOff = 0;
+	moveStart = System.currentTimeMillis();
+    }
+
     @Override
     public void setDir(Direction dir) {
 	super.setDir(dir);
