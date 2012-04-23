@@ -86,8 +86,7 @@ public class NetClientHandler extends NetHandler {
 	}
 	Location l = p.apply(ent);
 	ent.teleportShort(l);
-	if (ent != client.getEntityManager().getLocalEntity()
-		|| !ent.isMoving())
+	if (ent != client.getEntityManager().getLocalEntity())
 	    ent.forceStartMoveLoop();
     }
 
