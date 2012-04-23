@@ -31,7 +31,7 @@ public class GraphicsLoader {
 		    String cleanedName = line[0];
 		    for (String s:Paths.imageFiles)
 			cleanedName = cleanedName.replace("." + s,"");
-		    Integer name = Integer.valueOf(line[0]);
+		    Integer name = Integer.valueOf(cleanedName);
 		    float ver;
 		    try {
 			ver = Float.valueOf(line[1]);
@@ -76,6 +76,7 @@ public class GraphicsLoader {
 	    filelistNew.renameTo(filelistCurrent);
 	    client.getLog().info("Finished checking graphic versions!");
 	} catch (Exception e) {
+	    client.getLog().printStackTrace(e);
 	    client.getLog().info("Failed to check for graphical updates!");
 	}
     }
