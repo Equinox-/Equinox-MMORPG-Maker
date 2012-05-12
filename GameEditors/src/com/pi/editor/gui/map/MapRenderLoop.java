@@ -16,7 +16,7 @@ public class MapRenderLoop implements EditorPage {
     // GUIz
     private PIContainer root = new PIContainer();
     private MapViewerObject mapArea;
-
+    private MapEditorObject mapEditor;
     // End GUIz
 
     public MapRenderLoop(Editor edit) {
@@ -26,20 +26,17 @@ public class MapRenderLoop implements EditorPage {
 	mapArea = new MapViewerObject();
 	mapArea.setSize(15, 15);
 
+	//Map Editor
+	mapEditor = new MapEditorObject(mapArea);
+	mapEditor.setSize(500,500);
+	
 	// Root
 	root.setLocation(0, 0);
 	root.setSize(editor.getApplet().getWidth(), editor.getApplet()
 		.getHeight());
 	root.add(mapArea);
-
-	try {
-	    mapArea.setSector((Sector) DatabaseIO
-		    .read(new File(
-			    "C:/Users/Westin/Documents/.equinox_mmorpg/world/0-0-0.sector"),
-			    Sector.class));
-	} catch (IOException e) {
-	}
-
+	root.add(mapEditor);
+	
 	root.compile();
     }
 

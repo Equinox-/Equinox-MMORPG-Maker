@@ -1,8 +1,9 @@
 package com.pi.editor.gui.map;
 
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
@@ -11,47 +12,37 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.graphics.device.IGraphics;
-import com.pi.gui.PIButton;
 import com.pi.gui.PIContainer;
+import com.pi.gui.PIScrollBar;
+import com.pi.gui.PIScrollBar.ScrollBarListener;
+import com.pi.gui.PIScrollBar.ScrollEvent;
 
 public class MapViewerObject extends PIContainer {
-    private PIButton scrollLeft, scrollRight, scrollUp, scrollDown;
 
     private Sector sectorInfo;
-    private int cX = 0, cZ = 0;
+    private PIScrollBar horiz, vert;
 
-    private int xOff = 0, zOff = 0;
+    int xOff = 0, zOff = 0;
+    int cX = 0, cZ = 0;
+    int iCX, iCY;
 
-    private static final int BUTTON_SIZE = 25;
+    int maxXOff, maxZOff;
+
+    public MapInfoRenderer infoRender = null;
 
     public MapViewerObject() {
 	super();
-	ScrollMouseListener sML = new ScrollMouseListener(this);
+	EventHandler tHandle = new EventHandler();
+	horiz = new PIScrollBar(true);
+	vert = new PIScrollBar(false);
+	horiz.addScrollBarListener(tHandle);
+	vert.addScrollBarListener(tHandle);
 
-	scrollLeft = new PIButton();
-	scrollLeft.addMouseListener(sML);
-	scrollLeft.setSize(BUTTON_SIZE, BUTTON_SIZE);
-	scrollLeft.setContent("<");
+	addMouseMotionListener(tHandle);
+	addMouseListener(tHandle);
 
-	scrollRight = new PIButton();
-	scrollRight.addMouseListener(sML);
-	scrollRight.setSize(BUTTON_SIZE, BUTTON_SIZE);
-	scrollRight.setContent(">");
-
-	scrollUp = new PIButton();
-	scrollUp.addMouseListener(sML);
-	scrollUp.setSize(BUTTON_SIZE, BUTTON_SIZE);
-	scrollUp.setContent("/\\");
-
-	scrollDown = new PIButton();
-	scrollDown.addMouseListener(sML);
-	scrollDown.setSize(BUTTON_SIZE, BUTTON_SIZE);
-	scrollDown.setContent("\\/");
-
-	add(scrollLeft);
-	add(scrollRight);
-	add(scrollUp);
-	add(scrollDown);
+	add(horiz);
+	add(vert);
 
 	setSize(15, 15);
 	setOffset(0, 0);
@@ -66,11 +57,14 @@ public class MapViewerObject extends PIContainer {
 	super.setSize(width * TileConstants.TILE_WIDTH, height
 		* TileConstants.TILE_HEIGHT);
 
-	scrollDown.setLocation(getWidth() - BUTTON_SIZE, getHeight()
-		- BUTTON_SIZE - BUTTON_SIZE);
-	scrollUp.setLocation(getWidth() - BUTTON_SIZE, BUTTON_SIZE);
-	scrollRight.setLocation(getWidth() - BUTTON_SIZE - BUTTON_SIZE, 0);
-	scrollLeft.setLocation(BUTTON_SIZE, 0);
+	horiz.setLocation(25, 0);
+	horiz.setSize(getWidth() - 50, 25);
+
+	vert.setLocation(getWidth() - 25, 25);
+	vert.setSize(25, getHeight() - 50);
+
+	maxXOff = SectorConstants.SECTOR_WIDTH - width + 2;
+	maxZOff = SectorConstants.SECTOR_HEIGHT - height + 2;
     }
 
     @Override
@@ -78,20 +72,39 @@ public class MapViewerObject extends PIContainer {
 	for (TileLayer l : TileLayer.values()) {
 	    renderLayer(g, l);
 	}
+	if (infoRender != null) {
+	    for (int x = Math.max(xOff, 0); x < Math.min(xOff
+		    + (getWidth() / TileConstants.TILE_WIDTH),
+		    SectorConstants.SECTOR_WIDTH); x++) {
+		for (int z = Math.max(zOff, 0); z < Math.min(zOff
+			+ (getHeight() / TileConstants.TILE_HEIGHT),
+			SectorConstants.SECTOR_HEIGHT); z++) {
+		    if (sectorInfo != null) {
+			Tile lTile = sectorInfo.getLocalTile(x, z);
+			if (lTile != null) {
+			    infoRender.renderMapTile(g,
+				    TileConstants.TILE_WIDTH * (x - xOff)
+					    + getAbsoluteX(),
+				    TileConstants.TILE_HEIGHT * (z - zOff)
+					    + getAbsoluteY(), lTile);
+			}
+		    }
+		}
+	    }
+	}
 
 	g.setColor(Color.WHITE);
 	g.drawRect((cX - xOff) * TileConstants.TILE_WIDTH, (cZ - zOff)
 		* TileConstants.TILE_HEIGHT, TileConstants.TILE_WIDTH - 1,
 		TileConstants.TILE_HEIGHT - 1);
-
 	super.render(g);
     }
 
     private void renderLayer(IGraphics g, TileLayer l) {
-	for (int x = xOff; x < Math.min(xOff
+	for (int x = Math.max(xOff, 0); x < Math.min(xOff
 		+ (getWidth() / TileConstants.TILE_WIDTH),
 		SectorConstants.SECTOR_WIDTH); x++) {
-	    for (int z = zOff; z < Math.min(zOff
+	    for (int z = Math.max(zOff, 0); z < Math.min(zOff
 		    + (getHeight() / TileConstants.TILE_HEIGHT),
 		    SectorConstants.SECTOR_HEIGHT); z++) {
 		if (sectorInfo != null) {
@@ -113,39 +126,63 @@ public class MapViewerObject extends PIContainer {
     public void setOffset(int x, int y) {
 	this.xOff = x;
 	this.zOff = y;
-	scrollLeft.setVisible(xOff > 0);
-	scrollRight.setVisible(xOff < SectorConstants.SECTOR_WIDTH
-		- (getWidth() / TileConstants.TILE_WIDTH));
-
-	scrollUp.setVisible(zOff > 0);
-	scrollDown.setVisible(zOff < SectorConstants.SECTOR_HEIGHT
-		- (getHeight() / TileConstants.TILE_HEIGHT));
     }
 
-    @Override
-    public void mouseMoved(MouseEvent e) {
-	super.mouseMoved(e);
-	cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
-	cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
-    }
+    private class EventHandler implements ScrollBarListener,
+	    MouseMotionListener, MouseListener {
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	    iCX = e.getX() % TileConstants.TILE_WIDTH;
+	    iCY = e.getY() % TileConstants.TILE_HEIGHT;
 
-    private static class ScrollMouseListener extends MouseAdapter {
-	private MapViewerObject o;
+	    cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
+	    cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
+	    if (infoRender != null)
+		infoRender.onMapDrag(sectorInfo, cX, cZ, iCX, iCY);
+	}
 
-	public ScrollMouseListener(MapViewerObject o) {
-	    this.o = o;
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	    iCX = e.getX() % TileConstants.TILE_WIDTH;
+	    iCY = e.getY() % TileConstants.TILE_HEIGHT;
+
+	    cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
+	    cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
+	}
+
+	@Override
+	public void onScroll(ScrollEvent e) {
+	    if (e.getSource() == vert) {
+		zOff = (int) (e.getScrollPosition() * maxZOff) - 1;
+	    } else if (e.getSource() == horiz) {
+		xOff = (int) (e.getScrollPosition() * maxXOff) - 1;
+	    }
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-	    if (e.getSource() == o.scrollUp)
-		o.setOffset(o.xOff, o.zOff - 1);
-	    else if (e.getSource() == o.scrollDown)
-		o.setOffset(o.xOff, o.zOff + 1);
-	    else if (e.getSource() == o.scrollLeft)
-		o.setOffset(o.xOff - 1, o.zOff);
-	    else if (e.getSource() == o.scrollRight)
-		o.setOffset(o.xOff + 1, o.zOff);
+	    if (infoRender != null)
+		infoRender.onMapClick(sectorInfo, cX, cZ, iCX, iCY);
 	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+    }
+
+    public Sector getSector() {
+	return sectorInfo;
     }
 }

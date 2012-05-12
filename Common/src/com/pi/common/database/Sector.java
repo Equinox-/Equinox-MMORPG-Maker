@@ -12,6 +12,14 @@ public class Sector implements PacketObject {
     private Tile[][] tiles = new Tile[SectorConstants.SECTOR_WIDTH][SectorConstants.SECTOR_HEIGHT];
     private int revision = 0;
 
+    public Sector() {
+	for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++) {
+	    for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
+		tiles[x][y] = new Tile();
+	    }
+	}
+    }
+
     public Tile[][] getTileArray() {
 	return tiles;
     }

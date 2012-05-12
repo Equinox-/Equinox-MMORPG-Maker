@@ -13,7 +13,6 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
-import com.pi.editor.database.Paths;
 import com.pi.editor.gui.EditorPage;
 import com.pi.editor.gui.map.MapRenderLoop;
 import com.pi.graphics.device.DeviceRegistration;

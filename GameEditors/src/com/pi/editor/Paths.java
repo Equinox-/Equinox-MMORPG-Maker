@@ -1,4 +1,4 @@
-package com.pi.editor.database;
+package com.pi.editor;
 
 import java.io.File;
 
