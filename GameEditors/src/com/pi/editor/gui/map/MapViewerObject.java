@@ -137,7 +137,9 @@ public class MapViewerObject extends PIContainer {
 
 	    cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
 	    cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
-	    if (infoRender != null)
+	    if (!vert.getBounds().contains(e.getX(), e.getY())
+		    && !horiz.getBounds().contains(e.getX(), e.getY())
+		    && infoRender != null)
 		infoRender.onMapDrag(sectorInfo, cX, cZ, iCX, iCY);
 	}
 
@@ -161,7 +163,9 @@ public class MapViewerObject extends PIContainer {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-	    if (infoRender != null)
+	    if (!vert.getBounds().contains(e.getX(), e.getY())
+		    && !horiz.getBounds().contains(e.getX(), e.getY())
+		    && infoRender != null)
 		infoRender.onMapClick(sectorInfo, cX, cZ, iCX, iCY);
 	}
 

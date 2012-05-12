@@ -185,6 +185,15 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	return getAbsoluteBounds(new Rectangle());
     }
 
+    public Rectangle getBounds(Rectangle r) {
+	r.setBounds(x, y, width, height);
+	return r;
+    }
+
+    public Rectangle getBounds() {
+	return getBounds(new Rectangle());
+    }
+
     public int getX() {
 	return x;
     }

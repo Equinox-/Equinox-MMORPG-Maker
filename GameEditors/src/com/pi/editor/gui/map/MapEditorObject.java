@@ -370,9 +370,9 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		    int tileWidth = dragTileAX - tileAX;
 		    int tileHeight = dragTileAY - tileAY;
 		    for (int x = tileX; x <= Math.min(tileX + tileWidth,
-			    SectorConstants.SECTOR_WIDTH); x++) {
+			    SectorConstants.SECTOR_WIDTH - 1); x++) {
 			for (int y = tileY; y <= Math.min(tileY + tileHeight,
-				SectorConstants.SECTOR_HEIGHT); y++) {
+				SectorConstants.SECTOR_HEIGHT - 1); y++) {
 			    s.getLocalTile(x, y)
 				    .setLayer(
 					    currentTileLayer,
