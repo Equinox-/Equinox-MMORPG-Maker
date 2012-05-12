@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Create Runnable Jar for Project GameEditors">
+	<property name="setDir" location="C:/Users/Westin/java-workspace/EMMORPG" />
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
     <target name="create_run_jar">
-        <jar destfile="C:/Users/Westin/java-workspace/EMMORPG/GameEditors.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="${setDir}/GameEditors/GameEditors.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="com.pi.editor.EditorViewerFrame"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="C:/Users/Westin/java-workspace/EMMORPG/GameEditors/bin"/>
+            <fileset dir="${setDir}/GameEditors/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Users/Westin/java-workspace/JOGL/gluegen-rt.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Users/Westin/java-workspace/JOGL/jogl.all.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="C:/Users/Westin/java-workspace/JOGL/nativewindow.all.jar"/>
-            <fileset dir="C:/Users/Westin/java-workspace/EMMORPG/Common/bin"/>
-            <fileset dir="C:/Users/Westin/java-workspace/EMMORPG/PIGraphicsLibrary/bin"/>
+            <fileset dir="${setDir}/Common/bin"/>
+            <fileset dir="${setDir}/PIGraphicsLibrary/bin"/>
         </jar>
     </target>
 </project>
