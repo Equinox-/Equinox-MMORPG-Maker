@@ -128,12 +128,21 @@ public class MapViewerObject extends PIContainer {
     }
 
     private void renderLayer(IGraphics g, TileLayer l) {
+	int[] dat = infoRender.getCurrentTiledata();
 	for (int x = Math.max(xOff, 0); x < Math.min(xOff
 		+ (getWidth() / TileConstants.TILE_WIDTH),
 		SectorConstants.SECTOR_WIDTH); x++) {
 	    for (int z = Math.max(zOff, 0); z < Math.min(zOff
 		    + (getHeight() / TileConstants.TILE_HEIGHT),
 		    SectorConstants.SECTOR_HEIGHT); z++) {
+		if (infoRender != null && l == infoRender.getCurrentTileLayer()) {
+		    int tileWidth = dat[3] - dat[1] + 1;
+		    int tileHeight = dat[4] - dat[2] + 1;
+		    if (x >= cX && z >= cZ && x < cX + tileWidth
+			    && z < cZ + tileHeight) {
+			continue;
+		    }
+		}
 		if (sectorInfo != null) {
 		    Tile lTile = sectorInfo.getLocalTile(x, z);
 		    if (lTile != null) {
