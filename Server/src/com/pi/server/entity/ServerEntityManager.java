@@ -22,8 +22,8 @@ import com.pi.server.client.Client;
 import com.pi.server.constants.ServerConstants;
 
 public class ServerEntityManager implements EntityListener {
-    private final Map<Integer, Entity> entityMap = Collections
-	    .synchronizedMap(new HashMap<Integer, Entity>());
+    private final Map<Integer, ServerEntity> entityMap = Collections
+	    .synchronizedMap(new HashMap<Integer, ServerEntity>());
     private final Server server;
 
     public ServerEntityManager(Server server) {
@@ -40,7 +40,7 @@ public class ServerEntityManager implements EntityListener {
 	}
     }
 
-    public boolean registerEntity(Entity e) {
+    public boolean registerEntity(ServerEntity e) {
 	e.setListener(this);
 	int id = 0;
 	while (true) {
@@ -55,13 +55,13 @@ public class ServerEntityManager implements EntityListener {
 	return false;
     }
 
-    public boolean deRegisterEntity(int id) {
-	return entityMap.remove(id) != null;
+    public ServerEntity deRegisterEntity(int id) {
+	return entityMap.remove(id);
     }
 
-    public List<Entity> getEntitiesInSector(SectorLocation loc) {
-	List<Entity> sector = new ArrayList<Entity>();
-	for (Entity e : entityMap.values()) {
+    public List<ServerEntity> getEntitiesInSector(SectorLocation loc) {
+	List<ServerEntity> sector = new ArrayList<ServerEntity>();
+	for (ServerEntity e : entityMap.values()) {
 	    if (loc.containsLocation(e)) {
 		sector.add(e);
 	    }
@@ -69,9 +69,9 @@ public class ServerEntityManager implements EntityListener {
 	return sector;
     }
 
-    public List<Entity> getEntitiesWithin(Location l, int maxDist) {
-	List<Entity> entities = new ArrayList<Entity>();
-	for (Entity e : entityMap.values()) {
+    public List<ServerEntity> getEntitiesWithin(Location l, int maxDist) {
+	List<ServerEntity> entities = new ArrayList<ServerEntity>();
+	for (ServerEntity e : entityMap.values()) {
 	    if (Location.dist(l, e) <= maxDist) {
 		entities.add(e);
 	    }
@@ -79,13 +79,13 @@ public class ServerEntityManager implements EntityListener {
 	return entities;
     }
 
-    public Entity getEntity(int id) {
+    public ServerEntity getEntity(int id) {
 	return entityMap.get(id);
     }
 
     @Override
     public void entityTeleport(int entity, Location from, Location to) {
-	Entity e = getEntity(entity);
+	ServerEntity e = getEntity(entity);
 	if (e != null) {
 	    for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
 		Client cli = server.getClientManager().getClient(i);
@@ -105,7 +105,7 @@ public class ServerEntityManager implements EntityListener {
 	}
     }
 
-    public Map<Integer, Entity> registeredEntities() {
+    public Map<Integer, ServerEntity> registeredEntities() {
 	return Collections.unmodifiableMap(entityMap);
     }
 
@@ -120,6 +120,20 @@ public class ServerEntityManager implements EntityListener {
 
     @Override
     public void entityDispose(int entity) {
+	Entity e = deRegisterEntity(entity);
+	if (e != null) {
+	    for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+		Client cli = server.getClientManager().getClient(i);
+		if (cli != null && cli.getEntity() != null
+			&& cli.getNetClient() != null) {
+		    int dist = Location.dist(cli.getEntity(), e);
+		    if (dist <= ServerConstants.ENTITY_DISPOSE_DIST) {
+			cli.getNetClient().send(
+				Packet8EntityDispose.create(entity));
+		    }
+		}
+	    }
+	}
     }
 
     public void clientMove(Client cli, Location from, Location to) {
@@ -148,7 +162,7 @@ public class ServerEntityManager implements EntityListener {
 
     @Override
     public void entityMove(int entity, Location from, Location to, Direction dir) {
-	Entity e = getEntity(entity);
+	ServerEntity e = getEntity(entity);
 	if (e != null) {
 	    for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
 		Client cli = server.getClientManager().getClient(i);

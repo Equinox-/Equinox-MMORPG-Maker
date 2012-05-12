@@ -4,11 +4,12 @@ import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
+import com.pi.server.entity.ServerEntity;
 import com.pi.server.net.NetServerClient;
 
 public class Client {
     private Account acc;
-    private Entity entity;
+    private ServerEntity entity;
     private final NetServerClient network;
     private final Server server;
     private final int clientID;
@@ -27,7 +28,7 @@ public class Client {
 		    this.entity.getEntityID());
 	}
 	this.acc = account;
-	this.entity = new Entity(account.getEntityDef());
+	this.entity = new ServerEntity(account.getEntityDef());
 	server.getServerEntityManager().registerEntity(entity);
 	network.send(Packet11LocalEntityID.getPacket(entity.getEntityID()));
 	// TODO Find a better way to request entities for clients on move
@@ -36,9 +37,8 @@ public class Client {
 
     public void dispose() {
 	String desc = this.toString();
-	if (entity != null && entity.getEntityID() != -1)
-	    server.getServerEntityManager().deRegisterEntity(
-		    entity.getEntityID());
+	if (entity != null)
+	    entity.unRegister();
 	if (network != null)
 	    network.dispose();
 	server.getClientManager().removeFromRegistry(getID());

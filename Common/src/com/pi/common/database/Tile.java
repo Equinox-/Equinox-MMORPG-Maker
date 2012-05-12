@@ -8,8 +8,13 @@ import com.pi.common.net.packet.PacketObject;
 
 public class Tile implements PacketObject {
     private int flags = 0;
+    private int attribute = 0;
     private GraphicsObject[] layers = new GraphicsObject[TileLayer.MAX_VALUE
 	    .ordinal()];
+
+    public Tile() {
+
+    }
 
     public int getFlags() {
 	return flags;
@@ -17,6 +22,14 @@ public class Tile implements PacketObject {
 
     public void setFlags(int flags) {
 	this.flags = flags;
+    }
+
+    public int getAttribute() {
+	return attribute;
+    }
+
+    public void setAttribute(int attrib) {
+	attribute = attrib;
     }
 
     public boolean hasFlag(int flag) {
@@ -38,6 +51,7 @@ public class Tile implements PacketObject {
     @Override
     public void writeData(PacketOutputStream pOut) throws IOException {
 	pOut.writeInt(flags);
+	pOut.writeInt(attribute);
 	int layerFlags = 0;
 	int stuff = 1;
 	for (int i = 0; i < layers.length; i++) {
@@ -56,6 +70,7 @@ public class Tile implements PacketObject {
     @Override
     public void readData(PacketInputStream pIn) throws IOException {
 	flags = pIn.readInt();
+	attribute = pIn.readInt();
 	int layerFlags = pIn.readInt();
 	int stuff = 1;
 	for (int i = 0; i < layers.length; i++) {
