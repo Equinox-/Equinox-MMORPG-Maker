@@ -54,6 +54,10 @@ public abstract class IGraphics {
     public abstract void drawImage(int graphic, int dx, int dy, int dwidth,
 	    int dheight, int sx, int sy, int swidth, int sheight);
 
+    public abstract void drawFilteredImage(int graphic, int dx, int dy,
+	    int dwidth, int dheight, int sx, int sy, int swidth, int sheight,
+	    float opacity);
+
     public void drawImage(int graphic, int dx, int dy, int sx, int sy,
 	    int swidth, int sheight) {
 	drawImage(graphic, dx, dy, swidth, sheight, sx, sy, swidth, sheight);
@@ -74,6 +78,31 @@ public abstract class IGraphics {
     public void drawImage(int graphic, int dx, int dy) {
 	drawImage(graphic, dx, dy, 0, 0, getImageWidth(graphic),
 		getImageHeight(graphic));
+    }
+
+    public void drawFilteredImage(int graphic, int dx, int dy, int sx, int sy,
+	    int swidth, int sheight, float opacity) {
+	drawFilteredImage(graphic, dx, dy, swidth, sheight, sx, sy, swidth,
+		sheight, opacity);
+    }
+
+    public void drawFilteredImage(GraphicsObject obj, int dx, int dy,
+	    int dwidth, int dheight, float opacity) {
+	drawFilteredImage(obj.getGraphic(), dx, dy, dwidth, dheight,
+		(int) obj.getPositionX(), (int) obj.getPositionY(),
+		(int) obj.getPositionWidth(), (int) obj.getPositionHeight(),
+		opacity);
+    }
+
+    public void drawFilteredImage(GraphicsObject obj, int dx, int dy,
+	    float opacity) {
+	drawFilteredImage(obj, dx, dy, (int) obj.getPositionWidth(),
+		(int) obj.getPositionHeight(), opacity);
+    }
+
+    public void drawFilteredImage(int graphic, int dx, int dy, float opacity) {
+	drawFilteredImage(graphic, dx, dy, 0, 0, getImageWidth(graphic),
+		getImageHeight(graphic), opacity);
     }
 
     public void drawTiledImage(GraphicsObject bgImage, Rectangle bounds,
@@ -208,6 +237,6 @@ public abstract class IGraphics {
     public void setClip(int x, int y, int width, int height) {
 	setClip(new Rectangle(x, y, width, height));
     }
-    
+
     public abstract ObjectHeap<? extends GraphicsStorage> loadedGraphics();
 }

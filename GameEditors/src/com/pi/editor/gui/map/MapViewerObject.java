@@ -71,6 +71,10 @@ public class MapViewerObject extends PIContainer {
     public void render(IGraphics g) {
 	for (TileLayer l : TileLayer.values()) {
 	    renderLayer(g, l);
+	    if (infoRender != null && l == infoRender.getCurrentTileLayer()
+		    && infoRender.getCurrentTiledata() != null) {
+		renderInfoHover(g);
+	    }
 	}
 	if (infoRender != null) {
 	    for (int x = Math.max(xOff, 0); x < Math.min(xOff
@@ -86,7 +90,7 @@ public class MapViewerObject extends PIContainer {
 				    TileConstants.TILE_WIDTH * (x - xOff)
 					    + getAbsoluteX(),
 				    TileConstants.TILE_HEIGHT * (z - zOff)
-					    + getAbsoluteY(), lTile);
+					    + getAbsoluteY(), x, z, lTile);
 			}
 		    }
 		}
@@ -98,6 +102,17 @@ public class MapViewerObject extends PIContainer {
 		* TileConstants.TILE_HEIGHT, TileConstants.TILE_WIDTH - 1,
 		TileConstants.TILE_HEIGHT - 1);
 	super.render(g);
+    }
+
+    private void renderInfoHover(IGraphics g) {
+	int[] dat = infoRender.getCurrentTiledata();
+	int tileWidth = dat[3] - dat[1] + 1;
+	int tileHeight = dat[4] - dat[2] + 1;
+	g.drawFilteredImage(dat[0], TileConstants.TILE_WIDTH * (cX - xOff)
+		+ getAbsoluteX(), TileConstants.TILE_HEIGHT * (cZ - zOff)
+		+ getAbsoluteY(), dat[1] * TileConstants.TILE_WIDTH, dat[2]
+		* TileConstants.TILE_HEIGHT, TileConstants.TILE_WIDTH
+		* tileWidth, TileConstants.TILE_HEIGHT * tileHeight, .5f);
     }
 
     private void renderLayer(IGraphics g, TileLayer l) {
@@ -128,6 +143,8 @@ public class MapViewerObject extends PIContainer {
 	this.zOff = y;
     }
 
+    int currentButton = 0;
+
     private class EventHandler implements ScrollBarListener,
 	    MouseMotionListener, MouseListener {
 	@Override
@@ -140,7 +157,8 @@ public class MapViewerObject extends PIContainer {
 	    if (!vert.getBounds().contains(e.getX(), e.getY())
 		    && !horiz.getBounds().contains(e.getX(), e.getY())
 		    && infoRender != null)
-		infoRender.onMapDrag(sectorInfo, cX, cZ, iCX, iCY);
+		infoRender.onMapDrag(sectorInfo, currentButton, cX, cZ, iCX,
+			iCY);
 	}
 
 	@Override
@@ -166,15 +184,18 @@ public class MapViewerObject extends PIContainer {
 	    if (!vert.getBounds().contains(e.getX(), e.getY())
 		    && !horiz.getBounds().contains(e.getX(), e.getY())
 		    && infoRender != null)
-		infoRender.onMapClick(sectorInfo, cX, cZ, iCX, iCY);
+		infoRender.onMapClick(sectorInfo, e.getButton(), cX, cZ, iCX,
+			iCY);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+	    currentButton = e.getButton();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+	    currentButton = 0;
 	}
 
 	@Override

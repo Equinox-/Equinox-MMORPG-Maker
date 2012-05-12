@@ -92,13 +92,20 @@ public class GLGraphics extends IGraphics implements GLEventListener {
     @Override
     public void drawImage(int texID, int dx, int dy, int dwidth, int dheight,
 	    int sx, int sy, int swidth, int sheight) {
+	drawFilteredImage(texID, dx, dy, dwidth, dheight, sx, sy, swidth,
+		sheight, 1f);
+    }
+
+    @Override
+    public void drawFilteredImage(int texID, int dx, int dy, int dwidth,
+	    int dheight, int sx, int sy, int swidth, int sheight, float opacity) {
 	Texture tex = textureManager.fetchTexture(texID);
 	if (tex != null) {
 	    double width = tex.getWidth();
 	    double height = tex.getHeight();
 	    tex.enable();
 	    tex.bind();
-	    setColor(Color.WHITE);
+	    setColor(new Color(1f, 1f, 1f, opacity));
 	    gl.glBegin(GL2.GL_QUADS);
 	    gl.glTexCoord2d(sx / width, sy / height);
 	    gl.glVertex2f(dx, dy);

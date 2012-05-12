@@ -52,7 +52,7 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
     private PIScrollBar horizontalTile;
     private PIScrollBar tileLayerSelector;
 
-    private PIButton save, load, newS;
+    private PIButton save, load, newS, fill;
 
     private PICheckbox directionBlockMode;
 
@@ -197,9 +197,16 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 	    }
 	});
 
+	fill = new PIButton();
+	fill.setLocation(325, 160);
+	fill.setContent("Fill");
+	fill.setSize(50, 25);
+	fill.addMouseListener(tileSelectionHandler);
+
 	add(load);
 	add(save);
 	add(newS);
+	add(fill);
 	add(directionBlockMode);
 
 	compile();
@@ -266,12 +273,25 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		}
 	    } else if (e.getSource() == newS) {
 		viewer.setSector(new Sector());
+	    } else if (e.getSource() == fill && viewer.getSector() != null
+		    && !directionBlockMode.isChecked()) {
+		int result = JOptionPane.showConfirmDialog(null,
+			"Are you sure you want to fill with this tile?",
+			"Fill map", JOptionPane.YES_NO_OPTION);
+		if (result == JOptionPane.YES_OPTION) {
+		    for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++) {
+			for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
+			    onMapClick(viewer.getSector(), MouseEvent.BUTTON1,
+				    x, y, 0, 0);
+			}
+		    }
+		}
 	    }
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-	    mouseDown = true;
+	    mouseDown = e.getSource() == graphicsData;
 	}
 
 	@Override
@@ -297,17 +317,23 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-	    dragTileX = (e.getX() + currentTileOffX) / TileConstants.TILE_WIDTH;
-	    dragTileY = (e.getY() + currentTileOffY)
-		    / TileConstants.TILE_HEIGHT;
+	    if (e.getSource() == graphicsData) {
+		dragTileX = (e.getX() + currentTileOffX)
+			/ TileConstants.TILE_WIDTH;
+		dragTileY = (e.getY() + currentTileOffY)
+			/ TileConstants.TILE_HEIGHT;
+	    }
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-	    tileX = (e.getX() + currentTileOffX) / TileConstants.TILE_WIDTH;
-	    tileY = (e.getY() + currentTileOffY) / TileConstants.TILE_HEIGHT;
-	    dragTileX = tileX;
-	    dragTileY = tileY;
+	    if (e.getSource() == graphicsData) {
+		tileX = (e.getX() + currentTileOffX) / TileConstants.TILE_WIDTH;
+		tileY = (e.getY() + currentTileOffY)
+			/ TileConstants.TILE_HEIGHT;
+		dragTileX = tileX;
+		dragTileY = tileY;
+	    }
 	}
 
     }
@@ -316,7 +342,8 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
     private static final int voffset = 4;
 
     @Override
-    public void renderMapTile(IGraphics g, int baseX, int baseY, Tile tile) {
+    public void renderMapTile(IGraphics g, int baseX, int baseY, int tileX,
+	    int tileY, Tile tile) {
 	if (directionBlockMode.isChecked()) {
 	    g.drawText(
 		    "<",
@@ -362,108 +389,132 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
     }
 
     @Override
-    public void onMapClick(Sector s, int tileX, int tileY, int internalX,
-	    int internalY) {
+    public void onMapClick(Sector s, int button, int tileX, int tileY,
+	    int internalX, int internalY) {
 	if (s != null) {
-	    if (!directionBlockMode.isChecked()) {
-		if (tileAX >= 0) {
-		    int tileWidth = dragTileAX - tileAX;
-		    int tileHeight = dragTileAY - tileAY;
-		    for (int x = tileX; x <= Math.min(tileX + tileWidth,
-			    SectorConstants.SECTOR_WIDTH - 1); x++) {
-			for (int y = tileY; y <= Math.min(tileY + tileHeight,
-				SectorConstants.SECTOR_HEIGHT - 1); y++) {
-			    s.getLocalTile(x, y)
-				    .setLayer(
-					    currentTileLayer,
-					    new GraphicsObject(
-						    tileset,
-						    ((x - tileX) + tileAX)
-							    * TileConstants.TILE_WIDTH,
-						    ((y - tileY) + tileAY)
-							    * TileConstants.TILE_HEIGHT,
-						    TileConstants.TILE_WIDTH,
-						    TileConstants.TILE_HEIGHT));
+	    if (button == MouseEvent.BUTTON1) {
+		if (!directionBlockMode.isChecked()) {
+		    if (tileAX >= 0) {
+			int tileWidth = dragTileAX - tileAX;
+			int tileHeight = dragTileAY - tileAY;
+			for (int x = tileX; x <= Math.min(tileX + tileWidth,
+				SectorConstants.SECTOR_WIDTH - 1); x++) {
+			    for (int y = tileY; y <= Math.min(tileY
+				    + tileHeight,
+				    SectorConstants.SECTOR_HEIGHT - 1); y++) {
+				s.getLocalTile(x, y)
+					.setLayer(
+						currentTileLayer,
+						new GraphicsObject(
+							tileset,
+							((x - tileX) + tileAX)
+								* TileConstants.TILE_WIDTH,
+							((y - tileY) + tileAY)
+								* TileConstants.TILE_HEIGHT,
+							TileConstants.TILE_WIDTH,
+							TileConstants.TILE_HEIGHT));
+			    }
 			}
-		    }
-		}
-	    } else {
-		int flags = s.getLocalTile(tileX, tileY).getFlags();
-		if (internalX < (TileConstants.TILE_WIDTH / 3)) {
-		    if (internalY > (TileConstants.TILE_HEIGHT / 3)
-			    && internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
-			if ((flags & TileFlags.WALL_WEST) == TileFlags.WALL_WEST)
-			    flags &= (~TileFlags.WALL_WEST);
-			else
-			    flags |= TileFlags.WALL_WEST;
-		    }
-		} else if (internalX > 2 * (TileConstants.TILE_WIDTH / 3)) {
-		    if (internalY > (TileConstants.TILE_HEIGHT / 3)
-			    && internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
-			if ((flags & TileFlags.WALL_EAST) == TileFlags.WALL_EAST)
-			    flags &= (~TileFlags.WALL_EAST);
-			else
-			    flags |= TileFlags.WALL_EAST;
 		    }
 		} else {
-		    if (internalY < (TileConstants.TILE_HEIGHT / 3)) {
-			if ((flags & TileFlags.WALL_NORTH) == TileFlags.WALL_NORTH)
-			    flags &= (~TileFlags.WALL_NORTH);
-			else
-			    flags |= TileFlags.WALL_NORTH;
-		    } else if (internalY > 2 * (TileConstants.TILE_HEIGHT / 3)) {
-			if ((flags & TileFlags.WALL_SOUTH) == TileFlags.WALL_SOUTH)
-			    flags &= (~TileFlags.WALL_SOUTH);
-			else
-			    flags |= TileFlags.WALL_SOUTH;
+		    int flags = s.getLocalTile(tileX, tileY).getFlags();
+		    if (internalX < (TileConstants.TILE_WIDTH / 3)) {
+			if (internalY > (TileConstants.TILE_HEIGHT / 3)
+				&& internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
+			    if ((flags & TileFlags.WALL_WEST) == TileFlags.WALL_WEST)
+				flags &= (~TileFlags.WALL_WEST);
+			    else
+				flags |= TileFlags.WALL_WEST;
+			}
+		    } else if (internalX > 2 * (TileConstants.TILE_WIDTH / 3)) {
+			if (internalY > (TileConstants.TILE_HEIGHT / 3)
+				&& internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
+			    if ((flags & TileFlags.WALL_EAST) == TileFlags.WALL_EAST)
+				flags &= (~TileFlags.WALL_EAST);
+			    else
+				flags |= TileFlags.WALL_EAST;
+			}
 		    } else {
-			if ((flags & TileFlags.BLOCKED) == TileFlags.BLOCKED) {
-			    flags = 0;
-			    if (tileX > 0) {
-				s.getLocalTile(tileX - 1, tileY).removeFlag(
-					TileFlags.WALL_EAST);
-			    }
-			    if (tileY > 0) {
-				s.getLocalTile(tileX, tileY - 1).removeFlag(
-					TileFlags.WALL_SOUTH);
-			    }
-			    if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
-				s.getLocalTile(tileX + 1, tileY).removeFlag(
-					TileFlags.WALL_WEST);
-			    }
-			    if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
-				s.getLocalTile(tileX, tileY - 1).removeFlag(
-					TileFlags.WALL_NORTH);
-			    }
+			if (internalY < (TileConstants.TILE_HEIGHT / 3)) {
+			    if ((flags & TileFlags.WALL_NORTH) == TileFlags.WALL_NORTH)
+				flags &= (~TileFlags.WALL_NORTH);
+			    else
+				flags |= TileFlags.WALL_NORTH;
+			} else if (internalY > 2 * (TileConstants.TILE_HEIGHT / 3)) {
+			    if ((flags & TileFlags.WALL_SOUTH) == TileFlags.WALL_SOUTH)
+				flags &= (~TileFlags.WALL_SOUTH);
+			    else
+				flags |= TileFlags.WALL_SOUTH;
 			} else {
-			    flags |= TileFlags.BLOCKED;
-			    if (tileX > 0) {
-				s.getLocalTile(tileX - 1, tileY).applyFlag(
-					TileFlags.WALL_EAST);
-			    }
-			    if (tileY > 0) {
-				s.getLocalTile(tileX, tileY - 1).applyFlag(
-					TileFlags.WALL_SOUTH);
-			    }
-			    if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
-				s.getLocalTile(tileX + 1, tileY).applyFlag(
-					TileFlags.WALL_WEST);
-			    }
-			    if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
-				s.getLocalTile(tileX, tileY + 1).applyFlag(
-					TileFlags.WALL_NORTH);
+			    if ((flags & TileFlags.BLOCKED) == TileFlags.BLOCKED) {
+				flags = 0;
+				if (tileX > 0) {
+				    s.getLocalTile(tileX - 1, tileY)
+					    .removeFlag(TileFlags.WALL_EAST);
+				}
+				if (tileY > 0) {
+				    s.getLocalTile(tileX, tileY - 1)
+					    .removeFlag(TileFlags.WALL_SOUTH);
+				}
+				if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
+				    s.getLocalTile(tileX + 1, tileY)
+					    .removeFlag(TileFlags.WALL_WEST);
+				}
+				if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
+				    s.getLocalTile(tileX, tileY - 1)
+					    .removeFlag(TileFlags.WALL_NORTH);
+				}
+			    } else {
+				flags |= TileFlags.BLOCKED;
+				if (tileX > 0) {
+				    s.getLocalTile(tileX - 1, tileY).applyFlag(
+					    TileFlags.WALL_EAST);
+				}
+				if (tileY > 0) {
+				    s.getLocalTile(tileX, tileY - 1).applyFlag(
+					    TileFlags.WALL_SOUTH);
+				}
+				if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
+				    s.getLocalTile(tileX + 1, tileY).applyFlag(
+					    TileFlags.WALL_WEST);
+				}
+				if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
+				    s.getLocalTile(tileX, tileY + 1).applyFlag(
+					    TileFlags.WALL_NORTH);
+				}
 			    }
 			}
 		    }
+		    s.getLocalTile(tileX, tileY).setFlags(flags);
 		}
-		s.getLocalTile(tileX, tileY).setFlags(flags);
+	    } else if (button == MouseEvent.BUTTON3) {
+		Tile t = s.getLocalTile(tileX, tileY);
+		if (t != null && t.getLayer(currentTileLayer) != null) {
+		    tileset = t.getLayer(currentTileLayer).getGraphic();
+		    tileAX = (int) (t.getLayer(currentTileLayer).getPositionX() / TileConstants.TILE_WIDTH);
+		    tileAY = (int) (t.getLayer(currentTileLayer).getPositionY() / TileConstants.TILE_HEIGHT);
+		    dragTileAX = tileAX;
+		    dragTileAY = tileAY;
+		}
 	    }
 	}
     }
 
     @Override
-    public void onMapDrag(Sector s, int tileX, int tileY, int internalX,
-	    int internalY) {
-	onMapClick(s, tileX, tileY, internalX, internalY);
+    public void onMapDrag(Sector s, int button, int tileX, int tileY,
+	    int internalX, int internalY) {
+	if (button == MouseEvent.BUTTON1)
+	    onMapClick(s, button, tileX, tileY, internalX, internalY);
+    }
+
+    @Override
+    public int[] getCurrentTiledata() {
+	return new int[] { tileset, tileAX, tileAY, dragTileAX, dragTileAY };
+    }
+
+    @Override
+    public TileLayer getCurrentTileLayer() {
+	return directionBlockMode.isChecked() || tileAX < 0 ? null
+		: currentTileLayer;
     }
 }

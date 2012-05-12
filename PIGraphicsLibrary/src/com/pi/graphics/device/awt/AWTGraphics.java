@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -198,5 +199,19 @@ public class AWTGraphics extends IGraphics {
     @Override
     public ObjectHeap<ImageStorage> loadedGraphics() {
 	return imageManager.loadedMap();
+    }
+
+    @Override
+    public void drawFilteredImage(int graphic, int dx, int dy, int dwidth,
+	    int dheight, int sx, int sy, int swidth, int sheight, float opacity) {
+	BufferedImage raw = imageManager.fetchImage(graphic);
+	if (raw != null) {
+	    RescaleOp op = new RescaleOp(new float[] { 1f, 1f, 1f, opacity },
+		    new float[] { 0, 0, 0, 0 }, null);
+	    BufferedImage image = op.createCompatibleDestImage(raw, null);
+	    image = op.filter(raw, image);
+	    graphics.drawImage(image, dx, dy, dx + dwidth, dy + dheight, sx,
+		    sy, sx + swidth, sy + sheight, null);
+	}
     }
 }
