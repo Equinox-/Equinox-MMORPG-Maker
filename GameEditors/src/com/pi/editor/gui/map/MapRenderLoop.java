@@ -1,10 +1,6 @@
 package com.pi.editor.gui.map;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.pi.common.database.Sector;
-import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.contants.TileConstants;
 import com.pi.editor.Editor;
 import com.pi.editor.gui.EditorPage;
 import com.pi.graphics.device.IGraphics;
@@ -17,6 +13,7 @@ public class MapRenderLoop implements EditorPage {
     private PIContainer root = new PIContainer();
     private MapViewerObject mapArea;
     private MapEditorObject mapEditor;
+
     // End GUIz
 
     public MapRenderLoop(Editor edit) {
@@ -26,18 +23,22 @@ public class MapRenderLoop implements EditorPage {
 	mapArea = new MapViewerObject();
 	mapArea.setSize(15, 15);
 
-	//Map Editor
-	mapEditor = new MapEditorObject(mapArea);
-	mapEditor.setSize(500,500);
-	
+	// Map Editor
+	mapEditor = new MapEditorObject(mapArea, this);
+	mapEditor.setSize(500, 500);
+
 	// Root
 	root.setLocation(0, 0);
 	root.setSize(editor.getApplet().getWidth(), editor.getApplet()
 		.getHeight());
 	root.add(mapArea);
 	root.add(mapEditor);
-	
+
 	root.compile();
+    }
+
+    public Editor getEditor() {
+	return editor;
     }
 
     @Override
@@ -59,5 +60,16 @@ public class MapRenderLoop implements EditorPage {
     @Override
     public void render(IGraphics graphics) {
 	root.render(graphics);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+	mapEditor.setSize(mapEditor.getWidth(), height - 50);
+	mapEditor.setLocation(width - mapEditor.getWidth(), 0);
+
+	mapArea.setSize((width - mapEditor.getWidth() - 50)
+		/ TileConstants.TILE_WIDTH, (height - 50)
+		/ TileConstants.TILE_HEIGHT);
+	root.compile();
     }
 }

@@ -2,6 +2,9 @@ package com.pi.editor;
 
 import java.applet.Applet;
 import java.awt.Container;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -73,12 +76,22 @@ public class Editor implements Disposable, Renderable, DeviceRegistration {
 	logger.info("Put image files here: "
 		+ Paths.getGraphicsDirectory().getAbsolutePath());
 	MapEditorObject.init();
-	
+
 	// Create editor pages
 	editorPages = new EditorPage[EditorState.values().length];
 	editorPages[EditorState.MapEditor.ordinal()] = new MapRenderLoop(this);
 
 	changeState(EditorState.MapEditor);
+
+	cApplet.addComponentListener(new ComponentAdapter() {
+	    @Override
+	    public void componentResized(ComponentEvent e) {
+		if (editState != null && editorPages != null
+			&& editorPages[editState.ordinal()] != null)
+		    editorPages[editState.ordinal()].resize(cApplet.getWidth(),
+			    cApplet.getHeight());
+	    }
+	});
     }
 
     public void changeState(EditorState e) {

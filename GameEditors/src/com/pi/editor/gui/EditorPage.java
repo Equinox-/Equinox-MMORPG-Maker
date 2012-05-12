@@ -6,4 +6,6 @@ public interface EditorPage extends Renderable {
     public void register();
 
     public void unRegister();
+    
+    public void resize(int width, int height);
 }

@@ -33,6 +33,8 @@ import com.pi.gui.PIStyle.StyleType;
 public class MapEditorObject extends PIContainer implements ScrollBarListener,
 	MapInfoRenderer {
     private static int[] TILESETS = new int[] { 2 };
+    private File lastDirectory;
+    private MapRenderLoop loop;
 
     public static void init() {
 	String s = JOptionPane
@@ -61,19 +63,19 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
     private TileSelectionHandler tileSelectionHandler = new TileSelectionHandler();
 
     private int currentTileOffX, currentTileOffY;
+    private boolean updateTilesetScroll = true;
 
     private MapViewerObject viewer;
 
-    public MapEditorObject(MapViewerObject viewer) {
+    public MapEditorObject(MapViewerObject viewer, MapRenderLoop loop) {
 	setLocation(500, 0);
-	setSize(500, 500);
+	this.loop = loop;
 
 	this.viewer = viewer;
 
 	tileSelector = new PIContainer();
 	tileSelector.setLocation(0, 0);
-	tileSelector.setSize(300, 500);
-	tileSelector.setStyle(StyleType.Normal, GUIKit.containerNormal.clone());
+	tileSelector.setStyle(StyleType.Normal, GUIKit.containerNormal);
 
 	graphicsData = new PIComponent() {
 	    @Override
@@ -83,16 +85,36 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		    g.setColor(Color.BLACK);
 		    g.fillRect(getAbsoluteX(), getAbsoluteY(), getWidth(),
 			    getHeight());
-		    currentTileOffX = (int) ((1f - horizontalTile
-			    .getScrollAmount()) * (g.getImageWidth(tileset) - getWidth()));
-		    currentTileOffY = (int) (verticalTile.getScrollAmount() * (g
-			    .getImageHeight(tileset) - getHeight()));
-		    g.drawImage(tileset, getAbsoluteX(), getAbsoluteY(),
-			    currentTileOffX, currentTileOffY, Math.min(
-				    g.getImageWidth(tileset) - currentTileOffX,
-				    getWidth()),
-			    Math.min(g.getImageHeight(tileset)
-				    - currentTileOffY, getHeight()));
+		    g.setColor(Color.WHITE);
+		    g.drawRect(getAbsoluteX(), getAbsoluteY(), getWidth(),
+			    getHeight());
+
+		    int iWidth = g.getImageWidth(tileset);
+		    int iHeight = g.getImageHeight(tileset);
+
+		    if (updateTilesetScroll) {
+			horizontalTile.setVisible(iWidth > getWidth());
+			verticalTile.setVisible(iHeight > getHeight());
+			horizontalTile.setScrollAmount(0);
+			verticalTile.setScrollAmount(0);
+
+			if (horizontalTile.isVisible()) {
+			    horizontalTile
+				    .setStep(1f / (float) ((iWidth - getWidth()) / TileConstants.TILE_WIDTH));
+			}
+
+			if (verticalTile.isVisible()) {
+			    verticalTile
+				    .setStep(1f / (float) ((iHeight - getHeight()) / TileConstants.TILE_HEIGHT));
+			}
+		    }
+		    currentTileOffX = (int) (horizontalTile.getScrollAmount() * (iWidth - getWidth()));
+		    currentTileOffY = (int) (verticalTile.getScrollAmount() * (iHeight - getHeight()));
+		    g.drawImage(tileset, getAbsoluteX() + 1,
+			    getAbsoluteY() + 1, currentTileOffX,
+			    currentTileOffY, Math.min(iWidth - currentTileOffX,
+				    getWidth() - 2), Math.min(iHeight
+				    - currentTileOffY, getHeight() - 2));
 
 		    int destX = (Math.min(tileX, dragTileX) * TileConstants.TILE_WIDTH)
 			    - currentTileOffX + getAbsoluteX();
@@ -104,7 +126,7 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		    int destY2 = (Math.max(tileY, dragTileY) * TileConstants.TILE_HEIGHT)
 			    - currentTileOffY + getAbsoluteY();
 		    g.setColor(Color.WHITE.darker());
-		    g.drawRect(destX, destY, (destX2 - destX)
+		    g.drawRect(destX + 1, destY + 1, (destX2 - destX)
 			    + TileConstants.TILE_WIDTH - 1, (destY2 - destY)
 			    + TileConstants.TILE_HEIGHT - 1);
 
@@ -119,7 +141,7 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 			destY2 = (dragTileAY * TileConstants.TILE_HEIGHT)
 				- currentTileOffY + getAbsoluteY();
 			g.setColor(Color.WHITE);
-			g.drawRect(destX, destY, (destX2 - destX)
+			g.drawRect(destX + 1, destY + 1, (destX2 - destX)
 				+ TileConstants.TILE_WIDTH - 1,
 				(destY2 - destY) + TileConstants.TILE_HEIGHT
 					- 1);
@@ -127,29 +149,19 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		}
 	    }
 	};
-	graphicsData.setLocation(0, 0);
-	graphicsData.setSize(tileSelector.getWidth() - 25,
-		tileSelector.getHeight() - 75);
 	graphicsData.addMouseMotionListener(tileSelectionHandler);
 	graphicsData.addMouseListener(tileSelectionHandler);
 
 	horizontalTile = new PIScrollBar(true);
-	horizontalTile.setLocation(0, tileSelector.getHeight() - 75);
-	horizontalTile.setSize(tileSelector.getWidth() - 25, 25);
 
 	verticalTile = new PIScrollBar(false);
-	verticalTile.setLocation(tileSelector.getWidth() - 25, 0);
-	verticalTile.setSize(25, tileSelector.getHeight() - 75);
 
 	tilesetSelector = new PIScrollBar(true);
-	tilesetSelector.setLocation(0, tileSelector.getHeight() - 50);
-	tilesetSelector.setSize(tileSelector.getWidth() - 25, 25);
 	tilesetSelector.setStep(1f / ((float) TILESETS.length));
 
 	tileLayerSelector = new PIScrollBar(true);
-	tileLayerSelector.setLocation(0, tileSelector.getHeight() - 25);
-	tileLayerSelector.setSize(tileSelector.getWidth() - 25, 25);
-	tileLayerSelector.setStep(1f / ((float) TileLayer.values().length));
+	tileLayerSelector
+		.setStep(1f / ((float) TileLayer.MAX_VALUE.ordinal() - 1));
 	tileLayerSelector.addScrollBarListener(this);
 	tileLayerSelector.setStyle(StyleType.Normal,
 		tileLayerSelector.getStyle(StyleType.Normal));
@@ -209,9 +221,30 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 	add(fill);
 	add(directionBlockMode);
 
+	setSize(500, 500);
+
 	compile();
 
 	viewer.infoRender = this;
+    }
+
+    @Override
+    public void setSize(int width, int height) {
+	super.setSize(width, height);
+
+	tileSelector.setSize(300, height);
+	graphicsData.setLocation(0, 0);
+	graphicsData.setSize(tileSelector.getWidth() - 25,
+		tileSelector.getHeight() - 75);
+
+	horizontalTile.setLocation(0, tileSelector.getHeight() - 75);
+	horizontalTile.setSize(tileSelector.getWidth() - 25, 25);
+	verticalTile.setLocation(tileSelector.getWidth() - 25, 0);
+	verticalTile.setSize(25, tileSelector.getHeight() - 75);
+	tilesetSelector.setLocation(0, tileSelector.getHeight() - 50);
+	tilesetSelector.setSize(tileSelector.getWidth() - 25, 25);
+	tileLayerSelector.setLocation(0, tileSelector.getHeight() - 25);
+	tileLayerSelector.setSize(tileSelector.getWidth() - 25, 25);
     }
 
     @Override
@@ -227,6 +260,7 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		dragTileX = 0;
 		dragTileY = 0;
 		tileAX = -1;
+		updateTilesetScroll = true;
 	    }
 	} else if (e.getSource() == tileLayerSelector) {
 	    tileLayerSelector
@@ -244,14 +278,20 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 
     private class TileSelectionHandler implements MouseListener,
 	    MouseMotionListener {
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	    if (e.getSource() == save) {
 		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showSaveDialog(null);
+		if (lastDirectory != null)
+		    fc.setCurrentDirectory(lastDirectory);
+		fc.requestFocus();
+		int returnVal = fc.showSaveDialog(loop.getEditor()
+			.getContainer());
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    File file = fc.getSelectedFile();
+		    lastDirectory = new File(file.getParent());
 		    try {
 			DatabaseIO.write(file, viewer.getSector());
 		    } catch (Exception ex) {
@@ -260,10 +300,15 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		}
 	    } else if (e.getSource() == load) {
 		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showOpenDialog(null);
+		if (lastDirectory != null)
+		    fc.setCurrentDirectory(lastDirectory);
+		fc.requestFocus();
+		int returnVal = fc.showOpenDialog(loop.getEditor()
+			.getContainer());
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    File file = fc.getSelectedFile();
+		    lastDirectory = new File(file.getParent());
 		    try {
 			viewer.setSector((Sector) DatabaseIO.read(file,
 				Sector.class));

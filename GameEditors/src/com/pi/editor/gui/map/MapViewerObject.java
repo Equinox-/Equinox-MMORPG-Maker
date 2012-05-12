@@ -59,9 +59,15 @@ public class MapViewerObject extends PIContainer {
 
 	horiz.setLocation(25, 0);
 	horiz.setSize(getWidth() - 50, 25);
+	int hSteps = (SectorConstants.SECTOR_WIDTH - width);
+	horiz.setStep(1f / (hSteps > 0 ? hSteps : 1));
+	horiz.setVisible(hSteps > 0);
 
 	vert.setLocation(getWidth() - 25, 25);
 	vert.setSize(25, getHeight() - 50);
+	int vSteps = (SectorConstants.SECTOR_HEIGHT - height);
+	vert.setStep(1f / (vSteps > 0 ? vSteps : 1));
+	vert.setVisible(vSteps > 0);
 
 	maxXOff = SectorConstants.SECTOR_WIDTH - width + 2;
 	maxZOff = SectorConstants.SECTOR_HEIGHT - height + 2;
@@ -108,11 +114,17 @@ public class MapViewerObject extends PIContainer {
 	int[] dat = infoRender.getCurrentTiledata();
 	int tileWidth = dat[3] - dat[1] + 1;
 	int tileHeight = dat[4] - dat[2] + 1;
-	g.drawFilteredImage(dat[0], TileConstants.TILE_WIDTH * (cX - xOff)
-		+ getAbsoluteX(), TileConstants.TILE_HEIGHT * (cZ - zOff)
-		+ getAbsoluteY(), dat[1] * TileConstants.TILE_WIDTH, dat[2]
-		* TileConstants.TILE_HEIGHT, TileConstants.TILE_WIDTH
-		* tileWidth, TileConstants.TILE_HEIGHT * tileHeight, .5f);
+	g.drawFilteredImage(
+		dat[0],
+		TileConstants.TILE_WIDTH * (cX - xOff) + getAbsoluteX(),
+		TileConstants.TILE_HEIGHT * (cZ - zOff) + getAbsoluteY(),
+		dat[1] * TileConstants.TILE_WIDTH,
+		dat[2] * TileConstants.TILE_HEIGHT,
+		TileConstants.TILE_WIDTH
+			* Math.min(tileWidth, SectorConstants.SECTOR_WIDTH - cX),
+		TileConstants.TILE_HEIGHT
+			* Math.min(tileHeight, SectorConstants.SECTOR_HEIGHT
+				- cZ), .5f);
     }
 
     private void renderLayer(IGraphics g, TileLayer l) {
@@ -154,6 +166,15 @@ public class MapViewerObject extends PIContainer {
 
 	    cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
 	    cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
+	    if (cX < 0)
+		cX = 0;
+	    if (cZ < 0)
+		cZ = 0;
+	    if (cX >= SectorConstants.SECTOR_WIDTH)
+		cX = SectorConstants.SECTOR_WIDTH - 1;
+	    if (cZ >= SectorConstants.SECTOR_HEIGHT)
+		cZ = SectorConstants.SECTOR_HEIGHT - 1;
+
 	    if (!vert.getBounds().contains(e.getX(), e.getY())
 		    && !horiz.getBounds().contains(e.getX(), e.getY())
 		    && infoRender != null)
@@ -168,6 +189,14 @@ public class MapViewerObject extends PIContainer {
 
 	    cX = (e.getX() / TileConstants.TILE_WIDTH) + xOff;
 	    cZ = (e.getY() / TileConstants.TILE_HEIGHT) + zOff;
+	    if (cX < 0)
+		cX = 0;
+	    if (cZ < 0)
+		cZ = 0;
+	    if (cX >= SectorConstants.SECTOR_WIDTH)
+		cX = SectorConstants.SECTOR_WIDTH - 1;
+	    if (cZ >= SectorConstants.SECTOR_HEIGHT)
+		cZ = SectorConstants.SECTOR_HEIGHT - 1;
 	}
 
 	@Override
