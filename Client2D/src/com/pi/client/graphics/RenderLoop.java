@@ -9,9 +9,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
-import com.pi.client.graphics.device.IGraphics;
-import com.pi.client.gui.LoadingBar;
-import com.pi.client.gui.PIPopup;
+import com.pi.graphics.device.IGraphics;
+import com.pi.graphics.device.Renderable;
+import com.pi.gui.LoadingBar;
+import com.pi.gui.PIPopup;
 
 public class RenderLoop implements Renderable, MouseListener,
 		MouseMotionListener, MouseWheelListener, KeyListener {

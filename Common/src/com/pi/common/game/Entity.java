@@ -102,4 +102,9 @@ public class Entity extends Location {
 	this.x = apply.x;
 	this.z = apply.z;
     }
+
+    public void unRegister() {
+	if (listener != null && getEntityID() != -1)
+	    listener.entityDispose(getEntityID());
+    }
 }

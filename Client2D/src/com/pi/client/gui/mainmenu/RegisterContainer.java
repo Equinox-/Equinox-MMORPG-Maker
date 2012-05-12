@@ -3,13 +3,13 @@ package com.pi.client.gui.mainmenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.pi.client.gui.GUIKit;
-import com.pi.client.gui.PIComponent;
-import com.pi.client.gui.PIContainer;
-import com.pi.client.gui.PIStyle.StyleType;
-import com.pi.client.gui.PITextField;
 import com.pi.common.PICryptUtils;
 import com.pi.common.net.packet.Packet3Register;
+import com.pi.gui.GUIKit;
+import com.pi.gui.PIComponent;
+import com.pi.gui.PIContainer;
+import com.pi.gui.PIStyle.StyleType;
+import com.pi.gui.PITextField;
 
 public class RegisterContainer extends PIContainer {
     PIComponent registerButton = new PIComponent();
@@ -43,29 +43,27 @@ public class RegisterContainer extends PIContainer {
 	    public void mouseClicked(MouseEvent e) {
 		if (menu.client.isNetworkConnected()) {
 		    if (usernameField.getContent().length() <= 0) {
-			menu.client.getDisplayManager().getRenderLoop()
-				.alert("You must enter a username!");
+			menu.client.getRenderLoop().alert(
+				"You must enter a username!");
 		    } else if (passwordField.getContent().length() <= 0) {
-			menu.client.getDisplayManager().getRenderLoop()
-				.alert("You must enter a password!");
+			menu.client.getRenderLoop().alert(
+				"You must enter a password!");
 		    } else if (!passwordField.getContent().equals(
 			    confpasswordField.getContent())) {
-			menu.client
-				.getDisplayManager()
-				.getRenderLoop()
-				.alert("You must correctly confirm your password!");
+			menu.client.getRenderLoop().alert(
+				"You must correctly confirm your password!");
 		    } else {
 			Packet3Register pack = new Packet3Register();
 			pack.username = usernameField.getContent();
 			pack.password = PICryptUtils.crypt(passwordField
 				.getContent());
 			menu.client.getNetwork().send(pack);
-			menu.client.getDisplayManager().getRenderLoop()
-				.loading("Connecting to server...");
+			menu.client.getRenderLoop().loading(
+				"Connecting to server...");
 		    }
 		} else {
-		    menu.client.getDisplayManager().getRenderLoop()
-			    .alert("Cannot login without network connection!");
+		    menu.client.getRenderLoop().alert(
+			    "Cannot login without network connection!");
 		}
 	    }
 	});

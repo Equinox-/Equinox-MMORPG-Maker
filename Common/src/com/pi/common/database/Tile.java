@@ -28,7 +28,7 @@ public class Tile implements PacketObject {
     }
 
     public GraphicsObject getLayer(TileLayer layer) {
-	return layers[layer.ordinal()];
+	return layer.ordinal() < layers.length ? layers[layer.ordinal()] : null;
     }
 
     public static enum TileLayer {

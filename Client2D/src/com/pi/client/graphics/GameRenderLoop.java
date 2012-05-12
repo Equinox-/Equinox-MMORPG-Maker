@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
-import com.pi.client.graphics.device.IGraphics;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;
@@ -15,6 +14,8 @@ import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
+import com.pi.graphics.device.IGraphics;
+import com.pi.graphics.device.Renderable;
 
 public class GameRenderLoop implements Renderable {
     private final Client client;

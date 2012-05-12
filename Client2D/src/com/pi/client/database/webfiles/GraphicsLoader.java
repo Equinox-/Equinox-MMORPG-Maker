@@ -14,6 +14,33 @@ import com.pi.client.Client;
 import com.pi.client.database.Paths;
 
 public class GraphicsLoader {
+    private static Map<Integer, Float> getCurrentVersions(File filelistCurrent)
+	    throws IOException {
+	HashMap<Integer, Float> currentVersions = new HashMap<Integer, Float>();
+	if (filelistCurrent.exists()) {
+	    BufferedReader reader = new BufferedReader(new FileReader(
+		    filelistCurrent));
+	    while (reader.ready()) {
+		String[] line = reader.readLine().split("\t");
+		String cleanedName = line[0];
+		for (String s : Paths.imageFiles)
+		    cleanedName = cleanedName.replace("." + s, "");
+		try {
+		    Integer name = Integer.valueOf(cleanedName);
+		    float ver;
+		    ver = Float.valueOf(line[1]);
+		    if (Paths.getGraphicsFile(name) != null) {
+			currentVersions.put(name, ver);
+		    }
+		} catch (Exception e) {
+		    continue;
+		}
+	    }
+	    reader.close();
+	}
+	return currentVersions;
+    }
+
     public static void load(Client client) {
 	try {
 	    File filelistNew = new File(Paths.getGraphicsDirectory(),
@@ -22,32 +49,16 @@ public class GraphicsLoader {
 		    "filelist");
 	    client.getLog().info("Downloading filelist...");
 	    download(new URL(ServerConfiguration.fileList), filelistNew);
-	    Map<Integer, Float> currentVersions = new HashMap<Integer, Float>();
-	    if (filelistCurrent.exists()) {
-		BufferedReader reader = new BufferedReader(new FileReader(
-			filelistCurrent));
-		while (reader.ready()) {
-		    String[] line = reader.readLine().split("\t");
-		    String cleanedName = line[0];
-		    for (String s:Paths.imageFiles)
-			cleanedName = cleanedName.replace("." + s,"");
-		    Integer name = Integer.valueOf(cleanedName);
-		    float ver;
-		    try {
-			ver = Float.valueOf(line[1]);
-		    } catch (Exception e) {
-			continue;
-		    }
-		    if (Paths.getGraphicsFile(name) != null)
-			currentVersions.put(name, ver);
-		}
-		reader.close();
-	    }
+	    Map<Integer, Float> currentVersions = getCurrentVersions(filelistCurrent);
 	    BufferedReader reader = new BufferedReader(new FileReader(
 		    filelistNew));
 	    while (reader.ready()) {
 		String[] line = reader.readLine().split("\t");
-		String name = line[0];
+		String rawName = line[0];
+		String cleanedName = rawName;
+		for (String s : Paths.imageFiles)
+		    cleanedName = cleanedName.replace("." + s, "");
+		Integer name = Integer.valueOf(cleanedName);
 		float ver;
 		try {
 		    ver = Float.valueOf(line[1]);
@@ -61,7 +72,8 @@ public class GraphicsLoader {
 			    .info(name + " is outdated.  Upgrading to version "
 				    + ver);
 		    try {
-			File dest = new File(Paths.getGraphicsDirectory(), name);
+			File dest = new File(Paths.getGraphicsDirectory(),
+				rawName);
 			if (!dest.exists())
 			    dest.createNewFile();
 			download(new URL(ServerConfiguration.graphicsFolder
@@ -75,6 +87,9 @@ public class GraphicsLoader {
 	    filelistCurrent.delete();
 	    filelistNew.renameTo(filelistCurrent);
 	    client.getLog().info("Finished checking graphic versions!");
+	} catch (NumberFormatException e) {
+	    client.getLog()
+		    .severe("There appears to be a number format error server side!  Please report this.");
 	} catch (Exception e) {
 	    client.getLog().printStackTrace(e);
 	    client.getLog().info("Failed to check for graphical updates!");

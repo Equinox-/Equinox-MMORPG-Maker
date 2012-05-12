@@ -6,7 +6,7 @@ import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
-public class Entity extends Location {
+public class EntityData extends Location {
     private byte dir;
     private TileLayer aboveLayer = TileLayer.MASK1;
     private int entityID = -1;

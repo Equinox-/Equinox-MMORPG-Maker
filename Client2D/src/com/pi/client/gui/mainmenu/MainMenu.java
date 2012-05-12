@@ -13,14 +13,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
-import com.pi.client.graphics.Renderable;
-import com.pi.client.graphics.device.IGraphics;
-import com.pi.client.gui.GUIKit;
-import com.pi.client.gui.PIButton;
-import com.pi.client.gui.PIComponent;
-import com.pi.client.gui.PIContainer;
-import com.pi.client.gui.PIStyle;
-import com.pi.client.gui.PIStyle.StyleType;
+import com.pi.graphics.device.IGraphics;
+import com.pi.graphics.device.Renderable;
+import com.pi.gui.GUIKit;
+import com.pi.gui.PIButton;
+import com.pi.gui.PIComponent;
+import com.pi.gui.PIContainer;
+import com.pi.gui.PIStyle;
+import com.pi.gui.PIStyle.StyleType;
 
 public class MainMenu implements Renderable, MouseListener,
 	MouseMotionListener, MouseWheelListener, KeyListener {

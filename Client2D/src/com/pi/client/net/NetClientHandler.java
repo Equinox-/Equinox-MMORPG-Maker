@@ -48,7 +48,7 @@ public class NetClientHandler extends NetHandler {
     }
 
     public void process(Packet2Alert p) {
-	client.getDisplayManager().getRenderLoop().alert(p.message);
+	client.getRenderLoop().alert(p.message);
     }
 
     public void process(Packet4Sector p) {

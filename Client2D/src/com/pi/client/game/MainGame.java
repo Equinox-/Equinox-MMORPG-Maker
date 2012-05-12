@@ -11,11 +11,11 @@ import java.awt.event.MouseWheelListener;
 import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
 import com.pi.client.graphics.GameRenderLoop;
-import com.pi.client.graphics.Renderable;
-import com.pi.client.graphics.device.IGraphics;
 import com.pi.common.contants.Direction;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
+import com.pi.graphics.device.IGraphics;
+import com.pi.graphics.device.Renderable;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
 	MouseMotionListener, MouseWheelListener {

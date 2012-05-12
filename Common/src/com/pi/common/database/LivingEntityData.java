@@ -2,10 +2,11 @@ package com.pi.common.database;
 
 import java.io.IOException;
 
+import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
-public abstract class LivingEntity extends Entity {
+public abstract class LivingEntityData extends Entity {
     private int health;
 
     public int getHealth() {

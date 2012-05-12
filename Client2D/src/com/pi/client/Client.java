@@ -1,11 +1,12 @@
 package com.pi.client;
 
 import java.applet.Applet;
+import java.awt.Container;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import com.pi.client.database.Paths;
 import com.pi.client.database.webfiles.GraphicsLoader;
@@ -15,8 +16,7 @@ import com.pi.client.debug.SectorMonitorPanel;
 import com.pi.client.def.Definitions;
 import com.pi.client.entity.ClientEntityManager;
 import com.pi.client.game.MainGame;
-import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.gui.GUIKit;
+import com.pi.client.graphics.RenderLoop;
 import com.pi.client.gui.mainmenu.MainMenu;
 import com.pi.client.net.NetClient;
 import com.pi.client.world.World;
@@ -26,8 +26,11 @@ import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.common.game.GameState;
+import com.pi.graphics.device.DeviceRegistration;
+import com.pi.graphics.device.DisplayManager;
+import com.pi.gui.GUIKit;
 
-public class Client implements Disposable {
+public class Client implements Disposable, DeviceRegistration {
     static {
 	GUIKit.init();
     }
@@ -47,6 +50,7 @@ public class Client implements Disposable {
     // Graphics start
     private Applet cApplet;
     private DisplayManager displayManager;
+    private RenderLoop renderLoop;
     // Graphics end
 
     // GUI Start
@@ -63,20 +67,14 @@ public class Client implements Disposable {
 
     public Client(Applet applet) {
 
-	ip = JOptionPane.showInputDialog(applet,
-		"Please input the ip: (xxx.xxx.xxx.xxx)");
-	while (true) {
-	    try {
-		port = Integer.valueOf(JOptionPane.showInputDialog(applet,
-			"Please input the port"));
-		break;
-	    } catch (NumberFormatException e) {
-		JOptionPane.showMessageDialog(applet,
-			"Bad number format, try again");
-	    }
-	}
-	// ip = "127.0.0.1";
-	// port = 9999;
+	/*
+	 * ip = JOptionPane.showInputDialog(applet,
+	 * "Please input the ip: (xxx.xxx.xxx.xxx)"); while (true) { try { port
+	 * = Integer.valueOf(JOptionPane.showInputDialog(applet,
+	 * "Please input the port")); break; } catch (NumberFormatException e) {
+	 * JOptionPane.showMessageDialog(applet,
+	 * "Bad number format, try again"); } }
+	 */
 
 	clientThreads = new ThreadGroup("ClientThreads");
 	reView = new PIResourceViewer("Client");
@@ -92,7 +90,8 @@ public class Client implements Disposable {
 	reView.addTab("Logger", plp);
 	reView.addTab("Threads", new ThreadMonitorPanel(clientThreads));
 	this.cApplet = applet;
-	this.displayManager = new DisplayManager(this);
+	this.displayManager = new DisplayManager(this,
+		renderLoop = new RenderLoop(this));
 
 	// PRE POST INIT
 	GraphicsLoader.load(this);
@@ -129,6 +128,7 @@ public class Client implements Disposable {
 	return world;
     }
 
+    @Override
     public PILogger getLog() {
 	return logger;
     }
@@ -167,6 +167,7 @@ public class Client implements Disposable {
 	return port;
     }
 
+    @Override
     public ThreadGroup getThreadGroup() {
 	return clientThreads;
     }
@@ -179,6 +180,7 @@ public class Client implements Disposable {
 	return defs;
     }
 
+    @Override
     public void fatalError(String string) {
 	logger.severe(string);
 	dispose();
@@ -199,6 +201,20 @@ public class Client implements Disposable {
     public void setGameState(GameState state) {
 	gameState = state;
 	if (gameState == GameState.MAIN_GAME)
-	    getDisplayManager().getRenderLoop().hideAlert();
+	    renderLoop.hideAlert();
+    }
+
+    @Override
+    public Container getContainer() {
+	return getApplet();
+    }
+
+    @Override
+    public File getGraphicsFile(int id) {
+	return Paths.getGraphicsFile(id);
+    }
+
+    public RenderLoop getRenderLoop() {
+	return renderLoop;
     }
 }

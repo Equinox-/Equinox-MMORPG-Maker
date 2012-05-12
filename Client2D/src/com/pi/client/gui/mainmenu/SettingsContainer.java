@@ -3,11 +3,11 @@ package com.pi.client.gui.mainmenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.pi.client.graphics.device.DisplayManager.GraphicsMode;
-import com.pi.client.gui.GUIKit;
-import com.pi.client.gui.PICheckbox;
-import com.pi.client.gui.PIContainer;
-import com.pi.client.gui.PIStyle.StyleType;
+import com.pi.graphics.device.DisplayManager.GraphicsMode;
+import com.pi.gui.GUIKit;
+import com.pi.gui.PICheckbox;
+import com.pi.gui.PIContainer;
+import com.pi.gui.PIStyle.StyleType;
 
 public class SettingsContainer extends PIContainer {
 	private final MainMenu menu;

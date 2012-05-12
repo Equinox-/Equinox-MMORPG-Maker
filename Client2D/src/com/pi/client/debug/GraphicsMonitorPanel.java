@@ -4,8 +4,8 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.client.graphics.device.DisplayManager;
-import com.pi.client.graphics.device.GraphicsStorage;
+import com.pi.graphics.device.DisplayManager;
+import com.pi.graphics.device.GraphicsStorage;
 
 public class GraphicsMonitorPanel extends JPanel {
     private static final long serialVersionUID = 1L;
