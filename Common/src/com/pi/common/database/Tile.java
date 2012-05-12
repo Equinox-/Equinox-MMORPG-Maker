@@ -36,6 +36,14 @@ public class Tile implements PacketObject {
 	return (flags & flag) == flag;
     }
 
+    public void applyFlag(int flag) {
+	flags |= flag;
+    }
+
+    public void removeFlag(int flag) {
+	flags &= (~flag);
+    }
+
     public void setLayer(TileLayer layer, GraphicsObject tile) {
 	layers[layer.ordinal()] = tile;
     }

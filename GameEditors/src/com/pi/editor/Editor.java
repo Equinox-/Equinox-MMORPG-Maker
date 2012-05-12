@@ -14,6 +14,7 @@ import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.editor.gui.EditorPage;
+import com.pi.editor.gui.map.MapEditorObject;
 import com.pi.editor.gui.map.MapRenderLoop;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.DisplayManager;
@@ -69,6 +70,10 @@ public class Editor implements Disposable, Renderable, DeviceRegistration {
 	// Post INIT
 	this.displayManager.postInititation();
 
+	logger.info("Put image files here: "
+		+ Paths.getGraphicsDirectory().getAbsolutePath());
+	MapEditorObject.init();
+	
 	// Create editor pages
 	editorPages = new EditorPage[EditorState.values().length];
 	editorPages[EditorState.MapEditor.ordinal()] = new MapRenderLoop(this);

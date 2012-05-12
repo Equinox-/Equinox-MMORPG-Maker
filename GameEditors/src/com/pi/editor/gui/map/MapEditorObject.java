@@ -18,6 +18,7 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.editor.Paths;
 import com.pi.graphics.device.IGraphics;
 import com.pi.gui.GUIKit;
 import com.pi.gui.PIButton;
@@ -33,9 +34,10 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 	MapInfoRenderer {
     private static int[] TILESETS = new int[] { 2 };
 
-    static {
+    public static void init() {
 	String s = JOptionPane
-		.showInputDialog("List tileset IDs, comma seperated values");
+		.showInputDialog("List tileset image IDs, comma seperated values\n(From "
+			+ Paths.getGraphicsDirectory().getAbsolutePath() + ")");
 	String[] dat = s.split(",");
 	TILESETS = new int[dat.length];
 	for (int i = 0; i < dat.length; i++) {
@@ -417,8 +419,40 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
 		    } else {
 			if ((flags & TileFlags.BLOCKED) == TileFlags.BLOCKED) {
 			    flags = 0;
+			    if (tileX > 0) {
+				s.getLocalTile(tileX - 1, tileY).removeFlag(
+					TileFlags.WALL_EAST);
+			    }
+			    if (tileY > 0) {
+				s.getLocalTile(tileX, tileY - 1).removeFlag(
+					TileFlags.WALL_SOUTH);
+			    }
+			    if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
+				s.getLocalTile(tileX + 1, tileY).removeFlag(
+					TileFlags.WALL_WEST);
+			    }
+			    if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
+				s.getLocalTile(tileX, tileY - 1).removeFlag(
+					TileFlags.WALL_NORTH);
+			    }
 			} else {
 			    flags |= TileFlags.BLOCKED;
+			    if (tileX > 0) {
+				s.getLocalTile(tileX - 1, tileY).applyFlag(
+					TileFlags.WALL_EAST);
+			    }
+			    if (tileY > 0) {
+				s.getLocalTile(tileX, tileY - 1).applyFlag(
+					TileFlags.WALL_SOUTH);
+			    }
+			    if (tileX < SectorConstants.SECTOR_WIDTH - 1) {
+				s.getLocalTile(tileX + 1, tileY).applyFlag(
+					TileFlags.WALL_WEST);
+			    }
+			    if (tileY < SectorConstants.SECTOR_HEIGHT - 1) {
+				s.getLocalTile(tileX, tileY + 1).applyFlag(
+					TileFlags.WALL_NORTH);
+			    }
 			}
 		    }
 		}
