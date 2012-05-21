@@ -18,87 +18,94 @@ import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
 public class MainGame implements Renderable, KeyListener, MouseListener,
-	MouseMotionListener, MouseWheelListener {
-    private final Client client;
-    private final GameRenderLoop gameRenderLoop;
+		MouseMotionListener, MouseWheelListener {
+	private final Client client;
+	private final GameRenderLoop gameRenderLoop;
 
-    public MainGame(final Client client) {
-	this.client = client;
-	this.gameRenderLoop = new GameRenderLoop(client);
-    }
-
-    @Override
-    public void render(IGraphics g) {
-	this.gameRenderLoop.render(g);
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-	Entity ent = client.getEntityManager().getLocalEntity();
-	if (ent != null) {
-	    Direction dir = null;
-	    switch (e.getKeyCode()) {
-	    case KeyEvent.VK_UP:
-		dir = Direction.UP;
-		break;
-	    case KeyEvent.VK_DOWN:
-		dir = Direction.DOWN;
-		break;
-	    case KeyEvent.VK_LEFT:
-		dir = Direction.LEFT;
-		break;
-	    case KeyEvent.VK_RIGHT:
-		dir = Direction.RIGHT;
-		break;
-	    }
-	    if (dir != null) {
-		ClientEntity local = client.getEntityManager().getLocalEntity();
-		if (local != null && !local.isMoving()) {
-		    local.setDir(dir);
-		    local.doMovement();
-		    client.getNetwork().send(Packet14ClientMove.create(local));
-		}
-	    }
+	public MainGame(final Client client) {
+		this.client = client;
+		this.gameRenderLoop = new GameRenderLoop(client);
 	}
-    }
 
-    @Override
-    public void keyReleased(KeyEvent arg0) {
-    }
+	@Override
+	public void render(IGraphics g) {
+		this.gameRenderLoop.render(g);
+	}
 
-    @Override
-    public void keyTyped(KeyEvent arg0) {
-    }
+	@Override
+	public void keyPressed(KeyEvent e) {
+		Entity ent = client.getEntityManager().getLocalEntity();
+		if (ent != null) {
+			Direction dir = null;
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				dir = Direction.UP;
+				break;
+			case KeyEvent.VK_DOWN:
+				dir = Direction.DOWN;
+				break;
+			case KeyEvent.VK_LEFT:
+				dir = Direction.LEFT;
+				break;
+			case KeyEvent.VK_RIGHT:
+				dir = Direction.RIGHT;
+				break;
+			}
+			if (dir != null) {
+				ClientEntity local = client.getEntityManager().getLocalEntity();
+				if (local != null && !local.isMoving()) {
+					local.setDir(dir);
+					if (local.canMove(client
+							.getWorld()
+							.getSectorManager()
+							.getSector(local.getSectorX(), local.getPlane(),
+									local.getSectorZ()))) {
+						local.doMovement();
+						client.getNetwork().send(
+								Packet14ClientMove.create(local));
+					}
+				}
+			}
+		}
+	}
 
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent arg0) {
-    }
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+	}
 
-    @Override
-    public void mouseDragged(MouseEvent arg0) {
-    }
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+	}
 
-    @Override
-    public void mouseMoved(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+	}
 
-    @Override
-    public void mouseClicked(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+	}
 
-    @Override
-    public void mouseEntered(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+	}
 
-    @Override
-    public void mouseExited(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+	}
 
-    @Override
-    public void mousePressed(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+	}
 
-    @Override
-    public void mouseReleased(MouseEvent arg0) {
-    }
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+	}
 }

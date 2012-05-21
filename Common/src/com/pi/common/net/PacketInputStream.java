@@ -7,34 +7,34 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 
 public class PacketInputStream extends DataInputStream {
-    public PacketInputStream(InputStream in) {
-	super(in);
-    }
+	public PacketInputStream(InputStream in) {
+		super(in);
+	}
 
-    public String readString() throws IOException {
-	int strlen = readInt();
-	if (strlen < 0)
-	    throw new IOException("Invalid String Length: " + strlen);
-	if (strlen == 0)
-	    return "";
-	char[] chars = new char[strlen];
-	for (int i = 0; i < strlen; i++)
-	    chars[i] = readChar();
-	return new String(chars);
-    }
-    
-    public byte[] readByteArray() throws IOException{
-	byte[] read = new byte[readInt()];
-	readFully(read);
-	return read;
-    }
-    
-    public Object readObject() throws IOException, ClassNotFoundException {
-  	ByteArrayInputStream bIn = new ByteArrayInputStream(readByteArray());
-  	ObjectInputStream objIn = new ObjectInputStream(bIn);
-  	Object o = objIn.readObject();
-  	objIn.close();
-  	bIn.close();
-  	return o;
-      }
+	public String readString() throws IOException {
+		int strlen = readInt();
+		if (strlen < 0)
+			throw new IOException("Invalid String Length: " + strlen);
+		if (strlen == 0)
+			return "";
+		char[] chars = new char[strlen];
+		for (int i = 0; i < strlen; i++)
+			chars[i] = readChar();
+		return new String(chars);
+	}
+
+	public byte[] readByteArray() throws IOException {
+		byte[] read = new byte[readInt()];
+		readFully(read);
+		return read;
+	}
+
+	public Object readObject() throws IOException, ClassNotFoundException {
+		ByteArrayInputStream bIn = new ByteArrayInputStream(readByteArray());
+		ObjectInputStream objIn = new ObjectInputStream(bIn);
+		Object o = objIn.readObject();
+		objIn.close();
+		bIn.close();
+		return o;
+	}
 }

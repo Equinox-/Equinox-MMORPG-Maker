@@ -1,43 +1,43 @@
 package com.pi.client;
 
 public abstract class ClientThread extends Thread {
-    protected boolean running = true;
-    protected final Client client;
-    protected Object mutex;
+	protected boolean running = true;
+	protected final Client client;
+	protected Object mutex;
 
-    public ClientThread(Client client) {
-	super(client.getThreadGroup(), "ClientThread");
-	super.setName(getClass().getSimpleName());
-	this.client = client;
-    }
-
-    @Override
-    public void run() {
-	client.getLog().fine("Started: " + getClass().getSimpleName());
-	while (running && shouldLoop()) {
-	    loop();
+	public ClientThread(Client client) {
+		super(client.getThreadGroup(), "ClientThread");
+		super.setName(getClass().getSimpleName());
+		this.client = client;
 	}
-	client.getLog().fine("Stopped: " + getClass().getSimpleName());
-    }
 
-    private boolean shouldLoop() {
-	return true;
-    }
-
-    protected abstract void loop();
-
-    public void dispose() {
-	running = false;
-	if (mutex != null) {
-	    synchronized (mutex) {
-		mutex.notify();
-	    }
+	@Override
+	public void run() {
+		client.getLog().fine("Started: " + getClass().getSimpleName());
+		while (running && shouldLoop()) {
+			loop();
+		}
+		client.getLog().fine("Stopped: " + getClass().getSimpleName());
 	}
-	try {
-	    join();
-	} catch (InterruptedException e) {
-	    client.getLog().printStackTrace(e);
-	    System.exit(0);
+
+	private boolean shouldLoop() {
+		return true;
 	}
-    }
+
+	protected abstract void loop();
+
+	public void dispose() {
+		running = false;
+		if (mutex != null) {
+			synchronized (mutex) {
+				mutex.notify();
+			}
+		}
+		try {
+			join();
+		} catch (InterruptedException e) {
+			client.getLog().printStackTrace(e);
+			System.exit(0);
+		}
+	}
 }

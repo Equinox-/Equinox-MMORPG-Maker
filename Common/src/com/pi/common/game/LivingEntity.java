@@ -1,6 +1,5 @@
 package com.pi.common.game;
 
-
 public class LivingEntity extends Entity {
 	private float health;
 

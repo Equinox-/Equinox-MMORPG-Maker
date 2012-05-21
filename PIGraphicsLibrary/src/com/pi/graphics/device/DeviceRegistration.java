@@ -7,13 +7,13 @@ import com.pi.common.debug.PILogger;
 
 public interface DeviceRegistration {
 
-    public PILogger getLog();
+	public PILogger getLog();
 
-    public void fatalError(String s);
+	public void fatalError(String s);
 
-    public Container getContainer();
+	public Container getContainer();
 
-    public ThreadGroup getThreadGroup();
+	public ThreadGroup getThreadGroup();
 
-    public File getGraphicsFile(int id);
+	public File getGraphicsFile(int id);
 }

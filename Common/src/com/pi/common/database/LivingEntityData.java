@@ -7,26 +7,26 @@ import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public abstract class LivingEntityData extends Entity {
-    private int health;
+	private int health;
 
-    public int getHealth() {
-	return health;
-    }
+	public int getHealth() {
+		return health;
+	}
 
-    @Override
-    public void readData(PacketInputStream pIn) throws IOException {
-	super.readData(pIn);
-	health = pIn.readInt();
-    }
+	@Override
+	public void readData(PacketInputStream pIn) throws IOException {
+		super.readData(pIn);
+		health = pIn.readInt();
+	}
 
-    @Override
-    public void writeData(PacketOutputStream pOut) throws IOException {
-	super.writeData(pOut);
-	pOut.writeInt(health);
-    }
+	@Override
+	public void writeData(PacketOutputStream pOut) throws IOException {
+		super.writeData(pOut);
+		pOut.writeInt(health);
+	}
 
-    @Override
-    public int getLength() {
-	return 4 + super.getLength();
-    }
+	@Override
+	public int getLength() {
+		return 4 + super.getLength();
+	}
 }

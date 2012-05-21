@@ -6,9 +6,9 @@ import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public interface PacketObject {
-    public void writeData(PacketOutputStream pOut) throws IOException;
+	public void writeData(PacketOutputStream pOut) throws IOException;
 
-    public int getLength();
+	public int getLength();
 
-    public void readData(PacketInputStream pIn) throws IOException;
+	public void readData(PacketInputStream pIn) throws IOException;
 }

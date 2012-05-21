@@ -32,8 +32,8 @@ public class EntityDefLoader {
 		EntityDefStorage stor = getStorage(defID);
 		return stor != null ? stor.empty : true;
 	}
-	
-	public EntityDef getDef(int defID){
+
+	public EntityDef getDef(int defID) {
 		EntityDefStorage stor = getStorage(defID);
 		return stor != null ? stor.def : null;
 	}

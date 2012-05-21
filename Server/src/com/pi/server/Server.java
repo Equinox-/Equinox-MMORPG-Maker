@@ -18,113 +18,120 @@ import com.pi.server.debug.EntityMonitorPanel;
 import com.pi.server.debug.SectorMonitorPanel;
 import com.pi.server.def.Definitions;
 import com.pi.server.entity.ServerEntityManager;
+import com.pi.server.logic.ServerLogic;
 import com.pi.server.net.NetServer;
 import com.pi.server.world.World;
 
 public class Server {
-    private ThreadGroup serverThreads;
-    private NetServer network;
-    private World world;
-    private PILogger log;
-    private ServerDatabase database;
-    private ServerEntityManager entityManager;
-    private ClientManager clientManager;
-    private Definitions defs;
-    private PIResourceViewer rcView;
-    private boolean disposing = false;
+	private ThreadGroup serverThreads;
+	private NetServer network;
+	private World world;
+	private PILogger log;
+	private ServerDatabase database;
+	private ServerEntityManager entityManager;
+	private ClientManager clientManager;
+	private Definitions defs;
+	private PIResourceViewer rcView;
+	private ServerLogic sLogic;
+	private boolean disposing = false;
 
-    public NetServer getNetwork() {
-	return network;
-    }
-
-    public ServerDatabase getDatabase() {
-	return database;
-    }
-
-    public ClientManager getClientManager() {
-	return clientManager;
-    }
-
-    public PILogger getLog() {
-	return log;
-    }
-
-    public Server() {
-	serverThreads = new ThreadGroup("Server");
-	rcView = new PIResourceViewer("Server");
-	PILoggerPane pn = new PILoggerPane();
-	rcView.addTab("Logger", pn);
-	rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
-	rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	rcView.addWindowListener(new WindowAdapter() {
-	    @Override
-	    public void windowClosing(WindowEvent e) {
-		dispose();
-	    }
-	});
-	log = new PILogger(Paths.getLogFile(), pn.logOut);
-
-	entityManager = new ServerEntityManager(this);
-	rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
-	clientManager = new ClientManager();
-	database = new ServerDatabase(this);
-	try {
-	    network = new NetServer(this, 9999);
-	    rcView.addTab("Network Clients", new ClientMonitorPanel(
-		    clientManager));
-	    world = new World(this);
-	    rcView.addTab("Sectors",
-		    new SectorMonitorPanel(world.getSectorManager()));
-	    defs = new Definitions(this);
-
-	    world.getSectorManager().getSector(0, 0, 0);
-	} catch (BindException e1) {
-	    dispose();
+	public NetServer getNetwork() {
+		return network;
 	}
-    }
 
-    @SuppressWarnings("deprecation")
-    public void dispose() {
-	if (!disposing) {
-	    disposing = true;
-	    if (network != null)
-		network.dispose();
-	    if (database != null)
-		database.save();
-	    if (world != null)
-		world.dispose();
-	    if (defs != null)
-		defs.dispose();
-	} else {
-	    if (rcView != null)
-		rcView.dispose();
-
-	    serverThreads.stop();
-	    log.close();
+	public ServerDatabase getDatabase() {
+		return database;
 	}
-    }
 
-    public ServerEntityManager getServerEntityManager() {
-	return entityManager;
-    }
+	public ClientManager getClientManager() {
+		return clientManager;
+	}
 
-    public static void main(String[] args) {
-	new Server();
-    }
+	public PILogger getLog() {
+		return log;
+	}
 
-    public World getWorld() {
-	return world;
-    }
+	public Server() {
+		serverThreads = new ThreadGroup("Server");
+		rcView = new PIResourceViewer("Server");
+		PILoggerPane pn = new PILoggerPane();
+		rcView.addTab("Logger", pn);
+		rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
+		rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		rcView.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				dispose();
+			}
+		});
+		log = new PILogger(Paths.getLogFile(), pn.logOut);
 
-    public Definitions getDefs() {
-	return defs;
-    }
+		entityManager = new ServerEntityManager(this);
+		rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
+		clientManager = new ClientManager();
+		database = new ServerDatabase(this);
+		try {
+			network = new NetServer(this, 9999);
+			rcView.addTab("Network Clients", new ClientMonitorPanel(
+					clientManager));
+			world = new World(this);
+			rcView.addTab("Sectors",
+					new SectorMonitorPanel(world.getSectorManager()));
+			defs = new Definitions(this);
 
-    public ThreadGroup getThreadGroup() {
-	return serverThreads;
-    }
+			world.getSectorManager().getSector(0, 0, 0);
 
-    public boolean isNetworkConnected() {
-	return network.isConnected();
-    }
+			sLogic = new ServerLogic(this);
+			sLogic.start();
+		} catch (BindException e1) {
+			dispose();
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public void dispose() {
+		if (!disposing) {
+			disposing = true;
+			if (sLogic != null)
+				sLogic.dispose();
+			if (network != null)
+				network.dispose();
+			if (database != null)
+				database.save();
+			if (world != null)
+				world.dispose();
+			if (defs != null)
+				defs.dispose();
+		} else {
+			if (rcView != null)
+				rcView.dispose();
+
+			serverThreads.stop();
+			log.close();
+		}
+	}
+
+	public ServerEntityManager getServerEntityManager() {
+		return entityManager;
+	}
+
+	public static void main(String[] args) {
+		new Server();
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public Definitions getDefs() {
+		return defs;
+	}
+
+	public ThreadGroup getThreadGroup() {
+		return serverThreads;
+	}
+
+	public boolean isNetworkConnected() {
+		return network.isConnected();
+	}
 }

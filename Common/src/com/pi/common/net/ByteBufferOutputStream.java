@@ -5,18 +5,18 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 public class ByteBufferOutputStream extends OutputStream {
-    private ByteBuffer bb;
+	private ByteBuffer bb;
 
-    public ByteBufferOutputStream(int size) {
-	bb = ByteBuffer.allocate(size);
-    }
+	public ByteBufferOutputStream(int size) {
+		bb = ByteBuffer.allocate(size);
+	}
 
-    @Override
-    public void write(int b) throws IOException {
-	bb.put((byte) b);
-    }
+	@Override
+	public void write(int b) throws IOException {
+		bb.put((byte) b);
+	}
 
-    public ByteBuffer getByteBuffer() {
-	return bb;
-    }
+	public ByteBuffer getByteBuffer() {
+		return bb;
+	}
 }

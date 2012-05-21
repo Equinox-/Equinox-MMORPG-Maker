@@ -167,7 +167,7 @@ public class RenderLoop implements Renderable, MouseListener,
 				if (client.getMainGame() != null)
 					client.getMainGame().mouseClicked(e);
 			}
-		}else{
+		} else {
 			popup.mouseClicked(e);
 		}
 	}
@@ -184,7 +184,7 @@ public class RenderLoop implements Renderable, MouseListener,
 				if (client.getMainGame() != null)
 					client.getMainGame().mouseEntered(e);
 			}
-		}else{
+		} else {
 			popup.mouseEntered(e);
 		}
 	}
@@ -201,7 +201,7 @@ public class RenderLoop implements Renderable, MouseListener,
 				if (client.getMainGame() != null)
 					client.getMainGame().mouseExited(e);
 			}
-		}else{
+		} else {
 			popup.mouseExited(e);
 		}
 	}
@@ -218,7 +218,7 @@ public class RenderLoop implements Renderable, MouseListener,
 				if (client.getMainGame() != null)
 					client.getMainGame().mousePressed(e);
 			}
-		}else{
+		} else {
 			popup.mousePressed(e);
 		}
 	}

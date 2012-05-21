@@ -6,30 +6,31 @@ import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public class Packet8EntityDispose extends Packet {
-    public int entityID;
+	public int entityID;
 
-    public static Packet8EntityDispose create(int id) {
-	Packet8EntityDispose p = new Packet8EntityDispose();
-	p.entityID = id;
-	return p;
-    }
+	public static Packet8EntityDispose create(int id) {
+		Packet8EntityDispose p = new Packet8EntityDispose();
+		p.entityID = id;
+		return p;
+	}
 
-    @Override
-    public void writeData(PacketOutputStream pOut) throws IOException {
-	pOut.writeInt(entityID);
-    }
+	@Override
+	public void writeData(PacketOutputStream pOut) throws IOException {
+		pOut.writeInt(entityID);
+	}
 
-    @Override
-    public void readData(PacketInputStream pIn) throws IOException {
-	entityID = pIn.readInt();
-    }
-    @Override
-    public int getID() {
-	return 8;
-    }
+	@Override
+	public void readData(PacketInputStream pIn) throws IOException {
+		entityID = pIn.readInt();
+	}
 
-    @Override
-    public int getLength() {
-	return 4;
-    }
+	@Override
+	public int getID() {
+		return 8;
+	}
+
+	@Override
+	public int getLength() {
+		return 4;
+	}
 }
