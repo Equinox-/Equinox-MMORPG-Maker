@@ -58,7 +58,7 @@ public class NetClientHandler extends NetHandler {
 	public void process(Packet6BlankSector p) {
 		client.getWorld()
 				.getSectorManager()
-				.flagSectorAsBlack(
+				.flagSectorAsBlank(
 						new SectorLocation(p.baseX, p.baseY, p.baseZ));
 	}
 

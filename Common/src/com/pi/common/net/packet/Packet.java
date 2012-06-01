@@ -1,6 +1,5 @@
 package com.pi.common.net.packet;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -75,7 +74,7 @@ public abstract class Packet implements PacketObject {
 
 	public static Packet getPacket(PILogger log, PacketInputStream pIn)
 			throws IOException {
-		int id = pIn.readInt();
+		int id = pIn.readByte();
 		Packet packet = getPacket(log, id);
 		if (packet == null)
 			throw new IOException("Bad packet id: " + id);
@@ -84,12 +83,12 @@ public abstract class Packet implements PacketObject {
 	}
 
 	public void writePacket(PacketOutputStream pOut) throws IOException {
-		pOut.writeInt(getID());
+		pOut.writeByte(getID());
 		writeData(pOut);
 	}
 
 	public int getPacketLength() {
-		return 4 + getLength();
+		return 1 + getLength();
 	}
 
 	public abstract int getID();

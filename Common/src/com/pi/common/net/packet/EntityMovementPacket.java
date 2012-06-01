@@ -7,8 +7,7 @@ import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
 public abstract class EntityMovementPacket extends Packet {
-	private static final int DATA_SIZE_BITS = 8;
-
+	private static final int DATA_SIZE_BITS = 8;  //CHange this.  Needs to be a power of 2, >= 4
 	private static final int DATA_HALF_MAX = (int) Math.pow(2,
 			DATA_SIZE_BITS - 1);
 	protected static final int DATA_MAX = DATA_HALF_MAX * 2;

@@ -95,7 +95,15 @@ public class SectorManager extends ServerThread {
 			sec.data = sector;
 			sec.updatePacketData();
 			map.put(sector.getSectorLocation(), sec);
-			server.getWorld().getSectorWriter().writeSector(sector);
+		}
+
+		// Write Sector
+		try {
+			DatabaseIO.write(
+					Paths.getSectorFile(sector.getSectorX(),
+							sector.getSectorY(), sector.getSectorZ()), sector);
+		} catch (IOException e) {
+			server.getLog().printStackTrace(e);
 		}
 	}
 

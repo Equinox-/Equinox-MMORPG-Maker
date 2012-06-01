@@ -1,8 +1,6 @@
 package com.pi.common.game;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class ObjectHeap<E> {
 	private static final int defaultCapacityIncrement = 10;
@@ -73,73 +71,5 @@ public class ObjectHeap<E> {
 
 	public int numElements() {
 		return numElements;
-	}
-
-	public Iterator<Entry<Integer, E>> iterator() {
-		return new ObjectHeapIterator<E>(this);
-	}
-
-	private static class ObjectHeapIterator<E> implements
-			Iterator<Entry<Integer, E>> {
-		private final ObjectHeap<E> heap;
-		private int head = 0;
-
-		public ObjectHeapIterator(ObjectHeap<E> heap) {
-			this.heap = heap;
-		}
-
-		@Override
-		public Entry<Integer, E> next() {
-			while (head < heap.capacity()) {
-				E data = heap.get(head);
-				head++;
-				if (data != null)
-					return new ObjectEntry<Integer, E>(head - 1, data);
-			}
-			return null;
-		}
-
-		@Override
-		public boolean hasNext() {
-			int tmpHead = head;
-			while (tmpHead < heap.capacity()) {
-				E data = heap.get(tmpHead);
-				tmpHead++;
-				if (data != null)
-					return true;
-			}
-			return false;
-		}
-
-		@Override
-		public void remove() {
-			throw new RuntimeException("No such method");
-		}
-	}
-
-	private static class ObjectEntry<K, V> implements Entry<K, V> {
-		private K key;
-		private V val;
-
-		public ObjectEntry(K k, V v) {
-			this.key = k;
-			this.val = v;
-		}
-
-		@Override
-		public K getKey() {
-			return key;
-		}
-
-		@Override
-		public V getValue() {
-			return val;
-		}
-
-		@Override
-		public V setValue(V value) {
-			return this.val = value;
-		}
-
 	}
 }

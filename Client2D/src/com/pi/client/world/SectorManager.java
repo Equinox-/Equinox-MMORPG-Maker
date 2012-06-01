@@ -56,11 +56,21 @@ public class SectorManager extends ClientThread {
 			sec.lastUsed = System.currentTimeMillis();
 			sec.data = sector;
 			map.put(sector.getSectorLocation(), sec);
-			client.getWorld().getSectorWriter().writeSector(sector);
-			client.getLog().info(
-					"Loaded client sector: "
-							+ sector.getSectorLocation().toString());
 		}
+		// Write Sector:
+		try {
+			File fin = Paths.getSectorFile(sector.getSectorX(),
+					sector.getSectorY(), sector.getSectorZ());
+			File dest = new File(fin.getAbsolutePath() + ".tmp");
+			DatabaseIO.write(dest, sector);
+			dest.renameTo(fin);
+		} catch (IOException e) {
+			client.getLog().printStackTrace(e);
+		}
+
+		client.getLog().info(
+				"Loaded client sector: "
+						+ sector.getSectorLocation().toString());
 	}
 
 	@Override
@@ -124,7 +134,7 @@ public class SectorManager extends ClientThread {
 		}
 	}
 
-	public void flagSectorAsBlack(SectorLocation p) {
+	public void flagSectorAsBlank(SectorLocation p) {
 		SectorStorage ss = map.get(p);
 		if (ss == null) {
 			ss = new SectorStorage();
