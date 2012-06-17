@@ -22,11 +22,6 @@ public class Packet1Login extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 1;
-	}
-
-	@Override
 	public int getLength() {
 		return PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream.stringByteLength(password);

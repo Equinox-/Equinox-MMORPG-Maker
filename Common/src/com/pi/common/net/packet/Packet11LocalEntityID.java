@@ -25,11 +25,6 @@ public class Packet11LocalEntityID extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 11;
-	}
-
-	@Override
 	public int getLength() {
 		return 4;
 	}

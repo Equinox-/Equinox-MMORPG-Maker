@@ -25,12 +25,11 @@ public class Location implements PacketObject {
 	}
 
 	public SectorLocation getSectorLocation() {
-		return new SectorLocation((int) (x / SectorConstants.SECTOR_WIDTH),
-				plane, (int) (z / SectorConstants.SECTOR_HEIGHT));
+		return new SectorLocation(getSectorX(), plane, getSectorZ());
 	}
 
 	public int getSectorX() {
-		return (int) (x / SectorConstants.SECTOR_WIDTH);
+		return SectorConstants.worldToSectorX(x);
 	}
 
 	public int getPlane() {
@@ -38,7 +37,7 @@ public class Location implements PacketObject {
 	}
 
 	public int getSectorZ() {
-		return (int) (z / SectorConstants.SECTOR_HEIGHT);
+		return SectorConstants.worldToSectorZ(z);
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class Location implements PacketObject {
 	}
 
 	public int getLocalX() {
-		return x - (getSectorX() * SectorConstants.SECTOR_WIDTH);
+		return SectorConstants.worldToLocalSectorX(x);
 	}
 
 	public int getGlobalX() {
@@ -59,7 +58,7 @@ public class Location implements PacketObject {
 	}
 
 	public int getLocalZ() {
-		return z - (getSectorZ() * SectorConstants.SECTOR_HEIGHT);
+		return SectorConstants.worldToLocalSectorZ(z);
 	}
 
 	public int getGlobalZ() {

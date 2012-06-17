@@ -25,11 +25,6 @@ public class Packet6BlankSector extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 6;
-	}
-
-	@Override
 	public int getLength() {
 		return 12;
 	}

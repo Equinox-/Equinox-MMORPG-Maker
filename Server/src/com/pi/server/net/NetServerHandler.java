@@ -99,11 +99,7 @@ public class NetServerHandler extends NetHandler {
 				int xC = l.x - ent.x;
 				int zC = l.z - ent.z;
 				Direction dir = Direction.getBestDirection(xC, zC);
-				if (ent.canMoveIn(
-						server.getWorld()
-								.getSectorManager()
-								.getSector(ent.getSectorX(), ent.plane,
-										ent.getSectorZ()), dir))
+				if (ent.canMoveIn(server.getWorld().getSectorManager(), dir))
 					ent.teleportShort(l);
 			}
 		}

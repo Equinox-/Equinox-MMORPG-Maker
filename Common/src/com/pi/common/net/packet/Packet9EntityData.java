@@ -48,11 +48,6 @@ public class Packet9EntityData extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 9;
-	}
-
-	@Override
 	public int getLength() {
 		if (loc == null)
 			loc = new Location();

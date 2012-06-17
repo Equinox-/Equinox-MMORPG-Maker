@@ -1,11 +1,13 @@
 package com.pi.common.game;
 
 import com.pi.common.contants.Direction;
+import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileFlags;
 import com.pi.common.database.Location;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.world.SectorManager;
 
 public class Entity extends Location {
 	protected Direction dir = Direction.UP;
@@ -111,8 +113,17 @@ public class Entity extends Location {
 			listener.entityDispose(getEntityID());
 	}
 
-	public boolean canMoveIn(Sector sec, Direction dir) {
-		if (sec != null) {
+	public boolean canMoveIn(SectorManager mgr, Direction dir) {
+		Sector sec = mgr.getSector(getSectorX(), getPlane(), getSectorZ());
+		int moveSX = SectorConstants.worldToSectorX(x + dir.getXOff());
+		int moveSZ = SectorConstants.worldToSectorZ(z + dir.getZOff());
+		Sector move;
+		if (moveSX != sec.getSectorX() || moveSZ != sec.getSectorZ()) {
+			move = mgr.getSector(moveSX, getPlane(), moveSZ);
+		} else {
+			move = sec;
+		}
+		if (sec != null && move != null) {
 			Tile t = sec.getGlobalTile(x, z);
 			if (t != null) {
 				switch (dir) {
@@ -130,7 +141,7 @@ public class Entity extends Location {
 		return false;
 	}
 
-	public boolean canMove(Sector sec) {
+	public boolean canMove(SectorManager sec) {
 		return canMoveIn(sec, getDir());
 	}
 }

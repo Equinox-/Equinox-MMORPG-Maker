@@ -20,7 +20,8 @@ import com.pi.server.ServerThread;
 import com.pi.server.client.Client;
 import com.pi.server.database.Paths;
 
-public class SectorManager extends ServerThread {
+public class SectorManager extends ServerThread implements
+		com.pi.common.world.SectorManager {
 	public final static int sectorExpiry = 300000; // 5 Minutes
 
 	private LinkedList<SectorLocation> loadQueue = new LinkedList<SectorLocation>();
@@ -34,6 +35,7 @@ public class SectorManager extends ServerThread {
 
 	public void requestSector(int clientID, Packet5SectorRequest req) {
 		synchronized (mutex) {
+			server.getLog().info("Request sector");
 			SectorStorage sec = getSectorStorage(req.baseX, req.baseY,
 					req.baseZ);
 			if (sec != null && (sec.data != null || sec.empty)) {
@@ -46,6 +48,8 @@ public class SectorManager extends ServerThread {
 							.getNetClient().send(packet);
 				} else {
 					Sector sector = sec.data;
+					server.getLog().info(
+							sector.getRevision() + ":" + req.revision);
 					if (sector.getRevision() != req.revision) {
 
 						Packet4Sector packet = new Packet4Sector();

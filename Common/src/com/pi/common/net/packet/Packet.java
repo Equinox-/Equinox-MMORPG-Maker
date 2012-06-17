@@ -13,34 +13,35 @@ public abstract class Packet implements PacketObject {
 	public final long timeStamp = System.currentTimeMillis();
 
 	static {
-		registerPacket(0, Packet0Disconnect.class);
-		registerPacket(1, Packet1Login.class);
-		registerPacket(2, Packet2Alert.class);
-		registerPacket(3, Packet3Register.class);
-		registerPacket(4, Packet4Sector.class);
-		registerPacket(5, Packet5SectorRequest.class);
-		registerPacket(6, Packet6BlankSector.class);
-		registerPacket(7, Packet7EntityTeleport.class, true);
-		registerPacket(8, Packet8EntityDispose.class);
-		registerPacket(9, Packet9EntityData.class, true);
-		registerPacket(10, Packet10EntityDataRequest.class);
-		registerPacket(11, Packet11LocalEntityID.class);
-		registerPacket(12, Packet12EntityDefRequest.class);
-		registerPacket(13, Packet13EntityDef.class);
-		registerPacket(14, Packet14ClientMove.class);
-		registerPacket(15, Packet15GameState.class);
-		registerPacket(16, Packet16EntityMove.class);
+		try {
+			registerPacket(Packet0Disconnect.class);
+			registerPacket(Packet1Login.class);
+			registerPacket(Packet2Alert.class);
+			registerPacket(Packet3Register.class);
+			registerPacket(Packet4Sector.class);
+			registerPacket(Packet5SectorRequest.class);
+			registerPacket(Packet6BlankSector.class);
+			registerPacket(Packet7EntityTeleport.class);
+			registerPacket(Packet8EntityDispose.class);
+			registerPacket(Packet9EntityData.class);
+			registerPacket(Packet10EntityDataRequest.class);
+			registerPacket(Packet11LocalEntityID.class);
+			registerPacket(Packet12EntityDefRequest.class);
+			registerPacket(Packet13EntityDef.class);
+			registerPacket(Packet14ClientMove.class);
+			registerPacket(Packet15GameState.class);
+			registerPacket(Packet16EntityMove.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e.toString());
+		}
 	}
 
 	public Packet() {
 	}
 
-	public static void registerPacket(int id, Class<? extends Packet> pClass) {
-		registerPacket(id, pClass, false);
-	}
-
-	public static void registerPacket(int id, Class<? extends Packet> pClass,
-			boolean highPriority) {
+	public static void registerPacket(Class<? extends Packet> pClass)
+			throws InstantiationException, IllegalAccessException {
+		int id = pClass.newInstance().getID();
 		if (id < idMapping.length && idMapping[id] != null) {
 			throw new IllegalArgumentException("Duplicate packet id: " + id);
 		} else {
@@ -91,5 +92,25 @@ public abstract class Packet implements PacketObject {
 		return 1 + getLength();
 	}
 
-	public abstract int getID();
+	public int getID() {
+		// This is a janky way to do it.
+		char[] name = getClass().getSimpleName().toCharArray();
+		boolean numStart = false;
+		String num = new String();
+		for (int i = 0; i < name.length; i++) {
+			if (name[i] >= '0' && name[i] <= '9') {
+				numStart = true;
+				num += name[i];
+			} else if (numStart) {
+				break;
+			}
+		}
+		try {
+			if (numStart)
+				return Integer.valueOf(num);
+		} catch (NumberFormatException e) {
+		}
+		throw new UnsupportedOperationException(
+				"The class name doesn't contain ID, please ovveride getID()");
+	}
 }

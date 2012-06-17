@@ -17,6 +17,19 @@ public enum Direction {
 		return zOff;
 	}
 
+	public Direction getInverse() {
+		return getDirection(-xOff, -zOff);
+	}
+
+	public static Direction getDirection(int xOff, int zOff) {
+		for (Direction d : values()) {
+			if (d.getXOff() == xOff && d.getZOff() == zOff) {
+				return d;
+			}
+		}
+		return null;
+	}
+
 	public static Direction getBestDirection(int xC, int zC) {
 		if (Math.abs(xC) > Math.abs(zC) && xC != 0) {
 			xC = xC / Math.abs(xC);
@@ -31,6 +44,6 @@ public enum Direction {
 					return d;
 			}
 		}
-		return UP;
+		return null;
 	}
 }

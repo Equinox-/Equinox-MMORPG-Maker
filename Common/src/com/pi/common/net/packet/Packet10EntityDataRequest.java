@@ -25,11 +25,6 @@ public class Packet10EntityDataRequest extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 10;
-	}
-
-	@Override
 	public int getLength() {
 		return 4;
 	}

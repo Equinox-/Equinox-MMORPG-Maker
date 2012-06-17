@@ -55,11 +55,7 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 				ClientEntity local = client.getEntityManager().getLocalEntity();
 				if (local != null && !local.isMoving()) {
 					local.setDir(dir);
-					if (local.canMove(client
-							.getWorld()
-							.getSectorManager()
-							.getSector(local.getSectorX(), local.getPlane(),
-									local.getSectorZ()))) {
+					if (local.canMove(client.getWorld().getSectorManager())) {
 						local.doMovement();
 						client.getNetwork().send(
 								Packet14ClientMove.create(local));

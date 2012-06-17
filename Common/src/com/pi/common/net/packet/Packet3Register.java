@@ -22,11 +22,6 @@ public class Packet3Register extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 3;
-	}
-
-	@Override
 	public int getLength() {
 		return PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream.stringByteLength(password);

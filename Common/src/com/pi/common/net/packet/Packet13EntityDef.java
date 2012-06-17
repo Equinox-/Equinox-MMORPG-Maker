@@ -27,11 +27,6 @@ public class Packet13EntityDef extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 13;
-	}
-
-	@Override
 	public int getLength() {
 		if (def == null)
 			def = new EntityDef();

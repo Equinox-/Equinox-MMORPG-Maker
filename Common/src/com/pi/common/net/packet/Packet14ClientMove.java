@@ -11,11 +11,6 @@ public class Packet14ClientMove extends EntityMovementPacket {
 	}
 
 	@Override
-	public int getID() {
-		return 14;
-	}
-
-	@Override
 	public int getLength() {
 		return super.getLength();
 	}

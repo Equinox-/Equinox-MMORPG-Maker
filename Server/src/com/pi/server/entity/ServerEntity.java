@@ -2,9 +2,11 @@ package com.pi.server.entity;
 
 import com.pi.common.contants.MovementConstants;
 import com.pi.common.game.Entity;
+import com.pi.server.logic.entity.EntityLogic;
 
 public class ServerEntity extends Entity {
 	private long nextMove = -1;
+	private EntityLogic logicClass;
 
 	public ServerEntity() {
 		super();
@@ -23,5 +25,17 @@ public class ServerEntity extends Entity {
 				+ (run ? MovementConstants.RUN_TIME
 						: MovementConstants.WALK_TIME);
 		super.doMovement();
+	}
+
+	public EntityLogic getLogic() {
+		return logicClass;
+	}
+
+	public boolean assignLogic(EntityLogic l) {
+		if (logicClass == null) {
+			logicClass = l;
+			return true;
+		}
+		return false;
 	}
 }

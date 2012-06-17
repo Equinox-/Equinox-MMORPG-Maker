@@ -31,8 +31,8 @@ public class NetClient extends Thread {
 			.allocate(NetConstants.MAX_BUFFER);
 	private boolean isRunning = true;
 
-	private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
-	private List<ByteBuffer> writeQueue = new LinkedList<ByteBuffer>();
+	private LinkedList<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
+	private LinkedList<ByteBuffer> writeQueue = new LinkedList<ByteBuffer>();
 	private NetHandler handler;
 	private DataWorker worker;
 	private Client client;
@@ -170,12 +170,12 @@ public class NetClient extends Thread {
 
 		synchronized (this.writeQueue) {
 			while (!writeQueue.isEmpty()) {
-				ByteBuffer buf = writeQueue.get(0);
+				ByteBuffer buf = writeQueue.getFirst();
 				socketChannel.write(buf);
 				if (buf.remaining() > 0) {
 					break;
 				}
-				writeQueue.remove(0);
+				writeQueue.removeFirst();
 			}
 
 			if (writeQueue.isEmpty()) {

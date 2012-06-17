@@ -45,11 +45,6 @@ public class Packet7EntityTeleport extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 7;
-	}
-
-	@Override
 	public int getLength() {
 		if (moved == null)
 			moved = new Location();

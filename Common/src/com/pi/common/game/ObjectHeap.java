@@ -1,8 +1,9 @@
 package com.pi.common.game;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class ObjectHeap<E> {
+public class ObjectHeap<E> implements Iterable<E> {
 	private static final int defaultCapacityIncrement = 10;
 	private static final int defaultStartLength = 10;
 
@@ -71,5 +72,39 @@ public class ObjectHeap<E> {
 
 	public int numElements() {
 		return numElements;
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return new Iterator<E>() {
+			int cID = 0;
+			E next = rNext();
+
+			@Override
+			public boolean hasNext() {
+				return next != null;
+			}
+
+			public E rNext() {
+				while (cID < capacity()) {
+					if (get(cID) != null)
+						return get(cID++);
+					cID++;
+				}
+				return null;
+			}
+
+			@Override
+			public E next() {
+				E next = this.next;
+				this.next = rNext();
+				return next;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 }

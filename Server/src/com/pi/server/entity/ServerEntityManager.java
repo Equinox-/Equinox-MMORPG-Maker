@@ -1,10 +1,8 @@
 package com.pi.server.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
@@ -12,6 +10,7 @@ import com.pi.common.database.SectorLocation;
 import com.pi.common.database.Tile.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityListener;
+import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet7EntityTeleport;
@@ -22,12 +21,15 @@ import com.pi.server.client.Client;
 import com.pi.server.constants.ServerConstants;
 
 public class ServerEntityManager implements EntityListener {
-	private final Map<Integer, ServerEntity> entityMap = Collections
-			.synchronizedMap(new HashMap<Integer, ServerEntity>());
+	private final ObjectHeap<ServerEntity> entityMap = new ObjectHeap<ServerEntity>();
 	private final Server server;
 
 	public ServerEntityManager(Server server) {
 		this.server = server;
+	}
+
+	public Iterator<ServerEntity> getEntities() {
+		return entityMap.iterator();
 	}
 
 	public void requestData(int id, Packet10EntityDataRequest p) {
@@ -44,12 +46,12 @@ public class ServerEntityManager implements EntityListener {
 		e.setListener(this);
 		int id = 0;
 		while (true) {
-			if (!entityMap.containsKey(id))
+			if (entityMap.get(id) == null)
 				break;
 			id++;
 		}
 		if (e.setEntityID(id)) {
-			entityMap.put(id, e);
+			entityMap.set(id, e);
 			return true;
 		}
 		return false;
@@ -61,7 +63,7 @@ public class ServerEntityManager implements EntityListener {
 
 	public List<ServerEntity> getEntitiesInSector(SectorLocation loc) {
 		List<ServerEntity> sector = new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap.values()) {
+		for (ServerEntity e : entityMap) {
 			if (loc.containsLocation(e)) {
 				sector.add(e);
 			}
@@ -71,7 +73,7 @@ public class ServerEntityManager implements EntityListener {
 
 	public List<ServerEntity> getEntitiesWithin(Location l, int maxDist) {
 		List<ServerEntity> entities = new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap.values()) {
+		for (ServerEntity e : entityMap) {
 			if (Location.dist(l, e) <= maxDist) {
 				entities.add(e);
 			}
@@ -105,10 +107,6 @@ public class ServerEntityManager implements EntityListener {
 		}
 	}
 
-	public Map<Integer, ServerEntity> registeredEntities() {
-		return Collections.unmodifiableMap(entityMap);
-	}
-
 	@Override
 	public void entityLayerChange(int entity, TileLayer from, TileLayer to) {
 
@@ -139,7 +137,7 @@ public class ServerEntityManager implements EntityListener {
 	public void clientMove(Client cli, Location from, Location to) {
 		if (cli != null && cli.getEntity() != null
 				&& cli.getNetClient() != null) {
-			for (Entity e : entityMap.values()) {
+			for (Entity e : entityMap) {
 				if (e != null) {
 					int nDist = Location.dist(e, to);
 					int oDist = from != null ? Location.dist(e, from) : -1;
@@ -180,5 +178,9 @@ public class ServerEntityManager implements EntityListener {
 				}
 			}
 		}
+	}
+
+	public int entityCount() {
+		return entityMap.numElements();
 	}
 }

@@ -50,17 +50,17 @@ public class Sector implements PacketObject {
 	}
 
 	public void setSectorLocation(int x, int y, int z) {
-		baseX = x * SectorConstants.SECTOR_WIDTH;
+		baseX = SectorConstants.localSectorToWorldX(x, 0);
 		baseY = y;
-		baseZ = z * SectorConstants.SECTOR_HEIGHT;
+		baseZ = SectorConstants.localSectorToWorldZ(z, 0);
 	}
 
 	public int getSectorX() {
-		return baseX / SectorConstants.SECTOR_WIDTH;
+		return SectorConstants.worldToSectorX(baseX);
 	}
 
 	public int getSectorZ() {
-		return baseZ / SectorConstants.SECTOR_HEIGHT;
+		return SectorConstants.worldToSectorZ(baseZ);
 	}
 
 	public int getSectorY() {

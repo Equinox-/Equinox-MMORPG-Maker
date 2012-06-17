@@ -13,6 +13,7 @@ import com.pi.server.database.Paths;
 public class EmptySector {
 	public static Sector create() {
 		Sector sec = new Sector();
+		sec.setRevision(1);
 		sec.setSectorLocation(0, 0, 0);
 		for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++)
 			for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
@@ -43,6 +44,13 @@ public class EmptySector {
 		EntityDef d = new EntityDef();
 		d.setGraphic(3);
 		d.setPosition(0, 0, 128, 192);
+		//d.setLogicClass("com.pi.server.logic.entity.AggressiveEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(0), d);
+		
+
+		d.setGraphic(4);
+		d.setPosition(0, 0, 128, 128);
+		d.setLogicClass("com.pi.server.logic.entity.RandomEntityLogic");
+		DatabaseIO.write(Paths.getEntityDef(1), d);
 	}
 }

@@ -16,11 +16,6 @@ public class Packet15GameState extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 15;
-	}
-
-	@Override
 	public void writeData(PacketOutputStream pOut) throws IOException {
 		pOut.writeInt(state != null ? state.ordinal() : -1);
 	}

@@ -31,11 +31,6 @@ public class Packet0Disconnect extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 0;
-	}
-
-	@Override
 	public int getLength() {
 		return PacketOutputStream.stringByteLength(reason)
 				+ PacketOutputStream.stringByteLength(details);

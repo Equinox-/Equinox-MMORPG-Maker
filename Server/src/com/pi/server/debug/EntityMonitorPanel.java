@@ -1,19 +1,23 @@
 package com.pi.server.debug;
 
+import java.util.Iterator;
+
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
-import com.pi.server.entity.ServerEntityManager;
+import com.pi.server.Server;
+import com.pi.server.entity.ServerEntity;
 
 public class EntityMonitorPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private final ServerEntityManager svr;
+	private final Server svr;
 	private ThreadTableModel table_model = new ThreadTableModel();
 	private JTable tbl;
 
-	public EntityMonitorPanel(ServerEntityManager svr) {
+	public EntityMonitorPanel(Server svr) {
 		this.svr = svr;
 		setLocation(0, 0);
 		setSize(500, 500);
@@ -29,13 +33,14 @@ public class EntityMonitorPanel extends JPanel {
 
 	private class ThreadTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
-		String[] colName = { "ID", "X", "Plane", "Z", "Layer", "Dir", "Def" };
+		String[] colName = { "ID", "X", "Plane", "Z", "Layer", "Dir", "Def",
+				"Brain" };
 		Class<?>[] colClass = { String.class, String.class, String.class,
 				String.class, String.class, String.class, String.class };
 
 		@Override
 		public int getRowCount() {
-			return svr.registeredEntities().size();
+			return svr.getServerEntityManager().entityCount() + 1;
 		}
 
 		@Override
@@ -45,17 +50,20 @@ public class EntityMonitorPanel extends JPanel {
 
 		@Override
 		public Object getValueAt(int row, int col) {
-			Integer[] keyArr = svr
-					.registeredEntities()
-					.keySet()
-					.toArray(
-							new Integer[svr.registeredEntities().keySet()
-									.size()]);
-			if (row < keyArr.length) {
-				Integer key = keyArr[row];
-				Entity ent = svr.getEntity(key);
-				if (ent == null)
-					return "";
+			if (row == 0) {
+				return colName[col];
+			}
+			row--;
+			Iterator<ServerEntity> itr = svr.getServerEntityManager()
+					.getEntities();
+			Entity ent = null;
+			while (row >= 0) {
+				row--;
+				ent = itr.next();
+			}
+			if (ent != null) {
+				EntityDef def = svr.getDefs().getEntityLoader()
+						.getDef(ent.getEntityDef());
 				switch (col) {
 				case 0:
 					return ent.getEntityID() + "";
@@ -71,6 +79,9 @@ public class EntityMonitorPanel extends JPanel {
 					return ent.getDir() + "";
 				case 6:
 					return ent.getEntityDef();
+				case 7:
+					return def != null ? Boolean.toString(def.getLogicCLass()
+							.length() > 0) : "No Def";
 				default:
 					return "";
 				}

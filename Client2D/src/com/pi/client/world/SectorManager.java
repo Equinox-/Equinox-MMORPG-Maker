@@ -15,7 +15,8 @@ import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
-public class SectorManager extends ClientThread {
+public class SectorManager extends ClientThread implements
+		com.pi.common.world.SectorManager {
 	public final static int sectorExpiry = 60000; // 1 Minute
 	public final static int serverRequestExpiry = 60000; // 30 seconds
 
@@ -33,6 +34,16 @@ public class SectorManager extends ClientThread {
 		start();
 	}
 
+	@Override
+	public boolean isEmptySector(int x, int y, int z) {
+		synchronized (mutex) {
+			SectorLocation p = new SectorLocation(x, y, z);
+			SectorStorage sS = map.get(p);
+			return sS == null || sS.empty;
+		}
+	}
+
+	@Override
 	public Sector getSector(int x, int y, int z) {
 		synchronized (mutex) {
 			SectorLocation p = new SectorLocation(x, y, z);

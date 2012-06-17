@@ -30,11 +30,6 @@ public class Packet16EntityMove extends EntityMovementPacket {
 	}
 
 	@Override
-	public int getID() {
-		return 16;
-	}
-
-	@Override
 	public int getLength() {
 		return 4 + super.getLength();
 	}

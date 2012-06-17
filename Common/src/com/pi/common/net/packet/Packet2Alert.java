@@ -25,11 +25,6 @@ public class Packet2Alert extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 2;
-	}
-
-	@Override
 	public int getLength() {
 		return PacketOutputStream.stringByteLength(message);
 	}

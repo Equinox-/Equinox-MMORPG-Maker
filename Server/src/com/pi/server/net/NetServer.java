@@ -61,11 +61,12 @@ public class NetServer extends Thread {
 						case NetChangeRequest.CHANGEOPS:
 							SelectionKey key = change.socket
 									.keyFor(this.selector);
-							if (key != null)
+							if (key != null && key.isValid()){
 								key.interestOps(change.ops);
+								changes.remove();
+							}
 						}
 					}
-					this.pendingChanges.clear();
 				}
 				this.selector.select();
 				Iterator<SelectionKey> selectedKeys = this.selector

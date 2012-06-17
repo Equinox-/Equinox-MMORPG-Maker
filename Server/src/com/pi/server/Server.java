@@ -17,6 +17,7 @@ import com.pi.server.debug.ClientMonitorPanel;
 import com.pi.server.debug.EntityMonitorPanel;
 import com.pi.server.debug.SectorMonitorPanel;
 import com.pi.server.def.Definitions;
+import com.pi.server.entity.ServerEntity;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.logic.ServerLogic;
 import com.pi.server.net.NetServer;
@@ -67,7 +68,7 @@ public class Server {
 		log = new PILogger(Paths.getLogFile(), pn.logOut);
 
 		entityManager = new ServerEntityManager(this);
-		rcView.addTab("Entities", new EntityMonitorPanel(entityManager));
+		rcView.addTab("Entities", new EntityMonitorPanel(this));
 		clientManager = new ClientManager();
 		database = new ServerDatabase(this);
 		try {
@@ -83,6 +84,11 @@ public class Server {
 
 			sLogic = new ServerLogic(this);
 			sLogic.start();
+			
+			ServerEntity ent = new ServerEntity();
+			ent.setEntityDef(1);
+			entityManager.registerEntity(ent);
+			
 		} catch (BindException e1) {
 			dispose();
 		}

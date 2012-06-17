@@ -24,11 +24,6 @@ public class Packet4Sector extends Packet {
 	}
 
 	@Override
-	public int getID() {
-		return 4;
-	}
-
-	@Override
 	public int getLength() {
 		if (sector == null)
 			sector = new Sector();
