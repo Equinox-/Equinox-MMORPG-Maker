@@ -1,5 +1,6 @@
 package com.pi.server.net;
 
+import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
@@ -52,7 +53,11 @@ public class NetServerClient extends NetClient {
 
 	@Override
 	public void processData(byte[] data, int off, int len) {
-		server.getNetwork().getWorker().processData(this, data, off, len);
+		try {
+			server.getNetwork().getWorker().processData(this, data, off, len);
+		} catch (IOException e) {
+			getLog().printStackTrace(e);
+		}
 	}
 
 	@Override

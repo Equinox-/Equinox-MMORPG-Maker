@@ -1,6 +1,5 @@
 package com.pi.server.logic.entity;
 
-import java.util.List;
 import java.util.Random;
 
 import com.pi.common.contants.Direction;
@@ -21,7 +20,7 @@ public class RandomEntityLogic extends EntityLogic {
 
 	@Override
 	public void doLogic() {
-		if (entity.isStillMoving())
+		if (sEntity.isStillMoving())
 			return;
 
 		if (currentMoveCount > 0) {

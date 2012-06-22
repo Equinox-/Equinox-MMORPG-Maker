@@ -12,8 +12,8 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.DataWorker;
@@ -26,7 +26,7 @@ public class NetServer extends Thread {
 	private ServerSocketChannel serverChannel;
 	private Selector selector;
 	private DataWorker worker;
-	private List<NetChangeRequest> pendingChanges = new LinkedList<NetChangeRequest>();
+	private Queue<NetChangeRequest> pendingChanges = new LinkedBlockingQueue<NetChangeRequest>();
 	private Server server;
 	private boolean isRunning = true;
 
@@ -61,7 +61,7 @@ public class NetServer extends Thread {
 						case NetChangeRequest.CHANGEOPS:
 							SelectionKey key = change.socket
 									.keyFor(this.selector);
-							if (key != null && key.isValid()){
+							if (key != null && key.isValid()) {
 								key.interestOps(change.ops);
 								changes.remove();
 							}
@@ -127,12 +127,12 @@ public class NetServer extends Thread {
 		NetServerClient c = ((Client) key.attachment()).getNetClient();
 		synchronized (c.getSendQueue()) {
 			while (!c.getSendQueue().isEmpty()) {
-				ByteBuffer buf = (ByteBuffer) c.getSendQueue().get(0);
+				ByteBuffer buf = (ByteBuffer) c.getSendQueue().peek();
 				socketChannel.write(buf);
 				if (buf.remaining() > 0) {
 					break;
 				}
-				c.getSendQueue().remove(0);
+				c.getSendQueue().poll();
 			}
 
 			if (c.getSendQueue().isEmpty()) {

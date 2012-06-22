@@ -1,169 +1,193 @@
 [INFO] Started selector
+[FINE] Started: SectorManager
+[FINE] Started: EntityDefLoader
+[FINE] Started: ServerLogic
 [INFO] Loaded: 1
-[INFO] Queued packet Packet11LocalEntityID in 0.07888
-[INFO] Queued packet Packet9EntityData in 0.030203
-[INFO] Queued packet Packet9EntityData in 0.053075
+[FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
+[FINEST] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
+[FINEST] Recieved Packet1Login on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
 [INFO] Loaded: 0
-[INFO] Queued packet Packet15GameState in 0.174767
-[INFO] Queued packet Packet16EntityMove in 0.033136
+[FINEST] Send Packet9EntityData size: 24 on 0
+[FINEST] Send Packet9EntityData size: 24 on 0
+[FINEST] Send Packet15GameState size: 4 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
 [INFO] 1:0
-[INFO] Queued packet Packet4Sector in 4.177696
+[FINEST] Send Packet4Sector size: 33184 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
 [INFO] Request sector
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
 [INFO] Request sector
-[INFO] Queued packet Packet6BlankSector in 0.043985
-[INFO] Queued packet Packet13EntityDef in 0.081812
-[INFO] Queued packet Packet16EntityMove in 0.025805
-[INFO] Queued packet Packet16EntityMove in 0.032256
-[INFO] Queued packet Packet16EntityMove in 0.031669
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.026098
-[INFO] Queued packet Packet13EntityDef in 0.043106
-[INFO] Queued packet Packet16EntityMove in 0.033722
-[INFO] Queued packet Packet16EntityMove in 0.025511
-[INFO] Queued packet Packet16EntityMove in 0.026391
-[INFO] Queued packet Packet16EntityMove in 0.033135
-[INFO] Queued packet Packet16EntityMove in 0.035188
-[INFO] Queued packet Packet16EntityMove in 0.032256
-[INFO] Queued packet Packet16EntityMove in 0.031669
-[INFO] Queued packet Packet16EntityMove in 0.026391
-[INFO] Queued packet Packet16EntityMove in 0.032842
-[INFO] Queued packet Packet16EntityMove in 0.041053
-[INFO] Queued packet Packet13EntityDef in 0.037241
-[INFO] Queued packet Packet16EntityMove in 0.026097
-[INFO] Queued packet Packet16EntityMove in 0.031962
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.026391
-[INFO] Queued packet Packet16EntityMove in 0.026098
-[INFO] Queued packet Packet16EntityMove in 0.026391
-[INFO] Queued packet Packet16EntityMove in 0.026391
-[INFO] Queued packet Packet16EntityMove in 0.032842
-[INFO] Queued packet Packet16EntityMove in 0.024632
-[INFO] Queued packet Packet16EntityMove in 0.029323
-[INFO] Queued packet Packet16EntityMove in 0.031376
-[INFO] Queued packet Packet16EntityMove in 0.024339
-[SEVERE] 
-java.util.ConcurrentModificationException
-java.util.LinkedList$ListItr.checkForComodification(Unknown Source)
-java.util.LinkedList$ListItr.next(Unknown Source)
-com.pi.server.net.NetServer.run(NetServer.java:59)
-[INFO] Queued packet Packet16EntityMove in 0.026684
-[INFO] Queued packet Packet16EntityMove in 0.023459
-[INFO] Queued packet Packet16EntityMove in 0.025805
-[INFO] Queued packet Packet16EntityMove in 0.031082
-[INFO] Queued packet Packet16EntityMove in 0.025804
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.033135
-[INFO] Queued packet Packet16EntityMove in 0.043105
-[INFO] Queued packet Packet16EntityMove in 0.035775
-[INFO] Queued packet Packet16EntityMove in 0.025511
-[INFO] Queued packet Packet16EntityMove in 0.030789
-[INFO] Queued packet Packet16EntityMove in 0.025804
-[INFO] Queued packet Packet16EntityMove in 0.030203
-[INFO] Queued packet Packet16EntityMove in 0.025511
-[INFO] Queued packet Packet16EntityMove in 0.031669
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.034308
-[INFO] Queued packet Packet16EntityMove in 0.031669
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.031669
-[INFO] Queued packet Packet16EntityMove in 0.024045
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.031083
-[INFO] Queued packet Packet16EntityMove in 0.02991
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.033429
-[INFO] Queued packet Packet16EntityMove in 0.024338
-[INFO] Queued packet Packet16EntityMove in 0.031376
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.034308
-[INFO] Queued packet Packet16EntityMove in 0.02815
-[INFO] Queued packet Packet16EntityMove in 0.022579
-[INFO] Queued packet Packet16EntityMove in 0.030496
-[INFO] Queued packet Packet16EntityMove in 0.022873
-[INFO] Queued packet Packet16EntityMove in 0.023752
-[INFO] Queued packet Packet16EntityMove in 0.032549
-[INFO] Queued packet Packet16EntityMove in 0.034015
-[INFO] Queued packet Packet16EntityMove in 0.031962
-[INFO] Queued packet Packet16EntityMove in 0.03079
-[INFO] Queued packet Packet16EntityMove in 0.023459
-[INFO] Queued packet Packet16EntityMove in 0.02991
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.021993
-[INFO] Queued packet Packet16EntityMove in 0.034308
-[INFO] Queued packet Packet16EntityMove in 0.027857
-[INFO] Queued packet Packet16EntityMove in 0.034602
-[INFO] Queued packet Packet16EntityMove in 0.030203
-[INFO] Queued packet Packet16EntityMove in 0.034015
-[INFO] Queued packet Packet16EntityMove in 0.023459
-[INFO] Queued packet Packet16EntityMove in 0.024045
-[INFO] Queued packet Packet16EntityMove in 0.029323
-[INFO] Queued packet Packet16EntityMove in 0.022872
-[INFO] Queued packet Packet16EntityMove in 0.022579
-[INFO] Queued packet Packet16EntityMove in 0.02082
-[INFO] Queued packet Packet16EntityMove in 0.023751
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.026977
-[INFO] Queued packet Packet16EntityMove in 0.02815
-[INFO] Queued packet Packet16EntityMove in 0.028443
-[INFO] Queued packet Packet16EntityMove in 0.021406
-[INFO] Queued packet Packet16EntityMove in 0.032549
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.028151
-[INFO] Queued packet Packet16EntityMove in 0.026978
-[INFO] Queued packet Packet16EntityMove in 0.027564
-[INFO] Queued packet Packet16EntityMove in 0.023165
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.021406
-[INFO] Queued packet Packet16EntityMove in 0.022579
-[INFO] Queued packet Packet16EntityMove in 0.023166
-[INFO] Queued packet Packet16EntityMove in 0.021113
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[SEVERE] 
-java.util.ConcurrentModificationException
-java.util.LinkedList$ListItr.checkForComodification(Unknown Source)
-java.util.LinkedList$ListItr.next(Unknown Source)
-com.pi.server.net.NetServer.run(NetServer.java:59)
-[INFO] Queued packet Packet16EntityMove in 0.02815
-[INFO] Queued packet Packet16EntityMove in 0.022872
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.029323
-[INFO] Queued packet Packet16EntityMove in 0.021406
-[INFO] Queued packet Packet16EntityMove in 0.022872
-[INFO] Queued packet Packet16EntityMove in 0.029323
-[INFO] Queued packet Packet16EntityMove in 0.0217
-[INFO] Queued packet Packet16EntityMove in 0.023166
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.034602
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.026978
-[INFO] Queued packet Packet16EntityMove in 0.023166
-[INFO] Queued packet Packet16EntityMove in 0.021993
-[INFO] Queued packet Packet16EntityMove in 0.02903
-[INFO] Queued packet Packet16EntityMove in 0.026978
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.031083
-[INFO] Queued packet Packet16EntityMove in 0.022872
-[INFO] Queued packet Packet16EntityMove in 0.021406
-[INFO] Queued packet Packet16EntityMove in 0.027857
-[INFO] Queued packet Packet16EntityMove in 0.028737
-[INFO] Queued packet Packet16EntityMove in 0.027857
-[INFO] Queued packet Packet16EntityMove in 0.021992
-[INFO] Queued packet Packet16EntityMove in 0.0217
-[INFO] Queued packet Packet16EntityMove in 0.026684
-[INFO] Queued packet Packet16EntityMove in 0.022286
-[INFO] Queued packet Packet16EntityMove in 0.021406
-[INFO] Queued packet Packet16EntityMove in 0.025218
-[INFO] Queued packet Packet16EntityMove in 0.029031
-[INFO] Queued packet Packet16EntityMove in 0.019353
-[INFO] Queued packet Packet8EntityDispose in 0.026098
-[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.server.entity.ServerEntity@53713116
+[FINEST] Send Packet6BlankSector size: 12 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 128 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 32 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 128 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 32 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Request sector
+[FINEST] Flagged as empty: SectorLocation[x=1, z=0, plane=0]
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Request sector
+[FINEST] Flagged as empty: SectorLocation[x=0, z=1, plane=0]
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Request sector
+[FINEST] Flagged as empty: SectorLocation[x=1, z=1, plane=0]
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.Entity@1edd01df
+[FINE] Stopped: ServerLogic
 [INFO] Stopped selector
+[FINE] Stopped: SectorManager
+[FINE] Stopped: EntityDefLoader

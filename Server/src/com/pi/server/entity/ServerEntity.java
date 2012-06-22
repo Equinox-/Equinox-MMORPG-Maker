@@ -4,16 +4,13 @@ import com.pi.common.contants.MovementConstants;
 import com.pi.common.game.Entity;
 import com.pi.server.logic.entity.EntityLogic;
 
-public class ServerEntity extends Entity {
+public class ServerEntity {
 	private long nextMove = -1;
 	private EntityLogic logicClass;
+	private Entity wrap;
 
-	public ServerEntity() {
-		super();
-	}
-
-	public ServerEntity(int entityDef) {
-		super(entityDef);
+	public ServerEntity(Entity wrapped) {
+		this.wrap = wrapped;
 	}
 
 	public boolean isStillMoving() {
@@ -24,7 +21,7 @@ public class ServerEntity extends Entity {
 		nextMove = System.currentTimeMillis()
 				+ (run ? MovementConstants.RUN_TIME
 						: MovementConstants.WALK_TIME);
-		super.doMovement();
+		wrap.doMovement();
 	}
 
 	public EntityLogic getLogic() {
@@ -37,5 +34,9 @@ public class ServerEntity extends Entity {
 			return true;
 		}
 		return false;
+	}
+
+	public Entity getWrappedEntity() {
+		return wrap;
 	}
 }

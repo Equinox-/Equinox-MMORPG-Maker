@@ -35,7 +35,7 @@ public class ServerLogic extends ServerThread {
 
 	public EntityLogic loadEntityLogic(ServerEntity e) {
 		EntityDef def = server.getDefs().getEntityLoader()
-				.getDef(e.getEntityDef());
+				.getDef(e.getWrappedEntity().getEntityDef());
 		if (def != null && def.getLogicCLass().length() > 0) {
 			try {
 				Class<?> clazz = getContextClassLoader().loadClass(

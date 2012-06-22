@@ -13,23 +13,13 @@ public class Entity extends Location {
 	protected Direction dir = Direction.UP;
 	protected TileLayer aboveLayer = TileLayer.MASK1;
 	protected int entityID = -1;
-	protected EntityListener listener = null;
 	protected int defID = 0;
 
 	public Entity(int def) {
 		this.defID = def;
 	}
 
-	public Entity(EntityListener listen, int def) {
-		this(listen);
-		this.defID = def;
-	}
-
 	public Entity() {
-	}
-
-	public Entity(EntityListener listen) {
-		this.listener = listen;
 	}
 
 	public void setEntityDef(int entityDef) {
@@ -60,15 +50,8 @@ public class Entity extends Location {
 		return aboveLayer;
 	}
 
-	public void setListener(EntityListener l) {
-		this.listener = l;
-	}
-
 	@Override
 	public void setLocation(int x, int plane, int z) {
-		if (listener != null && getEntityID() != -1)
-			listener.entityTeleport(getEntityID(), new Location(getGlobalX(),
-					getPlane(), getGlobalZ()), new Location(x, plane, z));
 		super.setLocation(x, plane, z);
 	}
 
@@ -77,8 +60,6 @@ public class Entity extends Location {
 	}
 
 	public void setLayer(TileLayer t) {
-		if (listener != null && getEntityID() != -1)
-			listener.entityLayerChange(getEntityID(), getLayer(), t);
 		aboveLayer = t;
 	}
 
@@ -87,10 +68,6 @@ public class Entity extends Location {
 	}
 
 	public void doMovement() {
-		if (listener != null && getEntityID() != -1)
-			listener.entityMove(getEntityID(), new Location(getGlobalX(),
-					getPlane(), getGlobalZ()), new Location(x + dir.getXOff(),
-					plane, z + dir.getZOff()), dir);
 		x += dir.getXOff();
 		z += dir.getZOff();
 	}
@@ -101,16 +78,8 @@ public class Entity extends Location {
 		int zC = apply.z - z;
 		if (xC != 0 || zC != 0)
 			dir = Direction.getBestDirection(xC, zC);
-		if (listener != null && getEntityID() != -1)
-			listener.entityMove(getEntityID(), new Location(getGlobalX(),
-					getPlane(), getGlobalZ()), apply, dir);
 		this.x = apply.x;
 		this.z = apply.z;
-	}
-
-	public void unRegister() {
-		if (listener != null && getEntityID() != -1)
-			listener.entityDispose(getEntityID());
 	}
 
 	public boolean canMoveIn(SectorManager mgr, Direction dir) {

@@ -1,9 +1,9 @@
 package com.pi.server.logic.entity;
 
 import java.util.List;
-import java.util.Random;
 
 import com.pi.common.contants.Direction;
+import com.pi.common.game.Entity;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 
@@ -20,8 +20,9 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 		int minDist = Integer.MAX_VALUE;
 		ServerEntity best = null;
 		for (ServerEntity e : entList) {
-			if (e != entity) {
-				int nDist = Math.abs(e.x - entity.x) + Math.abs(e.z - entity.z);
+			if (e != sEntity) {
+				int nDist = Math.abs(e.getWrappedEntity().x - entity.x)
+						+ Math.abs(e.getWrappedEntity().z - entity.z);
 				if (nDist < minDist) {
 					minDist = nDist;
 					best = e;
@@ -33,56 +34,59 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 
 	@Override
 	public void doLogic() {
-		if (entity.isStillMoving())
+		if (sEntity.isStillMoving())
 			return;
 
 		if (target < 0) {
 			ServerEntity nT = grabNewTarget();
 			if (nT != null) {
-				target = nT.getEntityID();
+				target = nT.getWrappedEntity().getEntityID();
 			} else {
 				super.doLogic();
 			}
 		} else {
-			ServerEntity target = server.getServerEntityManager().getEntity(
+			ServerEntity wrapper = server.getServerEntityManager().getEntity(
 					this.target);
-			if (target != null) {
-				int xDir = (target.x - entity.x);
-				int zDir = (target.z - entity.z);
-				Direction[] pDirs;
-				if (xDir != 0) {
-					if (zDir != 0) {
-						pDirs = new Direction[] {
-								zDir < 0 ? Direction.UP : Direction.DOWN,
-								xDir < 0 ? Direction.LEFT : Direction.RIGHT };
+			if (wrapper != null) {
+				Entity target = wrapper.getWrappedEntity();
+				if (target != null) {
+					int xDir = (target.x - entity.x);
+					int zDir = (target.z - entity.z);
+					Direction[] pDirs;
+					if (xDir != 0) {
+						if (zDir != 0) {
+							pDirs = new Direction[] {
+									zDir < 0 ? Direction.UP : Direction.DOWN,
+									xDir < 0 ? Direction.LEFT : Direction.RIGHT };
+						} else {
+							pDirs = new Direction[] { xDir < 0 ? Direction.LEFT
+									: Direction.RIGHT };
+						}
 					} else {
-						pDirs = new Direction[] { xDir < 0 ? Direction.LEFT
-								: Direction.RIGHT };
+						if (zDir != 0) {
+							pDirs = new Direction[] { zDir < 0 ? Direction.UP
+									: Direction.DOWN };
+						} else {
+							pDirs = new Direction[0];
+						}
 					}
-				} else {
-					if (zDir != 0) {
-						pDirs = new Direction[] { zDir < 0 ? Direction.UP
-								: Direction.DOWN };
-					} else {
-						pDirs = new Direction[0];
+					int[] triedDirs = new int[0];
+					if (pDirs.length >= 2) {
+						triedDirs = new int[] { rand.nextInt(pDirs.length) };
+						if (tryMove(pDirs[triedDirs[0]]))
+							return;
 					}
+					for (int i = 0; i < pDirs.length; i++) {
+						for (int tried : triedDirs)
+							if (tried == i)
+								continue;
+						if (tryMove(pDirs[i]))
+							return;
+					}
+					return;
 				}
-				int[] triedDirs = new int[0];
-				if (pDirs.length >= 2) {
-					triedDirs = new int[] { rand.nextInt(pDirs.length) };
-					if (tryMove(pDirs[triedDirs[0]]))
-						return;
-				}
-				for (int i = 0; i < pDirs.length; i++) {
-					for (int tried : triedDirs)
-						if (tried == i)
-							continue;
-					if (tryMove(pDirs[i]))
-						return;
-				}
-			} else {
-				this.target = -1;
 			}
 		}
+		this.target = -1;
 	}
 }

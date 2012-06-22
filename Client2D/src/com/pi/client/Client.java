@@ -18,7 +18,7 @@ import com.pi.client.entity.ClientEntityManager;
 import com.pi.client.game.MainGame;
 import com.pi.client.graphics.RenderLoop;
 import com.pi.client.gui.mainmenu.MainMenu;
-import com.pi.client.net.NetClient;
+import com.pi.client.net.ClientNetwork;
 import com.pi.client.world.World;
 import com.pi.common.Disposable;
 import com.pi.common.debug.PILogger;
@@ -44,7 +44,7 @@ public class Client implements Disposable, DeviceRegistration {
 	// Network Start
 	private String ip = "127.0.0.1";
 	private int port = 9999;
-	private NetClient network;
+	private ClientNetwork network;
 	// Network End
 
 	// Graphics start
@@ -101,7 +101,7 @@ public class Client implements Disposable, DeviceRegistration {
 		reView.addTab("Sectors",
 				new SectorMonitorPanel(this.world.getSectorManager()));
 		this.defs = new Definitions(this);
-		network = new NetClient(this, ip, port);
+		network = new ClientNetwork(this, ip, port);
 		this.entityManager = new ClientEntityManager(this);
 		reView.addTab("Entities", new EntityMonitorPanel(entityManager));
 
@@ -112,7 +112,7 @@ public class Client implements Disposable, DeviceRegistration {
 		gameState = GameState.MAIN_MENU;
 	}
 
-	public NetClient getNetwork() {
+	public ClientNetwork getNetwork() {
 		return network;
 	}
 

@@ -1,34 +1,24 @@
 package com.pi.server.database;
 
-import java.io.EOFException;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import com.pi.common.database.Account;
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.net.packet.PacketObject;
 
-public class AccountDatabase {
+public class AccountDatabase implements PacketObject {
 	private ArrayList<Account> list;
 
 	public AccountDatabase() throws IOException {
-
 		list = new ArrayList<Account>();
-		try {
-			PacketInputStream fIn = new PacketInputStream(new FileInputStream(
-					Paths.getAccountsDatabase()));
-			int num = fIn.readInt();
-			for (int i = 0; i < num; i++) {
-				Account acc = new Account();
-				acc.readData(fIn);
-				list.add(acc);
-			}
-		} catch (EOFException e) {
-			if (Paths.getAccountsDatabase().exists())
-				Paths.getAccountsDatabase().delete();
-		}
+		if (Paths.getAccountsDatabase().exists())
+			readData(new PacketInputStream(
+					DatabaseIO.readByteBuffer(new FileInputStream(Paths
+							.getAccountsDatabase()))));
 	}
 
 	public Account getAccount(String username) {
@@ -49,12 +39,33 @@ public class AccountDatabase {
 		return true;
 	}
 
-	public void writeData() throws IOException {
-		PacketOutputStream fOut = new PacketOutputStream(new FileOutputStream(
-				Paths.getAccountsDatabase()));
-		fOut.writeInt(list.size());
-		for (int i = 0; i < list.size(); i++)
-			list.get(i).writeData(fOut);
-		fOut.close();
+	@Override
+	public void writeData(PacketOutputStream pOut) throws IOException {
+		pOut.writeInt(list.size());
+		for (Account a : list)
+			a.writeData(pOut);
+	}
+
+	@Override
+	public int getLength() {
+		int len = 4;
+		for (Account a : list)
+			len += a.getLength();
+		return len;
+	}
+
+	@Override
+	public void readData(PacketInputStream pIn) throws IOException {
+		list.clear();
+		if (pIn.getByteBuffer().remaining() >= 4) {
+			int size = pIn.readInt();
+			System.out.println(size);
+			list.ensureCapacity(size);
+			for (int i = 0; i < size; i++) {
+				Account a = new Account();
+				a.readData(pIn);
+				list.add(a);
+			}
+		}
 	}
 }

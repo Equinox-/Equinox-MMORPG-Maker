@@ -1,14 +1,48 @@
 package com.pi.common.net;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
-public class PacketInputStream extends DataInputStream {
-	public PacketInputStream(InputStream in) {
-		super(in);
+public class PacketInputStream {
+	private ByteBuffer bb;
+
+	public PacketInputStream(ByteBuffer bb) {
+		this.bb = bb;
+	}
+
+	public void readBytes(byte[] data) {
+		bb.get(data);
+	}
+
+	public byte readByte() {
+		return bb.get();
+	}
+
+	public char readChar() {
+		return bb.getChar();
+	}
+
+	public short readShort() {
+		return bb.getShort();
+	}
+
+	public int readInt() {
+		return bb.getInt();
+	}
+
+	public float readFloat() {
+		return bb.getFloat();
+	}
+
+	public long readLong() {
+		return bb.getLong();
+	}
+
+	public double readDouble() {
+		return bb.getDouble();
 	}
 
 	public String readString() throws IOException {
@@ -25,7 +59,7 @@ public class PacketInputStream extends DataInputStream {
 
 	public byte[] readByteArray() throws IOException {
 		byte[] read = new byte[readInt()];
-		readFully(read);
+		readBytes(read);
 		return read;
 	}
 
@@ -36,5 +70,9 @@ public class PacketInputStream extends DataInputStream {
 		objIn.close();
 		bIn.close();
 		return o;
+	}
+
+	public ByteBuffer getByteBuffer() {
+		return bb;
 	}
 }

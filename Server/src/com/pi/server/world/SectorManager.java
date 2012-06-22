@@ -2,6 +2,7 @@ package com.pi.server.world;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -10,7 +11,6 @@ import java.util.Map;
 import com.pi.common.database.Sector;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.DatabaseIO;
-import com.pi.common.net.ByteBufferOutputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet5SectorRequest;
@@ -65,11 +65,13 @@ public class SectorManager extends ServerThread implements
 		}
 	}
 
+	@Override
 	public Sector getSector(int x, int y, int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
 		return ss != null ? ss.data : null;
 	}
 
+	@Override
 	public boolean isEmptySector(int x, int y, int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
 		return ss != null ? ss.empty : false;
@@ -171,13 +173,12 @@ public class SectorManager extends ServerThread implements
 
 		public void updatePacketData() {
 			Packet4Sector p = new Packet4Sector();
+			p.sector = data;
 			try {
-				ByteBufferOutputStream bO = new ByteBufferOutputStream(
-						p.getPacketLength());
-				PacketOutputStream pO = new PacketOutputStream(bO);
+				PacketOutputStream pO = new PacketOutputStream(
+						ByteBuffer.allocate(p.getPacketLength()));
 				p.writePacket(pO);
-				pO.close();
-				pack = bO.getByteBuffer().array();
+				pack = pO.getByteBuffer().array();
 			} catch (Exception e) {
 				pack = null;
 			}

@@ -16,6 +16,7 @@ import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet16EntityMove;
+import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -24,10 +25,10 @@ import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
 
 public class NetClientHandler extends NetHandler {
-	private final NetClient netClient;
+	private final ClientNetwork netClient;
 	private final Client client;
 
-	public NetClientHandler(NetClient netClient, Client client) {
+	public NetClientHandler(ClientNetwork netClient, Client client) {
 		this.client = client;
 		this.netClient = netClient;
 	}
@@ -39,6 +40,12 @@ public class NetClientHandler extends NetHandler {
 
 	@Override
 	public void process(Packet p) {
+	}
+
+	public void process(Packet17Clock p) {
+		long ping = (System.currentTimeMillis() - p.clientSendTime) / 2;
+		long offset = p.serverSendTime - ping - p.clientSendTime;
+		netClient.syncServerClock(ping, offset);
 	}
 
 	public void process(Packet0Disconnect p) {

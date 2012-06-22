@@ -1,25 +1,28 @@
 package com.pi.common.net;
 
-import java.io.ByteArrayInputStream;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.packet.Packet;
 
 public abstract class DataWorker extends Thread {
-	private List<DataEvent> queue = new LinkedList<DataEvent>();
+	private Queue<DataEvent> queue = new PriorityBlockingQueue<DataEvent>();
 
 	public DataWorker(ThreadGroup t) {
 		super(t, "NetDataWorker");
 		start();
 	}
 
-	public void processData(NetClient socket, byte[] data, int off, int count) {
+	public void processData(NetClient socket, byte[] data, int off, int count)
+			throws IOException {
 		byte[] dataCopy = new byte[count];
+		ByteBuffer bb;
 		System.arraycopy(data, off + 4, dataCopy, 0, count);
 		synchronized (queue) {
-			queue.add(new DataEvent(socket, dataCopy));
+			queue.add(new DataEvent(socket, dataCopy, this));
 			queue.notify();
 		}
 	}
@@ -47,15 +50,13 @@ public abstract class DataWorker extends Thread {
 					}
 				} else {
 					try {
-						dataEvent = queue.remove(0);
-						PacketInputStream pIn = new PacketInputStream(
-								new ByteArrayInputStream(dataEvent.data));
-						Packet pack = Packet.getPacket(getLog(), pIn);
-						pIn.close();
+						dataEvent = queue.poll();
+						dataEvent.packet.readData(dataEvent.pIn);
 						getLog().finest(
-								"Recieved " + pack.getName()
+								"Recieved " + dataEvent.packet.getName()
 										+ dataEvent.socket.getSuffix());
-						dataEvent.socket.getHandler().processPacket(pack);
+						dataEvent.socket.getHandler().processPacket(
+								dataEvent.packet);
 					} catch (Exception e) {
 						getLog().printStackTrace(e);
 					}
@@ -64,13 +65,23 @@ public abstract class DataWorker extends Thread {
 		}
 	}
 
-	public static class DataEvent {
+	public static class DataEvent implements Comparable<DataEvent> {
 		public NetClient socket;
-		public byte[] data;
+		public ByteBuffer data;
+		public Packet packet;
+		public PacketInputStream pIn;
 
-		public DataEvent(NetClient socket, byte[] data) {
+		public DataEvent(NetClient socket, byte[] data, DataWorker worker)
+				throws IOException {
 			this.socket = socket;
-			this.data = data;
+			this.data = ByteBuffer.wrap(data);
+			this.pIn = new PacketInputStream(this.data);
+			this.packet = Packet.getPacket(worker.getLog(), pIn);
+		}
+
+		@Override
+		public int compareTo(DataEvent o) {
+			return packet.compareTo(o.packet);
 		}
 	}
 }

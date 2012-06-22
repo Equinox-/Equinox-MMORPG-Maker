@@ -10,6 +10,7 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.ThreadMonitorPanel;
+import com.pi.common.game.Entity;
 import com.pi.server.client.ClientManager;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
@@ -17,7 +18,6 @@ import com.pi.server.debug.ClientMonitorPanel;
 import com.pi.server.debug.EntityMonitorPanel;
 import com.pi.server.debug.SectorMonitorPanel;
 import com.pi.server.def.Definitions;
-import com.pi.server.entity.ServerEntity;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.logic.ServerLogic;
 import com.pi.server.net.NetServer;
@@ -85,7 +85,7 @@ public class Server {
 			sLogic = new ServerLogic(this);
 			sLogic.start();
 			
-			ServerEntity ent = new ServerEntity();
+			Entity ent = new Entity();
 			ent.setEntityDef(1);
 			entityManager.registerEntity(ent);
 			

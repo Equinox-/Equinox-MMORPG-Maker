@@ -7,10 +7,10 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
-public abstract class Packet implements PacketObject {
+public abstract class Packet implements PacketObject, Comparable<Packet> {
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Packet>[] idMapping = new Class[0];
-	public final long timeStamp = System.currentTimeMillis();
+	public long timeStamp = System.currentTimeMillis();
 
 	static {
 		try {
@@ -31,6 +31,7 @@ public abstract class Packet implements PacketObject {
 			registerPacket(Packet14ClientMove.class);
 			registerPacket(Packet15GameState.class);
 			registerPacket(Packet16EntityMove.class);
+			registerPacket(Packet17Clock.class);
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString());
 		}
@@ -79,12 +80,13 @@ public abstract class Packet implements PacketObject {
 		Packet packet = getPacket(log, id);
 		if (packet == null)
 			throw new IOException("Bad packet id: " + id);
-		packet.readData(pIn);
+		// packet.timeStamp = pIn.readLong();
 		return packet;
 	}
 
 	public void writePacket(PacketOutputStream pOut) throws IOException {
 		pOut.writeByte(getID());
+		// pOut.writeLong(timeStamp);
 		writeData(pOut);
 	}
 
@@ -112,5 +114,15 @@ public abstract class Packet implements PacketObject {
 		}
 		throw new UnsupportedOperationException(
 				"The class name doesn't contain ID, please ovveride getID()");
+	}
+
+	@Override
+	public int compareTo(Packet p) {
+		if (p == this || p.timeStamp == timeStamp)
+			return 0;
+		if (timeStamp < p.timeStamp)
+			return -1;
+		else
+			return 1;
 	}
 }

@@ -56,12 +56,13 @@ public class EntityMonitorPanel extends JPanel {
 			row--;
 			Iterator<ServerEntity> itr = svr.getServerEntityManager()
 					.getEntities();
-			Entity ent = null;
+			ServerEntity sEnt = null;
 			while (row >= 0) {
 				row--;
-				ent = itr.next();
+				sEnt = itr.next();
 			}
-			if (ent != null) {
+			if (sEnt != null) {
+				Entity ent = sEnt.getWrappedEntity();
 				EntityDef def = svr.getDefs().getEntityLoader()
 						.getDef(ent.getEntityDef());
 				switch (col) {

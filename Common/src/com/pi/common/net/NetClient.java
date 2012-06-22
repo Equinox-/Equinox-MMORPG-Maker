@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.packet.Packet;
@@ -19,7 +19,7 @@ public abstract class NetClient {
 	private int sendSinceUpdate = 0;
 	private int recieveSinceUpdate = 0;
 
-	private final List<ByteBuffer> sendQueue = new LinkedList<ByteBuffer>();
+	private final Queue<ByteBuffer> sendQueue = new LinkedBlockingQueue<ByteBuffer>();
 	protected final SocketChannel socket;
 	private final ByteBuffer readBuffer = ByteBuffer
 			.allocate(NetConstants.MAX_BUFFER);
@@ -80,18 +80,12 @@ public abstract class NetClient {
 			addWriteRequest();
 			synchronized (this.sendQueue) {
 				int size = pack.getPacketLength();
-				ByteBufferOutputStream bO = new ByteBufferOutputStream(size + 4);
-				bO.getByteBuffer().put((byte) (size >>> 24));
-				bO.getByteBuffer().put((byte) (size >>> 16));
-				bO.getByteBuffer().put((byte) (size >>> 8));
-				bO.getByteBuffer().put((byte) (size));
-
-				PacketOutputStream pO = new PacketOutputStream(bO);
+				PacketOutputStream pO = new PacketOutputStream(
+						ByteBuffer.allocate(size + 4));
+				pO.writeInt(size);
 				pack.writePacket(pO);
-				pO.close();
-				bO.getByteBuffer().flip();
-				sendSinceUpdate += bO.getByteBuffer().capacity();
-				sendQueue.add(bO.getByteBuffer());
+				sendSinceUpdate += size;
+				sendQueue.add((ByteBuffer) pO.getByteBuffer().flip());
 			}
 			wakeSelector();
 		} catch (Exception e) {
@@ -105,17 +99,13 @@ public abstract class NetClient {
 		try {
 			addWriteRequest();
 			synchronized (this.sendQueue) {
-				ByteBufferOutputStream bO = new ByteBufferOutputStream(
-						packetData.length + 4);
-				bO.getByteBuffer().put((byte) (packetData.length >>> 24));
-				bO.getByteBuffer().put((byte) (packetData.length >>> 16));
-				bO.getByteBuffer().put((byte) (packetData.length >>> 8));
-				bO.getByteBuffer().put((byte) (packetData.length));
+				ByteBuffer bb = ByteBuffer
+						.allocateDirect(packetData.length + 4);
+				bb.putInt(packetData.length);
 
-				bO.getByteBuffer().put(packetData);
-				bO.getByteBuffer().flip();
-				sendSinceUpdate += bO.getByteBuffer().capacity();
-				sendQueue.add(bO.getByteBuffer());
+				bb.put(packetData);
+				sendSinceUpdate += bb.capacity();
+				sendQueue.add((ByteBuffer) bb.flip());
 			}
 			wakeSelector();
 		} catch (Exception e) {
@@ -127,7 +117,7 @@ public abstract class NetClient {
 		return socket.isOpen() && socket.isConnected();
 	}
 
-	public List<ByteBuffer> getSendQueue() {
+	public Queue<ByteBuffer> getSendQueue() {
 		return sendQueue;
 	}
 

@@ -45,9 +45,8 @@ public class ClientEntity extends Entity {
 	public void doMovement() {
 		if (!isMoving()) {
 			super.doMovement();
-			xOff = 0;
-			zOff = 0;
 			moveStart = System.currentTimeMillis();
+			processMovement();
 		}
 	}
 

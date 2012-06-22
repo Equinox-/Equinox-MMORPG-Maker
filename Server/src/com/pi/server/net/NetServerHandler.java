@@ -13,6 +13,8 @@ import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet12EntityDefRequest;
 import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet15GameState;
+import com.pi.common.net.packet.Packet16EntityMove;
+import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet1Login;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet3Register;
@@ -40,6 +42,11 @@ public class NetServerHandler extends NetHandler {
 
 	@Override
 	public void process(Packet p) {
+	}
+
+	public void process(Packet17Clock p) {
+		p.serverSendTime = System.currentTimeMillis();
+		netClient.send(p);
 	}
 
 	public void process(Packet0Disconnect p) {
@@ -95,12 +102,22 @@ public class NetServerHandler extends NetHandler {
 		if (cli != null) {
 			Entity ent = cli.getEntity();
 			if (ent != null) {
+				Location origin = new Location(ent.x, ent.plane, ent.z);
 				Location l = p.apply(ent);
 				int xC = l.x - ent.x;
 				int zC = l.z - ent.z;
 				Direction dir = Direction.getBestDirection(xC, zC);
-				if (ent.canMoveIn(server.getWorld().getSectorManager(), dir))
+				if (Location.dist(origin, l) < 2
+						&& ent.canMoveIn(server.getWorld().getSectorManager(),
+								dir)) {
 					ent.teleportShort(l);
+					server.getServerEntityManager().sendEntityMove(
+							ent.getEntityID(), origin, l, ent.getDir());
+				} else {
+					cli.getNetClient().send(
+							Packet16EntityMove.create(cli.getEntity()
+									.getEntityID(), origin));
+				}
 			}
 		}
 	}

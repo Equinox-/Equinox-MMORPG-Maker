@@ -2,6 +2,7 @@ package com.pi.server.database;
 
 import java.io.IOException;
 
+import com.pi.common.database.io.DatabaseIO;
 import com.pi.server.Server;
 
 public class ServerDatabase {
@@ -24,7 +25,7 @@ public class ServerDatabase {
 
 	public void save() {
 		try {
-			accountsDB.writeData();
+			DatabaseIO.write(Paths.getAccountsDatabase(), accountsDB);
 		} catch (IOException e) {
 			server.getLog().printStackTrace(e);
 		}
