@@ -8,11 +8,11 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import com.pi.client.constants.Constants;
 import com.pi.client.database.Paths;
 import com.pi.client.database.webfiles.GraphicsLoader;
 import com.pi.client.debug.EntityMonitorPanel;
 import com.pi.client.debug.GraphicsMonitorPanel;
-import com.pi.client.debug.SectorMonitorPanel;
 import com.pi.client.def.Definitions;
 import com.pi.client.entity.ClientEntityManager;
 import com.pi.client.game.MainGame;
@@ -24,48 +24,138 @@ import com.pi.common.Disposable;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
+import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.common.game.GameState;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.gui.GUIKit;
 
+/**
+ * The class managing all the client subsystems.
+ * <p>
+ * The client class contains all the subsystems, and provides an instanced
+ * object that allows them to reference each other.
+ * 
+ * @see com.pi.client.def.Definitions;
+ * @see com.pi.client.entity.ClientEntityManager;
+ * @see com.pi.client.net.ClientNetwork;
+ * @see com.pi.client.world.World;
+ * @see com.pi.graphics.device.DisplayManager;
+ * @author Westin
+ * 
+ */
 public class Client implements Disposable, DeviceRegistration {
 	static {
 		GUIKit.init();
 	}
+	
+	/**
+	 * The thread group for monitoring all client threads.
+	 */
 	private ThreadGroup clientThreads;
 
+	/**
+	 * The world manager instance.
+	 * 
+	 * @see com.pi.client.world.World
+	 */
 	private World world;
+
+	/**
+	 * The client's entity manager instance.
+	 * 
+	 * @see com.pi.client.entity.ClientEntityManager
+	 */
 	private ClientEntityManager entityManager;
+
+	/**
+	 * The definitions manager instance.
+	 * 
+	 * @see com.pi.client.def.Definitions
+	 */
 	private Definitions defs;
+
+	/**
+	 * Boolean value monitoring the disposal state of the client. Mainly used to
+	 * prevent re-disposal of systems.
+	 */
 	private boolean disposing = false;
 
 	// Network Start
-	private String ip = "127.0.0.1";
-	private int port = 9999;
+	/**
+	 * The client network instance.
+	 * 
+	 * @see com.pi.client.net.ClientNetwork
+	 */
 	private ClientNetwork network;
 	// Network End
 
 	// Graphics start
+	/**
+	 * The applet that the client renders on.
+	 */
 	private Applet cApplet;
+	/**
+	 * The display manager instance.
+	 * 
+	 * @see com.pi.graphics.device.DisplayManager
+	 */
 	private DisplayManager displayManager;
+	/**
+	 * The render loop for rendering the client's screen.
+	 * 
+	 * @see com.pi.client.graphics.RenderLoop
+	 */
 	private RenderLoop renderLoop;
 	// Graphics end
 
 	// GUI Start
+	/**
+	 * The graphical user interface container for the main game controls.
+	 * 
+	 * @see com.pi.client.game.MainGame
+	 */
 	private MainGame mainGame;
+	/**
+	 * The graphical user interface container for the main menu controls.
+	 * 
+	 * @see com.pi.client.gui.mainmenu.MainMenu
+	 */
 	private MainMenu mainMenu;
+	/**
+	 * Enum for setting the current game state.
+	 * 
+	 * @see com.pi.common.game.GameState
+	 */
 	private GameState gameState = GameState.LOADING;
 	// GUI End
 
 	// Debug Start
+	/**
+	 * The logger instance used for logging events.
+	 * 
+	 * @see com.pi.common.debug.PILogger
+	 */
 	private final PILogger logger;
+	/**
+	 * The resource viewer.
+	 * <p>
+	 * The resource viewer is used to monitor the current state of various game
+	 * systems.
+	 * 
+	 * @see com.pi.common.debug.PIResourceViewer
+	 */
 	private PIResourceViewer reView;
 
 	// Debug End
 
-	public Client(Applet applet) {
+	/**
+	 * Creates a instance of the whole game client on the provided applet.
+	 * 
+	 * @param applet The game container
+	 */
+	public Client(final Applet applet) {
 
 		/*
 		 * ip = JOptionPane.showInputDialog(applet,
@@ -81,7 +171,7 @@ public class Client implements Disposable, DeviceRegistration {
 		reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		reView.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				dispose();
 			}
 		});
@@ -90,18 +180,19 @@ public class Client implements Disposable, DeviceRegistration {
 		reView.addTab("Logger", plp);
 		reView.addTab("Threads", new ThreadMonitorPanel(clientThreads));
 		this.cApplet = applet;
-		this.displayManager = new DisplayManager(this,
-				renderLoop = new RenderLoop(this));
+		this.renderLoop = new RenderLoop(this);
+		this.displayManager = new DisplayManager(this, renderLoop);
 
 		// PRE POST INIT
 		GraphicsLoader.load(this);
 
-		reView.addTab("Graphics", new GraphicsMonitorPanel(this.displayManager));
+		reView.addTab("Graphics", new GraphicsMonitorPanel(displayManager));
 		this.world = new World(this);
 		reView.addTab("Sectors",
 				new SectorMonitorPanel(this.world.getSectorManager()));
 		this.defs = new Definitions(this);
-		network = new ClientNetwork(this, ip, port);
+		network = new ClientNetwork(this, Constants.NETWORK_IP,
+				Constants.NETWORK_PORT);
 		this.entityManager = new ClientEntityManager(this);
 		reView.addTab("Entities", new EntityMonitorPanel(entityManager));
 
@@ -112,109 +203,176 @@ public class Client implements Disposable, DeviceRegistration {
 		gameState = GameState.MAIN_MENU;
 	}
 
-	public ClientNetwork getNetwork() {
+	/**
+	 * Gets the networking model for this client.
+	 * 
+	 * @see com.pi.client.net.ClientNetwork
+	 * @return the client's network model
+	 */
+	public final ClientNetwork getNetwork() {
 		return network;
 	}
 
-	public Applet getApplet() {
+	/**
+	 * Gets the applet container for this client.
+	 * 
+	 * @return the container applet
+	 */
+	public final Applet getApplet() {
 		return this.cApplet;
 	}
 
-	public DisplayManager getDisplayManager() {
+	/**
+	 * Gets the display manager for this client.
+	 * 
+	 * @see com.pi.graphics.device.DisplayManager
+	 * @return the display manager instance
+	 */
+	public final DisplayManager getDisplayManager() {
 		return displayManager;
 	}
 
-	public World getWorld() {
+	/**
+	 * Gets the world manager for this client.
+	 * 
+	 * @see com.pi.client.world.World
+	 * @return the world manager instance
+	 */
+	public final World getWorld() {
 		return world;
 	}
 
 	@Override
-	public PILogger getLog() {
+	public final PILogger getLog() {
 		return logger;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void dispose() {
+	public final void dispose() {
 		if (!disposing) {
 			disposing = true;
-			if (displayManager != null)
+			if (displayManager != null) {
 				displayManager.dispose();
-			if (world != null)
+			}
+			if (world != null) {
 				world.dispose();
-			if (defs != null)
+			}
+			if (defs != null) {
 				defs.dispose();
-			if (network != null)
+			}
+			if (network != null) {
 				network.dispose();
+			}
 		} else {
-			if (reView != null)
+			if (reView != null) {
 				reView.dispose();
+			}
 
 			clientThreads.stop();
 			logger.close();
 		}
 	}
 
-	public boolean isNetworkConnected() {
+	/**
+	 * Gets the current network connection state.
+	 * 
+	 * @return the connected state of the network
+	 */
+	public final boolean isNetworkConnected() {
 		return getNetwork() != null && getNetwork().isConnected();
 	}
 
-	public String getNetworkIP() {
-		return ip;
-	}
-
-	public int getNetworkPort() {
-		return port;
-	}
-
 	@Override
-	public ThreadGroup getThreadGroup() {
+	public final ThreadGroup getThreadGroup() {
 		return clientThreads;
 	}
 
-	public ClientEntityManager getEntityManager() {
+	/**
+	 * Gets the client's instance of an entity manager.
+	 * 
+	 * @see com.pi.client.entity.ClientEntityManager
+	 * @return the entity manager instance
+	 */
+	public final ClientEntityManager getEntityManager() {
 		return entityManager;
 	}
 
-	public Definitions getDefs() {
+	/**
+	 * Gets the client's instance of a definitions manager.
+	 * 
+	 * @see com.pi.client.def.Definitions
+	 * @return the definition manager instance
+	 */
+	public final Definitions getDefs() {
 		return defs;
 	}
 
 	@Override
-	public void fatalError(String string) {
+	public final void fatalError(final String string) {
 		logger.severe(string);
 		dispose();
 	}
 
-	public GameState getGameState() {
+	/**
+	 * Gets the current state of the game.
+	 * 
+	 * @see com.pi.common.game.GameState
+	 * @return the current game state
+	 */
+	public final GameState getGameState() {
 		return gameState;
 	}
 
-	public MainGame getMainGame() {
+	/**
+	 * Gets the main game control container.
+	 * 
+	 * @see com.pi.client.game.MainGame
+	 * @return the main game container instance
+	 */
+	public final MainGame getMainGame() {
 		return mainGame;
 	}
 
-	public MainMenu getMainMenu() {
+	/**
+	 * Gets the main menu control container.
+	 * 
+	 * @see com.pi.client.gui.mainmenu.MainMenu
+	 * @return the main menu container instance
+	 */
+	public final MainMenu getMainMenu() {
 		return mainMenu;
 	}
 
-	public void setGameState(GameState state) {
+	/**
+	 * Sets the current game state to the provided state.
+	 * 
+	 * @param state the new state
+	 */
+	public final void setGameState(final GameState state) {
 		gameState = state;
-		if (gameState == GameState.MAIN_GAME)
+		if (gameState == GameState.MAIN_GAME) {
 			renderLoop.hideAlert();
+		}
 	}
 
 	@Override
-	public Container getContainer() {
+	public final Container getContainer() {
 		return getApplet();
 	}
 
 	@Override
-	public File getGraphicsFile(int id) {
+	public final File getGraphicsFile(final int id) {
 		return Paths.getGraphicsFile(id);
 	}
 
-	public RenderLoop getRenderLoop() {
+	/**
+	 * Gets the instance of a render loop used to render the client window.
+	 * 
+	 * @see com.pi.client.graphics.RenderLoop
+	 * @return the render loop instance
+	 */
+	public final RenderLoop getRenderLoop() {
 		return renderLoop;
 	}
 }

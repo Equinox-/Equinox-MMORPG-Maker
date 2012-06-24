@@ -6,7 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
 public class PIResourceViewer extends JFrame {
-	private static final long serialVersionUID = 1L;
+	public static final int DEFAULT_WIDTH = 500;
+	public static final int DEFAULT_HEIGHT = 500;
 	public final JTabbedPane tabs;
 
 	public PIResourceViewer(String type) {

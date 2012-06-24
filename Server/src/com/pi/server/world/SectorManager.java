@@ -24,8 +24,10 @@ public class SectorManager extends ServerThread implements
 		com.pi.common.world.SectorManager {
 	public final static int sectorExpiry = 300000; // 5 Minutes
 
-	private LinkedList<SectorLocation> loadQueue = new LinkedList<SectorLocation>();
-	private Hashtable<SectorLocation, SectorStorage> map = new Hashtable<SectorLocation, SectorStorage>();
+	private LinkedList<SectorLocation> loadQueue =
+			new LinkedList<SectorLocation>();
+	private Hashtable<SectorLocation, SectorStorage> map =
+			new Hashtable<SectorLocation, SectorStorage>();
 
 	public SectorManager(Server server) {
 		super(server);
@@ -33,30 +35,37 @@ public class SectorManager extends ServerThread implements
 		start();
 	}
 
-	public void requestSector(int clientID, Packet5SectorRequest req) {
+	public void requestSector(int clientID,
+			Packet5SectorRequest req) {
 		synchronized (mutex) {
 			server.getLog().info("Request sector");
-			SectorStorage sec = getSectorStorage(req.baseX, req.baseY,
-					req.baseZ);
+			SectorStorage sec =
+					getSectorStorage(req.baseX, req.baseY,
+							req.baseZ);
 			if (sec != null && (sec.data != null || sec.empty)) {
 				if (sec.empty) {
-					Packet6BlankSector packet = new Packet6BlankSector();
+					Packet6BlankSector packet =
+							new Packet6BlankSector();
 					packet.baseX = req.baseX;
 					packet.baseY = req.baseY;
 					packet.baseZ = req.baseZ;
-					server.getClientManager().getClient(clientID)
-							.getNetClient().send(packet);
+					server.getClientManager()
+							.getClient(clientID).getNetClient()
+							.send(packet);
 				} else {
 					Sector sector = sec.data;
 					server.getLog().info(
-							sector.getRevision() + ":" + req.revision);
+							sector.getRevision() + ":"
+									+ req.revision);
 					if (sector.getRevision() != req.revision) {
 
-						Packet4Sector packet = new Packet4Sector();
+						Packet4Sector packet =
+								new Packet4Sector();
 						packet.sector = sector;
 
-						Client cli = server.getClientManager().getClient(
-								clientID);
+						Client cli =
+								server.getClientManager()
+										.getClient(clientID);
 						// cli.getNetClient().sendRaw(sec.pack);
 						cli.getNetClient().send(packet);
 					}
@@ -77,7 +86,8 @@ public class SectorManager extends ServerThread implements
 		return ss != null ? ss.empty : false;
 	}
 
-	private SectorStorage getSectorStorage(int x, int y, int z) {
+	@Override
+	public SectorStorage getSectorStorage(int x, int y, int z) {
 		synchronized (mutex) {
 			SectorLocation p = new SectorLocation(x, y, z);
 			SectorStorage sS = map.get(p);
@@ -94,9 +104,12 @@ public class SectorManager extends ServerThread implements
 
 	public void setSector(Sector sector) {
 		synchronized (mutex) {
-			SectorStorage sec = map.get(sector.getSectorLocation());
-			if (sec == null)
-				sec = new SectorStorage();
+			ServerSectorStorage sec =
+					(ServerSectorStorage) map.get(sector
+							.getSectorLocation());
+			if (sec == null) {
+				sec = new ServerSectorStorage();
+			}
 			sec.lastUsed = System.currentTimeMillis();
 			sec.data = sector;
 			sec.updatePacketData();
@@ -105,9 +118,9 @@ public class SectorManager extends ServerThread implements
 
 		// Write Sector
 		try {
-			DatabaseIO.write(
-					Paths.getSectorFile(sector.getSectorX(),
-							sector.getSectorY(), sector.getSectorZ()), sector);
+			DatabaseIO.write(Paths.getSectorFile(
+					sector.getSectorX(), sector.getSectorY(),
+					sector.getSectorZ()), sector);
 		} catch (IOException e) {
 			server.getLog().printStackTrace(e);
 		}
@@ -132,25 +145,31 @@ public class SectorManager extends ServerThread implements
 		for (SectorLocation i : map.keySet()) {
 			if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
 				map.remove(i);
-				server.getLog().fine("Dropped sector: " + i.toString());
+				server.getLog().fine(
+						"Dropped sector: " + i.toString());
 			}
 		}
 	}
 
 	private void doRequest() {
 		SectorLocation oldestSector = loadQueue.removeFirst();
-		SectorStorage sX = map.get(oldestSector);
+		ServerSectorStorage sX =
+				(ServerSectorStorage) map.get(oldestSector);
 		if (sX == null || (sX.data == null && !sX.empty)) {
-			if (sX == null)
-				sX = new SectorStorage();
+			if (sX == null) {
+				sX = new ServerSectorStorage();
+			}
 			try {
-				sX.data = (Sector) DatabaseIO.read(
-						Paths.getSectorFile(oldestSector), Sector.class);
+				sX.data =
+						(Sector) DatabaseIO.read(Paths
+								.getSectorFile(oldestSector),
+								Sector.class);
 				sX.updatePacketData();
 				sX.empty = false;
 				sX.lastUsed = System.currentTimeMillis();
 				server.getLog().finer(
-						"Loaded sector " + oldestSector.toString());
+						"Loaded sector "
+								+ oldestSector.toString());
 				map.put(oldestSector, sX);
 			} catch (FileNotFoundException e) {
 				sX.data = null;
@@ -158,14 +177,16 @@ public class SectorManager extends ServerThread implements
 				sX.lastUsed = System.currentTimeMillis();
 				map.put(oldestSector, sX);
 				server.getLog().finest(
-						"Flagged as empty: " + oldestSector.toString());
+						"Flagged as empty: "
+								+ oldestSector.toString());
 			} catch (IOException e) {
 				server.getLog().printStackTrace(e);
 			}
 		}
 	}
 
-	public static class SectorStorage {
+	public static class ServerSectorStorage extends
+			SectorStorage {
 		public long lastUsed;
 		public Sector data;
 		public byte[] pack;
@@ -175,8 +196,10 @@ public class SectorManager extends ServerThread implements
 			Packet4Sector p = new Packet4Sector();
 			p.sector = data;
 			try {
-				PacketOutputStream pO = new PacketOutputStream(
-						ByteBuffer.allocate(p.getPacketLength()));
+				PacketOutputStream pO =
+						new PacketOutputStream(
+								ByteBuffer.allocate(p
+										.getPacketLength()));
 				p.writePacket(pO);
 				pack = pO.getByteBuffer().array();
 			} catch (Exception e) {
@@ -190,7 +213,8 @@ public class SectorManager extends ServerThread implements
 		public int revision;
 		public int baseX, baseY, baseZ;
 
-		public ClientSectorRequest(int client, Packet5SectorRequest req) {
+		public ClientSectorRequest(int client,
+				Packet5SectorRequest req) {
 			this.clientId = client;
 			this.revision = req.revision;
 			this.baseX = req.baseX;
@@ -201,14 +225,18 @@ public class SectorManager extends ServerThread implements
 		@Override
 		public boolean equals(Object o) {
 			if (o instanceof ClientSectorRequest) {
-				ClientSectorRequest req = (ClientSectorRequest) o;
-				return this.clientId == req.clientId && this.baseX == req.baseX
-						&& this.baseY == req.baseY && this.baseZ == req.baseZ;
+				ClientSectorRequest req =
+						(ClientSectorRequest) o;
+				return this.clientId == req.clientId
+						&& this.baseX == req.baseX
+						&& this.baseY == req.baseY
+						&& this.baseZ == req.baseZ;
 			}
 			return false;
 		}
 	}
 
+	@Override
 	public Map<SectorLocation, SectorStorage> loadedMap() {
 		synchronized (mutex) {
 			return Collections.unmodifiableMap(map);

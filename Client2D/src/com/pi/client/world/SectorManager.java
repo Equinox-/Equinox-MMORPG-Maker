@@ -17,79 +17,75 @@ import com.pi.common.net.packet.Packet5SectorRequest;
 
 public class SectorManager extends ClientThread implements
 		com.pi.common.world.SectorManager {
-	public final static int sectorExpiry = 60000; // 1 Minute
-	public final static int serverRequestExpiry = 60000; // 30 seconds
+	public static final int sectorExpiry = 60000; // 1 Minute
+	public static final int serverRequestExpiry = 60000; // 30 seconds
 
-	private LinkedList<SectorLocation> loadQueue = new LinkedList<SectorLocation>();
-	private Hashtable<SectorLocation, SectorStorage> map = new Hashtable<SectorLocation, SectorStorage>();
-	private Hashtable<SectorLocation, Long> sentRequests = new Hashtable<SectorLocation, Long>();
+	private LinkedList<SectorLocation> loadQueue =
+			new LinkedList<SectorLocation>();
+	private Hashtable<SectorLocation, SectorStorage> map =
+			new Hashtable<SectorLocation, SectorStorage>();
+	private Hashtable<SectorLocation, Long> sentRequests =
+			new Hashtable<SectorLocation, Long>();
 
-	public Map<SectorLocation, SectorStorage> loadedMap() {
-		return Collections.unmodifiableMap(map);
-	}
-
-	public SectorManager(Client client) {
+	public SectorManager(final Client client) {
 		super(client);
-		mutex = new Object();
+		createMutex();
 		start();
 	}
 
 	@Override
-	public boolean isEmptySector(int x, int y, int z) {
-		synchronized (mutex) {
-			SectorLocation p = new SectorLocation(x, y, z);
-			SectorStorage sS = map.get(p);
-			return sS == null || sS.empty;
-		}
+	public final boolean isEmptySector(final int x, final int y,
+			final int z) {
+		SectorStorage ss = getSectorStorage(x, y, z);
+		return ss == null || ss.empty;
 	}
 
 	@Override
-	public Sector getSector(int x, int y, int z) {
-		synchronized (mutex) {
-			SectorLocation p = new SectorLocation(x, y, z);
-			SectorStorage sS = map.get(p);
-			if (sS == null || (sS.data == null && !sS.empty)) {
-				if (!loadQueue.contains(p)) { // TODO FASTER
-					loadQueue.addLast(p);
-					mutex.notify();
-				}
-				return null;
-			}
-			return sS != null ? sS.data : null;
+	public final Sector getSector(final int x, final int y,
+			final int z) {
+		SectorStorage ss = getSectorStorage(x, y, z);
+		if (ss != null) {
+			return ss.data;
+		} else {
+			return null;
 		}
 	}
 
-	public void setSector(Sector sector) {
-		synchronized (mutex) {
-			SectorStorage sec = map.get(sector.getSectorLocation());
-			if (sec == null)
+	public final void setSector(final Sector sector) {
+		synchronized (getMutex()) {
+			SectorStorage sec =
+					map.get(sector.getSectorLocation());
+			if (sec == null) {
 				sec = new SectorStorage();
+			}
 			sec.lastUsed = System.currentTimeMillis();
 			sec.data = sector;
 			map.put(sector.getSectorLocation(), sec);
 		}
 		// Write Sector:
 		try {
-			File fin = Paths.getSectorFile(sector.getSectorX(),
-					sector.getSectorY(), sector.getSectorZ());
+			File fin =
+					Paths.getSectorFile(sector.getSectorX(),
+							sector.getSectorY(),
+							sector.getSectorZ());
 			File dest = new File(fin.getAbsolutePath() + ".tmp");
 			DatabaseIO.write(dest, sector);
 			dest.renameTo(fin);
 		} catch (IOException e) {
-			client.getLog().printStackTrace(e);
+			getClient().getLog().printStackTrace(e);
 		}
 
-		client.getLog().info(
+		getClient().getLog().info(
 				"Loaded client sector: "
 						+ sector.getSectorLocation().toString());
 	}
 
 	@Override
-	public void loop() {
-		synchronized (mutex) {
+	public final void loop() {
+		synchronized (getMutex()) {
 			if (loadQueue.size() <= 0) {
 				try {
-					mutex.wait();
+					getMutex().wait();
 				} catch (InterruptedException e) {
 				}
 			} else {
@@ -115,10 +111,12 @@ public class SectorManager extends ClientThread implements
 			int revision = -1;
 			if (f.exists()) {
 				try {
-					sX.data = (Sector) DatabaseIO.read(f, Sector.class);
+					sX.data =
+							(Sector) DatabaseIO.read(f,
+									Sector.class);
 					revision = sX.data.getRevision();
 				} catch (IOException e) {
-					client.getLog().severe(
+					getClient().getLog().severe(
 							"Corrupted sector cache: "
 									+ oldestSector.toString());
 					f.delete();
@@ -127,25 +125,28 @@ public class SectorManager extends ClientThread implements
 				sX.empty = true;
 			}
 			map.put(oldestSector, sX);
-			if (client.isNetworkConnected()) {
+			if (getClient().isNetworkConnected()) {
 				if (sentRequests.get(oldestSector) == null
-						|| sentRequests.get(oldestSector).longValue()
+						|| sentRequests.get(oldestSector)
+								.longValue()
 								+ serverRequestExpiry < System
 									.currentTimeMillis()) {
-					sentRequests.put(oldestSector, System.currentTimeMillis());
-					Packet5SectorRequest pack = new Packet5SectorRequest();
+					sentRequests.put(oldestSector,
+							System.currentTimeMillis());
+					Packet5SectorRequest pack =
+							new Packet5SectorRequest();
 					pack.baseX = oldestSector.x;
 					pack.baseY = oldestSector.plane;
 					pack.baseZ = oldestSector.z;
 					pack.revision = revision;
-					client.getNetwork().send(pack);
+					getClient().getNetwork().send(pack);
 					sX.lastUsed = System.currentTimeMillis();
 				}
 			}
 		}
 	}
 
-	public void flagSectorAsBlank(SectorLocation p) {
+	public final void flagSectorAsBlank(final SectorLocation p) {
 		SectorStorage ss = map.get(p);
 		if (ss == null) {
 			ss = new SectorStorage();
@@ -156,10 +157,24 @@ public class SectorManager extends ClientThread implements
 		}
 	}
 
-	public static class SectorStorage {
-		public long lastUsed;
-		public Sector data;
-		public boolean empty;
-		public boolean requested = false;
+	@Override
+	public SectorStorage getSectorStorage(int x, int y, int z) {
+		synchronized (getMutex()) {
+			SectorLocation p = new SectorLocation(x, y, z);
+			SectorStorage sS = map.get(p);
+			if (sS == null || (sS.data == null && !sS.empty)) {
+				if (!loadQueue.contains(p)) { // TODO FASTER
+					loadQueue.addLast(p);
+					getMutex().notify();
+				}
+				return null;
+			}
+			return sS;
+		}
+	}
+
+	@Override
+	public Map<SectorLocation, SectorStorage> loadedMap() {
+		return Collections.unmodifiableMap(map);
 	}
 }

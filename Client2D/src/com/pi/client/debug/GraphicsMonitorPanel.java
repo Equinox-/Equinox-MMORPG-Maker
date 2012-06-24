@@ -4,33 +4,77 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import com.pi.common.debug.PIResourceViewer;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
 
+/**
+ * Monitors the state of loaded graphics.
+ * 
+ * @author Westin
+ * @see com.pi.graphics.device.DisplayManager
+ */
 public class GraphicsMonitorPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private final DisplayManager ig;
-	private ThreadTableModel table_model = new ThreadTableModel();
-	private JTable tbl;
-
-	public GraphicsMonitorPanel(DisplayManager displayManager) {
-		this.ig = displayManager;
+	/**
+	 * Creates a graphics monitor panel with the specified display manager
+	 * providing the contents.
+	 * 
+	 * @param displayManager the information provider.
+	 * @see com.pi.graphics.device.DisplayManager
+	 */
+	public GraphicsMonitorPanel(
+			final DisplayManager displayManager) {
 		setLocation(0, 0);
-		setSize(500, 500);
+		setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
 		setLayout(null);
-		tbl = new JTable(table_model);
+		JTable tbl =
+				new JTable(
+						new GraphicsTableModel(displayManager));
 		tbl.setLocation(0, 0);
-		tbl.setSize(500, 500);
+		tbl.setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
 		tbl.setVisible(true);
 		tbl.setFillsViewportHeight(true);
 		add(tbl);
 		setVisible(true);
 	}
 
-	private class ThreadTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 1L;
-		String[] colName = { "Name", "Last used", "Object" };
-		Class<?>[] colClass = { String.class, String.class, String.class };
+	/**
+	 * Represents a table model based on information provided by a display
+	 * manager.
+	 * 
+	 * @author Westin
+	 * 
+	 */
+	private static class GraphicsTableModel extends
+			AbstractTableModel {
+		/**
+		 * The name of each column.
+		 */
+		private static final String[] COLUMN_NAMES = { "Name",
+				"Last used", "Object" };
+		/**
+		 * The class of each column.
+		 */
+		private static final Class<?>[] COLUMN_CLASSES = {
+				String.class, String.class, String.class };
+
+		/**
+		 * The information provider.
+		 */
+		private final DisplayManager ig;
+
+		/**
+		 * Creates a graphics table model with the provided display manager as
+		 * the information provider.
+		 * 
+		 * @param displayManager the information provider.
+		 */
+		public GraphicsTableModel(
+				final DisplayManager displayManager) {
+			this.ig = displayManager;
+		}
 
 		@Override
 		public int getRowCount() {
@@ -39,58 +83,60 @@ public class GraphicsMonitorPanel extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return colName.length;
+			return COLUMN_NAMES.length;
 		}
 
 		@Override
-		public Object getValueAt(int row, int col) {
+		public Object getValueAt(final int row, final int col) {
+			int offset = row;
 			int idx = -1;
 			for (int i = 0; i < ig.loadedGraphics().capacity(); i++) {
-				try {
-					if (ig.loadedGraphics().get(i) != null) {
-						if (row-- == 0) {
-							idx = i;
-							break;
-						}
+				if (ig.loadedGraphics().get(i) != null) {
+					if (offset-- == 0) {
+						idx = i;
+						break;
 					}
-				} catch (Exception e) {
 				}
 			}
 			if (idx != -1) {
-				try {
-					GraphicsStorage ss = ig.loadedGraphics().get(idx);
-					switch (col) {
-					case 0:
-						return idx;
-					case 1:
-						return ss != null ? ""
-								+ (System.currentTimeMillis() - ss.lastUsed)
-								: -1 + "";
-					case 2:
-						return ss != null ? ss.getGraphic() != null ? ss
-								.getGraphic().toString() : "null" : "null";
-					default:
-						return "";
+				GraphicsStorage ss =
+						ig.loadedGraphics().get(idx);
+				switch (col) {
+				case 0:
+					return idx;
+				case 1:
+					if (ss == null) {
+						return "null";
+					} else {
+						return (System.currentTimeMillis() - ss.lastUsed)
+								+ "ms";
 					}
-				} catch (Exception e) {
+				case 2:
+					if (ss == null || ss.getGraphic() == null) {
+						return "null";
+					} else {
+						return ss.getGraphic().toString();
+					}
+				default:
+					return "";
 				}
 			}
 			return "";
 		}
 
 		@Override
-		public String getColumnName(int paramInt) {
-			return colName[paramInt];
+		public String getColumnName(final int col) {
+			return COLUMN_NAMES[col];
 		}
 
 		@Override
-		public Class<?> getColumnClass(int paramInt) {
-			return paramInt < colClass.length ? colClass[paramInt]
-					: String.class;
+		public Class<?> getColumnClass(final int col) {
+			return COLUMN_CLASSES[col];
 		}
 
 		@Override
-		public boolean isCellEditable(int paramInt1, int paramInt2) {
+		public boolean isCellEditable(final int row,
+				final int col) {
 			return false;
 		}
 	}
