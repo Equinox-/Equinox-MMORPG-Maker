@@ -19,7 +19,8 @@ import com.pi.server.client.Client;
 import com.pi.server.constants.ServerConstants;
 
 public class ServerEntityManager {
-	private final ObjectHeap<ServerEntity> entityMap = new ObjectHeap<ServerEntity>();
+	private final ObjectHeap<ServerEntity> entityMap =
+			new ObjectHeap<ServerEntity>();
 	private final Server server;
 
 	public ServerEntityManager(Server server) {
@@ -35,7 +36,8 @@ public class ServerEntityManager {
 		if (ent != null) {
 			Client cli = server.getClientManager().getClient(id);
 			if (cli != null && cli.getNetClient() != null) {
-				cli.getNetClient().send(Packet9EntityData.create(ent));
+				cli.getNetClient().send(
+						Packet9EntityData.create(ent));
 			}
 		}
 	}
@@ -58,8 +60,10 @@ public class ServerEntityManager {
 		return entityMap.remove(id);
 	}
 
-	public List<ServerEntity> getEntitiesInSector(SectorLocation loc) {
-		List<ServerEntity> sector = new ArrayList<ServerEntity>();
+	public List<ServerEntity> getEntitiesInSector(
+			SectorLocation loc) {
+		List<ServerEntity> sector =
+				new ArrayList<ServerEntity>();
 		for (ServerEntity e : entityMap) {
 			if (loc.containsLocation(e.getWrappedEntity())) {
 				sector.add(e);
@@ -68,8 +72,10 @@ public class ServerEntityManager {
 		return sector;
 	}
 
-	public List<ServerEntity> getEntitiesWithin(Location l, int maxDist) {
-		List<ServerEntity> entities = new ArrayList<ServerEntity>();
+	public List<ServerEntity> getEntitiesWithin(Location l,
+			int maxDist) {
+		List<ServerEntity> entities =
+				new ArrayList<ServerEntity>();
 		for (ServerEntity e : entityMap) {
 			if (Location.dist(l, e.getWrappedEntity()) <= maxDist) {
 				entities.add(e);
@@ -82,22 +88,27 @@ public class ServerEntityManager {
 		return entityMap.get(id);
 	}
 
-	public void sendEntityTeleport(int entity, Location from, Location to) {
+	public void sendEntityTeleport(int entity, Location from,
+			Location to) {
 		ServerEntity e = getEntity(entity);
 		if (e != null) {
 			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
-				Client cli = server.getClientManager().getClient(i);
+				Client cli =
+						server.getClientManager().getClient(i);
 				if (cli != null && cli.getEntity() != null
 						&& cli.getNetClient() != null) {
-					int nDist = Location.dist(cli.getEntity(), to);
-					int oDist = Location.dist(cli.getEntity(), from);
+					int nDist =
+							Location.dist(cli.getEntity(), to);
+					int oDist =
+							Location.dist(cli.getEntity(), from);
 					if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
 						cli.getNetClient().send(
 								Packet7EntityTeleport.create(e
 										.getWrappedEntity()));
 					} else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 						cli.getNetClient().send(
-								Packet8EntityDispose.create(entity));
+								Packet8EntityDispose
+										.create(entity));
 					}
 				}
 			}
@@ -108,13 +119,15 @@ public class ServerEntityManager {
 		Entity e = deRegisterEntity(entity).getWrappedEntity();
 		if (e != null) {
 			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
-				Client cli = server.getClientManager().getClient(i);
+				Client cli =
+						server.getClientManager().getClient(i);
 				if (cli != null && cli.getEntity() != null
 						&& cli.getNetClient() != null) {
 					int dist = Location.dist(cli.getEntity(), e);
 					if (dist <= ServerConstants.ENTITY_DISPOSE_DIST) {
 						cli.getNetClient().send(
-								Packet8EntityDispose.create(entity));
+								Packet8EntityDispose
+										.create(entity));
 					}
 				}
 			}
@@ -126,34 +139,42 @@ public class ServerEntityManager {
 				&& cli.getNetClient() != null) {
 			for (ServerEntity e : entityMap) {
 				if (e != null) {
-					int dist = Location.dist(e.getWrappedEntity(),
-							cli.getEntity());
+					int dist =
+							Location.dist(e.getWrappedEntity(),
+									cli.getEntity());
 					if (dist <= ServerConstants.ENTITY_UPDATE_DIST) {
 						cli.getNetClient().send(
-								Packet9EntityData.create(e.getWrappedEntity()));
+								Packet9EntityData.create(e
+										.getWrappedEntity()));
 					}
 				}
 			}
 		}
 	}
 
-	public void sendEntityMove(int entity, Location from, Location to,
-			Direction dir) {
+	public void sendEntityMove(int entity, Location from,
+			Location to, Direction dir) {
 		ServerEntity e = getEntity(entity);
 		if (e != null) {
 			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
-				Client cli = server.getClientManager().getClient(i);
-				if (cli != null && cli.getEntity() != null
+				Client cli =
+						server.getClientManager().getClient(i);
+				if (cli != null
+						&& cli.getEntity() != null
 						&& cli.getNetClient() != null
 						&& cli.getEntity().getEntityID() != entity) {
-					int nDist = Location.dist(cli.getEntity(), to);
-					int oDist = Location.dist(cli.getEntity(), from);
+					int nDist =
+							Location.dist(cli.getEntity(), to);
+					int oDist =
+							Location.dist(cli.getEntity(), from);
 					if (nDist <= ServerConstants.ENTITY_UPDATE_DIST) {
 						cli.getNetClient().send(
-								Packet16EntityMove.create(entity, to));
+								Packet16EntityMove.create(
+										entity, to));
 					} else if (oDist > ServerConstants.ENTITY_DISPOSE_DIST) {
 						cli.getNetClient().send(
-								Packet8EntityDispose.create(entity));
+								Packet8EntityDispose
+										.create(entity));
 					}
 				}
 			}

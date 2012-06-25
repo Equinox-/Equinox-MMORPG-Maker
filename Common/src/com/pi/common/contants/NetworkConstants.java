@@ -13,6 +13,17 @@ public final class NetworkConstants {
 	public static final int DOWNLOAD_CACHE_SIZE = 1024;
 
 	/**
+	 * The size in bytes of the maximum packet size.
+	 */
+	public static final int MAX_BUFFER = 1024 * 64;
+
+	/**
+	 * The time in milliseconds to recalculate the current network speeds.
+	 */
+	public static final long NETWORK_SPEED_RECALCULATION_TIME =
+			1000;
+
+	/**
 	 * A class to get the size of primitives.
 	 * 
 	 * @author Westin

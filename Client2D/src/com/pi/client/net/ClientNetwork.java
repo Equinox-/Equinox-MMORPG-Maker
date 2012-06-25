@@ -182,16 +182,18 @@ public class ClientNetwork extends Thread {
 					while (!pendingChanges.isEmpty()) {
 						NetChangeRequest change =
 								pendingChanges.poll();
-						switch (change.type) {
+						switch (change.getType()) {
 						case NetChangeRequest.CHANGEOPS:
 							SelectionKey key =
-									change.socket
-											.keyFor(this.selector);
-							key.interestOps(change.ops);
+									change.getChannel().keyFor(
+											this.selector);
+							key.interestOps(change
+									.getOperations());
 							break;
 						case NetChangeRequest.REGISTER:
-							change.socket.register(
-									this.selector, change.ops);
+							change.getChannel().register(
+									this.selector,
+									change.getOperations());
 							break;
 						default:
 							break;

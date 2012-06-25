@@ -5,27 +5,41 @@ import java.io.IOException;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * An alert packet that sends a message to the client for display graphically.
+ * 
+ * @author Westin
+ * 
+ */
 public class Packet2Alert extends Packet {
-	public static Packet2Alert create(String message) {
+	public String message;
+
+	/**
+	 * Creates an alert packet instance with the given message.
+	 * 
+	 * @param message the alert message
+	 * @return the packet instance
+	 */
+	public static Packet2Alert create(final String message) {
 		Packet2Alert p = new Packet2Alert();
 		p.message = message;
 		return p;
 	}
 
-	public String message;
-
 	@Override
-	public void writeData(PacketOutputStream dOut) throws IOException {
+	public final void writeData(final PacketOutputStream dOut)
+			throws IOException {
 		dOut.writeString(message);
 	}
 
 	@Override
-	public void readData(PacketInputStream dIn) throws IOException {
+	public final void readData(final PacketInputStream dIn)
+			throws IOException {
 		message = dIn.readString();
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return PacketOutputStream.stringByteLength(message);
 	}
 }

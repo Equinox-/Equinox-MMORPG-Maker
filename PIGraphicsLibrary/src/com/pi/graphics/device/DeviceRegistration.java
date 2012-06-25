@@ -5,15 +5,51 @@ import java.io.File;
 
 import com.pi.common.debug.PILogger;
 
+/**
+ * An interface that allows abstract classes to be registered with the display
+ * manager.
+ * 
+ * @see DisplayManager
+ * @author Westin
+ * 
+ */
 public interface DeviceRegistration {
 
-	public PILogger getLog();
+	/**
+	 * The logger used the log messages.
+	 * 
+	 * @return the logger
+	 */
+	PILogger getLog();
 
-	public void fatalError(String s);
+	/**
+	 * Method to call when a fatal error occurs.
+	 * 
+	 * @param s the error message
+	 */
+	void fatalError(String s);
 
-	public Container getContainer();
+	/**
+	 * Gets the container that the graphics manager should render in, and event
+	 * listeners should be registered to.
+	 * 
+	 * @return the container
+	 */
+	Container getContainer();
 
-	public ThreadGroup getThreadGroup();
+	/**
+	 * Gets the thread group any display manager threads should be registered
+	 * to.
+	 * 
+	 * @return the display manager thread group
+	 */
+	ThreadGroup getThreadGroup();
 
-	public File getGraphicsFile(int id);
+	/**
+	 * Gets the path to the graphics file with the given identification number.
+	 * 
+	 * @param id the graphics identification.
+	 * @return the file instance
+	 */
+	File getGraphicsFile(int id);
 }

@@ -29,7 +29,7 @@ public class Client {
 		this.acc = account;
 		this.entity = new Entity(account.getEntityDef());
 		server.getServerEntityManager().registerEntity(entity);
-		network.send(Packet11LocalEntityID.getPacket(entity.getEntityID()));
+		network.send(Packet11LocalEntityID.create(entity.getEntityID()));
 		// TODO Find a better way to request entities for clients on move
 		server.getServerEntityManager().sendClientEntities(this);
 	}

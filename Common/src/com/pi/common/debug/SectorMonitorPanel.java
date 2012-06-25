@@ -107,12 +107,14 @@ public class SectorMonitorPanel extends JPanel {
 						return key.getSectorZ() + "";
 					case 3:
 						return ""
-								+ (System.currentTimeMillis() - ss.lastUsed);
+								+ (System.currentTimeMillis() - ss
+										.getLastUsedTime());
 					case 4:
-						return Boolean.toString(ss.empty);
+						return Boolean.toString(ss.isEmpty());
 					case 5:
-						if (ss.data != null) {
-							return ss.data.getRevision() + "";
+						if (ss.getSectorRaw() != null) {
+							return ss.getSectorRaw()
+									.getRevision() + "";
 						} else {
 							return "-1";
 						}

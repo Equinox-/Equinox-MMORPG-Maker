@@ -6,20 +6,62 @@ import com.pi.common.database.Location;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * A class that represents a short entity movement in the minimum packet size.
+ * 
+ * @author Westin
+ * 
+ */
 public abstract class EntityMovementPacket extends Packet {
-	private static final int DATA_SIZE_BITS = 8;  //CHange this.  Needs to be a power of 2, >= 4
+	/**
+	 * The number of bits used for each coordinate. Must be a power of two
+	 * greater than 4.
+	 */
+	private static final int DATA_SIZE_BITS = 8;
+	/**
+	 * Half the maximum transmitted coordinate size.
+	 */
 	private static final int DATA_HALF_MAX = (int) Math.pow(2,
 			DATA_SIZE_BITS - 1);
-	protected static final int DATA_MAX = DATA_HALF_MAX * 2;
+	/**
+	 * The maximum transmitted coordinate size.
+	 */
+	private static final int DATA_MAX = DATA_HALF_MAX * 2;
+	/**
+	 * The mask applied to each coordinate.
+	 */
 	private static final int DATA_MASK = DATA_MAX - 1;
 
-	protected int xPart, zPart;
+	/**
+	 * The x coordinate.
+	 */
+	private int xPart;
+	/**
+	 * The z coordinate.
+	 */
+	private int zPart;
+	/**
+	 * The packed data.
+	 */
 	private long dat = 0;
 
+	/**
+	 * Sets the coordinate parts based on the world x and z position.
+	 * 
+	 * @param x the world x coordinate
+	 * @param z the world z coordinate
+	 */
+	protected final void setCoordinateParts(int x, int z) {
+		xPart = x % DATA_MAX;
+		zPart = z % DATA_MAX;
+	}
+
 	@Override
-	public void writeData(PacketOutputStream pOut) throws IOException {
-		dat = ((xPart << DATA_SIZE_BITS) & (DATA_MASK << DATA_SIZE_BITS))
-				+ (zPart & DATA_MASK);
+	public void writeData(final PacketOutputStream pOut)
+			throws IOException {
+		dat =
+				((xPart << DATA_SIZE_BITS) & (DATA_MASK << DATA_SIZE_BITS))
+						+ (zPart & DATA_MASK);
 		switch (DATA_SIZE_BITS) {
 		case 4:
 			pOut.writeByte((byte) dat);
@@ -34,12 +76,14 @@ public abstract class EntityMovementPacket extends Packet {
 			pOut.writeLong(dat);
 			break;
 		default:
-			throw new RuntimeException("DATA_SIZE_BITS is of incorrect size!");
+			throw new RuntimeException(
+					"DATA_SIZE_BITS is of incorrect size!");
 		}
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn) throws IOException {
+	public void readData(final PacketInputStream pIn)
+			throws IOException {
 		switch (DATA_SIZE_BITS) {
 		case 4:
 			dat = pIn.readByte();
@@ -54,13 +98,20 @@ public abstract class EntityMovementPacket extends Packet {
 			dat = pIn.readLong();
 			break;
 		default:
-			throw new RuntimeException("DATA_SIZE_BITS is of incorrect size!");
+			throw new RuntimeException(
+					"DATA_SIZE_BITS is of incorrect size!");
 		}
 		xPart = (int) ((dat >> DATA_SIZE_BITS) & DATA_MASK);
 		zPart = (int) (dat & DATA_MASK);
 	}
 
-	public Location apply(Location l) {
+	/**
+	 * Applies this movement packet to the given location.
+	 * 
+	 * @param l the current location
+	 * @return the modified location
+	 */
+	public final Location apply(final Location l) {
 		int cXO = l.x % DATA_MAX;
 		int cZO = l.z % DATA_MAX;
 		int xOC = xPart - cXO;

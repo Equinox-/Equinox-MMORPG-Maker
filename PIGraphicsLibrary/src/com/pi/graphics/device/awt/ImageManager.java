@@ -2,7 +2,8 @@ package com.pi.graphics.device.awt;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Vector;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 
@@ -10,44 +11,101 @@ import com.pi.common.game.ObjectHeap;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.GraphicsStorage;
 
+/**
+ * Class for loading images into the ram using a threaded model.
+ * 
+ * @author Westin
+ * 
+ */
 public class ImageManager extends Thread {
-	private static long imageExpiry = 30000; // 30 seconds
-	private ObjectHeap<ImageStorage> map = new ObjectHeap<ImageStorage>();
-	private Vector<Integer> loadQueue = new Vector<Integer>();
-	private boolean running = true;
+	/**
+	 * The time it takes to unload an image from the ram.
+	 */
+	private static final long IMAGE_EXPIRY = 30000; // 30 seconds
+
+	/**
+	 * The object heap used to store the images.
+	 */
+	private ObjectHeap<ImageStorage> map =
+			new ObjectHeap<ImageStorage>();
+	/**
+	 * The image load queue.
+	 */
+	private Queue<Integer> loadQueue =
+			new LinkedBlockingQueue<Integer>();
+	/**
+	 * Boolean representing the running state of this thread.
+	 */
+	private volatile boolean running = true;
+	/**
+	 * The object this manager is registered to.
+	 */
 	private final DeviceRegistration source;
 
-	public ImageManager(DeviceRegistration device) {
+	/**
+	 * The mutex that this thread waits on.
+	 */
+	private Object mutex = new Object();
+
+	/**
+	 * Create an image manager linked to the specified object.
+	 * 
+	 * @param device the device to link to
+	 */
+	public ImageManager(final DeviceRegistration device) {
 		super(device.getThreadGroup(), null, "PiImageManager");
 		this.source = device;
 		super.start();
 	}
 
-	public BufferedImage fetchImage(int graphic) {
+	/**
+	 * Get the image with the specified graphical identification number.
+	 * 
+	 * @param graphic the graphics id
+	 * @return the image if it's loaded, or <code>null</code> if not loaded
+	 */
+	public final BufferedImage fetchImage(final int graphic) {
 		synchronized (map) {
-			if (!running)
+			if (!running) {
 				return null;
+			}
 			ImageStorage tS = map.get(graphic);
 			if (tS == null) {
 				loadQueue.add(graphic);
+				mutex.notify();
 				return null;
 			}
-			tS.lastUsed = System.currentTimeMillis();
+			tS.updateLastUsed();
 			map.set(graphic, tS);
 			return tS.img;
 		}
 	}
 
+	/**
+	 * Class for storing the images once they are loaded.
+	 * 
+	 * @author Westin
+	 * 
+	 */
 	public static class ImageStorage extends GraphicsStorage {
-		public BufferedImage img;
+		/**
+		 * The image bound to this storage object.
+		 */
+		private BufferedImage img;
 
 		@Override
-		public Object getGraphic() {
+		public final Object getGraphic() {
 			return img;
 		}
 	}
 
-	private synchronized BufferedImage loadImage(Integer id) {
+	/**
+	 * Load the image specified by the given graphical identification number.
+	 * 
+	 * @param id the graphics id
+	 * @return the loaded image, or <code>null</code> if loading failed.
+	 */
+	private synchronized BufferedImage loadImage(final int id) {
 		File img = source.getGraphicsFile(id);
 		if (img == null) {
 			return null;
@@ -61,44 +119,72 @@ public class ImageManager extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public final void run() {
 		source.getLog().fine("Starting Image Manager Thread");
 		while (running) {
 			int oldestRequest = oldestRequest();
-			if (oldestRequest != -1 && map.get(oldestRequest) == null) {
+			if (oldestRequest != -1
+					&& map.get(oldestRequest) == null) {
 				ImageStorage tX = new ImageStorage();
 				tX.img = loadImage(oldestRequest);
-				tX.lastUsed = System.currentTimeMillis();
+				tX.updateLastUsed();
 				map.set(oldestRequest, tX);
+			} else {
+				synchronized (map) {
+					try {
+						map.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 			removeExpired();
 		}
 		source.getLog().fine("Killing Image Manager Thread");
 	}
 
+	/**
+	 * Remove the expired images from the RAM.
+	 */
 	private void removeExpired() {
-		for (int i = 0; i < map.capacity(); i++) {
-			if (map.get(i) != null) {
-				if (System.currentTimeMillis() - map.get(i).lastUsed > imageExpiry) {
-					ImageStorage str = map.remove(i);
-					if (str != null && str.img != null)
-						str.img.flush();
+		synchronized (map) {
+			for (int i = 0; i < map.capacity(); i++) {
+				if (map.get(i) != null) {
+					if (System.currentTimeMillis()
+							- map.get(i).getLastUsedTime() > IMAGE_EXPIRY) {
+						ImageStorage str = map.remove(i);
+						if (str != null && str.img != null) {
+							str.img.flush();
+						}
+					}
 				}
 			}
 		}
 	}
 
+	/**
+	 * Get the oldest requested image, or <code>-1</code> if there isn't one.
+	 * 
+	 * @return the oldest request
+	 */
 	private int oldestRequest() {
 		synchronized (map) {
-			if (loadQueue.size() > 0)
-				return loadQueue.remove(0);
+			if (loadQueue.size() > 0) {
+				return loadQueue.poll();
+			}
 			return -1;
 		}
 	}
 
-	public void dispose() {
+	/**
+	 * Disposes this image manager.
+	 */
+	public final void dispose() {
 		running = false;
 		try {
+			synchronized (map) {
+				map.notify();
+			}
 			super.join();
 		} catch (InterruptedException e) {
 			source.getLog().printStackTrace(e);
@@ -107,12 +193,18 @@ public class ImageManager extends Thread {
 		loadQueue.clear();
 		for (int i = 0; i < map.capacity(); i++) {
 			ImageStorage str = map.remove(i);
-			if (str != null && str.img != null)
+			if (str != null && str.img != null) {
 				str.img.flush();
+			}
 		}
 	}
 
-	public ObjectHeap<ImageStorage> loadedMap() {
+	/**
+	 * Gets the object heap controlled by this image manager.
+	 * 
+	 * @return the storage heap
+	 */
+	public final ObjectHeap<ImageStorage> loadedMap() {
 		return map;
 	}
 }

@@ -17,7 +17,8 @@ public class NetServerClient extends NetClient {
 	private int clientID = -1;
 	private Client cliRef = null;
 
-	public NetServerClient(final Server server, final SocketChannel socket) {
+	public NetServerClient(final Server server,
+			final SocketChannel socket) {
 		super(socket);
 		this.server = server;
 		this.handler = new NetServerHandler(server, this);
@@ -27,7 +28,8 @@ public class NetServerClient extends NetClient {
 		if (cliRef == null)
 			cliRef = c;
 		else
-			throw new RuntimeException("Client is already bound!");
+			throw new RuntimeException(
+					"Client is already bound!");
 	}
 
 	@Override
@@ -44,17 +46,20 @@ public class NetServerClient extends NetClient {
 	}
 
 	public void dispose(String reason, String details) {// TODO
-		server.getNetwork().deregisterSocketChannel(socket);
+		server.getNetwork()
+				.deregisterSocketChannel(getChannel());
 	}
 
 	public void dispose() {
-		server.getNetwork().deregisterSocketChannel(socket);
+		server.getNetwork()
+				.deregisterSocketChannel(getChannel());
 	}
 
 	@Override
 	public void processData(byte[] data, int off, int len) {
 		try {
-			server.getNetwork().getWorker().processData(this, data, off, len);
+			server.getNetwork().getWorker()
+					.processData(this, data, off, len);
 		} catch (IOException e) {
 			getLog().printStackTrace(e);
 		}
@@ -63,7 +68,8 @@ public class NetServerClient extends NetClient {
 	@Override
 	public void addWriteRequest() {
 		server.getNetwork().addChangeRequest(
-				new NetChangeRequest(socket, NetChangeRequest.CHANGEOPS,
+				new NetChangeRequest(getChannel(),
+						NetChangeRequest.CHANGEOPS,
 						SelectionKey.OP_WRITE));
 	}
 
@@ -84,6 +90,7 @@ public class NetServerClient extends NetClient {
 
 	@Override
 	public String toString() {
-		return "NetClient[" + clientID + "," + super.getHostAddress() + "]";
+		return "NetClient[" + clientID + ","
+				+ super.getHostAddress() + "]";
 	}
 }

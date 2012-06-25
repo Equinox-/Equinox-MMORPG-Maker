@@ -66,7 +66,7 @@ public class SectorManager extends ClientThread implements
 	public final boolean isEmptySector(final int x, final int y,
 			final int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
-		return ss == null || ss.empty;
+		return ss == null || ss.isEmpty();
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class SectorManager extends ClientThread implements
 			final int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
 		if (ss != null) {
-			return ss.data;
+			return ss.getSector();
 		} else {
 			return null;
 		}
@@ -93,8 +93,7 @@ public class SectorManager extends ClientThread implements
 			if (sec == null) {
 				sec = new SectorStorage();
 			}
-			sec.lastUsed = System.currentTimeMillis();
-			sec.data = sector;
+			sec.setSector(sector);
 			map.put(sector.getSectorLocation(), sec);
 		}
 		// Write Sector:
@@ -136,7 +135,8 @@ public class SectorManager extends ClientThread implements
 	 */
 	private void removeExpired() {
 		for (SectorLocation i : map.keySet()) {
-			if (System.currentTimeMillis() - map.get(i).lastUsed >= SECTOR_EXPIRY) {
+			if (System.currentTimeMillis()
+					- map.get(i).getLastUsedTime() >= SECTOR_EXPIRY) {
 				map.remove(i);
 			}
 		}
@@ -153,10 +153,9 @@ public class SectorManager extends ClientThread implements
 			int revision = -1;
 			if (f.exists()) {
 				try {
-					sX.data =
-							(Sector) DatabaseIO.read(f,
-									Sector.class);
-					revision = sX.data.getRevision();
+					sX.setSector((Sector) DatabaseIO.read(f,
+							Sector.class));
+					revision = sX.getSectorRaw().getRevision();
 				} catch (IOException e) {
 					getClient().getLog().severe(
 							"Corrupted sector cache: "
@@ -164,7 +163,7 @@ public class SectorManager extends ClientThread implements
 					f.delete();
 				}
 			} else {
-				sX.empty = true;
+				sX.setEmpty(true);
 			}
 			map.put(oldestSector, sX);
 			if (getClient().isNetworkConnected()) {
@@ -182,7 +181,7 @@ public class SectorManager extends ClientThread implements
 					pack.baseZ = oldestSector.getSectorZ();
 					pack.revision = revision;
 					getClient().getNetwork().send(pack);
-					sX.lastUsed = System.currentTimeMillis();
+					sX.updateLastTimeUsed();
 				}
 			}
 		}
@@ -198,10 +197,10 @@ public class SectorManager extends ClientThread implements
 		SectorStorage ss = map.get(p);
 		if (ss == null) {
 			ss = new SectorStorage();
-			ss.empty = true;
+			ss.setEmpty(true);
 			map.put(p, ss);
 		} else {
-			ss.empty = true;
+			ss.setEmpty(true);
 		}
 	}
 
@@ -211,7 +210,9 @@ public class SectorManager extends ClientThread implements
 		synchronized (getMutex()) {
 			SectorLocation p = new SectorLocation(x, y, z);
 			SectorStorage sS = map.get(p);
-			if (sS == null || (sS.data == null && !sS.empty)) {
+			if (sS == null
+					|| (sS.getSectorRaw() == null && !sS
+							.isEmpty())) {
 				if (!loadQueue.contains(p)) { // TODO FASTER
 					loadQueue.add(p);
 					getMutex().notify();

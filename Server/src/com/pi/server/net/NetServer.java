@@ -26,11 +26,13 @@ public class NetServer extends Thread {
 	private ServerSocketChannel serverChannel;
 	private Selector selector;
 	private DataWorker worker;
-	private Queue<NetChangeRequest> pendingChanges = new LinkedBlockingQueue<NetChangeRequest>();
+	private Queue<NetChangeRequest> pendingChanges =
+			new LinkedBlockingQueue<NetChangeRequest>();
 	private Server server;
 	private boolean isRunning = true;
 
-	public NetServer(Server server, int port) throws BindException {
+	public NetServer(Server server, int port)
+			throws BindException {
 		super(server.getThreadGroup(), "NetSelector");
 		try {
 			this.server = server;
@@ -53,24 +55,26 @@ public class NetServer extends Thread {
 			try {
 				// Process any pending changes
 				synchronized (this.pendingChanges) {
-					Iterator<NetChangeRequest> changes = this.pendingChanges
-							.iterator();
+					Iterator<NetChangeRequest> changes =
+							this.pendingChanges.iterator();
 					while (changes.hasNext()) {
 						NetChangeRequest change = changes.next();
-						switch (change.type) {
+						switch (change.getType()) {
 						case NetChangeRequest.CHANGEOPS:
-							SelectionKey key = change.socket
-									.keyFor(this.selector);
+							SelectionKey key =
+									change.getChannel().keyFor(
+											this.selector);
 							if (key != null && key.isValid()) {
-								key.interestOps(change.ops);
+								key.interestOps(change
+										.getOperations());
 								changes.remove();
 							}
 						}
 					}
 				}
 				this.selector.select();
-				Iterator<SelectionKey> selectedKeys = this.selector
-						.selectedKeys().iterator();
+				Iterator<SelectionKey> selectedKeys =
+						this.selector.selectedKeys().iterator();
 				while (selectedKeys.hasNext()) {
 					SelectionKey key = selectedKeys.next();
 					selectedKeys.remove();
@@ -100,20 +104,25 @@ public class NetServer extends Thread {
 	}
 
 	private void accept(SelectionKey key) throws IOException {
-		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key
-				.channel();
-		SocketChannel socketChannel = serverSocketChannel.accept();
+		ServerSocketChannel serverSocketChannel =
+				(ServerSocketChannel) key.channel();
+		SocketChannel socketChannel =
+				serverSocketChannel.accept();
 		socketChannel.configureBlocking(false);
-		Client c = new Client(server,
-				new NetServerClient(server, socketChannel));
+		Client c =
+				new Client(server, new NetServerClient(server,
+						socketChannel));
 		c.getNetClient().bindClient(c);
-		socketChannel.register(this.selector, SelectionKey.OP_READ).attach(c);
+		socketChannel.register(this.selector,
+				SelectionKey.OP_READ).attach(c);
 	}
 
 	private void read(SelectionKey key) throws IOException {
-		SocketChannel socketChannel = (SocketChannel) key.channel();
+		SocketChannel socketChannel =
+				(SocketChannel) key.channel();
 		try {
-			NetServerClient cli = ((Client) key.attachment()).getNetClient();
+			NetServerClient cli =
+					((Client) key.attachment()).getNetClient();
 			cli.read(key);
 		} catch (IOException e) {
 			key.cancel();
@@ -123,11 +132,14 @@ public class NetServer extends Thread {
 	}
 
 	private void write(SelectionKey key) throws IOException {
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-		NetServerClient c = ((Client) key.attachment()).getNetClient();
+		SocketChannel socketChannel =
+				(SocketChannel) key.channel();
+		NetServerClient c =
+				((Client) key.attachment()).getNetClient();
 		synchronized (c.getSendQueue()) {
 			while (!c.getSendQueue().isEmpty()) {
-				ByteBuffer buf = (ByteBuffer) c.getSendQueue().peek();
+				ByteBuffer buf =
+						(ByteBuffer) c.getSendQueue().peek();
 				socketChannel.write(buf);
 				if (buf.remaining() > 0) {
 					break;
@@ -142,13 +154,16 @@ public class NetServer extends Thread {
 	}
 
 	private Selector initSelector() throws IOException {
-		Selector socketSelector = SelectorProvider.provider().openSelector();
+		Selector socketSelector =
+				SelectorProvider.provider().openSelector();
 		this.serverChannel = ServerSocketChannel.open();
 		serverChannel.configureBlocking(false);
-		InetSocketAddress isa = new InetSocketAddress((InetAddress) null,
-				this.port);
+		InetSocketAddress isa =
+				new InetSocketAddress((InetAddress) null,
+						this.port);
 		serverChannel.socket().bind(isa);
-		serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
+		serverChannel.register(socketSelector,
+				SelectionKey.OP_ACCEPT);
 		return socketSelector;
 	}
 
@@ -167,7 +182,8 @@ public class NetServer extends Thread {
 	}
 
 	public boolean isConnected() {
-		return selector.isOpen() && serverChannel.isOpen() && isRunning;
+		return selector.isOpen() && serverChannel.isOpen()
+				&& isRunning;
 	}
 
 	public PILogger getLog() {
@@ -178,7 +194,8 @@ public class NetServer extends Thread {
 		selector.wakeup();
 	}
 
-	public void addChangeRequest(NetChangeRequest netChangeRequest) {
+	public void addChangeRequest(
+			NetChangeRequest netChangeRequest) {
 		pendingChanges.add(netChangeRequest);
 	}
 

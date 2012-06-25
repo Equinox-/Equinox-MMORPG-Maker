@@ -2,9 +2,17 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * Packet sent by the client to the server to request a sector data update if
+ * the revisions are different.
+ * 
+ * @author Westin
+ * 
+ */
 public class Packet5SectorRequest extends Packet {
 	public int baseX;
 	public int baseY;
@@ -12,7 +20,8 @@ public class Packet5SectorRequest extends Packet {
 	public int revision;
 
 	@Override
-	public void writeData(PacketOutputStream dOut) throws IOException {
+	public final void writeData(final PacketOutputStream dOut)
+			throws IOException {
 		dOut.writeInt(baseX);
 		dOut.writeInt(baseY);
 		dOut.writeInt(baseZ);
@@ -20,7 +29,8 @@ public class Packet5SectorRequest extends Packet {
 	}
 
 	@Override
-	public void readData(PacketInputStream dIn) throws IOException {
+	public final void readData(final PacketInputStream dIn)
+			throws IOException {
 		baseX = dIn.readInt();
 		baseY = dIn.readInt();
 		baseZ = dIn.readInt();
@@ -28,7 +38,7 @@ public class Packet5SectorRequest extends Packet {
 	}
 
 	@Override
-	public int getLength() {
-		return 16;
+	public final int getLength() {
+		return SizeOf.INT * 4;
 	}
 }

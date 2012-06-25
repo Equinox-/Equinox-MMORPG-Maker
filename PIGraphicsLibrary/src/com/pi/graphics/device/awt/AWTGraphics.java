@@ -1,7 +1,6 @@
 package com.pi.graphics.device.awt;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -19,24 +18,57 @@ import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.awt.ImageManager.ImageStorage;
 
+/**
+ * Class representing a Java 2D or Abstract Windowing Toolkit based graphics
+ * object.
+ * 
+ * @author Westin
+ * 
+ */
 public class AWTGraphics extends IGraphics {
+	/**
+	 * A boolean representing the running state of the graphics loop.
+	 */
 	private volatile boolean graphicsRunning = false;
+	/**
+	 * The timer controlling the graphics loop.
+	 */
 	private final Timer timer;
+	/**
+	 * A timer task hooked to the timer to render the buffer.
+	 */
 	private final TimerTask task;
-	private final Container applet;
-	private long startTime;
-	private int frameCont = 0;
+	/**
+	 * The last time the frames per second were updated.
+	 */
+	private long lastFPSUpdate;
+	/**
+	 * Number for frames rendered since last frames per second update.
+	 */
+	private int frameCount = 0;
+	/**
+	 * The cached frames per second value.
+	 */
 	private int cFPS = 0;
+	/**
+	 * The image manager used for loading images into the cache.
+	 */
 	private ImageManager imageManager;
 
+	/**
+	 * Creates an Java 2D or Abstract Windowing Toolkit graphics object linked
+	 * to the given display manager.
+	 * 
+	 * @param mgr the display manager to bind to
+	 */
 	public AWTGraphics(final DisplayManager mgr) {
 		super(mgr);
-		this.applet = super.mgr.getSource().getContainer();
-		startTime = System.currentTimeMillis();
-		imageManager = new ImageManager(super.mgr.getSource());
+		lastFPSUpdate = System.currentTimeMillis();
+		imageManager =
+				new ImageManager(getDisplayManager().getSource());
 
 		timer = new Timer();
-		// Create Timer Task
+		// Create the Timer Task
 		task = new TimerTask() {
 			private Image backBuffer;
 			private int width, height;
@@ -44,38 +76,58 @@ public class AWTGraphics extends IGraphics {
 			@Override
 			public void run() {
 				if (graphicsRunning) {
-					width = applet.getWidth();
-					height = applet.getHeight();
+					width =
+							getDisplayManager().getSource()
+									.getContainer().getWidth();
+					height =
+							getDisplayManager().getSource()
+									.getContainer().getHeight();
 					if (width > 0 && height > 0) {
-						Graphics frontBuffer = (Graphics2D) applet
-								.getGraphics();
+						Graphics frontBuffer =
+								(Graphics2D) getDisplayManager()
+										.getSource()
+										.getContainer()
+										.getGraphics();
 						if (backBuffer == null
 								|| backBuffer.getWidth(null) != width
 								|| backBuffer.getHeight(null) != height) {
-							if (backBuffer != null)
+							if (backBuffer != null) {
 								backBuffer.flush();
-							backBuffer = mgr.getSource().getContainer()
-									.createVolatileImage(width, height); // TODO
-							// Volatile
-							// vs
-							// Normal
+							}
+							backBuffer =
+									mgr.getSource()
+											.getContainer()
+											.createVolatileImage(
+													width,
+													height);
 						}
 						if (backBuffer != null) {
-							graphics = (Graphics2D) backBuffer.getGraphics();
-							if (graphics != null && frontBuffer != null) {
+							graphics =
+									(Graphics2D) backBuffer
+											.getGraphics();
+							if (graphics != null
+									&& frontBuffer != null) {
 								graphics.setBackground(Color.BLACK);
-								graphics.clearRect(0, 0, mgr.getSource()
-										.getContainer().getWidth(), mgr
-										.getSource().getContainer().getHeight());
+								graphics.clearRect(0, 0, mgr
+										.getSource()
+										.getContainer()
+										.getWidth(), mgr
+										.getSource()
+										.getContainer()
+										.getHeight());
 								doRender();
-								frameCont++;
-								if (System.currentTimeMillis() - startTime >= 1000) {
-									cFPS = (int) (frameCont / ((System
-											.currentTimeMillis() - startTime) / 1000f));
-									startTime = System.currentTimeMillis();
-									frameCont = 0;
+								frameCount++;
+								if (System.currentTimeMillis()
+										- lastFPSUpdate >= 1000) {
+									cFPS =
+											(int) (frameCount / ((System
+													.currentTimeMillis() - lastFPSUpdate) / 1000f));
+									lastFPSUpdate =
+											System.currentTimeMillis();
+									frameCount = 0;
 								}
-								frontBuffer.drawImage(backBuffer, 0, 0, null);
+								frontBuffer.drawImage(
+										backBuffer, 0, 0, null);
 							}
 						}
 						if (frontBuffer != null) {
@@ -86,55 +138,70 @@ public class AWTGraphics extends IGraphics {
 			}
 		};
 		graphicsRunning = true;
-		timer.schedule(task, 0, mgr.minMSPerFrame);
+		timer.schedule(task, 0,
+				DisplayManager.MINIMUM_MILLISECONDS_PER_FRAME);
 	}
 
+	/**
+	 * The graphics instance wrapped by this graphics object.
+	 */
 	private Graphics2D graphics;
 
 	@Override
-	public void drawLine(int x1, int y1, Color aC, int x2, int y2, Color bC) {
-		Graphics2D graphics = (Graphics2D) this.graphics.create();
-		graphics.setPaint(new GradientPaint(x1, y1, aC, x2, y2, bC));
-		graphics.drawLine(x1, y1, x2, y2);
-		graphics.dispose();
+	public final void drawLine(final int x1, final int y1,
+			final Color aC, final int x2, final int y2,
+			final Color bC) {
+		Graphics2D sGraphics =
+				(Graphics2D) this.graphics.create();
+		sGraphics.setPaint(new GradientPaint(x1, y1, aC, x2, y2,
+				bC));
+		sGraphics.drawLine(x1, y1, x2, y2);
+		sGraphics.dispose();
 	}
 
 	@Override
-	public void drawLine(int x1, int y1, int x2, int y2) {
+	public final void drawLine(final int x1, final int y1,
+			final int x2, final int y2) {
 		graphics.drawLine(x1, y1, x2, y2);
 	}
 
 	@Override
-	public void drawRect(int x, int y, int width, int height) {
+	public final void drawRect(final int x, final int y,
+			final int width, final int height) {
 		graphics.drawRect(x, y, width, height);
 	}
 
 	@Override
-	public void fillRect(int x, int y, int width, int height) {
+	public final void fillRect(final int x, final int y,
+			final int width, final int height) {
 		graphics.fillRect(x, y, width, height);
 	}
 
 	@Override
-	public void drawImage(int img, int dx, int dy, int dwidth, int dheight,
-			int sx, int sy, int swidth, int sheight) {
+	public final void drawImage(final int img, final int dx,
+			final int dy, final int dwidth, final int dheight,
+			final int sx, final int sy, final int swidth,
+			final int sheight) {
 		Image image = imageManager.fetchImage(img);
-		if (image != null)
-			graphics.drawImage(image, dx, dy, dx + dwidth, dy + dheight, sx,
-					sy, sx + swidth, sy + sheight, null);
+		if (image != null) {
+			graphics.drawImage(image, dx, dy, dx + dwidth, dy
+					+ dheight, sx, sy, sx + swidth,
+					sy + sheight, null);
+		}
 	}
 
 	@Override
-	public void drawPoint(int x, int y) {
+	public final void drawPoint(final int x, final int y) {
 		graphics.drawRect(x, y, 1, 1);
 	}
 
 	@Override
-	public void setColor(Color color) {
+	public final void setColor(final Color color) {
 		graphics.setColor(color);
 	}
 
 	@Override
-	public void dispose() {
+	public final void dispose() {
 		graphicsRunning = false;
 		task.cancel();
 		timer.cancel();
@@ -142,76 +209,94 @@ public class AWTGraphics extends IGraphics {
 	}
 
 	@Override
-	public void drawText(String text, int x, int y, Font f, Color color) {
-		if (color != null)
+	public final void drawText(final String text, final int x,
+			final int y, final Font f, final Color color) {
+		if (color != null) {
 			graphics.setColor(color);
-		if (f != null)
+		}
+		if (f != null) {
 			graphics.setFont(f);
-		graphics.drawString(
-				text,
-				x,
-				y
-						+ (int) graphics.getFontMetrics()
-								.getStringBounds(text, graphics).getHeight());
+		}
+		graphics.drawString(text, x, y
+				+ (int) graphics.getFontMetrics()
+						.getStringBounds(text, graphics)
+						.getHeight());
 	}
 
 	@Override
-	public int getFPS() {
+	public final int getFPS() {
 		return cFPS;
 	}
 
 	@Override
-	public int getImageWidth(int graphic) {
+	public final int getImageWidth(final int graphic) {
 		BufferedImage image = imageManager.fetchImage(graphic);
-		if (image != null)
+		if (image != null) {
 			return image.getWidth();
+		}
 		return 0;
 	}
 
 	@Override
-	public int getImageHeight(int graphic) {
+	public final int getImageHeight(final int graphic) {
 		BufferedImage image = imageManager.fetchImage(graphic);
-		if (image != null)
+		if (image != null) {
 			return image.getHeight();
+		}
 		return 0;
 	}
 
 	@Override
-	public Rectangle2D getStringBounds(Font f, String s) {
-		return graphics.getFontMetrics(f).getStringBounds(s, graphics);
+	public final Rectangle2D getStringBounds(final Font f,
+			final String s) {
+		return graphics.getFontMetrics(f).getStringBounds(s,
+				graphics);
 	}
 
 	@Override
-	public void setClip(Rectangle r) {
-		if (r == null)
-			r = mgr.getSource().getContainer().getBounds();
-		graphics.setClip(r);
+	public final void setClip(final Rectangle r) {
+		if (r == null) {
+			graphics.setClip(getDisplayManager().getSource()
+					.getContainer().getBounds());
+		} else {
+			graphics.setClip(r);
+		}
 	}
 
 	@Override
-	public Rectangle getClip() {
+	public final Rectangle getClip() {
 		Rectangle r = graphics.getClipBounds();
-		if (r == null)
-			r = mgr.getSource().getContainer().getBounds();
+		if (r == null) {
+			r =
+					getDisplayManager().getSource()
+							.getContainer().getBounds();
+		}
 		return r;
 	}
 
 	@Override
-	public ObjectHeap<ImageStorage> loadedGraphics() {
+	public final ObjectHeap<ImageStorage> loadedGraphics() {
 		return imageManager.loadedMap();
 	}
 
 	@Override
-	public void drawFilteredImage(int graphic, int dx, int dy, int dwidth,
-			int dheight, int sx, int sy, int swidth, int sheight, float opacity) {
+	public final void drawFilteredImage(final int graphic,
+			final int dx, final int dy, final int dwidth,
+			final int dheight, final int sx, final int sy,
+			final int swidth, final int sheight,
+			final float opacity) {
 		BufferedImage raw = imageManager.fetchImage(graphic);
 		if (raw != null) {
-			RescaleOp op = new RescaleOp(new float[] { 1f, 1f, 1f, opacity },
-					new float[] { 0, 0, 0, 0 }, null);
-			BufferedImage image = op.createCompatibleDestImage(raw, null);
+			RescaleOp op =
+					new RescaleOp(new float[] { 1f, 1f, 1f,
+							opacity },
+							new float[] { 0, 0, 0, 0 }, null);
+			BufferedImage image =
+					op.createCompatibleDestImage(raw, null);
 			image = op.filter(raw, image);
-			graphics.drawImage(image, dx, dy, dx + dwidth, dy + dheight, sx,
-					sy, sx + swidth, sy + sheight, null);
+			graphics.drawImage(image, dx, dy, dx + dwidth, dy
+					+ dheight, sx, sy, sx + swidth,
+					sy + sheight, null);
 		}
 	}
 }

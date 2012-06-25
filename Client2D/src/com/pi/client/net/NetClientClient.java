@@ -12,6 +12,7 @@ import com.pi.common.net.NetHandler;
 /**
  * The subclass of the {@link NetClient} class that provides a linkage to the
  * ClientNetwork class.
+ * 
  * @see NetClient
  * @see ClientNetwork
  * @author Westin
@@ -54,8 +55,8 @@ public class NetClientClient extends NetClient {
 
 	@Override
 	public final void addWriteRequest() {
-		network.addChangeRequest(new NetChangeRequest(socket,
-				NetChangeRequest.CHANGEOPS,
+		network.addChangeRequest(new NetChangeRequest(
+				getChannel(), NetChangeRequest.CHANGEOPS,
 				SelectionKey.OP_WRITE));
 	}
 
@@ -77,14 +78,5 @@ public class NetClientClient extends NetClient {
 	@Override
 	public final String toString() {
 		return "NetClient[" + super.getHostAddress() + "]";
-	}
-
-	/**
-	 * Gets the socket channel that this net client is bound to.
-	 * 
-	 * @return the socket channel
-	 */
-	public final SocketChannel getChannel() {
-		return socket;
 	}
 }

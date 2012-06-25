@@ -22,28 +22,41 @@ import com.pi.server.database.Paths;
 
 public class SectorManager extends ServerThread implements
 		com.pi.common.world.SectorManager {
-	public final static int sectorExpiry = 300000; // 5 Minutes
+	public static final int sectorExpiry = 300000; // 5 Minutes
 
 	private LinkedList<SectorLocation> loadQueue =
 			new LinkedList<SectorLocation>();
 	private Hashtable<SectorLocation, SectorStorage> map =
 			new Hashtable<SectorLocation, SectorStorage>();
 
-	public SectorManager(Server server) {
+	/**
+	 * Create the sector manager for the given server.
+	 * 
+	 * @param server the server
+	 */
+	public SectorManager(final Server server) {
 		super(server);
 		this.mutex = new Object();
 		start();
 	}
 
-	public void requestSector(int clientID,
-			Packet5SectorRequest req) {
+	/**
+	 * Requests a sector for the provided client id, and sector request.
+	 * 
+	 * @param clientID the client requesting the sector
+	 * @param req the request packet
+	 */
+	public final void requestSector(final int clientID,
+			final Packet5SectorRequest req) {
 		synchronized (mutex) {
 			server.getLog().info("Request sector");
 			SectorStorage sec =
 					getSectorStorage(req.baseX, req.baseY,
 							req.baseZ);
-			if (sec != null && (sec.data != null || sec.empty)) {
-				if (sec.empty) {
+			if (sec != null
+					&& (sec.getSectorRaw() != null || sec
+							.isEmpty())) {
+				if (sec.isEmpty()) {
 					Packet6BlankSector packet =
 							new Packet6BlankSector();
 					packet.baseX = req.baseX;
@@ -53,7 +66,7 @@ public class SectorManager extends ServerThread implements
 							.getClient(clientID).getNetClient()
 							.send(packet);
 				} else {
-					Sector sector = sec.data;
+					Sector sector = sec.getSector();
 					server.getLog().info(
 							sector.getRevision() + ":"
 									+ req.revision);
@@ -66,7 +79,7 @@ public class SectorManager extends ServerThread implements
 						Client cli =
 								server.getClientManager()
 										.getClient(clientID);
-						// cli.getNetClient().sendRaw(sec.pack);
+						// cli.getNetClient().sendRaw(sec.pack); TODO
 						cli.getNetClient().send(packet);
 					}
 				}
@@ -75,23 +88,28 @@ public class SectorManager extends ServerThread implements
 	}
 
 	@Override
-	public Sector getSector(int x, int y, int z) {
+	public final Sector getSector(final int x, final int y,
+			final int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
-		return ss != null ? ss.data : null;
+		return ss != null ? ss.getSector() : null;
 	}
 
 	@Override
-	public boolean isEmptySector(int x, int y, int z) {
+	public final boolean isEmptySector(final int x, final int y,
+			final int z) {
 		SectorStorage ss = getSectorStorage(x, y, z);
-		return ss != null ? ss.empty : false;
+		return ss != null ? ss.isEmpty() : false;
 	}
 
 	@Override
-	public SectorStorage getSectorStorage(int x, int y, int z) {
+	public final SectorStorage getSectorStorage(final int x,
+			final int y, final int z) {
 		synchronized (mutex) {
 			SectorLocation p = new SectorLocation(x, y, z);
 			SectorStorage sS = map.get(p);
-			if (sS == null || (sS.data == null && !sS.empty)) {
+			if (sS == null
+					|| (sS.getSectorRaw() == null && !sS
+							.isEmpty())) {
 				if (!loadQueue.contains(p)) {// TODO FASTER
 					loadQueue.addLast(p);
 					mutex.notify();
@@ -102,7 +120,7 @@ public class SectorManager extends ServerThread implements
 		}
 	}
 
-	public void setSector(Sector sector) {
+	public final void setSector(final Sector sector) {
 		synchronized (mutex) {
 			ServerSectorStorage sec =
 					(ServerSectorStorage) map.get(sector
@@ -127,7 +145,7 @@ public class SectorManager extends ServerThread implements
 	}
 
 	@Override
-	public void loop() {
+	public final void loop() {
 		synchronized (mutex) {
 			if (loadQueue.size() <= 0) {
 				try {
@@ -143,7 +161,8 @@ public class SectorManager extends ServerThread implements
 
 	private void removeExpired() {
 		for (SectorLocation i : map.keySet()) {
-			if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
+			if (System.currentTimeMillis()
+					- map.get(i).getLastUsedTime() > sectorExpiry) {
 				map.remove(i);
 				server.getLog().fine(
 						"Dropped sector: " + i.toString());
@@ -192,7 +211,7 @@ public class SectorManager extends ServerThread implements
 		public byte[] pack;
 		public boolean empty = false;
 
-		public void updatePacketData() {
+		public final void updatePacketData() {
 			Packet4Sector p = new Packet4Sector();
 			p.sector = data;
 			try {
@@ -213,8 +232,8 @@ public class SectorManager extends ServerThread implements
 		public int revision;
 		public int baseX, baseY, baseZ;
 
-		public ClientSectorRequest(int client,
-				Packet5SectorRequest req) {
+		public ClientSectorRequest(final int client,
+				final Packet5SectorRequest req) {
 			this.clientId = client;
 			this.revision = req.revision;
 			this.baseX = req.baseX;
@@ -223,7 +242,7 @@ public class SectorManager extends ServerThread implements
 		}
 
 		@Override
-		public boolean equals(Object o) {
+		public final boolean equals(final Object o) {
 			if (o instanceof ClientSectorRequest) {
 				ClientSectorRequest req =
 						(ClientSectorRequest) o;
@@ -237,7 +256,7 @@ public class SectorManager extends ServerThread implements
 	}
 
 	@Override
-	public Map<SectorLocation, SectorStorage> loadedMap() {
+	public final Map<SectorLocation, SectorStorage> loadedMap() {
 		synchronized (mutex) {
 			return Collections.unmodifiableMap(map);
 		}

@@ -20,49 +20,98 @@ import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
 import com.pi.graphics.device.IGraphics;
 
-public class GLGraphics extends IGraphics implements GLEventListener {
+/**
+ * Class representing an Open Graphics Library based graphics object.
+ * 
+ * @author Westin
+ * 
+ */
+public class GLGraphics extends IGraphics implements
+		GLEventListener {
+	/**
+	 * The animator object that renders the buffer.
+	 */
 	private final FPSAnimator animator;
+	/**
+	 * The thread that provides text renderer instances for different fonts.
+	 */
 	private final TextRendererProvider txtRender;
+	/**
+	 * The texture manager used for loading textures into the cache.
+	 */
 	private final TextureManager textureManager;
+	/**
+	 * The current clip area of this graphics object.
+	 */
 	private Rectangle cliparea;
+	/**
+	 * The current GL object being wrapped.
+	 */
+	private GL2 gl;
+	/**
+	 * The OpenGL drawable object this the current GL object is derived from.
+	 */
+	private GLAutoDrawable glCore;
+	/**
+	 * The OpenGL canvas object being rendered to.
+	 */
+	private final GLCanvas canvas;
 
-	public GLGraphics(DisplayManager mgr) {
+	/**
+	 * Creates an OpenGL based graphics object bound to the specified display
+	 * manager.
+	 * 
+	 * @param mgr the display manager to bind this to
+	 */
+	public GLGraphics(final DisplayManager mgr) {
 		super(mgr);
 		GLProfile.initSingleton(false);
 		canvas = new GLCanvas();
-		super.mgr.getSource().getContainer().add(canvas);
-		canvas.addGLEventListener(this);
-		canvas.setSize(super.mgr.getSource().getContainer().getSize());
-		cliparea = canvas.getBounds();
-		canvas.setLocation(0, 0);
-		animator = new FPSAnimator(mgr.maxFPS);
-		animator.add(canvas);
+		getDisplayManager().getSource().getContainer()
+				.add(getCanvas());
+		getCanvas().addGLEventListener(this);
+		getCanvas().setSize(
+				getDisplayManager().getSource().getContainer()
+						.getSize());
+		cliparea = getCanvas().getBounds();
+		getCanvas().setLocation(0, 0);
+		animator =
+				new FPSAnimator(
+						DisplayManager.MAXIMUM_FRAMES_PER_SECOND);
+		animator.add(getCanvas());
 		animator.start();
 		mgr.getSource().getLog().fine("Started graphics thread");
 		txtRender = new TextRendererProvider(mgr.getSource());
-		textureManager = new TextureManager(this, mgr.getSource());
+		textureManager =
+				new TextureManager(this, mgr.getSource());
 	}
 
-	private GL2 gl;
-	private GLAutoDrawable glCore;
-	public final GLCanvas canvas;
-
-	public GLAutoDrawable getCore() {
+	/**
+	 * Get the drawable core that the current GL object is derived from.
+	 * 
+	 * @return the OpenGL core drawable
+	 */
+	public final GLAutoDrawable getCore() {
 		return glCore;
 	}
 
 	@Override
-	public void drawLine(int x1, int y1, Color aC, int x2, int y2, Color bC) {
+	public final void drawLine(final int x1, final int y1,
+			final Color aC, final int x2, final int y2,
+			final Color bC) {
 		gl.glBegin(GL.GL_LINES);
-		gl.glColor4i(aC.getRed(), aC.getGreen(), aC.getBlue(), aC.getAlpha());
+		gl.glColor4i(aC.getRed(), aC.getGreen(), aC.getBlue(),
+				aC.getAlpha());
 		gl.glVertex2f(x1, y1);
-		gl.glColor4i(bC.getRed(), bC.getGreen(), bC.getBlue(), bC.getAlpha());
+		gl.glColor4i(bC.getRed(), bC.getGreen(), bC.getBlue(),
+				bC.getAlpha());
 		gl.glVertex2f(x2, y2);
 		gl.glEnd();
 	}
 
 	@Override
-	public void drawLine(int x1, int y1, int x2, int y2) {
+	public final void drawLine(final int x1, final int y1,
+			final int x2, final int y2) {
 		gl.glBegin(GL.GL_LINES);
 		gl.glVertex2f(x1, y1);
 		gl.glVertex2f(x2, y2);
@@ -70,7 +119,8 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public void drawRect(int x, int y, int width, int height) {
+	public final void drawRect(final int x, final int y,
+			final int width, final int height) {
 		gl.glBegin(GL2.GL_LINE_LOOP);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + width, y);
@@ -80,7 +130,8 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public void fillRect(int x, int y, int width, int height) {
+	public final void fillRect(final int x, final int y,
+			final int width, final int height) {
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + width, y);
@@ -90,15 +141,20 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public void drawImage(int texID, int dx, int dy, int dwidth, int dheight,
-			int sx, int sy, int swidth, int sheight) {
-		drawFilteredImage(texID, dx, dy, dwidth, dheight, sx, sy, swidth,
-				sheight, 1f);
+	public final void drawImage(final int texID, final int dx,
+			final int dy, final int dwidth, final int dheight,
+			final int sx, final int sy, final int swidth,
+			final int sheight) {
+		drawFilteredImage(texID, dx, dy, dwidth, dheight, sx,
+				sy, swidth, sheight, 1f);
 	}
 
 	@Override
-	public void drawFilteredImage(int texID, int dx, int dy, int dwidth,
-			int dheight, int sx, int sy, int swidth, int sheight, float opacity) {
+	public final void drawFilteredImage(final int texID,
+			final int dx, final int dy, final int dwidth,
+			final int dheight, final int sx, final int sy,
+			final int swidth, final int sheight,
+			final float opacity) {
 		Texture tex = textureManager.fetchTexture(texID);
 		if (tex != null) {
 			double width = tex.getWidth();
@@ -111,7 +167,8 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 			gl.glVertex2f(dx, dy);
 			gl.glTexCoord2d((sx + swidth) / width, sy / height);
 			gl.glVertex2f(dx + dwidth, dy);
-			gl.glTexCoord2d((sx + swidth) / width, (sy + sheight) / height);
+			gl.glTexCoord2d((sx + swidth) / width,
+					(sy + sheight) / height);
 			gl.glVertex2f(dx + dwidth, (dy + dheight));
 			gl.glTexCoord2d(sx / width, (sy + sheight) / height);
 			gl.glVertex2f(dx, (dy + dheight));
@@ -121,89 +178,105 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public void drawPoint(int x, int y) {
+	public final void drawPoint(final int x, final int y) {
 		gl.glBegin(GL.GL_POINTS);
 		gl.glVertex2f(x, y);
 		gl.glEnd();
 	}
 
 	@Override
-	public void setColor(Color color) {
-		gl.glColor4f(color.getRed() / 255f, color.getGreen() / 255f,
-				color.getBlue() / 255f, color.getAlpha() / 255f);
+	public final void setColor(final Color color) {
+		gl.glColor4f(color.getRed() / 255f,
+				color.getGreen() / 255f, color.getBlue() / 255f,
+				color.getAlpha() / 255f);
 	}
 
 	@Override
-	public void display(GLAutoDrawable arg0) {
-		if (!canvas.getSize().equals(
-				super.mgr.getSource().getContainer().getSize())) {
-			canvas.setSize(super.mgr.getSource().getContainer().getSize());
-			cliparea = canvas.getBounds();
-			canvas.reshape(0, 0, super.mgr.getSource().getContainer()
-					.getWidth(), super.mgr.getSource().getContainer()
-					.getHeight());
+	public final void display(final GLAutoDrawable arg0) {
+		if (!getCanvas().getSize().equals(
+				getDisplayManager().getSource().getContainer()
+						.getSize())) {
+			getCanvas().setSize(
+					getDisplayManager().getSource()
+							.getContainer().getSize());
+			cliparea = getCanvas().getBounds();
+			getCanvas().reshape(
+					0,
+					0,
+					getDisplayManager().getSource()
+							.getContainer().getWidth(),
+					getDisplayManager().getSource()
+							.getContainer().getHeight());
 		}
 		this.gl = arg0.getGL().getGL2();
 		this.glCore = arg0;
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glOrtho(0, canvas.getWidth(), canvas.getHeight(), 0, 1, -1);
+		gl.glOrtho(0, getCanvas().getWidth(), getCanvas()
+				.getHeight(), 0, 1, -1);
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT
+				| GL.GL_DEPTH_BUFFER_BIT);
 		super.doRender();
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable arg0) {
+	public final void dispose(final GLAutoDrawable arg0) {
 		this.gl = arg0.getGL().getGL2();
 		this.glCore = arg0;
 	}
 
 	@Override
-	public void init(GLAutoDrawable arg0) {
+	public final void init(final GLAutoDrawable arg0) {
 		this.gl = arg0.getGL().getGL2();
 		this.glCore = arg0;
 		this.gl.setSwapInterval(1);
 		this.gl.glEnable(GL.GL_BLEND);
-		this.gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		this.gl.glBlendFunc(GL.GL_SRC_ALPHA,
+				GL.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
-			int arg4) {
+	public final void reshape(final GLAutoDrawable arg0,
+			final int arg1, final int arg2, final int arg3,
+			final int arg4) {
 		this.gl = arg0.getGL().getGL2();
 		this.glCore = arg0;
 	}
 
 	@Override
-	public void dispose() {
+	public final void dispose() {
 		animator.stop();
-		mgr.getSource().getLog().fine("Killed OpenGL Graphics thread");
+		getDisplayManager().getSource().getLog()
+				.fine("Killed OpenGL Graphics thread");
 		txtRender.dispose();
 		textureManager.dispose();
-		if (canvas != null)
-			canvas.destroy();
+		if (getCanvas() != null) {
+			getCanvas().destroy();
+		}
 	}
 
 	@Override
-	public void drawText(String text, int x, int y, Font f, Color color) {
+	public final void drawText(final String text, final int x,
+			final int y, final Font f, final Color color) {
 		TextRenderer tRender = txtRender.fetchRenderer(f);
-		tRender.beginRendering(canvas.getWidth(), canvas.getHeight());
+		tRender.beginRendering(getCanvas().getWidth(),
+				getCanvas().getHeight());
 		tRender.setColor(color);
-		tRender.draw(text, x,
-				canvas.getHeight() - y
-						- (int) tRender.getBounds(text).getHeight());
+		tRender.draw(text, x, getCanvas().getHeight() - y
+				- (int) tRender.getBounds(text).getHeight());
 		tRender.endRendering();
 	}
 
 	@Override
-	public Rectangle2D getStringBounds(Font f, String s) {
+	public final Rectangle2D getStringBounds(final Font f,
+			final String s) {
 		return txtRender.fetchRenderer(f).getBounds(s);
 	}
 
 	@Override
-	public int getFPS() {
+	public final int getFPS() {
 		long duration = animator.getDuration() / 1000;
 		if (duration != 0) {
 			return (int) (animator.getTotalFrames() / duration);
@@ -212,32 +285,34 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public int getImageWidth(int graphic) {
+	public final int getImageWidth(final int graphic) {
 		Texture tex = textureManager.fetchTexture(graphic);
-		if (tex != null)
+		if (tex != null) {
 			return tex.getWidth();
+		}
 		return 0;
 	}
 
 	@Override
-	public int getImageHeight(int graphic) {
+	public final int getImageHeight(final int graphic) {
 		Texture tex = textureManager.fetchTexture(graphic);
-		if (tex != null)
+		if (tex != null) {
 			return tex.getHeight();
+		}
 		return 0;
 	}
 
 	@Override
-	public void setClip(Rectangle r) {
+	public final void setClip(final Rectangle r) {
 		if (r != null) {
-			gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 1, 0, 0, -r.x },
-					0);
-			gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[] { 0, 1, 0, -r.y },
-					0);
-			gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[] { -1, 0, 0,
-					r.x + r.width }, 0);
-			gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[] { 0, -1, 0,
-					r.y + r.height }, 0);
+			gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 1,
+					0, 0, -r.x }, 0);
+			gl.glClipPlane(GL2.GL_CLIP_PLANE1, new double[] { 0,
+					1, 0, -r.y }, 0);
+			gl.glClipPlane(GL2.GL_CLIP_PLANE2, new double[] {
+					-1, 0, 0, r.x + r.width }, 0);
+			gl.glClipPlane(GL2.GL_CLIP_PLANE3, new double[] { 0,
+					-1, 0, r.y + r.height }, 0);
 			gl.glEnable(GL2.GL_CLIP_PLANE0);
 			gl.glEnable(GL2.GL_CLIP_PLANE1);
 			gl.glEnable(GL2.GL_CLIP_PLANE2);
@@ -251,12 +326,21 @@ public class GLGraphics extends IGraphics implements GLEventListener {
 	}
 
 	@Override
-	public Rectangle getClip() {
+	public final Rectangle getClip() {
 		return cliparea;
 	}
 
 	@Override
-	public ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
+	public final ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
 		return textureManager.loadedMap();
+	}
+
+	/**
+	 * Gets the OpenGL canvas being rendered to.
+	 * 
+	 * @return the GLCanvas
+	 */
+	public final GLCanvas getCanvas() {
+		return canvas;
 	}
 }

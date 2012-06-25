@@ -5,24 +5,32 @@ import java.io.IOException;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * A packet the client send to the server to register a new account.
+ * 
+ * @author Westin
+ * 
+ */
 public class Packet3Register extends Packet {
 	public String username;
 	public String password;
 
 	@Override
-	public void writeData(PacketOutputStream dOut) throws IOException {
+	public final void writeData(final PacketOutputStream dOut)
+			throws IOException {
 		dOut.writeString(username);
 		dOut.writeString(password);
 	}
 
 	@Override
-	public void readData(PacketInputStream dIn) throws IOException {
+	public final void readData(final PacketInputStream dIn)
+			throws IOException {
 		username = dIn.readString();
 		password = dIn.readString();
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream.stringByteLength(password);
 	}

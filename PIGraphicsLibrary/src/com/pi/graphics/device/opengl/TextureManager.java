@@ -1,7 +1,8 @@
 package com.pi.graphics.device.opengl;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.media.opengl.GLProfile;
 
@@ -12,19 +13,52 @@ import com.pi.common.game.ObjectHeap;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.GraphicsStorage;
 
+/**
+ * Class for loading textures using a threaded model.
+ * 
+ * @author Westin
+ * 
+ */
 public class TextureManager extends Thread {
-	private static long textureExpiry = 30000; // 30 seconds
+	/**
+	 * The time in milliseconds for a texture to be disposed.
+	 */
+	private static final long TEXTURE_EXPIRY = 30000; // 30 seconds
+	/**
+	 * The graphics instance this manager is bound to.
+	 */
 	private GLGraphics glGraphics;
-	private ObjectHeap<TextureStorage> map = new ObjectHeap<TextureStorage>();
-	private Vector<Integer> loadQueue = new Vector<Integer>();
-	private boolean running = true;
-	private final DeviceRegistration client;
-	private Object syncObject = new Object();
+	/**
+	 * The storage map.
+	 */
+	private volatile ObjectHeap<TextureStorage> map =
+			new ObjectHeap<TextureStorage>();
+	/**
+	 * The texture loading queue.
+	 */
+	private Queue<Integer> loadQueue =
+			new LinkedBlockingQueue<Integer>();
+	/**
+	 * Boolean monitoring the running state of this thread.
+	 */
+	private volatile boolean running = true;
+	/**
+	 * The registration object this manager is bound to.
+	 */
+	private final DeviceRegistration dev;
 
-	public TextureManager(GLGraphics gl, DeviceRegistration client) {
-		super(client.getThreadGroup(), null, "PiTextureManager");
+	/**
+	 * Creates the texture manager for the specified graphics object and device
+	 * registration.
+	 * 
+	 * @param gl the graphics object
+	 * @param sDev the device registration
+	 */
+	public TextureManager(final GLGraphics gl,
+			final DeviceRegistration sDev) {
+		super(sDev.getThreadGroup(), null, "PiTextureManager");
 		this.glGraphics = gl;
-		this.client = client;
+		this.dev = sDev;
 		super.start();
 	}
 
@@ -33,27 +67,40 @@ public class TextureManager extends Thread {
 	 * thread has a GLContext bound to it. Will also add the graphic to the
 	 * loadQueue if it isn't loaded.
 	 * 
-	 * @param texID
+	 * @param texID the texture id
 	 * @return the texture object, or null if not loaded
 	 */
-	public Texture fetchTexture(int texID) {
-		synchronized (syncObject) {
+	public final Texture fetchTexture(final int texID) {
+		synchronized (map) {
 			TextureStorage tS = map.get(texID);
 			if (tS == null || tS.texData == null) {
 				loadQueue.add(texID);
 				return null;
 			}
-			tS.lastUsed = System.currentTimeMillis();
-			if (tS.texData != null && tS.tex == null)
+			tS.updateLastUsed();
+			if (tS.texData != null && tS.tex == null) {
 				tS.tex = TextureIO.newTexture(tS.texData);
+			}
 			map.set(texID, tS);
 			return tS.tex;
 		}
 	}
 
+	/**
+	 * Class for storing the textures with their data.
+	 * 
+	 * @author Westin
+	 * 
+	 */
 	private static class TextureStorage extends GraphicsStorage {
+		/**
+		 * The texture data backing the texture.
+		 */
 		private TextureData texData;
-		public Texture tex;
+		/**
+		 * The actual texture.
+		 */
+		private Texture tex;
 
 		@Override
 		public Object getGraphic() {
@@ -61,8 +108,14 @@ public class TextureManager extends Thread {
 		}
 	}
 
-	private TextureData getTextureData(Integer oldestID) {
-		File tex = client.getGraphicsFile(oldestID);
+	/**
+	 * Loads the texture data for the specified texture identification number.
+	 * 
+	 * @param oldestID the texture id
+	 * @return the texture data, or <code>null</code> if not loaded
+	 */
+	private TextureData getTextureData(final Integer oldestID) {
+		File tex = dev.getGraphicsFile(oldestID);
 		if (tex == null) {
 			return null;
 		} else {
@@ -71,38 +124,45 @@ public class TextureManager extends Thread {
 				if (lastDot < 0) {
 					return null;
 				}
-				String suffix = tex.getName().substring(lastDot + 1);
-				if (suffix == null)
+				String suffix =
+						tex.getName().substring(lastDot + 1);
+				if (suffix == null) {
 					return null;
-				return TextureIO.newTextureData(GLProfile.getDefault(), tex,
-						false, suffix);
+				}
+				return TextureIO.newTextureData(
+						GLProfile.getDefault(), tex, false,
+						suffix);
 			} catch (Exception e) {
-				client.getLog().printStackTrace(e);
+				dev.getLog().printStackTrace(e);
 				return null;
 			}
 		}
 	}
 
 	@Override
-	public void run() {
-		client.getLog().fine("Started Texture Manager");
+	public final void run() {
+		dev.getLog().fine("Started Texture Manager");
 		while (running) {
 			doRequest();
 			removeExpired();
 		}
-		client.getLog().fine("Killed Texture Manager");
+		dev.getLog().fine("Killed Texture Manager");
 	}
 
+	/**
+	 * Disposes the expired textures.
+	 */
 	private void removeExpired() {
-		synchronized (syncObject) {
+		synchronized (map) {
 			for (int i = 0; i < map.capacity(); i++) {
 				if (map.get(i) != null) {
-					if (System.currentTimeMillis() - map.get(i).lastUsed > textureExpiry) {
+					if (System.currentTimeMillis()
+							- map.get(i).getLastUsedTime() > TEXTURE_EXPIRY) {
 						if (glGraphics.getCore() != null
 								&& glGraphics.getCore().getGL() != null
 								&& map.get(i).tex != null) {
-							map.get(i).tex
-									.destroy(glGraphics.getCore().getGL());
+							map.get(i).tex.destroy(glGraphics
+									.getCore().getGL());
 						}
 						map.get(i).texData.flush();
 						map.remove(i);
@@ -112,30 +172,44 @@ public class TextureManager extends Thread {
 		}
 	}
 
+	/**
+	 * Process a request to load a texture.
+	 */
 	private void doRequest() {
-		synchronized (syncObject) {
-			int oldestID = loadQueue.size() > 0 ? loadQueue.remove(0) : -1;
+		synchronized (map) {
+			int oldestID = -1;
+			if (loadQueue.size() > 0) {
+				oldestID = loadQueue.poll();
+			}
 			if (oldestID != -1 && map.get(oldestID) == null) {
 				loadQueue.remove(oldestID);
 				TextureStorage tX = new TextureStorage();
 				tX.texData = getTextureData(oldestID);
-				tX.lastUsed = System.currentTimeMillis();
+				tX.updateLastUsed();
 				map.set(oldestID, tX);
 			}
 		}
 	}
 
-	public void dispose() {
+	/**
+	 * Dispose this texture manager.
+	 */
+	public final void dispose() {
 		running = false;
 		try {
 			super.join();
 		} catch (InterruptedException e) {
-			client.getLog().printStackTrace(e);
+			dev.getLog().printStackTrace(e);
 			System.exit(0);
 		}
 	}
 
-	public ObjectHeap<? extends GraphicsStorage> loadedMap() {
+	/**
+	 * Get the loaded graphics map.
+	 * 
+	 * @return the loaded map
+	 */
+	public final ObjectHeap<? extends GraphicsStorage> loadedMap() {
 		return map;
 	}
 }
