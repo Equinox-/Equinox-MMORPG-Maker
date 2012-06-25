@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+import com.pi.launcher.ServerConfiguration;
+
 /**
  * A class providing a graphical frontend for the logger class.
  * 
@@ -36,18 +38,18 @@ public class PILoggerPane extends JPanel {
 		super();
 		setLayout(null);
 		tPane = new JTextPane();
-		setSize(PIResourceViewer.DEFAULT_WIDTH,
-				PIResourceViewer.DEFAULT_HEIGHT);
+		setSize(ServerConfiguration.DEFAULT_WIDTH,
+				ServerConfiguration.DEFAULT_HEIGHT);
 		setLocation(0, 0);
-		tPane.setSize(PIResourceViewer.DEFAULT_WIDTH,
-				PIResourceViewer.DEFAULT_HEIGHT);
+		tPane.setSize(ServerConfiguration.DEFAULT_WIDTH,
+				ServerConfiguration.DEFAULT_HEIGHT);
 		tPane.setLocation(0, 0);
 		tPane.setAutoscrolls(true);
 		scrlPane = new JScrollPane(tPane);
 		scrlPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrlPane.setAutoscrolls(true);
-		scrlPane.setSize(PIResourceViewer.DEFAULT_WIDTH,
-				PIResourceViewer.DEFAULT_HEIGHT);
+		scrlPane.setSize(ServerConfiguration.DEFAULT_WIDTH,
+				ServerConfiguration.DEFAULT_HEIGHT);
 		scrlPane.setLocation(0, 0);
 		add(scrlPane);
 		logOut = new PrintStream(new OutputStream() {

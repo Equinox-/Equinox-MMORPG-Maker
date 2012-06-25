@@ -9,55 +9,82 @@ import com.pi.common.net.NetChangeRequest;
 import com.pi.common.net.NetClient;
 import com.pi.common.net.NetHandler;
 
+/**
+ * The subclass of the {@link NetClient} class that provides a linkage to the
+ * ClientNetwork class.
+ * @see NetClient
+ * @see ClientNetwork
+ * @author Westin
+ * 
+ */
 public class NetClientClient extends NetClient {
+	/**
+	 * The ClientNetwork instance this NetClient is bound to.
+	 */
 	private ClientNetwork network;
 
-	public NetClientClient(ClientNetwork net, SocketChannel socket) {
+	/**
+	 * Create a NetClient instance bound to the provided ClientNetwork instance,
+	 * with the provided socket channel as network communication.
+	 * 
+	 * @param net the ClientNetwork instance
+	 * @param socket the SocketChannel
+	 */
+	public NetClientClient(final ClientNetwork net,
+			final SocketChannel socket) {
 		super(socket);
 		this.network = net;
 	}
 
 	@Override
-	public PILogger getLog() {
+	public final PILogger getLog() {
 		return network.getLog();
 	}
 
 	@Override
-	public void processData(byte[] data, int off, int len) {
+	public final void processData(final byte[] data,
+			final int off, final int len) {
 		try {
-			network.getWorker().processData(this, data, off, len);
+			network.getWorker()
+					.processData(this, data, off, len);
 		} catch (IOException e) {
 			getLog().printStackTrace(e);
 		}
 	}
 
 	@Override
-	public void addWriteRequest() {
+	public final void addWriteRequest() {
 		network.addChangeRequest(new NetChangeRequest(socket,
-				NetChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+				NetChangeRequest.CHANGEOPS,
+				SelectionKey.OP_WRITE));
 	}
 
 	@Override
-	public String getSuffix() {
+	public final String getSuffix() {
 		return "";
 	}
 
 	@Override
-	public void wakeSelector() {
+	public final void wakeSelector() {
 		network.wakeSelector();
 	}
 
 	@Override
-	public NetHandler getHandler() {
+	public final NetHandler getHandler() {
 		return network.getNetHandler();
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "NetClient[" + super.getHostAddress() + "]";
 	}
 
-	public SocketChannel getChannel() {
+	/**
+	 * Gets the socket channel that this net client is bound to.
+	 * 
+	 * @return the socket channel
+	 */
+	public final SocketChannel getChannel() {
 		return socket;
 	}
 }

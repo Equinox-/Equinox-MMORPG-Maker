@@ -47,7 +47,8 @@ public abstract class ClientThread extends Thread {
 	 */
 	protected final void createMutex() {
 		if (mutex != null) {
-			throw new IllegalStateException("A mutex already exists!");
+			throw new IllegalStateException(
+					"A mutex already exists!");
 		}
 		mutex = new Object();
 	}
@@ -84,11 +85,13 @@ public abstract class ClientThread extends Thread {
 
 	@Override
 	public final void run() {
-		client.getLog().fine("Started: " + getClass().getSimpleName());
+		client.getLog().fine(
+				"Started: " + getClass().getSimpleName());
 		while (running && shouldLoop()) {
 			loop();
 		}
-		client.getLog().fine("Stopped: " + getClass().getSimpleName());
+		client.getLog().fine(
+				"Stopped: " + getClass().getSimpleName());
 	}
 
 	/**
@@ -98,7 +101,7 @@ public abstract class ClientThread extends Thread {
 	 * 
 	 * @return if the thread should continue
 	 */
-	private boolean shouldLoop() {
+	protected boolean shouldLoop() {
 		return true;
 	}
 

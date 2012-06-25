@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
+import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.common.game.Entity;
 import com.pi.server.client.ClientManager;
@@ -16,7 +17,6 @@ import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
 import com.pi.server.debug.ClientMonitorPanel;
 import com.pi.server.debug.EntityMonitorPanel;
-import com.pi.server.debug.SectorMonitorPanel;
 import com.pi.server.def.Definitions;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.logic.ServerLogic;
@@ -57,7 +57,8 @@ public class Server {
 		rcView = new PIResourceViewer("Server");
 		PILoggerPane pn = new PILoggerPane();
 		rcView.addTab("Logger", pn);
-		rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
+		rcView.addTab("Threads", new ThreadMonitorPanel(
+				serverThreads));
 		rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		rcView.addWindowListener(new WindowAdapter() {
 			@Override
@@ -65,7 +66,9 @@ public class Server {
 				dispose();
 			}
 		});
-		log = new PILogger(Paths.getLogFile(), pn.logOut);
+		log =
+				new PILogger(pn.getLogOutput(),
+						Paths.getLogFile());
 
 		entityManager = new ServerEntityManager(this);
 		rcView.addTab("Entities", new EntityMonitorPanel(this));
@@ -73,22 +76,22 @@ public class Server {
 		database = new ServerDatabase(this);
 		try {
 			network = new NetServer(this, 9999);
-			rcView.addTab("Network Clients", new ClientMonitorPanel(
-					clientManager));
+			rcView.addTab("Network Clients",
+					new ClientMonitorPanel(clientManager));
 			world = new World(this);
-			rcView.addTab("Sectors",
-					new SectorMonitorPanel(world.getSectorManager()));
+			rcView.addTab("Sectors", new SectorMonitorPanel(
+					world.getSectorManager()));
 			defs = new Definitions(this);
 
 			world.getSectorManager().getSector(0, 0, 0);
 
 			sLogic = new ServerLogic(this);
 			sLogic.start();
-			
+
 			Entity ent = new Entity();
 			ent.setEntityDef(1);
 			entityManager.registerEntity(ent);
-			
+
 		} catch (BindException e1) {
 			dispose();
 		}

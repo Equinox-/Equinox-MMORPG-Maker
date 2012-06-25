@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import com.pi.client.entity.ClientEntity;
 import com.pi.client.entity.ClientEntityManager;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.debug.PIResourceViewer;
@@ -99,7 +100,8 @@ public class EntityMonitorPanel extends JPanel {
 											.keySet().size()]);
 			if (row < keyArr.length) {
 				Integer key = keyArr[row];
-				Entity ent = svr.getEntity(key);
+				ClientEntity cEnt = svr.getEntity(key);
+				Entity ent = cEnt.getWrappedEntity();
 				if (ent == null) {
 					return "";
 				}

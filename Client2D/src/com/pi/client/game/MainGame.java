@@ -17,25 +17,43 @@ import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
-public class MainGame implements Renderable, KeyListener, MouseListener,
-		MouseMotionListener, MouseWheelListener {
+/**
+ * Displays the main game controls and the game itself.
+ * 
+ * @author Westin
+ * 
+ */
+public class MainGame implements Renderable, KeyListener,
+		MouseListener, MouseMotionListener, MouseWheelListener {
+	/**
+	 * The client instance.
+	 */
 	private final Client client;
+	/**
+	 * The actual game rendering loop.
+	 */
 	private final GameRenderLoop gameRenderLoop;
 
-	public MainGame(final Client client) {
-		this.client = client;
+	/**
+	 * Creates the Main Game render loop and controls for the specified client.
+	 * 
+	 * @param sClient the client instance
+	 */
+	public MainGame(final Client sClient) {
+		this.client = sClient;
 		this.gameRenderLoop = new GameRenderLoop(client);
 	}
 
 	@Override
-	public void render(IGraphics g) {
+	public final void render(final IGraphics g) {
 		this.gameRenderLoop.render(g);
 	}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
-		Entity ent = client.getEntityManager().getLocalEntity();
-		if (ent != null) {
+	public final void keyPressed(final KeyEvent e) {
+		ClientEntity cEnt =
+				client.getEntityManager().getLocalEntity();
+		if (cEnt != null) {
 			Direction dir = null;
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_UP:
@@ -50,58 +68,58 @@ public class MainGame implements Renderable, KeyListener, MouseListener,
 			case KeyEvent.VK_RIGHT:
 				dir = Direction.RIGHT;
 				break;
+			default:
+				return;
 			}
-			if (dir != null) {
-				ClientEntity local = client.getEntityManager().getLocalEntity();
-				if (local != null && !local.isMoving()) {
-					local.setDir(dir);
-					if (local.canMove(client.getWorld().getSectorManager())) {
-						local.doMovement();
-						client.getNetwork().send(
-								Packet14ClientMove.create(local));
-					}
+			if (!cEnt.isMoving()) {
+				Entity local = cEnt.getWrappedEntity();
+				local.setDir(dir);
+				if (local.canMove(client.getWorld())) {
+					local.doMovement();
+					client.getNetwork().send(
+							Packet14ClientMove.create(local));
 				}
 			}
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
+	public void keyReleased(final KeyEvent arg0) {
 	}
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {
+	public void keyTyped(final KeyEvent arg0) {
 	}
 
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {
+	public void mouseWheelMoved(final MouseWheelEvent arg0) {
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
+	public void mouseDragged(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
+	public void mouseMoved(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
+	public void mouseEntered(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseExited(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(final MouseEvent arg0) {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(final MouseEvent arg0) {
 	}
 }

@@ -19,7 +19,7 @@ import com.pi.client.game.MainGame;
 import com.pi.client.graphics.RenderLoop;
 import com.pi.client.gui.mainmenu.MainMenu;
 import com.pi.client.net.ClientNetwork;
-import com.pi.client.world.World;
+import com.pi.client.world.SectorManager;
 import com.pi.common.Disposable;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
@@ -37,11 +37,11 @@ import com.pi.gui.GUIKit;
  * The client class contains all the subsystems, and provides an instanced
  * object that allows them to reference each other.
  * 
- * @see com.pi.client.def.Definitions;
- * @see com.pi.client.entity.ClientEntityManager;
- * @see com.pi.client.net.ClientNetwork;
- * @see com.pi.client.world.World;
- * @see com.pi.graphics.device.DisplayManager;
+ * @see com.pi.client.def.Definitions
+ * @see com.pi.client.entity.ClientEntityManager
+ * @see com.pi.client.net.ClientNetwork
+ * @see com.pi.client.world.SectorManager
+ * @see com.pi.graphics.device.DisplayManager
  * @author Westin
  * 
  */
@@ -49,18 +49,18 @@ public class Client implements Disposable, DeviceRegistration {
 	static {
 		GUIKit.init();
 	}
-	
+
 	/**
 	 * The thread group for monitoring all client threads.
 	 */
 	private ThreadGroup clientThreads;
 
 	/**
-	 * The world manager instance.
+	 * The sector manager instance.
 	 * 
-	 * @see com.pi.client.world.World
+	 * @see com.pi.client.world.SectorManager
 	 */
-	private World world;
+	private SectorManager world;
 
 	/**
 	 * The client's entity manager instance.
@@ -176,25 +176,32 @@ public class Client implements Disposable, DeviceRegistration {
 			}
 		});
 		PILoggerPane plp = new PILoggerPane();
-		logger = new PILogger(Paths.getLogFile(), plp.logOut);
+		logger =
+				new PILogger(plp.getLogOutput(),
+						Paths.getLogFile());
 		reView.addTab("Logger", plp);
-		reView.addTab("Threads", new ThreadMonitorPanel(clientThreads));
+		reView.addTab("Threads", new ThreadMonitorPanel(
+				clientThreads));
 		this.cApplet = applet;
 		this.renderLoop = new RenderLoop(this);
-		this.displayManager = new DisplayManager(this, renderLoop);
+		this.displayManager =
+				new DisplayManager(this, renderLoop);
 
 		// PRE POST INIT
 		GraphicsLoader.load(this);
 
-		reView.addTab("Graphics", new GraphicsMonitorPanel(displayManager));
-		this.world = new World(this);
-		reView.addTab("Sectors",
-				new SectorMonitorPanel(this.world.getSectorManager()));
+		reView.addTab("Graphics", new GraphicsMonitorPanel(
+				displayManager));
+		this.world = new SectorManager(this);
+		reView.addTab("Sectors", new SectorMonitorPanel(
+				this.world));
 		this.defs = new Definitions(this);
-		network = new ClientNetwork(this, Constants.NETWORK_IP,
-				Constants.NETWORK_PORT);
+		network =
+				new ClientNetwork(this, Constants.NETWORK_IP,
+						Constants.NETWORK_PORT);
 		this.entityManager = new ClientEntityManager(this);
-		reView.addTab("Entities", new EntityMonitorPanel(entityManager));
+		reView.addTab("Entities", new EntityMonitorPanel(
+				entityManager));
 
 		// Post INIT
 		this.displayManager.postInititation();
@@ -233,12 +240,12 @@ public class Client implements Disposable, DeviceRegistration {
 	}
 
 	/**
-	 * Gets the world manager for this client.
+	 * Gets the sector manager for this client.
 	 * 
-	 * @see com.pi.client.world.World
-	 * @return the world manager instance
+	 * @see com.pi.client.world.SectorManager
+	 * @return the sector manager instance
 	 */
-	public final World getWorld() {
+	public final SectorManager getWorld() {
 		return world;
 	}
 
@@ -280,7 +287,8 @@ public class Client implements Disposable, DeviceRegistration {
 	 * @return the connected state of the network
 	 */
 	public final boolean isNetworkConnected() {
-		return getNetwork() != null && getNetwork().isConnected();
+		return getNetwork() != null
+				&& getNetwork().isConnected();
 	}
 
 	@Override

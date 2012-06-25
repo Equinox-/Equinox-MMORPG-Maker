@@ -7,24 +7,43 @@ import com.pi.common.Disposable;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 
+/**
+ * A launcher class that uses an applet to display the client.
+ * 
+ * @author Westin
+ * 
+ */
 public class PILauncher extends Applet {
-	private static final long serialVersionUID = 1L;
-	PILogger log;
-	PILoggerPane pane;
-	Disposable bound;
+	/**
+	 * The logger that progress messages are printed into.
+	 */
+	private PILogger log;
+	/**
+	 * The logger pane that the logger outputs to.
+	 */
+	private PILoggerPane pane;
+	/**
+	 * The bound disposable client.
+	 */
+	private Disposable bound;
 
+	/**
+	 * Create a launcher applet.
+	 */
 	public PILauncher() {
-		setSize(500, 500);
+		setSize(ServerConfiguration.DEFAULT_WIDTH,
+				ServerConfiguration.DEFAULT_HEIGHT);
 		setLayout(null);
 		pane = new PILoggerPane();
-		pane.setSize(500, 500);
+		pane.setSize(ServerConfiguration.DEFAULT_WIDTH,
+				ServerConfiguration.DEFAULT_HEIGHT);
 		pane.setLocation(0, 0);
 		add(pane);
-		log = new PILogger(pane.logOut);
+		log = new PILogger(pane.getLogOutput());
 	}
 
 	@Override
-	public void start() {
+	public final void start() {
 		try {
 			Updater.update(log);
 			bound = ClientLoader.loadClientApplet(this);
@@ -34,9 +53,10 @@ public class PILauncher extends Applet {
 	}
 
 	@Override
-	public void destroy() {
-		if (bound != null)
+	public final void destroy() {
+		if (bound != null) {
 			bound.dispose();
+		}
 		super.destroy();
 	}
 }

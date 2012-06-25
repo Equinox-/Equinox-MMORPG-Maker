@@ -83,11 +83,18 @@ public class Entity extends Location {
 	}
 
 	public boolean canMoveIn(SectorManager mgr, Direction dir) {
-		Sector sec = mgr.getSector(getSectorX(), getPlane(), getSectorZ());
-		int moveSX = SectorConstants.worldToSectorX(x + dir.getXOff());
-		int moveSZ = SectorConstants.worldToSectorZ(z + dir.getZOff());
+		Sector sec =
+				mgr.getSector(getSectorX(), getPlane(),
+						getSectorZ());
+		int moveSX =
+				SectorConstants
+						.worldToSectorX(x + dir.getXOff());
+		int moveSZ =
+				SectorConstants
+						.worldToSectorZ(z + dir.getZOff());
 		Sector move;
-		if (moveSX != sec.getSectorX() || moveSZ != sec.getSectorZ()) {
+		if (moveSX != sec.getSectorX()
+				|| moveSZ != sec.getSectorZ()) {
 			move = mgr.getSector(moveSX, getPlane(), moveSZ);
 		} else {
 			move = sec;

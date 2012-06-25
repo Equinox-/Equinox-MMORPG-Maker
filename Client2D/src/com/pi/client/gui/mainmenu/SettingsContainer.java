@@ -9,42 +9,85 @@ import com.pi.gui.PICheckbox;
 import com.pi.gui.PIContainer;
 import com.pi.gui.PIStyle.StyleType;
 
+/**
+ * Container providing settings configuration.
+ * 
+ * @author Westin
+ * 
+ */
 public class SettingsContainer extends PIContainer {
-	private final MainMenu menu;
-	private final PICheckbox opengl = new PICheckbox(), awt = new PICheckbox();
+	/**
+	 * The scalar horizontal padding of this container.
+	 */
+	private static final float HORIZONTAL_PADDING = 0.02f;
+	/**
+	 * The scalar vertical padding of this container.
+	 */
+	private static final float VERTICAL_PADDING = 0.02f;
 
-	public SettingsContainer(final MainMenu menu) {
+	/**
+	 * The scalar checkbox width.
+	 */
+	private static final float CHECKBOX_WIDTH = 0.2f;
+	/**
+	 * The scalar checkbox height.
+	 */
+	private static final float CHECKBOX_HEIGHT = 0.066f;
+
+	/**
+	 * The main menu instance that this container is bound to.
+	 */
+	private final MainMenu menu;
+	/**
+	 * The checkboxes for setting the graphic mode to OpenGL.
+	 */
+	private final PICheckbox opengl = new PICheckbox();
+	/**
+	 * The checkboxes for setting the graphic mode to Java2D, or AWT.
+	 */
+	private final PICheckbox awt = new PICheckbox();
+
+	/**
+	 * Creates and binds a settings container to the provided main menu.
+	 * 
+	 * @param sMenu the main menu
+	 */
+	public SettingsContainer(final MainMenu sMenu) {
 		setStyle(StyleType.Normal, GUIKit.containerNormal);
-		this.menu = menu;
+		this.menu = sMenu;
 		add(opengl);
 		opengl.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (!menu.client.getDisplayManager().getMode()
-						.equals(GraphicsMode.OpenGL)) {
-					menu.client.getDisplayManager()
+			public void mouseClicked(final MouseEvent e) {
+				if (!menu.getClient().getDisplayManager()
+						.getMode().equals(GraphicsMode.OpenGL)) {
+					menu.getClient().getDisplayManager()
 							.setMode(GraphicsMode.OpenGL);
 				}
 			}
 		});
+		opengl.setContent("OpenGL");
+
 		add(awt);
 		awt.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (!menu.client.getDisplayManager().getMode()
-						.equals(GraphicsMode.AWT)) {
-					menu.client.getDisplayManager().setMode(GraphicsMode.AWT);
+			public void mouseClicked(final MouseEvent e) {
+				if (!menu.getClient().getDisplayManager()
+						.getMode().equals(GraphicsMode.AWT)) {
+					menu.getClient().getDisplayManager()
+							.setMode(GraphicsMode.AWT);
 				}
 			}
 		});
-		opengl.setContent("OpenGL");
 		awt.setContent("Safe Mode");
 	}
 
 	@Override
-	public void update() {
-		opengl.setVisible(menu.client.getDisplayManager().hasOpenGL());
-		if (menu.client.getDisplayManager().getMode().equals(GraphicsMode.AWT)) {
+	public final void update() {
+		opengl.setVisible(menu.getClient().getDisplayManager()
+				.hasOpenGL());
+		if (menu.getClient().getDisplayManager().getMode()
+				.equals(GraphicsMode.AWT)) {
 			awt.setChecked(true);
 			opengl.setChecked(false);
 		} else {
@@ -54,11 +97,15 @@ public class SettingsContainer extends PIContainer {
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	public final void setSize(final int width, final int height) {
 		super.setSize(width, height);
-		awt.setLocation(width / 50, height / 50);
-		awt.setSize(width / 5, height / 15);
-		opengl.setLocation(width / 2, height / 50);
-		opengl.setSize(width / 5, height / 15);
+		awt.setLocation((int) (width * HORIZONTAL_PADDING),
+				(int) (height * VERTICAL_PADDING));
+		awt.setSize((int) (width * CHECKBOX_WIDTH),
+				(int) (height * CHECKBOX_HEIGHT));
+		opengl.setLocation(width / 2,
+				(int) (height * VERTICAL_PADDING));
+		opengl.setSize((int) (width * CHECKBOX_WIDTH),
+				(int) (height * CHECKBOX_HEIGHT));
 	}
 }

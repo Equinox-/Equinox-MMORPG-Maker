@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.pi.client.Client;
 import com.pi.client.ClientThread;
@@ -15,18 +16,46 @@ import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
+/**
+ * The sector manager, managing loading, saving, and requesting of sectors from
+ * the server.
+ * 
+ * @author Westin
+ * 
+ */
 public class SectorManager extends ClientThread implements
 		com.pi.common.world.SectorManager {
-	public static final int sectorExpiry = 60000; // 1 Minute
-	public static final int serverRequestExpiry = 60000; // 30 seconds
+	/**
+	 * The amount of time in milliseconds to purge a sector from the memory.
+	 */
+	public static final int SECTOR_EXPIRY = 60000;
+	/**
+	 * The amount of time in milliseconds to re-request a sector from the
+	 * server.
+	 */
+	public static final int SECTOR_REQUEST_EXPIRY = 60000;
 
-	private LinkedList<SectorLocation> loadQueue =
-			new LinkedList<SectorLocation>();
+	/**
+	 * The sector load queue.
+	 */
+	private Queue<SectorLocation> loadQueue =
+			new LinkedBlockingQueue<SectorLocation>();
+	/**
+	 * The storage map for the sectors.
+	 */
 	private Hashtable<SectorLocation, SectorStorage> map =
 			new Hashtable<SectorLocation, SectorStorage>();
+	/**
+	 * The sent request storage map for the sectors.
+	 */
 	private Hashtable<SectorLocation, Long> sentRequests =
 			new Hashtable<SectorLocation, Long>();
 
+	/**
+	 * Create a sector manager for the provided client.
+	 * 
+	 * @param client the client to bind this manager to
+	 */
 	public SectorManager(final Client client) {
 		super(client);
 		createMutex();
@@ -51,6 +80,12 @@ public class SectorManager extends ClientThread implements
 		}
 	}
 
+	/**
+	 * Sets the sector data in the storage map, and also save the sector to the
+	 * cache.
+	 * 
+	 * @param sector the sector to save
+	 */
 	public final void setSector(final Sector sector) {
 		synchronized (getMutex()) {
 			SectorStorage sec =
@@ -87,6 +122,7 @@ public class SectorManager extends ClientThread implements
 				try {
 					getMutex().wait();
 				} catch (InterruptedException e) {
+					getClient().getLog().printStackTrace(e);
 				}
 			} else {
 				doRequest();
@@ -95,16 +131,22 @@ public class SectorManager extends ClientThread implements
 		}
 	}
 
+	/**
+	 * Remove the expired sectors from the RAM.
+	 */
 	private void removeExpired() {
 		for (SectorLocation i : map.keySet()) {
-			if (System.currentTimeMillis() - map.get(i).lastUsed > sectorExpiry) {
+			if (System.currentTimeMillis() - map.get(i).lastUsed >= SECTOR_EXPIRY) {
 				map.remove(i);
 			}
 		}
 	}
 
+	/**
+	 * Do the requests in the load queue.
+	 */
 	private void doRequest() {
-		SectorLocation oldestSector = loadQueue.removeFirst();
+		SectorLocation oldestSector = loadQueue.poll();
 		if (oldestSector != null) {
 			SectorStorage sX = new SectorStorage();
 			File f = Paths.getSectorFile(oldestSector);
@@ -129,7 +171,7 @@ public class SectorManager extends ClientThread implements
 				if (sentRequests.get(oldestSector) == null
 						|| sentRequests.get(oldestSector)
 								.longValue()
-								+ serverRequestExpiry < System
+								+ SECTOR_REQUEST_EXPIRY < System
 									.currentTimeMillis()) {
 					sentRequests.put(oldestSector,
 							System.currentTimeMillis());
@@ -146,6 +188,12 @@ public class SectorManager extends ClientThread implements
 		}
 	}
 
+	/**
+	 * Flag the sector at the given location as blank, and no longer request it
+	 * from the server.
+	 * 
+	 * @param p the sector location to flag blank
+	 */
 	public final void flagSectorAsBlank(final SectorLocation p) {
 		SectorStorage ss = map.get(p);
 		if (ss == null) {
@@ -158,13 +206,14 @@ public class SectorManager extends ClientThread implements
 	}
 
 	@Override
-	public SectorStorage getSectorStorage(int x, int y, int z) {
+	public final SectorStorage getSectorStorage(final int x,
+			final int y, final int z) {
 		synchronized (getMutex()) {
 			SectorLocation p = new SectorLocation(x, y, z);
 			SectorStorage sS = map.get(p);
 			if (sS == null || (sS.data == null && !sS.empty)) {
 				if (!loadQueue.contains(p)) { // TODO FASTER
-					loadQueue.addLast(p);
+					loadQueue.add(p);
 					getMutex().notify();
 				}
 				return null;
@@ -174,7 +223,7 @@ public class SectorManager extends ClientThread implements
 	}
 
 	@Override
-	public Map<SectorLocation, SectorStorage> loadedMap() {
+	public final Map<SectorLocation, SectorStorage> loadedMap() {
 		return Collections.unmodifiableMap(map);
 	}
 }

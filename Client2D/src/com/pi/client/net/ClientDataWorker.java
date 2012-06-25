@@ -3,21 +3,36 @@ package com.pi.client.net;
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.DataWorker;
 
+/**
+ * The data worker sub class for the client's network.
+ * 
+ * @author Westin
+ * 
+ */
 public class ClientDataWorker extends DataWorker {
-	private final ClientNetwork t;
+	/**
+	 * The client network instance.
+	 */
+	private final ClientNetwork net;
 
-	public ClientDataWorker(ClientNetwork t) {
-		super(t.getThreadGroup());
-		this.t = t;
+	/**
+	 * Creates and binds this data worker to the provided client network
+	 * instance.
+	 * 
+	 * @param sNet the client network instance
+	 */
+	public ClientDataWorker(final ClientNetwork sNet) {
+		super(sNet.getThreadGroup());
+		this.net = sNet;
 	}
 
 	@Override
-	public boolean isRunning() {
-		return t.isConnected();
+	public final boolean isRunning() {
+		return net.isConnected();
 	}
 
 	@Override
-	public PILogger getLog() {
-		return t.getLog();
+	public final PILogger getLog() {
+		return net.getLog();
 	}
 }
