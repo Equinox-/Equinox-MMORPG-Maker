@@ -5,7 +5,7 @@ import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.server.database.Paths;

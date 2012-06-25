@@ -2,8 +2,10 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
+import com.pi.common.contants.NetworkConstants;
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
@@ -16,14 +18,16 @@ public class Packet7EntityTeleport extends Packet {
 	public static Packet7EntityTeleport create(Entity ent) {
 		Packet7EntityTeleport p = new Packet7EntityTeleport();
 		p.entityID = ent.getEntityID();
-		p.moved = new Location(ent.getGlobalX(), ent.getPlane(),
-				ent.getGlobalZ());
+		p.moved =
+				new Location(ent.getGlobalX(), ent.getPlane(),
+						ent.getGlobalZ());
 		p.entityLayer = ent.getLayer();
 		return p;
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut) throws IOException {
+	public void writeData(PacketOutputStream pOut)
+			throws IOException {
 		if (moved == null)
 			moved = new Location();
 		pOut.writeInt(entityID);
@@ -32,7 +36,8 @@ public class Packet7EntityTeleport extends Packet {
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn) throws IOException {
+	public void readData(PacketInputStream pIn)
+			throws IOException {
 		entityID = pIn.readInt();
 		if (moved == null)
 			moved = new Location();
@@ -48,6 +53,6 @@ public class Packet7EntityTeleport extends Packet {
 	public int getLength() {
 		if (moved == null)
 			moved = new Location();
-		return 8 + moved.getLength();
+		return (SizeOf.INT * 2) + moved.getLength();
 	}
 }

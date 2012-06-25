@@ -101,7 +101,7 @@ public class SectorManager extends ClientThread implements
 		try {
 			File fin =
 					Paths.getSectorFile(sector.getSectorX(),
-							sector.getSectorY(),
+							sector.getPlane(),
 							sector.getSectorZ());
 			File dest = new File(fin.getAbsolutePath() + ".tmp");
 			DatabaseIO.write(dest, sector);
@@ -177,9 +177,9 @@ public class SectorManager extends ClientThread implements
 							System.currentTimeMillis());
 					Packet5SectorRequest pack =
 							new Packet5SectorRequest();
-					pack.baseX = oldestSector.x;
-					pack.baseY = oldestSector.plane;
-					pack.baseZ = oldestSector.z;
+					pack.baseX = oldestSector.getSectorX();
+					pack.baseY = oldestSector.getPlane();
+					pack.baseZ = oldestSector.getSectorZ();
 					pack.revision = revision;
 					getClient().getNetwork().send(pack);
 					sX.lastUsed = System.currentTimeMillis();

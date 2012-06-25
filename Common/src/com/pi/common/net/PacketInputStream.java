@@ -3,7 +3,6 @@ package com.pi.common.net;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class PacketInputStream {

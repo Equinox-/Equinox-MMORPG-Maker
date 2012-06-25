@@ -4,10 +4,9 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import com.pi.common.database.SectorLocation;
 import com.pi.common.world.SectorManager;
 import com.pi.common.world.SectorManager.SectorStorage;
-import com.pi.common.database.SectorLocation;
-import com.pi.common.debug.PIResourceViewer;
 
 /**
  * Monitors the state of loaded sectors.
@@ -101,11 +100,11 @@ public class SectorMonitorPanel extends JPanel {
 				if (ss != null) {
 					switch (col) {
 					case 0:
-						return key.x + "";
+						return key.getSectorX() + "";
 					case 1:
-						return key.plane + "";
+						return key.getPlane() + "";
 					case 2:
-						return key.z + "";
+						return key.getSectorZ() + "";
 					case 3:
 						return ""
 								+ (System.currentTimeMillis() - ss.lastUsed);

@@ -6,7 +6,7 @@ import com.pi.common.contants.TileFlags;
 import com.pi.common.database.Location;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.common.world.SectorManager;
 
 public class Entity extends Location {
@@ -15,22 +15,22 @@ public class Entity extends Location {
 	protected int entityID = -1;
 	protected int defID = 0;
 
-	public Entity(int def) {
+	public Entity(final int def) {
 		this.defID = def;
 	}
 
 	public Entity() {
 	}
 
-	public void setEntityDef(int entityDef) {
+	public final void setEntityDef(final int entityDef) {
 		this.defID = entityDef;
 	}
 
-	public int getEntityDef() {
+	public final int getEntityDef() {
 		return this.defID;
 	}
 
-	public boolean setEntityID(int id) {
+	public final boolean setEntityID(final int id) {
 		if (entityID == -1) {
 			this.entityID = id;
 			return true;
@@ -38,51 +38,47 @@ public class Entity extends Location {
 		return false;
 	}
 
-	public Direction getDir() {
+	public final Direction getDir() {
 		return dir;
 	}
 
-	public int getEntityID() {
+	public final int getEntityID() {
 		return entityID;
 	}
 
-	public TileLayer getLayer() {
+	public final TileLayer getLayer() {
 		return aboveLayer;
 	}
 
-	@Override
-	public void setLocation(int x, int plane, int z) {
-		super.setLocation(x, plane, z);
-	}
-
-	public void setLocation(Location l) {
+	public final void setLocation(final Location l) {
 		setLocation(l.x, l.plane, l.z);
 	}
 
-	public void setLayer(TileLayer t) {
+	public final void setLayer(final TileLayer t) {
 		aboveLayer = t;
 	}
 
-	public void setDir(Direction dir) {
+	public final void setDir(final Direction dir) {
 		this.dir = dir;
 	}
 
-	public void doMovement() {
+	public final void doMovement() {
 		x += dir.getXOff();
 		z += dir.getZOff();
 	}
 
-	public void teleportShort(Location apply) {
+	public final void teleportShort(final Location apply) {
 		// calculate dir
 		int xC = apply.x - x;
 		int zC = apply.z - z;
-		if (xC != 0 || zC != 0)
+		if (xC != 0 || zC != 0) {
 			dir = Direction.getBestDirection(xC, zC);
+		}
 		this.x = apply.x;
 		this.z = apply.z;
 	}
 
-	public boolean canMoveIn(SectorManager mgr, Direction dir) {
+	public final boolean canMoveIn(final SectorManager mgr, final Direction dir) {
 		Sector sec =
 				mgr.getSector(getSectorX(), getPlane(),
 						getSectorZ());
@@ -111,13 +107,15 @@ public class Entity extends Location {
 					return !t.hasFlag(TileFlags.WALL_EAST);
 				case LEFT:
 					return !t.hasFlag(TileFlags.WALL_WEST);
+				default:
+					break;
 				}
 			}
 		}
 		return false;
 	}
 
-	public boolean canMove(SectorManager sec) {
+	public final boolean canMove(final SectorManager sec) {
 		return canMoveIn(sec, getDir());
 	}
 }

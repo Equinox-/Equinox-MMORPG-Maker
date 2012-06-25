@@ -2,64 +2,135 @@ package com.pi.common.database;
 
 import java.io.IOException;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.PacketObject;
 
+/**
+ * A class representing a tile of a sector.
+ * 
+ * @author Westin
+ * 
+ */
 public class Tile implements PacketObject {
+	/**
+	 * The blocking flags for this tile.
+	 */
 	private int flags = 0;
-	private int attribute = 0;
-	private GraphicsObject[] layers = new GraphicsObject[TileLayer.MAX_VALUE
-			.ordinal()];
+	/**
+	 * The attribute for this tile.
+	 */
+	private TileAttribute attribute = TileAttribute.NONE;
+	/**
+	 * The graphics for each tile layer.
+	 */
+	private GraphicsObject[] layers =
+			new GraphicsObject[TileLayer.MAX_VALUE.ordinal()];
 
+	/**
+	 * Creates an empty tile.
+	 */
 	public Tile() {
 
 	}
 
-	public int getFlags() {
+	/**
+	 * Gets the directional blocking flags for this tile.
+	 * 
+	 * @return the blocking flags
+	 */
+	public final int getFlags() {
 		return flags;
 	}
 
-	public void setFlags(int flags) {
-		this.flags = flags;
+	/**
+	 * Sets the direction blocking flags for this tile.
+	 * 
+	 * @param sFlags the new flags
+	 */
+	public final void setFlags(final int sFlags) {
+		this.flags = sFlags;
 	}
 
-	public int getAttribute() {
+	/**
+	 * Gets this tile's attribute.
+	 * 
+	 * @return this tile's attribute
+	 */
+	public final TileAttribute getAttribute() {
 		return attribute;
 	}
 
-	public void setAttribute(int attrib) {
+	/**
+	 * Sets this tile's attribute.
+	 * 
+	 * @param attrib the new attribute
+	 */
+	public final void setAttribute(final TileAttribute attrib) {
 		attribute = attrib;
 	}
 
-	public boolean hasFlag(int flag) {
+	/**
+	 * Checks if this tile's flags have the specified flag.
+	 * 
+	 * @param flag the flag to check
+	 * @return <code>true</code> if the flag is on, <code>false</code> if the
+	 *         flag is off
+	 */
+	public final boolean hasFlag(final int flag) {
 		return (flags & flag) == flag;
 	}
 
-	public void applyFlag(int flag) {
+	/**
+	 * Applies the specified flag to this tile's flags.
+	 * 
+	 * @param flag the flag to apply
+	 */
+	public final void applyFlag(final int flag) {
 		flags |= flag;
 	}
 
-	public void removeFlag(int flag) {
+	/**
+	 * Removes the specified flags from the flags list.
+	 * 
+	 * @param flag the flag to remove
+	 */
+	public final void removeFlag(final int flag) {
 		flags &= (~flag);
 	}
 
-	public void setLayer(TileLayer layer, GraphicsObject tile) {
+	/**
+	 * Sets the graphics object on the given layer.
+	 * 
+	 * @param layer the layer to modify
+	 * @param tile the graphics object to apply
+	 */
+	public final void setLayer(final TileLayer layer,
+			final GraphicsObject tile) {
 		layers[layer.ordinal()] = tile;
 	}
 
-	public GraphicsObject getLayer(TileLayer layer) {
-		return layer.ordinal() < layers.length ? layers[layer.ordinal()] : null;
-	}
-
-	public static enum TileLayer {
-		GROUND, MASK1, FRINGE1, MAX_VALUE
+	/**
+	 * Gets the graphics object on the given layer.
+	 * 
+	 * @param layer the layer to fetch
+	 * @return the graphics object on the given layer, or <code>null</code> if
+	 *         none exists.
+	 */
+	public final GraphicsObject getLayer(final TileLayer layer) {
+		if (layer.ordinal() < layers.length) {
+			return layers[layer.ordinal()];
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut) throws IOException {
+	public final void writeData(final PacketOutputStream pOut)
+			throws IOException {
 		pOut.writeInt(flags);
-		pOut.writeInt(attribute);
+		pOut.writeInt(attribute.ordinal());
 		int layerFlags = 0;
 		int stuff = 1;
 		for (int i = 0; i < layers.length; i++) {
@@ -70,21 +141,30 @@ public class Tile implements PacketObject {
 		}
 		pOut.writeInt(layerFlags);
 		for (int i = 0; i < layers.length; i++) {
-			if (layers[i] != null)
+			if (layers[i] != null) {
 				layers[i].writeData(pOut);
+			}
 		}
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		flags = pIn.readInt();
-		attribute = pIn.readInt();
+		int attribID = pIn.readInt();
+		if (attribID >= 0
+				&& attribID < TileAttribute.values().length) {
+			attribute = TileAttribute.values()[attribID];
+		} else {
+			attribute = TileAttribute.NONE;
+		}
 		int layerFlags = pIn.readInt();
 		int stuff = 1;
 		for (int i = 0; i < layers.length; i++) {
 			if ((layerFlags & stuff) == stuff) {
-				if (layers[i] == null)
+				if (layers[i] == null) {
 					layers[i] = new GraphicsObject();
+				}
 				layers[i].readData(pIn);
 			} else {
 				layers[i] = null;
@@ -94,11 +174,12 @@ public class Tile implements PacketObject {
 	}
 
 	@Override
-	public int getLength() {
-		int size = 12;
+	public final int getLength() {
+		int size = 3 * SizeOf.INT;
 		for (int i = 0; i < layers.length; i++) {
-			if (layers[i] != null)
+			if (layers[i] != null) {
 				size += layers[i].getLength();
+			}
 		}
 		return size;
 	}

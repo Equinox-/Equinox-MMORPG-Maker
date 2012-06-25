@@ -2,8 +2,9 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.common.game.Entity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
@@ -15,7 +16,8 @@ public class Packet9EntityData extends Packet {
 	public int entID;
 
 	@Override
-	public void writeData(PacketOutputStream pOut) throws IOException {
+	public void writeData(PacketOutputStream pOut)
+			throws IOException {
 		pOut.writeInt(entID);
 		if (loc == null)
 			loc = new Location();
@@ -25,7 +27,8 @@ public class Packet9EntityData extends Packet {
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn) throws IOException {
+	public void readData(PacketInputStream pIn)
+			throws IOException {
 		entID = pIn.readInt();
 		if (loc == null)
 			loc = new Location();
@@ -51,6 +54,7 @@ public class Packet9EntityData extends Packet {
 	public int getLength() {
 		if (loc == null)
 			loc = new Location();
-		return 12 + loc.getLength();
+		return (3 * SizeOf.INT)
+				+ loc.getLength();
 	}
 }

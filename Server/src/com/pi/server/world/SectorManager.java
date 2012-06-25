@@ -119,7 +119,7 @@ public class SectorManager extends ServerThread implements
 		// Write Sector
 		try {
 			DatabaseIO.write(Paths.getSectorFile(
-					sector.getSectorX(), sector.getSectorY(),
+					sector.getSectorX(), sector.getPlane(),
 					sector.getSectorZ()), sector);
 		} catch (IOException e) {
 			server.getLog().printStackTrace(e);

@@ -10,7 +10,7 @@ import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.graphics.device.IGraphics;
 import com.pi.gui.PIContainer;
 import com.pi.gui.PIScrollBar;

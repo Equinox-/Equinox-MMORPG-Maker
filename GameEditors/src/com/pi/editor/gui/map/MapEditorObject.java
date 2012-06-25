@@ -16,7 +16,7 @@ import com.pi.common.contants.TileFlags;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.editor.Paths;
 import com.pi.graphics.device.IGraphics;
@@ -558,7 +558,7 @@ public class MapEditorObject extends PIContainer implements ScrollBarListener,
     }
 
     @Override
-    public TileLayer getCurrentTileLayer() {
+	public TileLayer getCurrentTileLayer() {
 	return directionBlockMode.isChecked() || tileAX < 0 ? null
 		: currentTileLayer;
     }

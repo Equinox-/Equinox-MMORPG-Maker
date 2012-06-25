@@ -23,7 +23,8 @@ public final class Paths {
 	/**
 	 * The folder that the game cache is stored in.
 	 */
-	public static final String GAME_FOLDER_NAME = ".equinox_mmorpg";
+	public static final String GAME_FOLDER_NAME =
+			".equinox_mmorpg";
 
 	/**
 	 * An enum defining representing the possible operating systems.
@@ -68,8 +69,9 @@ public final class Paths {
 	/**
 	 * Represents the current operating system.
 	 */
-	public static final OperatingSystem CURRENT_OS = OperatingSystem
-			.lookup(System.getProperty("os.name"));
+	public static final OperatingSystem CURRENT_OS =
+			OperatingSystem
+					.lookup(System.getProperty("os.name"));
 
 	/**
 	 * Get's the user's home directory on a unix operating system.
@@ -146,7 +148,8 @@ public final class Paths {
 	 * @see com.pi.client.database.Paths#getSectorFile(int, int, int);
 	 */
 	public static File getSectorFile(final SectorLocation l) {
-		return getSectorFile(l.x, l.plane, l.z);
+		return getSectorFile(l.getSectorX(), l.getPlane(),
+				l.getSectorZ());
 	}
 
 	/**
@@ -160,8 +163,10 @@ public final class Paths {
 	public static File getHomeDirectory() {
 		File f;
 		if (CURRENT_OS == OperatingSystem.WINDOWS) {
-			f = new File(FileSystemView.getFileSystemView()
-					.getDefaultDirectory(), GAME_FOLDER_NAME);
+			f =
+					new File(FileSystemView.getFileSystemView()
+							.getDefaultDirectory(),
+							GAME_FOLDER_NAME);
 		} else {
 			f = new File(getUnixHome(), GAME_FOLDER_NAME);
 		}

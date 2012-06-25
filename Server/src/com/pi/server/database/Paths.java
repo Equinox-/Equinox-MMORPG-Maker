@@ -47,11 +47,13 @@ public class Paths {
 	}
 
 	public static File getSectorFile(int x, int y, int z) {
-		return new File(getSectorDirectory(), x + "-" + y + "-" + z + ".sector");
+		return new File(getSectorDirectory(), x + "-" + y + "-"
+				+ z + ".sector");
 	}
 
 	public static File getSectorFile(SectorLocation l) {
-		return getSectorFile(l.x, l.plane, l.z);
+		return getSectorFile(l.getSectorX(), l.getPlane(),
+				l.getSectorZ());
 	}
 
 	public static File getEntityDefDirectory() {

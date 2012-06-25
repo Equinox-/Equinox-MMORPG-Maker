@@ -4,30 +4,67 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * A panel for displaying the threads in a thread group.
+ * 
+ * @author Westin
+ * 
+ */
 public class ThreadMonitorPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private final ThreadGroup tg;
-	private ThreadTableModel table_model = new ThreadTableModel();
-	private JTable tbl;
 
-	public ThreadMonitorPanel(ThreadGroup tg) {
-		this.tg = tg;
+	/**
+	 * Creates a thread monitor panel bound to the specified thread group.
+	 * 
+	 * @param tg the thread group to bind to
+	 */
+	public ThreadMonitorPanel(final ThreadGroup tg) {
 		setLayout(null);
 		setLocation(0, 0);
-		setSize(500, 500);
-		tbl = new JTable(table_model);
+		setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
+		JTable tbl = new JTable(new ThreadTableModel(tg));
 		tbl.setLocation(0, 0);
-		tbl.setSize(500, 500);
+		tbl.setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
 		tbl.setVisible(true);
 		tbl.setFillsViewportHeight(true);
 		add(tbl);
 		setVisible(true);
 	}
 
-	private class ThreadTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 1L;
-		String[] colName = { "ID", "Name", "Priority", "State" };
-		Class<?>[] colClass = { Integer.class, String.class, Integer.class,
+	/**
+	 * A table model that displays the threads running in a thread group.
+	 * 
+	 * @author Westin
+	 * 
+	 */
+	private static final class ThreadTableModel extends
+			AbstractTableModel {
+		/**
+		 * The thread group this table model is bound to.
+		 */
+		private final ThreadGroup tg;
+
+		/**
+		 * Create a thread table model with the specified thread group bound to
+		 * it.
+		 * 
+		 * @param tG the thread group to bind
+		 */
+		private ThreadTableModel(final ThreadGroup tG) {
+			this.tg = tG;
+		}
+
+		/**
+		 * The column names.
+		 */
+		private static final String[] COLUMN_NAMES = { "ID",
+				"Name", "Priority", "State" };
+		/**
+		 * The class type for each column.
+		 */
+		private static final Class<?>[] COLUMN_CLASSES = {
+				Integer.class, String.class, Integer.class,
 				String.class };
 
 		@Override
@@ -37,13 +74,13 @@ public class ThreadMonitorPanel extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return colName.length;
+			return COLUMN_NAMES.length;
 		}
 
 		@Override
-		public Object getValueAt(int row, int col) {
-			Thread[] thrds;
-			tg.enumerate(thrds = new Thread[tg.activeCount()]);
+		public Object getValueAt(final int row, final int col) {
+			Thread[] thrds = new Thread[tg.activeCount()];
+			tg.enumerate(thrds);
 			if (row < thrds.length) {
 				Thread t = thrds[row];
 				switch (col) {
@@ -54,8 +91,11 @@ public class ThreadMonitorPanel extends JPanel {
 				case 2:
 					return t.getPriority();
 				case 3:
-					return t.getState() != null ? t.getState().toString()
-							: "null";
+					if (t.getState() != null) {
+						return t.getState().toString();
+					} else {
+						return "null";
+					}
 				default:
 					return "";
 				}
@@ -64,18 +104,18 @@ public class ThreadMonitorPanel extends JPanel {
 		}
 
 		@Override
-		public String getColumnName(int paramInt) {
-			return colName[paramInt];
+		public String getColumnName(final int col) {
+			return COLUMN_NAMES[col];
 		}
 
 		@Override
-		public Class<?> getColumnClass(int paramInt) {
-			return paramInt < colClass.length ? colClass[paramInt]
-					: String.class;
+		public Class<?> getColumnClass(final int col) {
+			return COLUMN_CLASSES[col];
 		}
 
 		@Override
-		public boolean isCellEditable(int paramInt1, int paramInt2) {
+		public boolean isCellEditable(final int row,
+				final int col) {
 			return false;
 		}
 	}

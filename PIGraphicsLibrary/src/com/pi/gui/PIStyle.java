@@ -31,8 +31,8 @@ public class PIStyle {
 
 	public Color border = null;
 	public Color background = null;
-	public Color foreground = GraphicsConstants.fontColor;
-	public Font font = GraphicsConstants.font;
+	public Color foreground = GraphicsConstants.FONT_COLOR;
+	public Font font = GraphicsConstants.FONT;
 	public GraphicsObject bgImage;
 	public boolean stretchBackgroundX = false;
 	public boolean stretchBackgroundY = false;

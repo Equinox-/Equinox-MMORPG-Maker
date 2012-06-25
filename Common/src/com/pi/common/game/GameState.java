@@ -1,5 +1,22 @@
 package com.pi.common.game;
 
+/**
+ * Enum representing the state of a client's game.
+ * 
+ * @author Westin
+ * 
+ */
 public enum GameState {
-	LOADING, MAIN_MENU, MAIN_GAME
+	/**
+	 * State representing the loading state of the client.
+	 */
+	LOADING, 
+	/**
+	 * State representing a client on the main menu.
+	 */
+	MAIN_MENU, 
+	/**
+	 * State representing a client that is in game.
+	 */
+	MAIN_GAME
 }

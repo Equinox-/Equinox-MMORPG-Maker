@@ -2,7 +2,7 @@ package com.pi.editor.gui.map;
 
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
-import com.pi.common.database.Tile.TileLayer;
+import com.pi.common.database.TileLayer;
 import com.pi.graphics.device.IGraphics;
 
 public interface MapInfoRenderer {
