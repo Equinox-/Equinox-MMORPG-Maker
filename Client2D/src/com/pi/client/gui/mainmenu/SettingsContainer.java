@@ -53,7 +53,7 @@ public class SettingsContainer extends PIContainer {
 	 * @param sMenu the main menu
 	 */
 	public SettingsContainer(final MainMenu sMenu) {
-		setStyle(StyleType.Normal, GUIKit.containerNormal);
+		setStyle(StyleType.NORMAL, GUIKit.DEFAULT_CONTAINER_STYLE);
 		this.menu = sMenu;
 		add(opengl);
 		opengl.addMouseListener(new MouseAdapter() {

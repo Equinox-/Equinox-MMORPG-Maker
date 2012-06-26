@@ -64,7 +64,7 @@ public class RenderLoop implements Renderable, MouseListener,
 				break;
 			}
 			// Render popup
-			popup.render(g, client.getApplet().getWidth(),
+			popup.render(g, 0, 0, client.getApplet().getWidth(),
 					client.getApplet().getHeight());
 			return;
 		}

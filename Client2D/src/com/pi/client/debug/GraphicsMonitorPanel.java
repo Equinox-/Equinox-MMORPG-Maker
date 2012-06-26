@@ -108,8 +108,8 @@ public class GraphicsMonitorPanel extends JPanel {
 					if (ss == null) {
 						return "null";
 					} else {
-						return (System.currentTimeMillis() - ss.lastUsed)
-								+ "ms";
+						return (System.currentTimeMillis() - ss
+								.getLastUsedTime()) + "ms";
 					}
 				case 2:
 					if (ss == null || ss.getGraphic() == null) {

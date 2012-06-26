@@ -64,31 +64,33 @@ public class LoginContainer extends PIContainer {
 	 * @param menu the logic container
 	 */
 	public LoginContainer(final MainMenu menu) {
-		setStyle(StyleType.Normal, GUIKit.containerNormal);
-		usernameField.setStyleSet(GUIKit.textfieldSet, false);
+		setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_CONTAINER_STYLE);
 		usernameField
 				.setMaxLength(UserConstants.USERNAME_MAX_SIZE);
-		usernameLabel.setStyle(StyleType.Normal, GUIKit.label);
+		usernameLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		usernameLabel.setContent("Username");
 		passwordLabel.setContent("Password");
-		passwordLabel.setStyle(StyleType.Normal, GUIKit.label);
-		passwordField.setStyleSet(GUIKit.textfieldSet, false);
+		passwordLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		passwordField.setMask('*');
 		passwordField
 				.setMaxLength(UserConstants.PASSWORD_MAX_SIZE);
-		loginButton.setStyleSet(GUIKit.buttonSet, false);
 		loginButton.setContent("Login");
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				if (menu.getClient().isNetworkConnected()) {
 					if (usernameField.getContent().length() <= 0) {
-						menu.getClient().getRenderLoop().alert(
-								"You must enter a username!");
+						menu.getClient()
+								.getRenderLoop()
+								.alert("You must enter a username!");
 					} else if (passwordField.getContent()
 							.length() <= 0) {
-						menu.getClient().getRenderLoop().alert(
-								"You must enter a password!");
+						menu.getClient()
+								.getRenderLoop()
+								.alert("You must enter a password!");
 					} else {
 						Packet1Login pack = new Packet1Login();
 						pack.username =
@@ -97,8 +99,10 @@ public class LoginContainer extends PIContainer {
 								PICryptUtils.crypt(passwordField
 										.getContent());
 						menu.getClient().getNetwork().send(pack);
-						menu.getClient().getRenderLoop().loading(
-								"Connecting to server...");
+						menu.getClient()
+								.getRenderLoop()
+								.loading(
+										"Connecting to server...");
 					}
 				} else {
 					menu.getClient()
@@ -128,19 +132,19 @@ public class LoginContainer extends PIContainer {
 		usernameLabel.setLocation(lMarg, vMarg + currentHeight);
 		usernameLabel.setSize(fieldWidth, fieldHeight);
 		currentHeight += fieldHeight;
-		
+
 		usernameField.setLocation(lMarg, vMarg + currentHeight);
 		usernameField.setSize(fieldWidth, fieldHeight);
 		currentHeight += fieldHeight;
-		
+
 		passwordLabel.setLocation(lMarg, vMarg + currentHeight);
 		passwordLabel.setSize(fieldWidth, fieldHeight);
 		currentHeight += fieldHeight;
-		
+
 		passwordField.setLocation(lMarg, vMarg + currentHeight);
 		passwordField.setSize(fieldWidth, fieldHeight);
 		currentHeight += fieldHeight;
-		
+
 		loginButton.setLocation(lMarg, height - fieldHeight
 				- vMarg);
 		loginButton.setSize(fieldWidth, fieldHeight);

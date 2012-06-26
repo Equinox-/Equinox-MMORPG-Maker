@@ -30,8 +30,10 @@ public class CreditsContainer extends PIContainer {
 	 * Creates an instance of the credits container.
 	 */
 	public CreditsContainer() {
-		setStyle(StyleType.Normal, GUIKit.containerNormal);
-		creditLabel.setStyle(StyleType.Normal, GUIKit.label);
+		setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_CONTAINER_STYLE);
+		creditLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		creditLabel
 				.setContent("Equinox MMORPG Maker\n\n"
 						+ "Created by Westin Miller alias 314piwm alias Equinox\n\n"

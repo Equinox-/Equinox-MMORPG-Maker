@@ -88,7 +88,8 @@ public class MainMenu implements Renderable, MouseListener,
 	/**
 	 * The style of the server status component.
 	 */
-	private PIStyle serverStatusStyle = GUIKit.label.clone();
+	private PIStyle serverStatusStyle =
+			GUIKit.DEFAULT_LABEL_STYLE.clone();
 	/**
 	 * The bound client.
 	 */
@@ -101,9 +102,9 @@ public class MainMenu implements Renderable, MouseListener,
 	 */
 	public MainMenu(final Client c) {
 		this.client = c;
-		set = GUIKit.buttonSet.clone();
+		set = GUIKit.BUTTON_STYLE_SET.clone();
 		serverStatusStyle.hAlign = false;
-		serverStatus.setStyle(StyleType.Normal,
+		serverStatus.setStyle(StyleType.NORMAL,
 				serverStatusStyle);
 		loginButton.setContent("Login");
 		loginButton.setStyleSet(set, false);
@@ -184,7 +185,7 @@ public class MainMenu implements Renderable, MouseListener,
 			serverStatusStyle.foreground = Color.red;
 			serverStatus.setContent("Offline");
 		}
-		serverStatus.setStyle(StyleType.Normal,
+		serverStatus.setStyle(StyleType.NORMAL,
 				serverStatusStyle);
 
 		buttonContainer.render(g);
@@ -213,14 +214,10 @@ public class MainMenu implements Renderable, MouseListener,
 		int menuLocY = (int) (height * MENU_Y_POSITION);
 
 		float fontSize = width * FONT_SIZE_WIDTH;
-		if (set.active != null) {
-			set.active.setFontSize(fontSize);
-		}
-		if (set.normal != null) {
-			set.normal.setFontSize(fontSize);
-		}
-		if (set.hover != null) {
-			set.hover.setFontSize(fontSize);
+		for (StyleType type : StyleType.values()) {
+			if (set.getStyle(type) != null) {
+				set.getStyle(type).setFontSize(fontSize);
+			}
 		}
 
 		loginOption.setSize(menuWidth, menuHeight);

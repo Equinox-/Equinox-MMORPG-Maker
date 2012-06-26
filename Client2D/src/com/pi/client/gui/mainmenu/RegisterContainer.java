@@ -71,27 +71,25 @@ public class RegisterContainer extends PIContainer {
 	 * @param menu the provided menu
 	 */
 	public RegisterContainer(final MainMenu menu) {
-		setStyle(StyleType.Normal, GUIKit.containerNormal);
-		usernameField.setStyleSet(GUIKit.textfieldSet, false);
+		setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_CONTAINER_STYLE);
 		usernameField
 				.setMaxLength(UserConstants.USERNAME_MAX_SIZE);
-		usernameLabel.setStyle(StyleType.Normal, GUIKit.label);
+		usernameLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		usernameLabel.setContent("Username");
 		passwordLabel.setContent("Password");
-		passwordLabel.setStyle(StyleType.Normal, GUIKit.label);
-		passwordField.setStyleSet(GUIKit.textfieldSet, false);
+		passwordLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		passwordField.setMask('*');
 		passwordField
 				.setMaxLength(UserConstants.PASSWORD_MAX_SIZE);
 		confPasswordLabel.setContent("Confirm Password");
-		confPasswordLabel.setStyle(StyleType.Normal,
-				GUIKit.label);
-		confPasswordField
-				.setStyleSet(GUIKit.textfieldSet, false);
+		confPasswordLabel.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_LABEL_STYLE);
 		confPasswordField.setMask('*');
 		confPasswordField
 				.setMaxLength(UserConstants.PASSWORD_MAX_SIZE);
-		registerButton.setStyleSet(GUIKit.buttonSet, false);
 		registerButton.setContent("Register");
 		registerButton.addMouseListener(new MouseAdapter() {
 			@Override

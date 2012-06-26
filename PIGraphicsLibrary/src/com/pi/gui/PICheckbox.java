@@ -6,47 +6,74 @@ import java.awt.event.MouseEvent;
 
 import com.pi.graphics.device.IGraphics;
 
+/**
+ * A component with a checkable box next to the component's text content.
+ * 
+ * @author Westin
+ * 
+ */
 public class PICheckbox extends PIComponent {
 
+	/**
+	 * Create a checkbox with the default style set as defined in
+	 * {@link GUIKit#CHECKBOX_STYLE_SET}.
+	 */
 	public PICheckbox() {
-		setStyleSet(GUIKit.checkboxSet, false);
+		setStyleSet(GUIKit.CHECKBOX_STYLE_SET, false);
 	}
 
-	public boolean isChecked() {
+	/**
+	 * If this checkbox is currently checked.
+	 * 
+	 * @return the checked state
+	 */
+	public final boolean isChecked() {
 		return isActive;
 	}
 
-	public void setChecked(boolean checked) {
+	/**
+	 * Set the checked state of this checkbox.
+	 * 
+	 * @param checked the new checked state
+	 */
+	public final void setChecked(final boolean checked) {
 		this.isActive = checked;
 	}
 
 	@Override
-	public PIStyle getCurrentStyle() {
-		if (hovering && containsStyle(PIStyle.StyleType.Hover))
-			return getStyle(PIStyle.StyleType.Hover);
-		if (isActive && containsStyle(PIStyle.StyleType.Active))
-			return getStyle(PIStyle.StyleType.Active);
-		return getStyle(PIStyle.StyleType.Normal);
+	public final PIStyle getCurrentStyle() {
+		if (hovering && containsStyle(PIStyle.StyleType.HOVER)) {
+			return getStyle(PIStyle.StyleType.HOVER);
+		}
+		if (isActive && containsStyle(PIStyle.StyleType.ACTIVE)) {
+			return getStyle(PIStyle.StyleType.ACTIVE);
+		}
+		return getStyle(PIStyle.StyleType.NORMAL);
 	}
 
 	@Override
-	public void paintBackground(IGraphics g) {
-		PIStyle style;
-		if (isVisible && (style = getCurrentStyle()) != null) {
+	public final void paintBackground(final IGraphics g) {
+		if (isVisible) {
+			PIStyle style = getCurrentStyle();
+			if (style == null) {
+				return;
+			}
 			Rectangle bounds = getAbsoluteBounds();
 			if (style.background != null) {
 				g.setColor(style.background);
-				g.fillRect(bounds.x, bounds.y, bounds.height, bounds.height);
+				g.fillRect(bounds.x, bounds.y, bounds.height,
+						bounds.height);
 			}
 			if (style.border != null) {
 				g.setColor(style.border);
-				g.drawRect(bounds.x, bounds.y, bounds.height, bounds.height);
+				g.drawRect(bounds.x, bounds.y, bounds.height,
+						bounds.height);
 			}
 		}
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public final void mouseClicked(final MouseEvent e) {
 		if (isFocused) {
 			isActive = !isActive;
 		}
@@ -54,20 +81,23 @@ public class PICheckbox extends PIComponent {
 	}
 
 	@Override
-	public Rectangle getAbsolutePaddedBounds() {
+	public final Rectangle getAbsolutePaddedBounds() {
 		Rectangle bounds = getAbsoluteBounds();
-		bounds.setBounds(bounds.x + bounds.height + 4, bounds.y, bounds.width,
-				bounds.height);
+		bounds.setBounds(bounds.x + bounds.height + 4, bounds.y,
+				bounds.width, bounds.height);
 		return bounds;
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
+	public final void keyTyped(final KeyEvent e) {
 		super.keyPressed(e);
 		if (e.getKeyChar() == '\n' && isFocused) {
-			MouseEvent ev = new MouseEvent(e.getComponent(),
-					MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
-					absX + (width / 2), absY + (height / 2), 1, false);
+			MouseEvent ev =
+					new MouseEvent(e.getComponent(),
+							MouseEvent.MOUSE_CLICKED,
+							System.currentTimeMillis(), 0, absX
+									+ (width / 2), absY
+									+ (height / 2), 1, false);
 			ev.setSource(this);
 			mouseClicked(ev);
 		}
