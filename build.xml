@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="help" name="Create binaries and javadoc for Equinox MMORPG maker">
+	<property name="setDir" location="C:/Users/Westin/java-workspace/EMMORPG" />
+	<!-- Help + Info -->
+	<target name="help">
+		<echo>Apache ANT Buildfile for Equinox MMORPG Maker
+		
+Available tasks:
+all: Does all the below tasks
+javadoc: Builds the documentation in the super directory EMMORPG_doc
+
+Cleaning build artifacts:
+clean_all: Cleans all build artifacts
+clean_client: Cleans client build artifacts
+clean_editors: Cleans game editor build artifacts
+clean_clientlauncher: Cleans client launcher build artifacts
+clean_server: Cleans server build artifacts
+clean_common: Cleans common build artifacts
+clean_graphicslib: Cleans build artifacts from the graphics library
+
+Compiling code:
+build_all: Builds and compiles all code, in the correct order
+build_common: Builds the common code
+build_graphicslib: Builds the graphics library.  This depends on the common code, so will also run build_common.
+build_client: Builds the game client.  This depends on the graphics library and common code, so both build_graphicslib and build_common will be run.
+build_clientlauncher: Builds the client launcher
+build_editors: Builds the game editors.  This depends on the graphics library and common code, so both build_graphicslib and build_common will be run.
+build_server: Builds the server code.  This depends on the common code, so will also run build_common.
+
+Packaging code:
+package_all: Packages the client, client launcher, editors, and server into runnable Java Archive (JAR) files
+package_client: Packages the client into a runnable JAR file, stored in the client launcher's library folder.
+package_clientlauncher: Packages the client launcher into a runnable JAR file, stored in the main directory.
+package_editors: Packages the game editor into a runnable JAR file, stored in the main directory.
+package_server: Packages the server into a runnable JAR file, stored in the main directory.
+		</echo>
+	</target>
+	
+	<!-- Global do everything -->
+	<target name="all" depends="clean_all,build_all,package_all"/>
+	
+	<!-- Clean build artifacts -->
+	<target name="clean_all" depends="clean_client,clean_clientlauncher,clean_server,clean_common,clean_graphicslib,clean_editors"/>
+	<target name="clean_client">
+		<delete dir="${setDir}/Client2D/bin" file="${setDir}/ClientLauncher/lib/EquinoxClient.jar"/>
+	</target>
+	<target name="clean_editors">
+		<delete dir="${setDir}/GameEditors/bin" file="${setDir}/GameEditors.jar"/>
+	</target>
+	<target name="clean_clientlauncher">
+		<delete dir="${setDir}/ClientLauncher/bin" file="${setDir}/EquinoxLauncher.jar"/>
+	</target>
+	<target name="clean_server">
+		<delete dir="${setDir}/Server/bin" file="${setDir}/Server.jar"/>
+	</target>
+	<target name="clean_common">
+		<delete dir="${setDir}/Common/bin"/>
+	</target>
+	<target name="clean_graphicslib">
+		<delete dir="${setDir}/PIGraphicsLibrary/bin"/>
+	</target>
+	
+	
+	<!-- Code compilation -->
+    <path id="client_classpath">
+		<pathelement location="${setDir}/Common/bin"/>
+		<pathelement location="${setDir}/PIGraphicsLibrary/bin"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
+    </path>
+    <path id="editors_classpath">
+		<pathelement location="${setDir}/Common/bin"/>
+		<pathelement location="${setDir}/PIGraphicsLibrary/bin"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
+    </path>
+    <path id="graphicslib_classpath">
+		<pathelement location="${setDir}/Common/bin"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
+    </path>
+	<path id="server_classpath">
+		<pathelement location="${setDir}/Common/bin"/>
+    </path>
+	
+	<target name="build_all" depends="build_common,build_graphicslib,build_client,build_server,build_clientlauncher,build_editors"/>
+	<target name="build_client" depends="build_graphicslib">
+		<mkdir dir="${setDir}/Client2D/bin"/>
+        <javac srcdir="${setDir}/Client2D/src" destdir="${setDir}/Client2D/bin" classpathref="client_classpath"/>
+	</target>
+	<target name="build_editors" depends="build_graphicslib">
+		<mkdir dir="${setDir}/GameEditors/bin"/>
+        <javac srcdir="${setDir}/GameEditors/src" destdir="${setDir}/GameEditors/bin" classpathref="editors_classpath"/>
+	</target>
+	<target name="build_clientlauncher">
+		<mkdir dir="${setDir}/ClientLauncher/bin"/>
+        <javac srcdir="${setDir}/ClientLauncher/src" destdir="${setDir}/ClientLauncher/bin"/>
+	</target>	
+	<target name="build_common">
+		<mkdir dir="${setDir}/Common/bin"/>
+        <javac srcdir="${setDir}/Common/src" destdir="${setDir}/Common/bin"/>
+	</target>
+	<target name="build_graphicslib" depends="build_common">
+		<mkdir dir="${setDir}/PIGraphicsLibrary/bin"/>
+        <javac srcdir="${setDir}/PIGraphicsLibrary/src" destdir="${setDir}/PIGraphicsLibrary/bin" classpathref="graphicslib_classpath"/>
+	</target>
+	<target name="build_server" depends="build_common">
+		<mkdir dir="${setDir}/Server/bin"/>
+        <javac srcdir="${setDir}/Server/src" destdir="${setDir}/Server/bin" classpathref="server_classpath"/>
+	</target>
+	
+	
+	<!-- Runnable JAR creation -->
+	<target name="package_all" depends="package_client,package_clientlauncher,package_server,package_editors"/>
+	
+    <target name="package_client">
+        <jar destfile="${setDir}/ClientLauncher/lib/EquinoxClient.jar">
+            <manifest>
+                <attribute name="Main-Class" value="com.pi.client.clientviewer.ClientViewerFrame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${setDir}/Client2D/bin"/>
+            <fileset dir="${setDir}/Common/bin"/>
+            <fileset dir="${setDir}/PIGraphicsLibrary/bin"/>
+        </jar>
+    </target>
+	
+	<target name="package_clientlauncher">
+        <jar destfile="${setDir}/EquinoxLauncher.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com.pi.launcher.LauncherViewerFrame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+        	<fileset dir="${setDir}/ClientLauncher/bin"/>
+        </jar>
+    </target>
+	
+	<target name="package_server">
+        <jar destfile="${setDir}/Server.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com.pi.server.Server"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${setDir}/Server/bin"/>
+            <fileset dir="${setDir}/Common/bin"/>
+        </jar>
+    </target>
+	<target name="package_editors">
+        <jar destfile="${setDir}/GameEditors.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="com.pi.editor.EditorViewerFrame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${setDir}/GameEditors/bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
+            <fileset dir="${setDir}/Common/bin"/>
+            <fileset dir="${setDir}/PIGraphicsLibrary/bin"/>
+        </jar>
+    </target>
+	
+	<!--Documentation-->
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="${setDir}/ClientLauncher/lib/gluegen-rt.jar;/Common/bin;${setDir}/ClientLauncher/lib/jogl.all.jar;${setDir}/ClientLauncher/lib/nativewindow.all.jar;${setDir}/PIGraphicsLibrary/bin" destdir="${setDir}/../EMMORPG_doc" doctitle="Equinox MMORPG Maker" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.pi.server.debug,com.pi.common.world,com.pi.common.net,com.pi.client.net,com.pi.server.net,com.pi.graphics.device.opengl,com.pi.common.database.def,com.pi.server.constants,com.pi.server,com.pi.graphics.device,com.pi.graphics.device.awt,com.pi.common.game,com.pi.common,com.pi.common.contants,com.pi.common.debug,com.pi.editor,com.pi.client.world,com.pi.client.game,com.pi.client.debug,com.pi.launcher,com.pi.client,com.pi.client.entity,com.pi.client.database.webfiles,com.pi.gui,com.pi.editor.gui,com.pi.editor.gui.map,com.pi.common.net.packet,com.pi.server.world,com.pi.client.database,com.pi.server.def,com.pi.server.logic,com.pi.client.graphics,com.pi.client.clientviewer,com.pi.common.database.io,com.pi.client.gui.mainmenu,com.pi.client.constants,com.pi.server.entity,com.pi.client.def,com.pi.server.logic.entity,com.pi.server.database,com.pi.server.client,com.pi.common.database" source="1.6" sourcepath="C:\Users\Westin\java-workspace\EMMORPG\PIGraphicsLibrary\src;C:\Users\Westin\java-workspace\EMMORPG\Client2D\src;C:\Users\Westin\java-workspace\EMMORPG\Server\src;C:\Users\Westin\java-workspace\EMMORPG\Common\src;C:\Users\Westin\java-workspace\EMMORPG\ClientLauncher\src;C:\Users\Westin\java-workspace\EMMORPG\GameEditors\src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

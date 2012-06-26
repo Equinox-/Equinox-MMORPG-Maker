@@ -74,7 +74,7 @@ public final class Paths {
 					.lookup(System.getProperty("os.name"));
 
 	/**
-	 * Get's the user's home directory on a unix operating system.
+	 * Get's the user's home directory on a *nix operating system.
 	 * 
 	 * @return the user's home directory.
 	 */
@@ -145,7 +145,7 @@ public final class Paths {
 	 * 
 	 * @param l the sector location
 	 * @return the file path
-	 * @see com.pi.client.database.Paths#getSectorFile(int, int, int);
+	 * @see Paths#getSectorFile(int, int, int)
 	 */
 	public static File getSectorFile(final SectorLocation l) {
 		return getSectorFile(l.getSectorX(), l.getPlane(),

@@ -36,8 +36,6 @@ public final class GUIKit {
 
 	/**
 	 * The default label style.
-	 * 
-	 * @see PILabel
 	 */
 	public static final PIStyle DEFAULT_LABEL_STYLE =
 			new PIStyle();

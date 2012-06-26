@@ -122,7 +122,7 @@ public class PacketOutputStream {
 	/**
 	 * Writes the specified float to the buffer as 4 bytes.
 	 * 
-	 * @see ByteBuffer#putFloat(int)
+	 * @see ByteBuffer#putFloat(float)
 	 * @param f the float to write
 	 */
 	public final void writeFloat(final float f) {

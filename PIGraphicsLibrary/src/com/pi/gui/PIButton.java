@@ -14,7 +14,7 @@ public class PIButton extends PIComponent {
 
 	/**
 	 * Create a normal button with the button style set as defined in
-	 * {@link GUIKit#BUTTON_SET}.
+	 * {@link GUIKit#BUTTON_STYLE_SET}.
 	 */
 	public PIButton() {
 		super();

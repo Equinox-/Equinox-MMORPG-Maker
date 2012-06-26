@@ -43,11 +43,6 @@ public class ImageManager extends Thread {
 	private final DeviceRegistration source;
 
 	/**
-	 * The mutex that this thread waits on.
-	 */
-	private Object mutex = new Object();
-
-	/**
 	 * Create an image manager linked to the specified object.
 	 * 
 	 * @param device the device to link to
@@ -72,7 +67,7 @@ public class ImageManager extends Thread {
 			ImageStorage tS = map.get(graphic);
 			if (tS == null) {
 				loadQueue.add(graphic);
-				mutex.notify();
+				map.notify();
 				return null;
 			}
 			tS.updateLastUsed();

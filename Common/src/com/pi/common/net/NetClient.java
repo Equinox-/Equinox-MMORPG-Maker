@@ -13,7 +13,7 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.net.packet.Packet;
 
 /**
- * A class representing the skeleton of a {@link java.nio} network client.
+ * A class representing the skeleton of a Java New I/O network client.
  * 
  * @author Westin
  * 
