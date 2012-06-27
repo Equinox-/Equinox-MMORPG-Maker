@@ -156,16 +156,6 @@ public class Client implements Disposable, DeviceRegistration {
 	 * @param applet The game container
 	 */
 	public Client(final Applet applet) {
-
-		/*
-		 * ip = JOptionPane.showInputDialog(applet,
-		 * "Please input the ip: (xxx.xxx.xxx.xxx)"); while (true) { try { port
-		 * = Integer.valueOf(JOptionPane.showInputDialog(applet,
-		 * "Please input the port")); break; } catch (NumberFormatException e) {
-		 * JOptionPane.showMessageDialog(applet,
-		 * "Bad number format, try again"); } }
-		 */
-
 		clientThreads = new ThreadGroup("ClientThreads");
 		reView = new PIResourceViewer("Client");
 		reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
