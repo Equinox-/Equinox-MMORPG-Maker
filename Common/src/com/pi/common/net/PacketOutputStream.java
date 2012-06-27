@@ -110,7 +110,7 @@ public class PacketOutputStream {
 	}
 
 	/**
-	 * Writes the specified character to the buffer as 1 byte.
+	 * Writes the specified character to the buffer as 2 bytes.
 	 * 
 	 * @see ByteBuffer#putChar(char)
 	 * @param c the character to write
@@ -150,9 +150,8 @@ public class PacketOutputStream {
 			writeInt(0);
 		} else {
 			writeInt(s.length());
-			char[] data = s.toCharArray();
-			for (char c : data) {
-				writeChar(c);
+			for (int i = 0; i < s.length(); i++) {
+				writeChar(s.charAt(i));
 			}
 		}
 	}

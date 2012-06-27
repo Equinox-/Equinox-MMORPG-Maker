@@ -128,33 +128,42 @@ public abstract class NetClient {
 			throws IOException {
 		int numRead =
 				((SocketChannel) key.channel()).read(readBuffer);
-		if (readBuffer.position() > 4) {
+		readThroughBuffer();
+
+		if (numRead == -1) {
+			key.channel().close();
+			key.cancel();
+			return;
+		}
+	}
+
+	/**
+	 * Reads all the packets out of the read buffer.
+	 */
+	private void readThroughBuffer() {
+		while (readBuffer.position() > SizeOf.INT) {
 			int len = readBuffer.getInt(0);
-			recieveSinceUpdate += len + 4;
-			if (readBuffer.position() >= len + 4) {
+			if (readBuffer.position() >= len + SizeOf.INT) {
+				recieveSinceUpdate += len + SizeOf.INT;
 				processData(readBuffer.array(),
-						readBuffer.arrayOffset(), len);
-				if (readBuffer.position() > len + 4) {
+						readBuffer.arrayOffset() + SizeOf.INT,
+						len);
+				if (readBuffer.position() > len + SizeOf.INT) {
 					byte[] temp =
 							new byte[readBuffer.position() - len
-									- 4];
+									- SizeOf.INT];
 					System.arraycopy(readBuffer.array(),
-							readBuffer.arrayOffset() + len + 4,
-							temp, 0, temp.length);
+							readBuffer.arrayOffset() + len
+									+ SizeOf.INT, temp, 0,
+							temp.length);
 					readBuffer.clear();
 					readBuffer.put(temp);
 				} else {
 					readBuffer.clear();
 				}
 			} else {
-				readBuffer.limit(len + 4);
+				break;
 			}
-		}
-
-		if (numRead == -1) {
-			key.channel().close();
-			key.cancel();
-			return;
 		}
 	}
 

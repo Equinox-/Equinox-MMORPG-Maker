@@ -53,7 +53,7 @@ public final class NetworkConstants {
 		/**
 		 * The size in bytes of a char.
 		 */
-		public static final int CHAR = 1;
+		public static final int CHAR = 2;
 		/**
 		 * The size in bytes of a byte.
 		 */

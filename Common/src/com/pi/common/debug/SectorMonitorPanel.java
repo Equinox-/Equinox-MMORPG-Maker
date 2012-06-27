@@ -58,7 +58,7 @@ public class SectorMonitorPanel extends JPanel {
 		 */
 		private static final Class<?>[] COLUMN_CLASSES = {
 				String.class, String.class, String.class,
-				String.class };
+				String.class, String.class, String.class };
 
 		/**
 		 * The information provider.

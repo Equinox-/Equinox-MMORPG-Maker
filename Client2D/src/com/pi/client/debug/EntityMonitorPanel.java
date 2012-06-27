@@ -63,7 +63,8 @@ public class EntityMonitorPanel extends JPanel {
 		 */
 		private static final Class<?>[] COLUMN_CLASSES = {
 				String.class, String.class, String.class,
-				String.class, String.class, String.class };
+				String.class, String.class, String.class,
+				String.class };
 		/**
 		 * The information provider for the table.
 		 */

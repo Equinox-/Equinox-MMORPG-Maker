@@ -64,56 +64,62 @@ public class GameRenderLoop implements Renderable {
 		if (client.getWorld() != null) {
 			TileLayer t;
 			Sector sec = client.getWorld().getSector(0, 0, 0);
-			Entity e =
-					client.getEntityManager().getLocalEntity()
-							.getWrappedEntity();
-			if (e != null) {
-				if (client.getEntityManager().getLocalEntity() != null
-						&& sec != null) {
-					getTileView();
-					List<ClientEntity> entities =
-							client.getEntityManager()
-									.getEntitiesWithin(e,
-											renderDistance);
-					for (int tI = 0; tI < TileLayer.MAX_VALUE
-							.ordinal(); tI++) {
-						t = TileLayer.values()[tI];
-						renderLayer(t);
-						for (ClientEntity ent : entities) {
-							if (ent.getWrappedEntity()
-									.getLayer() == t) {
-								ent.processMovement();
-								EntityDef def =
-										client.getDefs()
-												.getEntityLoader()
-												.getDef(ent
+			if (client.getEntityManager().getLocalEntity() != null) {
+				Entity e =
+						client.getEntityManager()
+								.getLocalEntity()
+								.getWrappedEntity();
+				if (e != null) {
+					if (client.getEntityManager()
+							.getLocalEntity() != null
+							&& sec != null) {
+						getTileView();
+						List<ClientEntity> entities =
+								client.getEntityManager()
+										.getEntitiesWithin(e,
+												renderDistance);
+						for (int tI = 0; tI < TileLayer.MAX_VALUE
+								.ordinal(); tI++) {
+							t = TileLayer.values()[tI];
+							renderLayer(t);
+							for (ClientEntity ent : entities) {
+								if (ent.getWrappedEntity()
+										.getLayer() == t) {
+									ent.processMovement();
+									EntityDef def =
+											client.getDefs()
+													.getEntityLoader()
+													.getDef(ent
+															.getWrappedEntity()
+															.getEntityDef());
+									if (def != null) {
+										float frameWidth =
+												def.getPositionWidth()
+														/ def.getHorizontalFrames();
+										float frameHeight =
+												def.getPositionHeight() / 4;
+										Point p =
+												locationToScreen(ent
+														.getWrappedEntity());
+										g.drawImage(
+												def.getGraphic(),
+												p.x
+														+ ent.getXOff(),
+												p.y
+														+ ent.getZOff(),
+												(int) def
+														.getPositionX()
+														+ (int) ((int) (ent
+																.getMovementPercent() * def
+																.getHorizontalFrames()) * frameWidth),
+												(int) (def
+														.getPositionY() + (frameHeight * ent
 														.getWrappedEntity()
-														.getEntityDef());
-								if (def != null) {
-									float frameWidth =
-											def.getPositionWidth()
-													/ def.getHorizontalFrames();
-									float frameHeight =
-											def.getPositionHeight() / 4;
-									Point p =
-											locationToScreen(ent
-													.getWrappedEntity());
-									g.drawImage(
-											def.getGraphic(),
-											p.x + ent.getXOff(),
-											p.y + ent.getZOff(),
-											(int) def
-													.getPositionX()
-													+ (int) ((int) (ent
-															.getMovementPercent() * def
-															.getHorizontalFrames()) * frameWidth),
-											(int) (def
-													.getPositionY() + (frameHeight * ent
-													.getWrappedEntity()
-													.getDir()
-													.ordinal())),
-											(int) frameWidth,
-											(int) frameHeight);
+														.getDir()
+														.ordinal())),
+												(int) frameWidth,
+												(int) frameHeight);
+									}
 								}
 							}
 						}

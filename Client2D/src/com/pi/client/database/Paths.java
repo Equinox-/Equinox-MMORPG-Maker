@@ -220,13 +220,12 @@ public final class Paths {
 	}
 
 	/**
-	 * Gets the log file at the current time and date.
+	 * Gets the log file.
 	 * 
 	 * @return the file path
 	 */
 	public static File getLogFile() {
-		return new File(getLogDirectory(), "log_"
-				+ new Date().toString().replace(" ", "_"));
+		return new File(getLogDirectory(), "log");
 	}
 
 	/**

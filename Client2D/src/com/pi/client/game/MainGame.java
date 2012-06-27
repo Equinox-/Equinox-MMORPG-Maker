@@ -35,6 +35,11 @@ public class MainGame implements Renderable, KeyListener,
 	private final GameRenderLoop gameRenderLoop;
 
 	/**
+	 * If this client is running.
+	 */
+	private boolean isRunning = false;
+
+	/**
 	 * Creates the Main Game render loop and controls for the specified client.
 	 * 
 	 * @param sClient the client instance
@@ -75,7 +80,7 @@ public class MainGame implements Renderable, KeyListener,
 				Entity local = cEnt.getWrappedEntity();
 				local.setDir(dir);
 				if (local.canMove(client.getWorld())) {
-					local.doMovement();
+					cEnt.doMovement(isRunning);
 					client.getNetwork().send(
 							Packet14ClientMove.create(local));
 				}
@@ -84,7 +89,13 @@ public class MainGame implements Renderable, KeyListener,
 	}
 
 	@Override
-	public void keyReleased(final KeyEvent arg0) {
+	public final void keyReleased(final KeyEvent e) {
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_SHIFT:
+			isRunning = !isRunning;
+		default:
+			break;
+		}
 	}
 
 	@Override

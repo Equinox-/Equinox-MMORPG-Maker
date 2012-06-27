@@ -46,7 +46,7 @@ public abstract class DataWorker extends Thread {
 			final byte[] data, final int off, final int count)
 			throws IOException {
 		byte[] dataCopy = new byte[count];
-		System.arraycopy(data, off + 4, dataCopy, 0, count);
+		System.arraycopy(data, off, dataCopy, 0, count);
 		synchronized (queue) {
 			queue.add(new DataEvent(socket, dataCopy, this));
 			queue.notify();

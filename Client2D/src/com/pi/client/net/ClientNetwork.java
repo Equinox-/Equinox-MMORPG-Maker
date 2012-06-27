@@ -82,9 +82,9 @@ public class ClientNetwork extends Thread {
 			lastSyncTime = 0, sentSyncPacket = 0;
 
 	/**
-	 * Shutdown flag for the thread.
+	 * Running flag for the thread.
 	 */
-	private boolean isRunning = false;
+	private boolean isRunning = true;
 
 	/**
 	 * Creates a network model and tries to establish a connection to the given

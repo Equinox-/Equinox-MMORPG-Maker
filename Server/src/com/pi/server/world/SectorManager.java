@@ -128,8 +128,8 @@ public class SectorManager extends ServerThread implements
 			if (sec == null) {
 				sec = new ServerSectorStorage();
 			}
-			sec.lastUsed = System.currentTimeMillis();
-			sec.data = sector;
+			sec.updateLastTimeUsed();
+			sec.setSector(sector);
 			sec.updatePacketData();
 			map.put(sector.getSectorLocation(), sec);
 		}
@@ -174,26 +174,25 @@ public class SectorManager extends ServerThread implements
 		SectorLocation oldestSector = loadQueue.removeFirst();
 		ServerSectorStorage sX =
 				(ServerSectorStorage) map.get(oldestSector);
-		if (sX == null || (sX.data == null && !sX.empty)) {
+		if (sX == null || (sX.getSectorRaw() == null && !sX.isEmpty())) {
 			if (sX == null) {
 				sX = new ServerSectorStorage();
 			}
 			try {
-				sX.data =
-						(Sector) DatabaseIO.read(Paths
-								.getSectorFile(oldestSector),
-								Sector.class);
+				sX.setSector((Sector) DatabaseIO.read(
+						Paths.getSectorFile(oldestSector),
+						Sector.class));
 				sX.updatePacketData();
-				sX.empty = false;
-				sX.lastUsed = System.currentTimeMillis();
+				sX.setEmpty(false);
+				sX.updateLastTimeUsed();
 				server.getLog().finer(
 						"Loaded sector "
 								+ oldestSector.toString());
 				map.put(oldestSector, sX);
 			} catch (FileNotFoundException e) {
-				sX.data = null;
-				sX.empty = true;
-				sX.lastUsed = System.currentTimeMillis();
+				sX.setSector(null);
+				sX.setEmpty(true);
+				sX.updateLastTimeUsed();
 				map.put(oldestSector, sX);
 				server.getLog().finest(
 						"Flagged as empty: "
@@ -206,14 +205,11 @@ public class SectorManager extends ServerThread implements
 
 	public static class ServerSectorStorage extends
 			SectorStorage {
-		public long lastUsed;
-		public Sector data;
 		public byte[] pack;
-		public boolean empty = false;
 
 		public final void updatePacketData() {
 			Packet4Sector p = new Packet4Sector();
-			p.sector = data;
+			p.sector = super.getSector();
 			try {
 				PacketOutputStream pO =
 						new PacketOutputStream(

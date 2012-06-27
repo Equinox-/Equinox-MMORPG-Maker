@@ -29,6 +29,11 @@ public class ClientEntity {
 	private Entity wrapped;
 
 	/**
+	 * How long it should take this entity to move one tile.
+	 */
+	private long movementTime = MovementConstants.WALK_TIME;
+
+	/**
 	 * Creates a client entity that wraps the provided entity.
 	 * 
 	 * @param e the entity to wrap
@@ -45,7 +50,7 @@ public class ClientEntity {
 			long elapsed =
 					System.currentTimeMillis() - moveStart;
 			movementPercent =
-					(((float) elapsed) / ((float) MovementConstants.WALK_TIME));
+					(((float) elapsed) / ((float) movementTime));
 			if (movementPercent < 1f) {
 				xOff =
 						-wrapped.getDir().getXOff()
@@ -66,9 +71,16 @@ public class ClientEntity {
 
 	/**
 	 * Do entity movement for this client entity and start the movement loop.
+	 * 
+	 * @param isRunning if this should be a running movement
 	 */
-	public final void doMovement() {
+	public final void doMovement(final boolean isRunning) {
 		if (!isMoving()) {
+			if (isRunning) {
+				movementTime = MovementConstants.RUN_TIME;
+			} else {
+				movementTime = MovementConstants.WALK_TIME;
+			}
 			wrapped.doMovement();
 			moveStart = System.currentTimeMillis();
 			processMovement();
