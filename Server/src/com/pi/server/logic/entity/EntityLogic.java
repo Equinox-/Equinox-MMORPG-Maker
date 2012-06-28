@@ -18,7 +18,7 @@ public abstract class EntityLogic {
 	}
 
 	protected boolean tryMove(Direction d) {
-		if (entity.canMoveIn(server.getWorld().getSectorManager(), d)) {
+		if (entity.canMoveIn(server.getWorld(), d)) {
 			entity.setDir(d);
 			Location curr = new Location(entity.x, entity.plane, entity.z);
 			sEntity.doTimedMovement(false);

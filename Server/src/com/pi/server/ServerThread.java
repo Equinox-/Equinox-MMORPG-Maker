@@ -20,7 +20,7 @@ public abstract class ServerThread extends Thread {
 		server.getLog().fine("Stopped: " + getClass().getSimpleName());
 	}
 
-	public abstract void loop();
+	protected abstract void loop();
 
 	public boolean shouldLoop() {
 		return true;

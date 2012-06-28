@@ -4,7 +4,6 @@
 [FINE] Started: ServerLogic
 [INFO] Loaded: 1
 [FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
-[FINEST] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
 [FINEST] Recieved Packet1Login on 0
 [FINEST] Send Packet11LocalEntityID size: 4 on 0
 [INFO] Loaded: 0
@@ -15,178 +14,23 @@
 [INFO] Request sector
 [INFO] 1:0
 [FINEST] Send Packet4Sector size: 33184 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Request sector
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
-[INFO] Request sector
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
-[INFO] Request sector
-[FINEST] Send Packet6BlankSector size: 12 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 128 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 32 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 128 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 32 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Request sector
-[FINEST] Flagged as empty: SectorLocation[x=1, z=0, plane=0]
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Request sector
-[FINEST] Flagged as empty: SectorLocation[x=0, z=1, plane=0]
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
-[INFO] Request sector
-[FINEST] Flagged as empty: SectorLocation[x=1, z=1, plane=0]
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Send Packet16EntityMove size: 6 on 0
-[FINEST] Recieved Packet14ClientMove on 0
 [FINEST] Send Packet8EntityDispose size: 4 on 0
-[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.Entity@1edd01df
+[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.Entity@0
+[FINEST] Recieved Packet1Login on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 24 on 0
+[FINEST] Send Packet9EntityData size: 24 on 0
+[FINEST] Send Packet15GameState size: 4 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
+[INFO] Request sector
+[INFO] 1:0
+[FINEST] Send Packet4Sector size: 33184 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 128 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 32 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.Entity@0
 [FINE] Stopped: ServerLogic
 [INFO] Stopped selector
 [FINE] Stopped: SectorManager

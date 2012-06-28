@@ -91,8 +91,7 @@ public class NetServerHandler extends NetHandler {
 	}
 
 	public void process(Packet5SectorRequest p) {
-		server.getWorld().getSectorManager()
-				.requestSector(netClient.getID(), p);
+		server.getWorld().requestSector(netClient.getID(), p);
 	}
 
 	public void process(Packet10EntityDataRequest p) {
@@ -102,7 +101,7 @@ public class NetServerHandler extends NetHandler {
 
 	public void process(Packet12EntityDefRequest p) {
 		server.getDefs().getEntityLoader()
-				.requestDef(netClient.getID(), p);
+				.requestDefinition(netClient.getID(), p.defID);
 	}
 
 	public void process(Packet14ClientMove p) {
@@ -120,8 +119,7 @@ public class NetServerHandler extends NetHandler {
 				Direction dir =
 						Direction.getBestDirection(xC, zC);
 				if (Location.dist(origin, l) < 2
-						&& ent.canMoveIn(server.getWorld()
-								.getSectorManager(), dir)) {
+						&& ent.canMoveIn(server.getWorld(), dir)) {
 					ent.teleportShort(l);
 					server.getServerEntityManager()
 							.sendEntityMove(ent.getEntityID(),

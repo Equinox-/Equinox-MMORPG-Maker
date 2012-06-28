@@ -13,6 +13,7 @@ import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.common.game.Entity;
 import com.pi.server.client.ClientManager;
+import com.pi.server.constants.ServerConstants;
 import com.pi.server.database.Paths;
 import com.pi.server.database.ServerDatabase;
 import com.pi.server.debug.ClientMonitorPanel;
@@ -21,37 +22,106 @@ import com.pi.server.def.Definitions;
 import com.pi.server.entity.ServerEntityManager;
 import com.pi.server.logic.ServerLogic;
 import com.pi.server.net.NetServer;
-import com.pi.server.world.World;
+import com.pi.server.world.SectorManager;
 
+/**
+ * The class managing all the server subsystems.
+ * 
+ * @see com.pi.server.net.NetServer
+ * @see com.pi.server.world.SectorManager
+ * @see com.pi.server.database.ServerDatabase
+ * @see com.pi.server.entity.ServerEntityManager
+ * @see com.pi.server.client.ClientManager
+ * @see com.pi.server.def.Definitions
+ * @author Westin
+ * 
+ */
 public class Server {
+	/**
+	 * The thread group for monitoring all server threads.
+	 */
 	private ThreadGroup serverThreads;
+	/**
+	 * The server's network model.
+	 */
 	private NetServer network;
-	private World world;
+	/**
+	 * The sector manager instance.
+	 */
+	private SectorManager world;
+	/**
+	 * The message logger.
+	 */
 	private PILogger log;
+	/**
+	 * The server's database model.
+	 */
 	private ServerDatabase database;
+	/**
+	 * The server's entity management system.
+	 */
 	private ServerEntityManager entityManager;
+	/**
+	 * The server's client management system.
+	 */
 	private ClientManager clientManager;
+	/**
+	 * The server's definitions loader.
+	 */
 	private Definitions defs;
+	/**
+	 * The resource viewer instance for this server.
+	 */
 	private PIResourceViewer rcView;
+	/**
+	 * The server logic that runs all automated tasks.
+	 */
 	private ServerLogic sLogic;
+	/**
+	 * If this server instance is being disposed. This flag prevents the sub
+	 * systems from being disposed twice.
+	 */
 	private boolean disposing = false;
 
-	public NetServer getNetwork() {
+	/**
+	 * Gets the server's network model instance.
+	 * 
+	 * @return the network model
+	 */
+	public final NetServer getNetwork() {
 		return network;
 	}
 
-	public ServerDatabase getDatabase() {
+	/**
+	 * Gets the server's database model instance.
+	 * 
+	 * @return the database model
+	 */
+	public final ServerDatabase getDatabase() {
 		return database;
 	}
 
-	public ClientManager getClientManager() {
+	/**
+	 * Gets the client management systems,.
+	 * 
+	 * @return the client manager
+	 */
+	public final ClientManager getClientManager() {
 		return clientManager;
 	}
 
-	public PILogger getLog() {
+	/**
+	 * The message logger.
+	 * 
+	 * @return the logger
+	 */
+	public final PILogger getLog() {
 		return log;
 	}
 
+	/**
+	 * Creates a server and all of it's subsystems.
+	 */
 	public Server() {
 		serverThreads = new ThreadGroup("Server");
 		rcView = new PIResourceViewer("Server");
@@ -62,7 +132,7 @@ public class Server {
 		rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		rcView.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosing(final WindowEvent e) {
 				dispose();
 			}
 		});
@@ -75,15 +145,17 @@ public class Server {
 		clientManager = new ClientManager();
 		database = new ServerDatabase(this);
 		try {
-			network = new NetServer(this, 9999);
+			network =
+					new NetServer(this,
+							ServerConstants.NETWORK_PORT);
 			rcView.addTab("Network Clients",
 					new ClientMonitorPanel(clientManager));
-			world = new World(this);
+			world = new SectorManager(this);
 			rcView.addTab("Sectors", new SectorMonitorPanel(
-					world.getSectorManager()));
+					world));
 			defs = new Definitions(this);
 
-			world.getSectorManager().getSector(0, 0, 0);
+			world.getSector(0, 0, 0);
 
 			sLogic = new ServerLogic(this);
 			sLogic.start();
@@ -97,50 +169,89 @@ public class Server {
 		}
 	}
 
+	/**
+	 * Disposes all the subsystems of this server.
+	 */
 	@SuppressWarnings("deprecation")
-	public void dispose() {
+	public final void dispose() {
 		if (!disposing) {
 			disposing = true;
-			if (sLogic != null)
+			if (sLogic != null) {
 				sLogic.dispose();
-			if (network != null)
+			}
+			if (network != null) {
 				network.dispose();
-			if (database != null)
+			}
+			if (database != null) {
 				database.save();
-			if (world != null)
+			}
+			if (world != null) {
 				world.dispose();
-			if (defs != null)
+			}
+			if (defs != null) {
 				defs.dispose();
+			}
 		} else {
-			if (rcView != null)
+			if (rcView != null) {
 				rcView.dispose();
+			}
 
 			serverThreads.stop();
 			log.close();
 		}
 	}
 
-	public ServerEntityManager getServerEntityManager() {
+	/**
+	 * Gets the entity manager bound to this server.
+	 * 
+	 * @return the entity manager
+	 */
+	public final ServerEntityManager getServerEntityManager() {
 		return entityManager;
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * Launches the default server instance.
+	 * 
+	 * @param args unused
+	 */
+	public static void main(final String[] args) {
 		new Server();
 	}
 
-	public World getWorld() {
+	/**
+	 * Gets the server's world model.
+	 * 
+	 * @return the sector manager
+	 */
+	public final SectorManager getWorld() {
 		return world;
 	}
 
-	public Definitions getDefs() {
+	/**
+	 * Gets the server's definitions model.
+	 * 
+	 * @return the definitions loader
+	 */
+	public final Definitions getDefs() {
 		return defs;
 	}
 
-	public ThreadGroup getThreadGroup() {
+	/**
+	 * Gets this server's thread registration group.
+	 * 
+	 * @return the thread group
+	 */
+	public final ThreadGroup getThreadGroup() {
 		return serverThreads;
 	}
 
-	public boolean isNetworkConnected() {
+	/**
+	 * Is the server's network model initialized and running.
+	 * 
+	 * @return if the network is connected
+	 */
+	public final boolean isNetworkConnected() {
 		return network.isConnected();
 	}
 }

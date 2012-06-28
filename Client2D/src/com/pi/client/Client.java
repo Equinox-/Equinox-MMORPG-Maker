@@ -57,22 +57,16 @@ public class Client implements Disposable, DeviceRegistration {
 
 	/**
 	 * The sector manager instance.
-	 * 
-	 * @see com.pi.client.world.SectorManager
 	 */
 	private SectorManager world;
 
 	/**
 	 * The client's entity manager instance.
-	 * 
-	 * @see com.pi.client.entity.ClientEntityManager
 	 */
 	private ClientEntityManager entityManager;
 
 	/**
 	 * The definitions manager instance.
-	 * 
-	 * @see com.pi.client.def.Definitions
 	 */
 	private Definitions defs;
 
@@ -85,8 +79,6 @@ public class Client implements Disposable, DeviceRegistration {
 	// Network Start
 	/**
 	 * The client network instance.
-	 * 
-	 * @see com.pi.client.net.ClientNetwork
 	 */
 	private ClientNetwork network;
 	// Network End
@@ -98,14 +90,10 @@ public class Client implements Disposable, DeviceRegistration {
 	private Applet cApplet;
 	/**
 	 * The display manager instance.
-	 * 
-	 * @see com.pi.graphics.device.DisplayManager
 	 */
 	private DisplayManager displayManager;
 	/**
 	 * The render loop for rendering the client's screen.
-	 * 
-	 * @see com.pi.client.graphics.RenderLoop
 	 */
 	private RenderLoop renderLoop;
 	// Graphics end
