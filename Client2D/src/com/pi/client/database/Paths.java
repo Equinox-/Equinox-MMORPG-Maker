@@ -1,7 +1,6 @@
 package com.pi.client.database;
 
 import java.io.File;
-import java.util.Date;
 
 import javax.swing.filechooser.FileSystemView;
 

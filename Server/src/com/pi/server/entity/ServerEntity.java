@@ -4,31 +4,74 @@ import com.pi.common.contants.MovementConstants;
 import com.pi.common.game.Entity;
 import com.pi.server.logic.entity.EntityLogic;
 
+/**
+ * An entity container class that manages special variables for server entities.
+ * 
+ * @author Westin
+ * 
+ */
 public class ServerEntity {
+	/**
+	 * The time in milliseconds that the next entity movement will be.
+	 */
 	private long nextMove = -1;
+	/**
+	 * The logic class instance.
+	 */
 	private EntityLogic logicClass;
+	/**
+	 * The entity this container wraps.
+	 */
 	private Entity wrap;
 
-	public ServerEntity(Entity wrapped) {
+	/**
+	 * Creates an entity container around the given entity.
+	 * 
+	 * @param wrapped the entity to wrap
+	 */
+	public ServerEntity(final Entity wrapped) {
 		this.wrap = wrapped;
 	}
 
-	public boolean isStillMoving() {
-		return nextMove != -1 && nextMove > System.currentTimeMillis();
+	/**
+	 * Checks if this entity is still moving.
+	 * 
+	 * @return if this entity is still moving
+	 */
+	public final boolean isStillMoving() {
+		return nextMove > System.currentTimeMillis();
 	}
 
-	public void doTimedMovement(boolean run) {
-		nextMove = System.currentTimeMillis()
-				+ (run ? MovementConstants.RUN_TIME
-						: MovementConstants.WALK_TIME);
-		wrap.doMovement();
+	/**
+	 * Checks if this entity is not still moving and if it is not, it moves it.
+	 */
+	public final void doTimedMovement() {
+		if (!isStillMoving()) {
+			nextMove =
+					System.currentTimeMillis()
+							+ MovementConstants.WALK_TIME;
+			wrap.doMovement();
+		}
 	}
 
-	public EntityLogic getLogic() {
+	/**
+	 * Gets the logic instance bound to this server entity.
+	 * 
+	 * @return the entity logic instance
+	 */
+	public final EntityLogic getLogic() {
 		return logicClass;
 	}
 
-	public boolean assignLogic(EntityLogic l) {
+	/**
+	 * Assigns the given entity logic instance to this server entity if not
+	 * already assigned.
+	 * 
+	 * @param l the logic instance to assign
+	 * @return <code>true</code> if the logic instance was assigned,
+	 *         <code>false</code> if not
+	 */
+	public final boolean assignLogic(final EntityLogic l) {
 		if (logicClass == null) {
 			logicClass = l;
 			return true;
@@ -36,7 +79,12 @@ public class ServerEntity {
 		return false;
 	}
 
-	public Entity getWrappedEntity() {
+	/**
+	 * Gets the entity that this container wraps.
+	 * 
+	 * @return the wrapped entity
+	 */
+	public final Entity getWrappedEntity() {
 		return wrap;
 	}
 }

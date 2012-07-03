@@ -19,7 +19,7 @@ import com.pi.common.game.Entity;
  */
 public class ClientEntityManager {
 	/**
-	 * The map of registered clients.
+	 * The map of registered entities.
 	 */
 	private final Map<Integer, ClientEntity> entityMap =
 			Collections

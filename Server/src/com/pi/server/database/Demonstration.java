@@ -1,4 +1,5 @@
 package com.pi.server.database;
+
 import java.io.IOException;
 
 import com.pi.common.contants.SectorConstants;
@@ -10,7 +11,18 @@ import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.io.DatabaseIO;
 
-public class EmptySector {
+/**
+ * Creates and saves demonstration information to the server's database.
+ * 
+ * @author Westin
+ * 
+ */
+public final class Demonstration {
+	/**
+	 * Creates a basic demonstration sector.
+	 * 
+	 * @return the sector instance
+	 */
 	public static Sector create() {
 		Sector sec = new Sector();
 		sec.setRevision(1);
@@ -29,30 +41,45 @@ public class EmptySector {
 			for (int y = 0; y < 5; y++) {
 				GraphicsObject obj = new GraphicsObject();
 				obj.setGraphic(2);
-				obj.setPosition(x * TileConstants.TILE_WIDTH, (5 + y)
-						* TileConstants.TILE_HEIGHT, 32, 32);
-				sec.getLocalTile(5 + x, 5 + y).setLayer(TileLayer.FRINGE1, obj);
+				obj.setPosition(x * TileConstants.TILE_WIDTH,
+						(5 + y) * TileConstants.TILE_HEIGHT, 32,
+						32);
+				sec.getLocalTile(5 + x, 5 + y).setLayer(
+						TileLayer.FRINGE1, obj);
 			}
 		}
 		return sec;
 	}
 
-	public static void main(final String[] args) throws IOException {
+	/**
+	 * Creates and saves the demonstration information.
+	 * 
+	 * @param args not used
+	 * @throws IOException if an error occurs
+	 */
+	public static void main(final String[] args)
+			throws IOException {
 		try {
-			DatabaseIO.write(Paths.getSectorFile(0, 0, 0), create());
+			DatabaseIO.write(Paths.getSectorFile(0, 0, 0),
+					create());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		EntityDef d = new EntityDef();
 		d.setGraphic(3);
 		d.setPosition(0, 0, 128, 192);
-		//d.setLogicClass("com.pi.server.logic.entity.AggressiveEntityLogic");
+		// d.setLogicClass("com.pi.server.logic.entity.AggressiveEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(0), d);
-		
 
 		d.setGraphic(4);
 		d.setPosition(0, 0, 128, 128);
 		d.setLogicClass("com.pi.server.logic.entity.RandomEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(1), d);
+	}
+
+	/**
+	 * Overridden constructor to prevent instances from being created.
+	 */
+	private Demonstration() {
 	}
 }

@@ -1,7 +1,7 @@
 package com.pi.client;
 
 /**
- * This provides an easy to ovveride class for creating threads bound to the
+ * This provides an easy to override class for creating threads bound to the
  * client.
  * 
  * @author Westin

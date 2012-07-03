@@ -22,40 +22,78 @@ import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 
+/**
+ * The packet handler for the network server.
+ * 
+ * @author Westin
+ * 
+ */
 public class NetServerHandler extends NetHandler {
+	/**
+	 * The network client this handler is using.
+	 */
 	private final NetServerClient netClient;
+	/**
+	 * The server this handler is bound to.
+	 */
 	private final Server server;
 
-	public NetServerHandler(final Server server,
-			final NetServerClient netClient) {
-		this.netClient = netClient;
-		this.server = server;
+	/**
+	 * Creates a packet handler for the given server and net client.
+	 * 
+	 * @param sServer the server
+	 * @param sNetClient the network client
+	 */
+	public NetServerHandler(final Server sServer,
+			final NetServerClient sNetClient) {
+		this.netClient = sNetClient;
+		this.server = sServer;
 	}
 
 	@Override
-	protected PILogger getLog() {
+	protected final PILogger getLog() {
 		return server.getLog();
 	}
 
+	/**
+	 * Gets the client instance this handler is bound to.
+	 * 
+	 * @return the client
+	 */
 	private Client getClient() {
 		return this.server.getClientManager().getClient(
 				netClient.getID());
 	}
 
 	@Override
-	public void process(Packet p) {
+	public void process(final Packet p) {
 	}
 
-	public void process(Packet17Clock p) {
+	/**
+	 * Processes the clock packet, id 17.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet17Clock p) {
 		p.serverSendTime = System.currentTimeMillis();
 		netClient.send(p);
 	}
 
-	public void process(Packet0Disconnect p) {
+	/**
+	 * Processes a disconnect packet, id 0.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet0Disconnect p) {
 		netClient.dispose(p.reason, p.details);
 	}
 
-	public void process(Packet1Login p) {
+	/**
+	 * Processes the logic packet, id 1.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet1Login p) {
 		try {
 			Account acc =
 					server.getDatabase().getAccounts()
@@ -78,7 +116,12 @@ public class NetServerHandler extends NetHandler {
 		}
 	}
 
-	public void process(Packet3Register p) {
+	/**
+	 * Processes the registration packet, id 3.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet3Register p) {
 		if (server.getDatabase().getAccounts()
 				.addAccount(p.username, p.password)) {
 			netClient.send(Packet2Alert
@@ -90,21 +133,41 @@ public class NetServerHandler extends NetHandler {
 		}
 	}
 
-	public void process(Packet5SectorRequest p) {
+	/**
+	 * Processes the sector request packet, id 5.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet5SectorRequest p) {
 		server.getWorld().requestSector(netClient.getID(), p);
 	}
 
-	public void process(Packet10EntityDataRequest p) {
+	/**
+	 * Processes the entity data request packet, id 10.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet10EntityDataRequest p) {
 		server.getServerEntityManager().requestData(
 				netClient.getID(), p);
 	}
 
-	public void process(Packet12EntityDefRequest p) {
+	/**
+	 * Processes the entity definition request packet, id 12.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet12EntityDefRequest p) {
 		server.getDefs().getEntityLoader()
 				.requestDefinition(netClient.getID(), p.defID);
 	}
 
-	public void process(Packet14ClientMove p) {
+	/**
+	 * Processes the client movement packet, id 14.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet14ClientMove p) {
 		Client cli =
 				server.getClientManager().getClient(
 						netClient.getID());

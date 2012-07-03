@@ -21,22 +21,57 @@ import com.pi.common.net.NetChangeRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 
+/**
+ * The main server network class providing the main selector thread and data
+ * worker.
+ * 
+ * @author Westin
+ * 
+ */
 public class NetServer extends Thread {
+	/**
+	 * The port this server is bound to.
+	 */
 	private int port;
+	/**
+	 * The socket channel this server uses.
+	 */
 	private ServerSocketChannel serverChannel;
+	/**
+	 * The selector this server uses.
+	 */
 	private Selector selector;
+	/**
+	 * The data worker this network uses.
+	 */
 	private DataWorker worker;
+	/**
+	 * The pending changes on this network server.
+	 */
 	private Queue<NetChangeRequest> pendingChanges =
 			new LinkedBlockingQueue<NetChangeRequest>();
+	/**
+	 * The server this network is bound to.
+	 */
 	private Server server;
+	/**
+	 * If the selector thread is running.
+	 */
 	private boolean isRunning = true;
 
-	public NetServer(Server server, int port)
+	/**
+	 * Creates a network server bound to the given server and port.
+	 * 
+	 * @param sServer the server instance
+	 * @param sPort the port to listen on
+	 * @throws BindException if there was an error connecting
+	 */
+	public NetServer(final Server sServer, final int sPort)
 			throws BindException {
-		super(server.getThreadGroup(), "NetSelector");
+		super(sServer.getThreadGroup(), "NetSelector");
 		try {
-			this.server = server;
-			this.port = port;
+			this.server = sServer;
+			this.port = sPort;
 			this.selector = this.initSelector();
 			this.worker = new ServerDataWorker(this);
 			start();
@@ -48,7 +83,7 @@ public class NetServer extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public final void run() {
 		server.getLog().info("Started selector");
 		while (isConnected()) {
 			server.getClientManager().removeDeadClients();
@@ -69,6 +104,8 @@ public class NetServer extends Thread {
 										.getOperations());
 								changes.remove();
 							}
+						default:
+							break;
 						}
 					}
 				}
@@ -99,11 +136,23 @@ public class NetServer extends Thread {
 		server.getLog().info("Stopped selector");
 	}
 
-	public DataWorker getWorker() {
+	/**
+	 * Gets the data worker that this server processes data on.
+	 * 
+	 * @return the data worker
+	 */
+	public final DataWorker getWorker() {
 		return worker;
 	}
 
-	private void accept(SelectionKey key) throws IOException {
+	/**
+	 * Processes an acceptable selection key.
+	 * 
+	 * @param key the selection key
+	 * @throws IOException if an error occurs
+	 */
+	private void accept(final SelectionKey key)
+			throws IOException {
 		ServerSocketChannel serverSocketChannel =
 				(ServerSocketChannel) key.channel();
 		SocketChannel socketChannel =
@@ -117,7 +166,13 @@ public class NetServer extends Thread {
 				SelectionKey.OP_READ).attach(c);
 	}
 
-	private void read(SelectionKey key) throws IOException {
+	/**
+	 * Processes a readable selection key.
+	 * 
+	 * @param key the selection key
+	 * @throws IOException if an error occurs
+	 */
+	private void read(final SelectionKey key) throws IOException {
 		SocketChannel socketChannel =
 				(SocketChannel) key.channel();
 		try {
@@ -131,7 +186,14 @@ public class NetServer extends Thread {
 		}
 	}
 
-	private void write(SelectionKey key) throws IOException {
+	/**
+	 * Processes a writable selection key.
+	 * 
+	 * @param key the selection key
+	 * @throws IOException if an error occurs
+	 */
+	private void write(final SelectionKey key)
+			throws IOException {
 		SocketChannel socketChannel =
 				(SocketChannel) key.channel();
 		NetServerClient c =
@@ -153,6 +215,12 @@ public class NetServer extends Thread {
 		}
 	}
 
+	/**
+	 * Creates the server channel and the selector bound to it.
+	 * 
+	 * @return a new selector
+	 * @throws IOException if a creation error occurs
+	 */
 	private Selector initSelector() throws IOException {
 		Selector socketSelector =
 				SelectorProvider.provider().openSelector();
@@ -167,7 +235,10 @@ public class NetServer extends Thread {
 		return socketSelector;
 	}
 
-	public void dispose() {
+	/**
+	 * Disposes all the related resources of this network server.
+	 */
+	public final void dispose() {
 		try {
 			isRunning = false;
 			selector.wakeup();
@@ -181,27 +252,52 @@ public class NetServer extends Thread {
 		}
 	}
 
-	public boolean isConnected() {
+	/**
+	 * Checks if this server is connected to the network.
+	 * 
+	 * @return if the network is connected
+	 */
+	public final boolean isConnected() {
 		return selector.isOpen() && serverChannel.isOpen()
 				&& isRunning;
 	}
 
-	public PILogger getLog() {
+	/**
+	 * Gets the logger instance bound to this network server.
+	 * 
+	 * @return the logger
+	 */
+	public final PILogger getLog() {
 		return server.getLog();
 	}
 
-	public void wakeSelector() {
+	/**
+	 * Wakes the selector bound to this server.
+	 */
+	public final void wakeSelector() {
 		selector.wakeup();
 	}
 
-	public void addChangeRequest(
-			NetChangeRequest netChangeRequest) {
+	/**
+	 * Adds a network change request to the change queue.
+	 * 
+	 * @param netChangeRequest the change request
+	 */
+	public final void addChangeRequest(
+			final NetChangeRequest netChangeRequest) {
 		pendingChanges.add(netChangeRequest);
 	}
 
-	public void deregisterSocketChannel(SocketChannel s) {
+	/**
+	 * Removes a socket channel from this selector.
+	 * 
+	 * @param s the channel to remove
+	 */
+	public final void deregisterSocketChannel(
+			final SocketChannel s) {
 		SelectionKey k = s.keyFor(selector);
-		if (k != null)
+		if (k != null) {
 			k.cancel();
+		}
 	}
 }

@@ -7,36 +7,80 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.database.def.EntityDef;
+import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.game.Entity;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 
+/**
+ * Monitors entities using a graphical JPanel.
+ * 
+ * @author Westin
+ * @see com.pi.server.entity.ServerEntityManager
+ * 
+ */
 public class EntityMonitorPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private final Server svr;
-	private ThreadTableModel table_model = new ThreadTableModel();
+	/**
+	 * The table displaying the entity list.
+	 */
 	private JTable tbl;
 
-	public EntityMonitorPanel(Server svr) {
-		this.svr = svr;
+	/**
+	 * Creates an entity model panel using the provided server as
+	 * the entity source.
+	 * 
+	 * @param server the server
+	 * @see com.pi.server.entity.ServerEntityManager
+	 */
+	public EntityMonitorPanel(final Server server) {
 		setLocation(0, 0);
-		setSize(500, 500);
+		setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
 		setLayout(null);
-		tbl = new JTable(table_model);
+		tbl = new JTable(new EntityTableModel(server));
 		tbl.setLocation(0, 0);
-		tbl.setSize(500, 500);
+		tbl.setSize(PIResourceViewer.DEFAULT_WIDTH,
+				PIResourceViewer.DEFAULT_HEIGHT);
 		tbl.setVisible(true);
 		tbl.setFillsViewportHeight(true);
 		add(tbl);
 		setVisible(true);
 	}
 
-	private class ThreadTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 1L;
-		String[] colName = { "ID", "X", "Plane", "Z", "Layer", "Dir", "Def",
-				"Brain" };
-		Class<?>[] colClass = { String.class, String.class, String.class,
-				String.class, String.class, String.class, String.class };
+	/**
+	 * The table model representing the information displayed.
+	 * 
+	 * @author Westin
+	 * 
+	 */
+	private static final class EntityTableModel extends
+			AbstractTableModel {
+		/**
+		 * The names of the columns.
+		 */
+		private static final String[] COLUMN_NAMES = { "ID",
+				"X", "Plane", "Z", "Layer", "Dir", "Def" };
+		/**
+		 * The classes of the column.
+		 */
+		private static final Class<?>[] COLUMN_CLASSES = {
+				String.class, String.class, String.class,
+				String.class, String.class, String.class,
+				String.class };
+		/**
+		 * The information provider for the table.
+		 */
+		private final Server svr;
+
+		/**
+		 * Create a table with the provided entity manager as the information
+		 * provider.
+		 * 
+		 * @param server the server instance
+		 */
+		private EntityTableModel(final Server server) {
+			this.svr = server;
+		}
 
 		@Override
 		public int getRowCount() {
@@ -45,17 +89,18 @@ public class EntityMonitorPanel extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return colName.length;
+			return COLUMN_NAMES.length;
 		}
 
 		@Override
-		public Object getValueAt(int row, int col) {
+		public Object getValueAt(final int sRow, final int col) {
+			int row = sRow;
 			if (row == 0) {
-				return colName[col];
+				return COLUMN_NAMES[col];
 			}
 			row--;
-			Iterator<ServerEntity> itr = svr.getServerEntityManager()
-					.getEntities();
+			Iterator<ServerEntity> itr =
+					svr.getServerEntityManager().getEntities();
 			ServerEntity sEnt = null;
 			while (row >= 0) {
 				row--;
@@ -63,8 +108,9 @@ public class EntityMonitorPanel extends JPanel {
 			}
 			if (sEnt != null) {
 				Entity ent = sEnt.getWrappedEntity();
-				EntityDef def = svr.getDefs().getEntityLoader()
-						.getDef(ent.getEntityDef());
+				EntityDef def =
+						svr.getDefs().getEntityLoader()
+								.getDef(ent.getEntityDef());
 				switch (col) {
 				case 0:
 					return ent.getEntityID() + "";
@@ -81,8 +127,12 @@ public class EntityMonitorPanel extends JPanel {
 				case 6:
 					return ent.getEntityDef();
 				case 7:
-					return def != null ? Boolean.toString(def.getLogicCLass()
-							.length() > 0) : "No Def";
+					if (def != null) {
+						return Boolean.toString(def
+								.getLogicCLass().length() > 0);
+					} else {
+						return "No Def";
+					}
 				default:
 					return "";
 				}
@@ -91,18 +141,18 @@ public class EntityMonitorPanel extends JPanel {
 		}
 
 		@Override
-		public String getColumnName(int paramInt) {
-			return colName[paramInt];
+		public String getColumnName(final int col) {
+			return COLUMN_NAMES[col];
 		}
 
 		@Override
-		public Class<?> getColumnClass(int paramInt) {
-			return paramInt < colClass.length ? colClass[paramInt]
-					: String.class;
+		public Class<?> getColumnClass(final int col) {
+			return COLUMN_CLASSES[col];
 		}
 
 		@Override
-		public boolean isCellEditable(int paramInt1, int paramInt2) {
+		public boolean isCellEditable(final int row,
+				final int col) {
 			return false;
 		}
 	}

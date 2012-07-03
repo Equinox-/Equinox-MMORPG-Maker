@@ -17,7 +17,7 @@ import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
 /**
- * The sector manager, managing loading, saving, and requesting of sectors from
+ * The sector manager, for loading, saving, and requesting of sectors from
  * the server.
  * 
  * @author Westin

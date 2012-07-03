@@ -6,22 +6,58 @@ import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
 import com.pi.server.net.NetServerClient;
 
+/**
+ * Class representing a client connected to the server, wrapping the account,
+ * entity, and network model.
+ * 
+ * @author Westin
+ * 
+ */
 public class Client {
+	/**
+	 * The account this client connected on.
+	 */
 	private Account acc;
+	/**
+	 * The visual entity that this client controls.
+	 */
 	private Entity entity;
+	/**
+	 * The network model this client sends packets on.
+	 */
 	private final NetServerClient network;
+	/**
+	 * The server instance this client is bound to.
+	 */
 	private final Server server;
+	/**
+	 * The client identification number that this client has.
+	 */
 	private final int clientID;
 
-	public Client(Server server, NetServerClient client) {
-		this.server = server;
-		this.network = client;
+	/**
+	 * Creates a client instance with the given server and network model.
+	 * 
+	 * @param sServer the server instance
+	 * @param sClient the network model
+	 */
+	public Client(final Server sServer,
+			final NetServerClient sClient) {
+		this.server = sServer;
+		this.network = sClient;
 		server.getClientManager().registerClient(this);
-		this.clientID = server.getClientManager().getClientID(this);
-		client.bindToID(clientID);
+		this.clientID =
+				server.getClientManager().getClientID(this);
+		network.bindToID(clientID);
 	}
 
-	public void bindAccount(Account account) {
+	/**
+	 * Binds this client to the given account, and creates the entity from the
+	 * account data.
+	 * 
+	 * @param account the account to bind to
+	 */
+	public final void bindAccount(final Account account) {
 		if (this.entity != null) {
 			server.getServerEntityManager().deRegisterEntity(
 					this.entity.getEntityID());
@@ -29,46 +65,95 @@ public class Client {
 		this.acc = account;
 		this.entity = new Entity(account.getEntityDef());
 		server.getServerEntityManager().registerEntity(entity);
-		network.send(Packet11LocalEntityID.create(entity.getEntityID()));
+		network.send(Packet11LocalEntityID.create(entity
+				.getEntityID()));
 		// TODO Find a better way to request entities for clients on move
 		server.getServerEntityManager().sendClientEntities(this);
 	}
 
-	public void dispose() {
+	/**
+	 * Disposes and removes this client from the entity and network registry.
+	 */
+	public final void dispose() {
 		String desc = this.toString();
-		if (entity != null)
-			server.getServerEntityManager().sendEntityDispose(entity.getEntityID());
-		if (network != null)
+		if (entity != null) {
+			server.getServerEntityManager().sendEntityDispose(
+					entity.getEntityID());
+		}
+		if (network != null) {
 			network.dispose();
+		}
 		server.getClientManager().removeFromRegistry(getID());
 		server.getLog().info("Client disconnected: " + desc);
 	}
 
-	public boolean isRegistered() {
+	/**
+	 * Checks if this entity is registered to the client manager.
+	 * 
+	 * @return <code>true</code> if it's registered, <code>false</code> if not
+	 */
+	public final boolean isRegistered() {
 		return clientID != -1;
 	}
 
-	public Entity getEntity() {
+	/**
+	 * Gets the visual entity that this client controls.
+	 * 
+	 * @return the entity
+	 */
+	public final Entity getEntity() {
 		return entity;
 	}
 
-	public Account getAccount() {
+	/**
+	 * Gets the account this client is bound to.
+	 * 
+	 * @return the account
+	 */
+	public final Account getAccount() {
 		return acc;
 	}
 
-	public NetServerClient getNetClient() {
+	/**
+	 * Gets the network model bound to this client.
+	 * 
+	 * @return the network model
+	 */
+	public final NetServerClient getNetClient() {
 		return network;
 	}
 
 	@Override
-	public String toString() {
-		return "Client(id=" + clientID + " ,network="
-				+ (network != null ? network.toString() : "") + " ,account="
-				+ (acc != null ? acc.toString() : "") + " ,entity="
-				+ (entity != null ? entity.toString() : "");
+	public final String toString() {
+		StringBuilder desc = new StringBuilder();
+		desc.append("Client(id=" + clientID + " ,network=");
+		if (network != null) {
+			desc.append(network.toString());
+		} else {
+			desc.append("none");
+		}
+		desc.append(" ,account=");
+		if (acc != null) {
+			desc.append(acc.toString());
+		} else {
+			desc.append("none");
+		}
+		desc.append(" ,entity=");
+		if (entity != null) {
+			desc.append(entity.toString());
+		} else {
+			desc.append("none");
+		}
+		return desc.toString();
 	}
 
-	public int getID() {
+	/**
+	 * Gets the identification number this client has with the client manager,
+	 * or <code>-1</code> if unregistered.
+	 * 
+	 * @return the id number
+	 */
+	public final int getID() {
 		return clientID;
 	}
 }

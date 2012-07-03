@@ -3,46 +3,97 @@ package com.pi.server.client;
 import com.pi.common.game.ObjectHeap;
 import com.pi.server.constants.ServerConstants;
 
+/**
+ * The client manager for registering and disposing client instances.
+ * 
+ * @see com.pi.server.client.Client
+ * @author Westin
+ * 
+ */
 public class ClientManager {
-	private ObjectHeap<Client> clientMap = new ObjectHeap<Client>();
+	/**
+	 * The mapping that stores the client instances.
+	 */
+	private ObjectHeap<Client> clientMap =
+			new ObjectHeap<Client>();
 
-	public Client getClient(int id) {
+	/**
+	 * Gets the client with the given identification number, or
+	 * <code>null</code> if there isn't a client registered.
+	 * 
+	 * @param id the identification number
+	 * @return the client instance
+	 */
+	public final Client getClient(final int id) {
 		return clientMap.get(id);
 	}
 
-	public void disposeClient(int id) {
+	/**
+	 * Disposes the client linked to the given identification number and removes
+	 * the client from the mapping.
+	 * 
+	 * @param id the identification number
+	 */
+	public final void disposeClient(final int id) {
 		Client c = getClient(id);
-		if (c != null)
+		if (c != null) {
 			c.dispose();
+			clientMap.remove(id);
+		}
 	}
 
-	public void disposeClient(Client client) {
+	/**
+	 * Disposes the given client and removes it from the mapping.
+	 * 
+	 * @param client the client
+	 */
+	public final void disposeClient(final Client client) {
 		disposeClient(client.getID());
 	}
 
-	public int getAvaliableID() {
-		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++)
-			if (clientMap.get(i) == null)
+	/**
+	 * Gets an identification number that doesn't have a client bound to it.
+	 * 
+	 * @return the available id, or <code>-1</code> if there isn't one available
+	 */
+	public final int getAvailableID() {
+		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+			if (clientMap.get(i) == null) {
 				return i;
+			}
+		}
 		return -1;
 	}
 
-	public void removeDeadClients() {
+	/**
+	 * Disposes all clients that don't have a connected network model.
+	 */
+	public final void removeDeadClients() {
 		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
 			Client c = clientMap.get(i);
 			if (c != null
-					&& (c.getNetClient() == null || !c.getNetClient()
-							.isConnected())) {
-				c.dispose();
+					&& (c.getNetClient() == null || !c
+							.getNetClient().isConnected())) {
+				disposeClient(c);
 			}
 		}
 	}
 
-	public int registerClient(Client c) {
-		int id;
-		if ((id = getClientID(c)) >= 0)
+	/**
+	 * Registers the client to this manager, returning the identification number
+	 * it was registered to, or <code>-1</code> if there wasn't an available
+	 * slot.
+	 * 
+	 * @see #getAvailableID()
+	 * @param c the client to register
+	 * @return the identification number
+	 */
+	public final int registerClient(final Client c) {
+		int id = getClientID(c);
+		if (id >= 0) {
 			return id;
-		id = getAvaliableID();
+		}
+		id = getAvailableID();
 		if (id != -1) {
 			clientMap.set(id, c);
 			return id;
@@ -50,11 +101,24 @@ public class ClientManager {
 		return -1;
 	}
 
-	public boolean hasAvaliableSlot() {
-		return getAvaliableID() != -1;
+	/**
+	 * Checks if there is an available slot for a client to be registered on.
+	 * 
+	 * @return <code>true</code> if there is an available slot, or
+	 *         <code>false</code> if not
+	 */
+	public final boolean hasAvaliableSlot() {
+		return getAvailableID() != -1;
 	}
 
-	public int getClientID(Client c) {
+	/**
+	 * Scans the client map for the same client as the one provided, and returns
+	 * the identification number, or <code>-1</code> if not found.
+	 * 
+	 * @param c the client to scan for
+	 * @return the id number
+	 */
+	public final int getClientID(final Client c) {
 		for (int i = 0; i < clientMap.capacity(); i++) {
 			Client client = clientMap.get(i);
 			if (client != null && client == c) {
@@ -64,15 +128,22 @@ public class ClientManager {
 		return -1;
 	}
 
-	public boolean isRegistered(Client c) {
-		return getClientID(c) != -1;
-	}
-
-	public ObjectHeap<Client> registeredClients() {
+	/**
+	 * Returns the mapping this client manager uses. This should never be
+	 * modified.
+	 * 
+	 * @return the mapping
+	 */
+	public final ObjectHeap<Client> registeredClients() {
 		return clientMap;
 	}
 
-	public void removeFromRegistry(int id) {
+	/**
+	 * Removes the client with the given ID from the registry.
+	 * 
+	 * @param id the identification number
+	 */
+	public final void removeFromRegistry(final int id) {
 		clientMap.remove(id);
 	}
 }

@@ -11,52 +11,103 @@ import com.pi.common.net.NetHandler;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 
+/**
+ * A network client bound to a network server.
+ * 
+ * @author Westin
+ * 
+ */
 public class NetServerClient extends NetClient {
+	/**
+	 * The server instance this client is bound to.
+	 */
 	private final Server server;
+	/**
+	 * The packet handler for this client.
+	 */
 	private NetHandler handler;
+	/**
+	 * This network client's identification number.
+	 */
 	private int clientID = -1;
+	/**
+	 * The client bound to this network instance.
+	 */
 	private Client cliRef = null;
 
-	public NetServerClient(final Server server,
+	/**
+	 * Creates a network server client for the given server and channel.
+	 * 
+	 * @param sServer the network server
+	 * @param socket the socket channel
+	 */
+	public NetServerClient(final Server sServer,
 			final SocketChannel socket) {
 		super(socket);
-		this.server = server;
+		this.server = sServer;
 		this.handler = new NetServerHandler(server, this);
 	}
 
-	public void bindClient(Client c) {
-		if (cliRef == null)
+	/**
+	 * Binds this network to the given client.
+	 * 
+	 * @param c the client to attach to this server
+	 */
+	public final void bindClient(final Client c) {
+		if (cliRef == null) {
 			cliRef = c;
-		else
+		} else {
 			throw new RuntimeException(
 					"Client is already bound!");
+		}
 	}
 
 	@Override
-	public PILogger getLog() {
+	public final PILogger getLog() {
 		return server.getLog();
 	}
 
-	public void bindToID(int id) {
+	/**
+	 * Binds this network to the given client id.
+	 * 
+	 * @param id the client id
+	 */
+	public final void bindToID(final int id) {
 		this.clientID = id;
 	}
 
-	public int getID() {
+	/**
+	 * Get's this client's identification number.
+	 * 
+	 * @return the id number
+	 */
+	public final int getID() {
 		return clientID;
 	}
 
-	public void dispose(String reason, String details) {// TODO
+	/**
+	 * Disposes this network client for the given reason.
+	 * 
+	 * @param reason the reason
+	 * @param details the details behind the reason
+	 */
+	public final void dispose(final String reason,
+			final String details) { // TODO
 		server.getNetwork()
 				.deregisterSocketChannel(getChannel());
 	}
 
-	public void dispose() {
+	/**
+	 * Disposes this network client.
+	 */
+	public final void dispose() {
 		server.getNetwork()
 				.deregisterSocketChannel(getChannel());
 	}
 
 	@Override
-	public void processData(byte[] data, int off, int len) {
+	public final void processData(final byte[] data,
+			final int off, final int len) {
 		try {
 			server.getNetwork().getWorker()
 					.processData(this, data, off, len);
@@ -66,7 +117,7 @@ public class NetServerClient extends NetClient {
 	}
 
 	@Override
-	public void addWriteRequest() {
+	public final void addWriteRequest() {
 		server.getNetwork().addChangeRequest(
 				new NetChangeRequest(getChannel(),
 						NetChangeRequest.CHANGEOPS,
@@ -74,22 +125,22 @@ public class NetServerClient extends NetClient {
 	}
 
 	@Override
-	public String getSuffix() {
+	public final String getSuffix() {
 		return " on " + clientID;
 	}
 
 	@Override
-	public void wakeSelector() {
+	public final void wakeSelector() {
 		server.getNetwork().wakeSelector();
 	}
 
 	@Override
-	public NetHandler getHandler() {
+	public final NetHandler getHandler() {
 		return handler;
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "NetClient[" + clientID + ","
 				+ super.getHostAddress() + "]";
 	}

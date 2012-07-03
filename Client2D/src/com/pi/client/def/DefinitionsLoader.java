@@ -17,7 +17,7 @@ public abstract class DefinitionsLoader<E> {
 	/**
 	 * How long for a request to the server to be re-made in milliseconds.
 	 */
-	private static final long REQUEST_EXPIRY = 2500;
+	private static final long REQUEST_EXPIRY = 5000;
 
 	/**
 	 * The client instance.
