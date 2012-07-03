@@ -44,6 +44,20 @@ public enum EntityType {
 	}
 
 	/**
+	 * Returns a new instance of the entity with this type, or <code>null</code>
+	 * if unable to comply.
+	 * 
+	 * @return the entity instance
+	 */
+	public Entity createInstance() {
+		try {
+			return getEntityClass().newInstance();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
 	 * Gets the entity type of the given entity.
 	 * 
 	 * @param entity the entity

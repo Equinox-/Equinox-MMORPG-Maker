@@ -2,6 +2,7 @@ package com.pi.server.client;
 
 import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
+import com.pi.common.game.EntityType;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
 import com.pi.server.net.NetServerClient;
@@ -59,16 +60,18 @@ public class Client {
 	 */
 	public final void bindAccount(final Account account) {
 		if (this.entity != null) {
-			server.getServerEntityManager().deRegisterEntity(
+			server.getEntityManager().deRegisterEntity(
 					this.entity.getEntityID());
 		}
 		this.acc = account;
-		this.entity = new Entity(account.getEntityDef());
-		server.getServerEntityManager().registerEntity(entity);
+		this.entity =
+				server.getEntityManager().registerEntity(
+						EntityType.Combat);
+		this.entity.setEntityDef(account.getEntityDef());
 		network.send(Packet11LocalEntityID.create(entity
 				.getEntityID()));
 		// TODO Find a better way to request entities for clients on move
-		server.getServerEntityManager().sendClientEntities(this);
+		server.getEntityManager().sendClientEntities(this);
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class Client {
 	public final void dispose() {
 		String desc = this.toString();
 		if (entity != null) {
-			server.getServerEntityManager().sendEntityDispose(
+			server.getEntityManager().sendEntityDispose(
 					entity.getEntityID());
 		}
 		if (network != null) {

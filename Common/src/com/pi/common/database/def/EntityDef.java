@@ -29,6 +29,11 @@ public class EntityDef extends GraphicsObject {
 	private String logicClass;
 
 	/**
+	 * The entity type this definition uses.
+	 */
+	private EntityType eType = EntityType.Normal;
+
+	/**
 	 * Gets the number of horizontal frames for the movement animation.
 	 * 
 	 * @return the horizontal frame count
@@ -73,12 +78,31 @@ public class EntityDef extends GraphicsObject {
 		return logicClass;
 	}
 
+	/**
+	 * Gets this entity definition's type.
+	 * 
+	 * @return the entity type
+	 */
+	public final EntityType getEntityType() {
+		return eType;
+	}
+
+	/**
+	 * Sets the entity type for this definition.
+	 * 
+	 * @param sEType the entity type
+	 */
+	public final void setEntityType(final EntityType sEType) {
+		this.eType = sEType;
+	}
+
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		super.writeData(pOut);
 		pOut.writeInt(horizFrames);
 		pOut.writeString(logicClass);
+		pOut.writeInt(eType.ordinal());
 	}
 
 	@Override
@@ -87,12 +111,13 @@ public class EntityDef extends GraphicsObject {
 		super.readData(pIn);
 		horizFrames = pIn.readInt();
 		logicClass = pIn.readString();
+		eType = EntityType.values()[pIn.readInt()];
 	}
 
 	@Override
 	public final int getLength() {
 		return super.getLength()
-				+ SizeOf.INT
+				+ (2 * SizeOf.INT)
 				+ PacketOutputStream
 						.stringByteLength(logicClass);
 	}

@@ -38,7 +38,7 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 	 */
 	public final ServerEntity grabNewTarget() {
 		List<ServerEntity> entList =
-				server.getServerEntityManager()
+				server.getEntityManager()
 						.getEntitiesInSector(
 								entity.getSectorLocation());
 		int minDist = Integer.MAX_VALUE;
@@ -74,7 +74,7 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 			}
 		} else {
 			ServerEntity wrapper =
-					server.getServerEntityManager().getEntity(
+					server.getEntityManager().getEntity(
 							this.target);
 			if (wrapper != null) {
 				Entity eTarget = wrapper.getWrappedEntity();

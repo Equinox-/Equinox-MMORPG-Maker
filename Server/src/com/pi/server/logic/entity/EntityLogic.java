@@ -53,7 +53,7 @@ public abstract class EntityLogic {
 					new Location(entity.x, entity.plane,
 							entity.z);
 			sEntity.doTimedMovement();
-			server.getServerEntityManager().sendEntityMove(
+			server.getEntityManager().sendEntityMove(
 					entity.getEntityID(), curr, entity, d);
 			return true;
 		}

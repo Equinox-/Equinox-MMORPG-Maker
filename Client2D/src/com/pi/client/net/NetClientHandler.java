@@ -8,6 +8,7 @@ import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
+import com.pi.common.game.EntityType;
 import com.pi.common.game.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
@@ -182,22 +183,24 @@ public class NetClientHandler extends NetHandler {
 	public final void process(final Packet9EntityData p) {
 		ClientEntity cEnt =
 				client.getEntityManager().getEntity(p.entID);
+		Entity ent;
 		if (cEnt == null) {
-			Entity ent;
-			try {
-				ent = p.eType.getEntityClass().newInstance();
-			} catch (Exception e) {
+			ent =
+					client.getEntityManager().registerEntity(
+							p.eType, p.entID);
+		} else {
+			ent = cEnt.getWrappedEntity();
+			EntityType cType = EntityType.getEntityType(ent);
+			if (cType != p.eType) {
 				client.getLog().severe(
-						"Error creating a client instance!");
-				client.getLog().printStackTrace(e);
-				return;
+						"Entity type conflict on entity "
+								+ p.entID
+								+ ".  The registered type is "
+								+ cType.name()
+								+ ", when it should be "
+								+ p.eType.name());
 			}
-			client.getLog().info(
-					"setid:" + ent.setEntityID(p.entID));
-			client.getEntityManager().saveEntity(ent);
-			cEnt = client.getEntityManager().getEntity(p.entID);
 		}
-		Entity ent = cEnt.getWrappedEntity();
 		ent.setEntityDef(p.defID);
 		ent.setLocation(p.loc);
 		ent.setLayer(p.layer);

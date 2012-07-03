@@ -8,6 +8,7 @@ import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.game.Entity;
+import com.pi.common.game.EntityType;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
@@ -73,12 +74,14 @@ public class ServerEntityManager {
 	}
 
 	/**
-	 * Registers the given entity with this manager.
+	 * Creates and registers an entity with the given entity type to this entity
+	 * manager.
 	 * 
-	 * @param e the entity to register
-	 * @return <code>true</code> if registered, <code>false</code> if not
+	 * @param eType the entity type
+	 * @return the registered entity or <code>null</code> if it wasn't
+	 *         registered
 	 */
-	public final boolean registerEntity(final Entity e) {
+	public final Entity registerEntity(final EntityType eType) {
 		int id = 0;
 		while (true) {
 			if (entityMap.get(id) == null) {
@@ -86,11 +89,14 @@ public class ServerEntityManager {
 			}
 			id++;
 		}
-		if (e.setEntityID(id)) {
-			entityMap.set(id, new ServerEntity(e));
-			return true;
+		Entity e = eType.createInstance();
+		if (e != null) {
+			if (e.setEntityID(id)) {
+				entityMap.set(id, new ServerEntity(e));
+				return e;
+			}
 		}
-		return false;
+		return null;
 	}
 
 	/**

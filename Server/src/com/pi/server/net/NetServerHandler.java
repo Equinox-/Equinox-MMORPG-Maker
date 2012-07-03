@@ -154,8 +154,8 @@ public class NetServerHandler extends NetHandler {
 	 * @param p the packet
 	 */
 	public final void process(final Packet10EntityDataRequest p) {
-		server.getServerEntityManager().requestData(
-				netClient.getID(), p);
+		server.getEntityManager().requestData(netClient.getID(),
+				p);
 	}
 
 	/**
@@ -190,9 +190,9 @@ public class NetServerHandler extends NetHandler {
 				if (Location.dist(origin, l) < 2
 						&& ent.canMoveIn(server.getWorld(), dir)) {
 					ent.teleportShort(l);
-					server.getServerEntityManager()
-							.sendEntityMove(ent.getEntityID(),
-									origin, l, ent.getDir());
+					server.getEntityManager().sendEntityMove(
+							ent.getEntityID(), origin, l,
+							ent.getDir());
 				} else {
 					cli.getNetClient().send(
 							Packet16EntityMove.create(cli
@@ -207,7 +207,7 @@ public class NetServerHandler extends NetHandler {
 	 * 
 	 * @param p the packet
 	 */
-	public void process(final Packet19Attack p) {
+	public final void process(final Packet19Attack p) {
 		Client cli =
 				server.getClientManager().getClient(
 						netClient.getID());
@@ -222,20 +222,22 @@ public class NetServerHandler extends NetHandler {
 									+ cli.getEntity().getDir()
 											.getZOff());
 			List<ServerEntity> entz =
-					server.getServerEntityManager()
+					server.getEntityManager()
 							.getEntitiesAtLocation(otherLoc);
 			for (ServerEntity ent : entz) {
 				if (ent.getWrappedEntity() instanceof LivingEntity) {
 					LivingEntity lE =
 							(LivingEntity) ent
 									.getWrappedEntity();
-					lE.setHealth(lE.getHealth() - 0.1f);
+					lE.setHealth(lE.getHealth() - 0.1f);// TODO Based on levels
+														// and stuff
 					if (lE.getHealth() <= 0f) {
-						server.getServerEntityManager()
+						server.getLog().severe("Kill the entity");
+						server.getEntityManager()
 								.deRegisterEntity(
 										ent.getWrappedEntity()
 												.getEntityID());
-						server.getServerEntityManager()
+						server.getEntityManager()
 								.sendEntityDispose(
 										ent.getWrappedEntity()
 												.getEntityID());

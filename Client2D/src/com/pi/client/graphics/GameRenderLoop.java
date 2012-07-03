@@ -8,7 +8,6 @@ import java.util.List;
 import com.pi.client.Client;
 import com.pi.client.constants.Constants;
 import com.pi.client.entity.ClientEntity;
-import com.pi.common.contants.GraphicsConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;

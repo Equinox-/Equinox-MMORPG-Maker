@@ -20,10 +20,6 @@ import com.pi.server.entity.ServerEntity;
  * 
  */
 public class EntityMonitorPanel extends JPanel {
-	/**
-	 * The table displaying the entity list.
-	 */
-	private JTable tbl;
 
 	/**
 	 * Creates an entity model panel using the provided server as
@@ -37,7 +33,7 @@ public class EntityMonitorPanel extends JPanel {
 		setSize(PIResourceViewer.DEFAULT_WIDTH,
 				PIResourceViewer.DEFAULT_HEIGHT);
 		setLayout(null);
-		tbl = new JTable(new EntityTableModel(server));
+		JTable tbl = new JTable(new EntityTableModel(server));
 		tbl.setLocation(0, 0);
 		tbl.setSize(PIResourceViewer.DEFAULT_WIDTH,
 				PIResourceViewer.DEFAULT_HEIGHT);
@@ -84,7 +80,7 @@ public class EntityMonitorPanel extends JPanel {
 
 		@Override
 		public int getRowCount() {
-			return svr.getServerEntityManager().entityCount() + 1;
+			return svr.getEntityManager().entityCount() + 1;
 		}
 
 		@Override
@@ -100,7 +96,7 @@ public class EntityMonitorPanel extends JPanel {
 			}
 			row--;
 			Iterator<ServerEntity> itr =
-					svr.getServerEntityManager().getEntities();
+					svr.getEntityManager().getEntities();
 			ServerEntity sEnt = null;
 			while (row >= 0) {
 				row--;

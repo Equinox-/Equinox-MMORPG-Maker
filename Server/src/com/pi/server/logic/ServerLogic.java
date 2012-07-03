@@ -28,7 +28,7 @@ public class ServerLogic extends ServerThread {
 	@Override
 	public final void loop() {
 		Iterator<ServerEntity> itr =
-				getServer().getServerEntityManager()
+				getServer().getEntityManager()
 						.getEntities();
 		while (itr.hasNext()) {
 			doEntityLogic(itr.next());

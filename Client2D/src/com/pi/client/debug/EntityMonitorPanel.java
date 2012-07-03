@@ -1,14 +1,16 @@
 package com.pi.client.debug;
 
+import java.util.Iterator;
+
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.client.entity.ClientEntity;
-import com.pi.client.entity.ClientEntityManager;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.game.Entity;
+import com.pi.client.Client;
+import com.pi.client.entity.ClientEntity;
 
 /**
  * Monitors entities using a graphical JPanel.
@@ -18,24 +20,20 @@ import com.pi.common.game.Entity;
  * 
  */
 public class EntityMonitorPanel extends JPanel {
-	/**
-	 * The table displaying the entity list.
-	 */
-	private JTable tbl;
 
 	/**
-	 * Creates an entity model panel using the provided ClientEntityManager as
-	 * the entity source.
+	 * Creates an entity model panel using the provided client as the entity
+	 * source.
 	 * 
-	 * @param server the entity manager source
+	 * @param client the client
 	 * @see com.pi.client.entity.ClientEntityManager
 	 */
-	public EntityMonitorPanel(final ClientEntityManager server) {
+	public EntityMonitorPanel(final Client client) {
 		setLocation(0, 0);
 		setSize(PIResourceViewer.DEFAULT_WIDTH,
 				PIResourceViewer.DEFAULT_HEIGHT);
 		setLayout(null);
-		tbl = new JTable(new EntityTableModel(server));
+		JTable tbl = new JTable(new EntityTableModel(client));
 		tbl.setLocation(0, 0);
 		tbl.setSize(PIResourceViewer.DEFAULT_WIDTH,
 				PIResourceViewer.DEFAULT_HEIGHT);
@@ -68,21 +66,21 @@ public class EntityMonitorPanel extends JPanel {
 		/**
 		 * The information provider for the table.
 		 */
-		private final ClientEntityManager svr;
+		private final Client svr;
 
 		/**
 		 * Create a table with the provided entity manager as the information
 		 * provider.
 		 * 
-		 * @param server the entity manager instance
+		 * @param client the client instance
 		 */
-		private EntityTableModel(final ClientEntityManager server) {
-			this.svr = server;
+		private EntityTableModel(final Client client) {
+			this.svr = client;
 		}
 
 		@Override
 		public int getRowCount() {
-			return svr.registeredEntities().size();
+			return svr.getEntityManager().entityCount() + 1;
 		}
 
 		@Override
@@ -91,21 +89,24 @@ public class EntityMonitorPanel extends JPanel {
 		}
 
 		@Override
-		public Object getValueAt(final int row, final int col) {
-			Integer[] keyArr =
-					svr.registeredEntities()
-							.keySet()
-							.toArray(
-									new Integer[svr
-											.registeredEntities()
-											.keySet().size()]);
-			if (row < keyArr.length) {
-				Integer key = keyArr[row];
-				ClientEntity cEnt = svr.getEntity(key);
-				Entity ent = cEnt.getWrappedEntity();
-				if (ent == null) {
-					return "";
-				}
+		public Object getValueAt(final int sRow, final int col) {
+			int row = sRow;
+			if (row == 0) {
+				return COLUMN_NAMES[col];
+			}
+			row--;
+			Iterator<ClientEntity> itr =
+					svr.getEntityManager().getEntities();
+			ClientEntity sEnt = null;
+			while (row >= 0) {
+				row--;
+				sEnt = itr.next();
+			}
+			if (sEnt != null) {
+				Entity ent = sEnt.getWrappedEntity();
+				EntityDef def =
+						svr.getDefs().getEntityLoader()
+								.getDef(ent.getEntityDef());
 				switch (col) {
 				case 0:
 					return ent.getEntityID() + "";
@@ -116,22 +117,17 @@ public class EntityMonitorPanel extends JPanel {
 				case 3:
 					return ent.getGlobalZ() + "";
 				case 4:
-					return ent.getLayer() + "";
+					return ent.getLayer();
 				case 5:
 					return ent.getDir() + "";
 				case 6:
-					EntityDef def =
-							svr.getClient().getDefs()
-									.getEntityLoader()
-									.getDef(ent.getEntityDef());
+					return ent.getEntityDef();
+				case 7:
 					if (def != null) {
-						return ent.getEntityDef() + "-Loaded";
-					} else if (svr.getClient().getDefs()
-							.getEntityLoader()
-							.isEmpty(ent.getEntityDef())) {
-						return ent.getEntityDef() + "-Empty";
+						return Boolean.toString(def
+								.getLogicCLass().length() > 0);
 					} else {
-						return ent.getEntityDef() + "-Unloaded";
+						return "No Def";
 					}
 				default:
 					return "";

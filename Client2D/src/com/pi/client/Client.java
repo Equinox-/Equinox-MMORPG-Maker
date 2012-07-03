@@ -178,8 +178,7 @@ public class Client implements Disposable, DeviceRegistration {
 				new ClientNetwork(this, Constants.NETWORK_IP,
 						Constants.NETWORK_PORT);
 		this.entityManager = new ClientEntityManager(this);
-		reView.addTab("Entities", new EntityMonitorPanel(
-				entityManager));
+		reView.addTab("Entities", new EntityMonitorPanel(this));
 
 		// Post INIT
 		this.displayManager.postInititation();
