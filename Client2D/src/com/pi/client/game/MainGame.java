@@ -14,6 +14,7 @@ import com.pi.client.graphics.GameRenderLoop;
 import com.pi.common.contants.Direction;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
+import com.pi.common.net.packet.Packet19Attack;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
@@ -73,10 +74,13 @@ public class MainGame implements Renderable, KeyListener,
 			case KeyEvent.VK_RIGHT:
 				dir = Direction.RIGHT;
 				break;
+			case KeyEvent.VK_CONTROL:
+				client.getNetwork().send(new Packet19Attack());
+				break;
 			default:
 				return;
 			}
-			if (!cEnt.isMoving()) {
+			if (!cEnt.isMoving() && dir != null) {
 				Entity local = cEnt.getWrappedEntity();
 				local.setDir(dir);
 				if (local.canMove(client.getWorld())) {

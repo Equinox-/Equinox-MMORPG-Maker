@@ -25,8 +25,8 @@ public class Tile implements PacketObject {
 	/**
 	 * The graphics for each tile layer.
 	 */
-	private GraphicsObject[] layers =
-			new GraphicsObject[TileLayer.MAX_VALUE.ordinal()];
+	private TileGraphicsObject[] layers =
+			new TileGraphicsObject[TileLayer.MAX_VALUE.ordinal()];
 
 	/**
 	 * Creates an empty tile.
@@ -107,7 +107,7 @@ public class Tile implements PacketObject {
 	 * @param tile the graphics object to apply
 	 */
 	public final void setLayer(final TileLayer layer,
-			final GraphicsObject tile) {
+			final TileGraphicsObject tile) {
 		layers[layer.ordinal()] = tile;
 	}
 
@@ -163,7 +163,7 @@ public class Tile implements PacketObject {
 		for (int i = 0; i < layers.length; i++) {
 			if ((layerFlags & stuff) == stuff) {
 				if (layers[i] == null) {
-					layers[i] = new GraphicsObject();
+					layers[i] = new TileGraphicsObject();
 				}
 				layers[i].readData(pIn);
 			} else {

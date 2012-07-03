@@ -1,11 +1,14 @@
 package com.pi.server.net;
 
+import java.util.List;
+
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Account;
 import com.pi.common.database.Location;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
 import com.pi.common.game.GameState;
+import com.pi.common.game.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
@@ -15,12 +18,15 @@ import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet17Clock;
+import com.pi.common.net.packet.Packet18Health;
+import com.pi.common.net.packet.Packet19Attack;
 import com.pi.common.net.packet.Packet1Login;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet3Register;
 import com.pi.common.net.packet.Packet5SectorRequest;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
+import com.pi.server.entity.ServerEntity;
 
 /**
  * The packet handler for the network server.
@@ -191,6 +197,53 @@ public class NetServerHandler extends NetHandler {
 					cli.getNetClient().send(
 							Packet16EntityMove.create(cli
 									.getEntity()));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Processes the attack packet, id 19.
+	 * 
+	 * @param p the packet
+	 */
+	public void process(final Packet19Attack p) {
+		Client cli =
+				server.getClientManager().getClient(
+						netClient.getID());
+		if (cli != null) {
+			Location otherLoc =
+					new Location(
+							cli.getEntity().x
+									+ cli.getEntity().getDir()
+											.getXOff(),
+							cli.getEntity().plane,
+							cli.getEntity().z
+									+ cli.getEntity().getDir()
+											.getZOff());
+			List<ServerEntity> entz =
+					server.getServerEntityManager()
+							.getEntitiesAtLocation(otherLoc);
+			for (ServerEntity ent : entz) {
+				if (ent.getWrappedEntity() instanceof LivingEntity) {
+					LivingEntity lE =
+							(LivingEntity) ent
+									.getWrappedEntity();
+					lE.setHealth(lE.getHealth() - 0.1f);
+					if (lE.getHealth() <= 0f) {
+						server.getServerEntityManager()
+								.deRegisterEntity(
+										ent.getWrappedEntity()
+												.getEntityID());
+						server.getServerEntityManager()
+								.sendEntityDispose(
+										ent.getWrappedEntity()
+												.getEntityID());
+					} else {
+						netClient
+								.send(Packet18Health.create(lE));
+					}
+					break;
 				}
 			}
 		}

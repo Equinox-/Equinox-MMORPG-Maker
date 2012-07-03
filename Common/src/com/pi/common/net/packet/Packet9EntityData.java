@@ -6,6 +6,7 @@ import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
 import com.pi.common.database.TileLayer;
 import com.pi.common.game.Entity;
+import com.pi.common.game.EntityType;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -21,6 +22,7 @@ public class Packet9EntityData extends Packet {
 	public TileLayer layer;
 	public int defID;
 	public int entID;
+	public EntityType eType = EntityType.Normal;
 
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
@@ -32,6 +34,7 @@ public class Packet9EntityData extends Packet {
 		loc.writeData(pOut);
 		pOut.writeInt(layer.ordinal());
 		pOut.writeInt(defID);
+		pOut.writeInt(eType.ordinal());
 	}
 
 	@Override
@@ -49,6 +52,12 @@ public class Packet9EntityData extends Packet {
 			layer = TileLayer.MASK1;
 		}
 		defID = pIn.readInt();
+		int type = pIn.readInt();
+		if (type >= 0 && type < EntityType.values().length) {
+			eType = EntityType.values()[type];
+		} else {
+			eType = EntityType.Normal;
+		}
 	}
 
 	/**
@@ -63,6 +72,7 @@ public class Packet9EntityData extends Packet {
 		pack.entID = e.getEntityID();
 		pack.layer = e.getLayer();
 		pack.loc = e;
+		pack.eType = EntityType.getEntityType(e);
 		return pack;
 	}
 
@@ -71,6 +81,6 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
-		return (3 * SizeOf.INT) + loc.getLength();
+		return (4 * SizeOf.INT) + loc.getLength();
 	}
 }

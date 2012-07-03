@@ -36,4 +36,13 @@ public abstract class Constants {
 	 */
 	public static final String GRAPHICS_FILELIST = GRAPHICS_URL
 			+ "filelist";
+
+	/**
+	 * The maximum width of the health bar.
+	 */
+	public static final int HEALTH_BAR_WIDTH = 40;
+	/**
+	 * The height of the health bar.
+	 */
+	public static final int HEALTH_BAR_HEIGHT = 4;
 }

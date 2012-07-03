@@ -10,7 +10,7 @@ public class LivingEntity extends Entity {
 	/**
 	 * Entity's current health.
 	 */
-	private float health;
+	private float health = 1f;
 
 	/**
 	 * Sets an entity's current health.

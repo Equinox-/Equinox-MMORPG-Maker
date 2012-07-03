@@ -124,6 +124,23 @@ public class ServerEntityManager {
 	}
 
 	/**
+	 * Gets all the entities at the given location.
+	 * 
+	 * @param loc the location to scan
+	 * @return the entities at the given location
+	 */
+	public final List<ServerEntity> getEntitiesAtLocation(
+			final Location loc) {
+		List<ServerEntity> ents = new ArrayList<ServerEntity>();
+		for (ServerEntity e : entityMap) {
+			if (loc.equals(e.getWrappedEntity())) {
+				ents.add(e);
+			}
+		}
+		return ents;
+	}
+
+	/**
 	 * Gets all the entities within the specified distance of the given
 	 * location.
 	 * 

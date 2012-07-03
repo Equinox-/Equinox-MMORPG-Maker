@@ -7,6 +7,7 @@ import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
+import com.pi.common.database.TileGraphicsObject;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.io.DatabaseIO;
@@ -25,25 +26,39 @@ public final class Demonstration {
 	 */
 	public static Sector create() {
 		Sector sec = new Sector();
-		sec.setRevision(1);
+		sec.setRevision(2);
 		sec.setSectorLocation(0, 0, 0);
 		for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++) {
 			for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
 				Tile t = new Tile();
-				GraphicsObject obj = new GraphicsObject();
+				TileGraphicsObject obj =
+						new TileGraphicsObject();
 				obj.setGraphic(2);
-				obj.setPosition(0, 32, 32, 32);
+				obj.setPosition(0, 32, 0, 0);
 				t.setLayer(TileLayer.GROUND, obj);
 				sec.setLocalTile(x, y, t);
+				if (Math.random() < 0.75f) {
+					continue;
+				}
+				TileGraphicsObject obj2 =
+						new TileGraphicsObject();
+				obj2.setGraphic(2);
+				obj2.setPosition(
+						32 + (Math.round(Math.random() * 2D) * 32),
+						Math.round(Math.random()) * 32, 0, 0);
+				t.setLayer(TileLayer.MASK1, obj2);
+
 			}
 		}
 		for (int x = 0; x < 4; x++) {
 			for (int y = 0; y < 5; y++) {
-				GraphicsObject obj = new GraphicsObject();
+				TileGraphicsObject obj =
+						new TileGraphicsObject();
 				obj.setGraphic(2);
 				obj.setPosition(x * TileConstants.TILE_WIDTH,
-						(5 + y) * TileConstants.TILE_HEIGHT, 32,
-						32);
+						(5 + y) * TileConstants.TILE_HEIGHT,
+						TileConstants.TILE_WIDTH,
+						TileConstants.TILE_HEIGHT);
 				sec.getLocalTile(5 + x, 5 + y).setLayer(
 						TileLayer.FRINGE1, obj);
 			}

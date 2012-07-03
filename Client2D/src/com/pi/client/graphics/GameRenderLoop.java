@@ -1,11 +1,14 @@
 package com.pi.client.graphics;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
 import com.pi.client.Client;
+import com.pi.client.constants.Constants;
 import com.pi.client.entity.ClientEntity;
+import com.pi.common.contants.GraphicsConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;
@@ -14,6 +17,7 @@ import com.pi.common.database.Tile;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
+import com.pi.common.game.LivingEntity;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
@@ -85,46 +89,71 @@ public class GameRenderLoop implements Renderable {
 							for (ClientEntity ent : entities) {
 								if (ent.getWrappedEntity()
 										.getLayer() == t) {
-									ent.processMovement();
-									EntityDef def =
-											client.getDefs()
-													.getEntityLoader()
-													.getDef(ent
-															.getWrappedEntity()
-															.getEntityDef());
-									if (def != null) {
-										float frameWidth =
-												def.getPositionWidth()
-														/ def.getHorizontalFrames();
-										float frameHeight =
-												def.getPositionHeight() / 4;
-										Point p =
-												locationToScreen(ent
-														.getWrappedEntity());
-										g.drawImage(
-												def.getGraphic(),
-												p.x
-														+ ent.getXOff(),
-												p.y
-														+ ent.getZOff(),
-												(int) def
-														.getPositionX()
-														+ (int) ((int) (ent
-																.getMovementPercent() * def
-																.getHorizontalFrames()) * frameWidth),
-												(int) (def
-														.getPositionY() + (frameHeight * ent
-														.getWrappedEntity()
-														.getDir()
-														.ordinal())),
-												(int) frameWidth,
-												(int) frameHeight);
-									}
+									renderEntity(ent);
 								}
 							}
 						}
 					}
 				}
+			}
+		}
+	}
+
+	/**
+	 * Renders the specified entity.
+	 * 
+	 * @param ent the entity
+	 */
+	private void renderEntity(final ClientEntity ent) {
+		ent.processMovement();
+		EntityDef def =
+				client.getDefs()
+						.getEntityLoader()
+						.getDef(ent.getWrappedEntity()
+								.getEntityDef());
+		if (def != null) {
+			float frameWidth =
+					def.getPositionWidth()
+							/ def.getHorizontalFrames();
+			float frameHeight = def.getPositionHeight() / 4;
+			Point p = locationToScreen(ent.getWrappedEntity());
+			p.x += ent.getXOff();
+			p.y +=
+					ent.getZOff() - frameHeight
+							+ TileConstants.TILE_HEIGHT;
+			g.drawImage(
+					def.getGraphic(),
+					p.x,
+					p.y,
+					(int) def.getPositionX()
+							+ (int) ((int) (ent
+									.getMovementPercent() * def
+									.getHorizontalFrames()) * frameWidth),
+					(int) (def.getPositionY() + (frameHeight * ent
+							.getWrappedEntity().getDir()
+							.ordinal())), (int) frameWidth,
+					(int) frameHeight);
+
+			if (ent.getWrappedEntity() instanceof LivingEntity
+					&& ((LivingEntity) ent.getWrappedEntity())
+							.getHealth() != 1f) {
+				int goodHealthWidth =
+						Math.round(((float) Constants.HEALTH_BAR_WIDTH)
+								* ((LivingEntity) ent
+										.getWrappedEntity())
+										.getHealth());
+				int barY = p.y - 5 - Constants.HEALTH_BAR_HEIGHT;
+				int barX =
+						p.x
+								- ((int) (Constants.HEALTH_BAR_WIDTH - frameWidth) / 2);
+				g.setColor(Color.GREEN);
+				g.fillRect(barX, barY, goodHealthWidth,
+						Constants.HEALTH_BAR_HEIGHT);
+				g.setColor(Color.RED);
+				g.fillRect(barX + goodHealthWidth, barY,
+						Constants.HEALTH_BAR_WIDTH
+								- goodHealthWidth,
+						Constants.HEALTH_BAR_HEIGHT);
 			}
 		}
 	}

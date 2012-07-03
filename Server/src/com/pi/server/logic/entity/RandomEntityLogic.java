@@ -3,6 +3,7 @@ package com.pi.server.logic.entity;
 import java.util.Random;
 
 import com.pi.common.contants.Direction;
+import com.pi.common.contants.MovementConstants;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 
@@ -14,17 +15,15 @@ import com.pi.server.entity.ServerEntity;
  */
 public class RandomEntityLogic extends EntityLogic {
 	/**
-	 * The random movement length minimum.
+	 * The random movement chance. Higher has a greater chance. 1 is constantly
+	 * moving.
 	 */
-	private static final int RANDOM_MOVEMENT_MIN = 3;
+	private static final float RANDOM_MOVEMENT_CHANCE = .1f;
+
 	/**
-	 * The random movement length maximum.
+	 * The minimum time in milliseconds between movement checks.
 	 */
-	private static final int RANDOM_MOVEMENT_MAX = 5;
-	/**
-	 * The random movement chance. Higher has a greater chance.
-	 */
-	private static final float RANDOM_MOVEMENT_CHANCE = .25f;
+	private static final long MOVEMENT_CHECK_TIME = 500;
 
 	/**
 	 * The random instance bound to this logic instance.
@@ -32,9 +31,9 @@ public class RandomEntityLogic extends EntityLogic {
 	protected final Random rand = new Random();
 
 	/**
-	 * The current number of moves since the last movement start.
+	 * The last movement check.
 	 */
-	private int currentMoveCount = 0;
+	private long lastMovementCheck = -1;
 
 	/**
 	 * Create a random entity logic instance for the given entity wrapper and
@@ -50,11 +49,13 @@ public class RandomEntityLogic extends EntityLogic {
 
 	@Override
 	public void doLogic() {
-		if (sEntity.isStillMoving()) {
+		if (sEntity.isStillMoving()
+				|| lastMovementCheck + MOVEMENT_CHECK_TIME > System
+						.currentTimeMillis()) {
 			return;
 		}
-
-		if (currentMoveCount > 0) {
+		lastMovementCheck = System.currentTimeMillis();
+		if (rand.nextFloat() < RANDOM_MOVEMENT_CHANCE) {
 			// It would appear that we should move randomly.
 			Direction d = null;
 			for (int i = 0; i < 3
@@ -66,14 +67,7 @@ public class RandomEntityLogic extends EntityLogic {
 						Direction.values()[rand
 								.nextInt(Direction.values().length)];
 			}
-			if (tryMove(d)) {
-				currentMoveCount--;
-			}
-		} else if (rand.nextFloat() < RANDOM_MOVEMENT_CHANCE) {
-			currentMoveCount =
-					rand.nextInt(RANDOM_MOVEMENT_MAX
-							- RANDOM_MOVEMENT_MIN)
-							+ RANDOM_MOVEMENT_MIN;
+			tryMove(d);
 		}
 	}
 }

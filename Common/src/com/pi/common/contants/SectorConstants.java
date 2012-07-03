@@ -64,7 +64,7 @@ public final class SectorConstants {
 		if (coordT < 0) {
 			coordT -= sectorSize - 1;
 		}
-		return coord / sectorSize;
+		return coordT / sectorSize;
 	}
 
 	/**

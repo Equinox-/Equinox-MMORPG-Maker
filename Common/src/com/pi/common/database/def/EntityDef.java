@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.GraphicsObject;
+import com.pi.common.game.EntityType;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 

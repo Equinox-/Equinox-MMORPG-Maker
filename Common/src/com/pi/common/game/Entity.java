@@ -70,7 +70,7 @@ public class Entity extends Location {
 	 * already set.
 	 * 
 	 * @param id the new identification number
-	 * @return if the entity id number was sucessfully assigned
+	 * @return if the entity id number was successfully assigned
 	 */
 	public final boolean setEntityID(final int id) {
 		if (entityID == -1) {
@@ -177,11 +177,11 @@ public class Entity extends Location {
 				mgr.getSector(getSectorX(), getPlane(),
 						getSectorZ());
 		int moveSX =
-				SectorConstants
-						.worldToSectorX(x + dir.getXOff());
+				SectorConstants.worldToSectorX(x
+						+ sDir.getXOff());
 		int moveSZ =
-				SectorConstants
-						.worldToSectorZ(z + dir.getZOff());
+				SectorConstants.worldToSectorZ(z
+						+ sDir.getZOff());
 		Sector move;
 		if (moveSX != sec.getSectorX()
 				|| moveSZ != sec.getSectorZ()) {
@@ -192,7 +192,7 @@ public class Entity extends Location {
 		if (sec != null && move != null) {
 			Tile t = sec.getGlobalTile(x, z);
 			if (t != null) {
-				switch (dir) {
+				switch (sDir) {
 				case UP:
 					return !t.hasFlag(TileFlags.WALL_NORTH);
 				case DOWN:

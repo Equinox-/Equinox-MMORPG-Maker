@@ -12,6 +12,7 @@ import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
 import com.pi.common.game.Entity;
+import com.pi.common.game.LivingEntity;
 import com.pi.server.client.ClientManager;
 import com.pi.server.constants.ServerConstants;
 import com.pi.server.database.Paths;
@@ -160,7 +161,7 @@ public class Server {
 			sLogic = new ServerLogic(this);
 			sLogic.start();
 
-			Entity ent = new Entity();
+			Entity ent = new LivingEntity();
 			ent.setEntityDef(1);
 			entityManager.registerEntity(ent);
 

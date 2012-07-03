@@ -8,6 +8,7 @@ import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.Entity;
+import com.pi.common.game.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Disconnect;
@@ -17,6 +18,7 @@ import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet17Clock;
+import com.pi.common.net.packet.Packet18Health;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -123,14 +125,14 @@ public class NetClientHandler extends NetHandler {
 		ClientEntity cEnt =
 				client.getEntityManager().getEntity(p.entityID);
 		if (cEnt == null) {
-			Entity ent = new Entity();
-			ent.setEntityID(p.entityID);
-			ent.setLocation(p.moved);
-			ent.setLayer(p.entityLayer);
-			client.getEntityManager().saveEntity(ent);
 			client.getNetwork()
 					.send(Packet10EntityDataRequest
 							.create(p.entityID));
+			/*
+			 * Entity ent = new Entity(); ent.setEntityID(p.entityID);
+			 * ent.setLocation(p.moved); ent.setLayer(p.entityLayer);
+			 * client.getEntityManager().saveEntity(ent);
+			 */
 			return;
 		}
 		cEnt.getWrappedEntity().setLocation(p.moved);
@@ -146,12 +148,14 @@ public class NetClientHandler extends NetHandler {
 		ClientEntity cEnt =
 				client.getEntityManager().getEntity(p.entity);
 		if (cEnt == null) {
-			Entity ent = new Entity();
-			ent.setEntityID(p.entity);
-			client.getEntityManager().saveEntity(ent);
 			client.getNetwork().send(
 					Packet10EntityDataRequest.create(p.entity));
-			cEnt = client.getEntityManager().getEntity(p.entity);
+			/*
+			 * Entity ent = new Entity(); ent .setEntityID (p.entity); client
+			 * .getEntityManager ( ).saveEntity( ent); cEnt = client
+			 * .getEntityManager ( ).getEntity(p .entity);
+			 */
+			return;
 		}
 		Entity ent = cEnt.getWrappedEntity();
 		Location l = p.apply(ent);
@@ -179,7 +183,15 @@ public class NetClientHandler extends NetHandler {
 		ClientEntity cEnt =
 				client.getEntityManager().getEntity(p.entID);
 		if (cEnt == null) {
-			Entity ent = new Entity();
+			Entity ent;
+			try {
+				ent = p.eType.getEntityClass().newInstance();
+			} catch (Exception e) {
+				client.getLog().severe(
+						"Error creating a client instance!");
+				client.getLog().printStackTrace(e);
+				return;
+			}
 			client.getLog().info(
 					"setid:" + ent.setEntityID(p.entID));
 			client.getEntityManager().saveEntity(ent);
@@ -219,6 +231,31 @@ public class NetClientHandler extends NetHandler {
 	public final void process(final Packet15GameState p) {
 		if (p.state != null) {
 			client.setGameState(p.state);
+		}
+	}
+
+	/**
+	 * Processes a entity health update packet, id 18.
+	 * 
+	 * @param p the health packet
+	 */
+	public final void process(final Packet18Health p) {
+		ClientEntity cEnt =
+				client.getEntityManager().getEntity(p.entityID);
+		if (cEnt == null) {
+			client.getNetwork()
+					.send(Packet10EntityDataRequest
+							.create(p.entityID));
+			/*
+			 * Entity ent = new Entity(); ent .setEntityID (p.entity); client
+			 * .getEntityManager ( ).saveEntity( ent); cEnt = client
+			 * .getEntityManager ( ).getEntity(p .entity);
+			 */
+			return;
+		}
+		if (cEnt.getWrappedEntity() instanceof LivingEntity) {
+			((LivingEntity) cEnt.getWrappedEntity())
+					.setHealth(p.health);
 		}
 	}
 }

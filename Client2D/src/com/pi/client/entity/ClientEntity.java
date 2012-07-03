@@ -26,7 +26,7 @@ public class ClientEntity {
 	/**
 	 * The entity wrapped by this client entity.
 	 */
-	private Entity wrapped;
+	private final Entity wrapped;
 
 	/**
 	 * How long it should take this entity to move one tile.
