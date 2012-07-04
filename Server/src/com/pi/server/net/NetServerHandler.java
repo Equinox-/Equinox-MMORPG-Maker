@@ -232,20 +232,22 @@ public class NetServerHandler extends NetHandler {
 									.getWrappedEntity();
 					lE.setHealth(lE.getHealth() - 1);// TODO Based on levels
 														// and stuff
+					Client attackedClient =
+							server.getClientManager()
+									.getClientByEntity(
+											lE.getEntityID());
 					if (lE.getHealth() <= 0) {
 						server.getEntityManager()
 								.sendEntityDispose(
 										ent.getWrappedEntity()
 												.getEntityID());
+						if (attackedClient != null) {
+							attackedClient.onEntityDeath();
+						}
 					} else {
 						Packet pack = Packet18Health.create(lE);
 						netClient.send(pack);
-						Client attackedClient =
-								server.getClientManager()
-										.getClientByEntity(
-												lE.getEntityID());
-						if (attackedClient != null
-								&& attackedClient.getNetClient() != null) {
+						if (attackedClient != null) {
 							attackedClient.getNetClient().send(
 									pack);
 						}

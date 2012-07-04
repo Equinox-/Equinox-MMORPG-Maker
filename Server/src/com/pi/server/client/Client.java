@@ -4,6 +4,7 @@ import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
+import com.pi.server.constants.Configuration;
 import com.pi.server.net.NetServerClient;
 
 /**
@@ -68,7 +69,6 @@ public class Client {
 						server.getDefs().getEntityLoader()
 								.getDef(account.getEntityDef()),
 						account.getLocation());
-		this.entity.setEntityDef(account.getEntityDef());
 		network.send(Packet11LocalEntityID.create(entity
 				.getEntityID()));
 		// TODO Find a better way to request entities for clients on move
@@ -160,5 +160,19 @@ public class Client {
 	 */
 	public final int getID() {
 		return clientID;
+	}
+
+	/**
+	 * Called when this client's entity dies.
+	 */
+	public final void onEntityDeath() {
+		acc.setLocation(Configuration.SPAWN_POINT);
+		this.entity =
+				server.getEntityManager().spawnEntity(
+						server.getDefs().getEntityLoader()
+								.getDef(acc.getEntityDef()),
+						acc.getLocation());
+		network.send(Packet11LocalEntityID.create(entity
+				.getEntityID()));
 	}
 }
