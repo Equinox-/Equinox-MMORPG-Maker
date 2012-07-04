@@ -118,7 +118,7 @@ public final class GraphicsLoader {
 							dest.createNewFile();
 						}
 						download(new URL(Constants.GRAPHICS_URL
-								+ name), dest);
+								+ rawName), dest);
 					} catch (IOException e) {
 						client.getLog().printStackTrace(e);
 					}
