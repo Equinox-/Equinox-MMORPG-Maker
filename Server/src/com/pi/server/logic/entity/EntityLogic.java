@@ -29,13 +29,13 @@ public abstract class EntityLogic {
 	/**
 	 * Creates a logic instance of the given server entity and server.
 	 * 
-	 * @param sEntity the entity wrapper
+	 * @param sSEntity the entity wrapper
 	 * @param sServer the server
 	 */
-	public EntityLogic(final ServerEntity sEntity,
+	public EntityLogic(final ServerEntity sSEntity,
 			final Server sServer) {
 		this.server = sServer;
-		this.sEntity = sEntity;
+		this.sEntity = sSEntity;
 		this.entity = sEntity.getWrappedEntity();
 	}
 

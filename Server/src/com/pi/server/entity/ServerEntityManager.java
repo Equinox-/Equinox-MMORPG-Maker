@@ -7,8 +7,8 @@ import java.util.List;
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
+import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
@@ -74,14 +74,16 @@ public class ServerEntityManager {
 	}
 
 	/**
-	 * Creates and registers an entity with the given entity type to this entity
-	 * manager.
+	 * Creates and registers an entity with the given entity definition and
+	 * position to this entity manager.
 	 * 
-	 * @param eType the entity type
+	 * @param eDef the entity definition
+	 * @param ePos the entity's spawn position
 	 * @return the registered entity or <code>null</code> if it wasn't
 	 *         registered
 	 */
-	public final Entity registerEntity(final EntityType eType) {
+	public final Entity spawnEntity(final EntityDef eDef,
+			final Location ePos) {
 		int id = 0;
 		while (true) {
 			if (entityMap.get(id) == null) {
@@ -89,9 +91,10 @@ public class ServerEntityManager {
 			}
 			id++;
 		}
-		Entity e = eType.createInstance();
+		Entity e = eDef.getEntityType().createInstance();
 		if (e != null) {
 			if (e.setEntityID(id)) {
+				e.setLocation(ePos.x, ePos.plane, ePos.z);
 				entityMap.set(id, new ServerEntity(e));
 				return e;
 			}

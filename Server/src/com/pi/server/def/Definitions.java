@@ -1,7 +1,6 @@
 package com.pi.server.def;
 
 import com.pi.server.Server;
-import com.pi.server.ServerThread;
 
 /**
  * The container providing all the definition loaders.
@@ -9,7 +8,7 @@ import com.pi.server.ServerThread;
  * @author Westin
  * @see com.pi.server.def.EntityDefLoader
  */
-public class Definitions extends ServerThread {
+public class Definitions {
 	/**
 	 * The entity definition loader.
 	 */
@@ -22,9 +21,8 @@ public class Definitions extends ServerThread {
 	 * @param server the server instance
 	 */
 	public Definitions(final Server server) {
-		super(server);
 		this.entityDefLoader = new EntityDefLoader(server);
-		super.start();
+		this.entityDefLoader.loadAllDefinitions();
 	}
 
 	/**
@@ -35,10 +33,5 @@ public class Definitions extends ServerThread {
 	 */
 	public final EntityDefLoader getEntityLoader() {
 		return entityDefLoader;
-	}
-
-	@Override
-	protected final void loop() {
-		entityDefLoader.loadLoop();
 	}
 }

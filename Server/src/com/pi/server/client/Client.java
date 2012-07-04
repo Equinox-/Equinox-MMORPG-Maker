@@ -2,7 +2,6 @@ package com.pi.server.client;
 
 import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
 import com.pi.server.net.NetServerClient;
@@ -65,8 +64,10 @@ public class Client {
 		}
 		this.acc = account;
 		this.entity =
-				server.getEntityManager().registerEntity(
-						EntityType.Combat);
+				server.getEntityManager().spawnEntity(
+						server.getDefs().getEntityLoader()
+								.getDef(account.getEntityDef()),
+						account.getLocation());
 		this.entity.setEntityDef(account.getEntityDef());
 		network.send(Packet11LocalEntityID.create(entity
 				.getEntityID()));
@@ -80,6 +81,7 @@ public class Client {
 	public final void dispose() {
 		String desc = this.toString();
 		if (entity != null) {
+			acc.setLocation(entity.x, entity.plane, entity.z);
 			server.getEntityManager().sendEntityDispose(
 					entity.getEntityID());
 		}

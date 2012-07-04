@@ -29,6 +29,11 @@ public class Account implements PacketObject {
 	private int entityDef;
 
 	/**
+	 * The current entity location.
+	 */
+	private Location entityLocation = new Location();
+
+	/**
 	 * Sets the username of this account.
 	 * 
 	 * @param sUsername the new username.
@@ -91,12 +96,43 @@ public class Account implements PacketObject {
 		return passwordHash;
 	}
 
+	/**
+	 * Sets the location of this account.
+	 * 
+	 * @param x the new x position
+	 * @param plane the new plane
+	 * @param z the new z position
+	 */
+	public final void setLocation(final int x, final int plane,
+			final int z) {
+		entityLocation.setLocation(x, plane, z);
+	}
+
+	/**
+	 * Sets the entity location to the given location.
+	 * 
+	 * @param l the new location
+	 */
+	public final void setLocation(final Location l) {
+		entityLocation = l;
+	}
+
+	/**
+	 * Gets the location of this account.
+	 * 
+	 * @return the entity location
+	 */
+	public final Location getLocation() {
+		return entityLocation;
+	}
+
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		pOut.writeInt(entityDef);
 		pOut.writeString(username);
 		pOut.writeString(passwordHash);
+		entityLocation.writeData(pOut);
 	}
 
 	@Override
@@ -105,6 +141,7 @@ public class Account implements PacketObject {
 		entityDef = pIn.readInt();
 		username = pIn.readString();
 		passwordHash = pIn.readString();
+		entityLocation.readData(pIn);
 	}
 
 	@Override
@@ -112,7 +149,8 @@ public class Account implements PacketObject {
 		return SizeOf.INT
 				+ PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream
-						.stringByteLength(passwordHash);
+						.stringByteLength(passwordHash)
+				+ entityLocation.getLength();
 	}
 
 	@Override

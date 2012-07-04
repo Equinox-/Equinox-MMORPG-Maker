@@ -28,21 +28,6 @@ public class EntityDefLoader extends
 	}
 
 	@Override
-	protected final boolean loadDefinition(final int defID) {
-		try {
-			File f = Paths.getEntityDef(defID);
-			EntityDef d =
-					(EntityDef) DatabaseIO.read(f,
-							EntityDef.class);
-			super.setDef(defID, d);
-			return true;
-		} catch (Exception e) {
-			getServer().getLog().printStackTrace(e);
-		}
-		return false;
-	}
-
-	@Override
 	protected final boolean sendDefinitionTo(final int client,
 			final int defID, final EntityDef def) {
 		Packet13EntityDef packet = new Packet13EntityDef();
@@ -51,5 +36,29 @@ public class EntityDefLoader extends
 		getServer().getClientManager().getClient(client)
 				.getNetClient().send(packet);
 		return true;
+	}
+
+	@Override
+	protected final void loadAllDefinitions() {
+		File[] defFiles =
+				Paths.getEntityDefDirectory().listFiles();
+		for (File defF : defFiles) {
+			String[] parts = defF.getName().split(".");
+			if (parts.length == 2 && parts[1] == "def") {
+				try {
+					int defID = Integer.valueOf(parts[0]);
+					EntityDef sDef =
+							(EntityDef) DatabaseIO.read(defF,
+									EntityDef.class);
+					if (sDef != null) {
+						setDef(defID, sDef);
+					}
+				} catch (NumberFormatException e) {
+					continue;
+				} catch (Exception e) {
+					getServer().getLog().printStackTrace(e);
+				}
+			}
+		}
 	}
 }

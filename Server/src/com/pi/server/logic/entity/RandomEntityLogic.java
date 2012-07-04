@@ -3,7 +3,6 @@ package com.pi.server.logic.entity;
 import java.util.Random;
 
 import com.pi.common.contants.Direction;
-import com.pi.common.contants.MovementConstants;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 

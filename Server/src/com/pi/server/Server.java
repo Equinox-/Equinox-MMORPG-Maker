@@ -6,13 +6,12 @@ import java.net.BindException;
 
 import javax.swing.JFrame;
 
+import com.pi.common.database.Location;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
-import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
 import com.pi.server.client.ClientManager;
 import com.pi.server.constants.ServerConstants;
 import com.pi.server.database.Paths;
@@ -161,12 +160,9 @@ public class Server {
 			sLogic = new ServerLogic(this);
 			sLogic.start();
 
-			Entity tE =
-					entityManager
-							.registerEntity(EntityType.Living);
-			if (tE != null) {
-				tE.setEntityDef(1);
-			}
+			entityManager.spawnEntity(defs
+							.getEntityLoader().getDef(1),
+							new Location());
 
 		} catch (BindException e1) {
 			dispose();
@@ -186,14 +182,11 @@ public class Server {
 			if (network != null) {
 				network.dispose();
 			}
-			if (database != null) {
-				database.save();
-			}
 			if (world != null) {
 				world.dispose();
 			}
-			if (defs != null) {
-				defs.dispose();
+			if (database != null) {
+				database.save();
 			}
 		} else {
 			if (rcView != null) {
