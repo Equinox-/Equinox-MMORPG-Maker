@@ -29,6 +29,24 @@ public class ClientManager {
 	}
 
 	/**
+	 * Gets the client with the given entity identification number, or
+	 * <code>null</code> if there isn't a client registered with the given
+	 * entity.
+	 * 
+	 * @param entityID the identification number
+	 * @return the client instance
+	 */
+	public final Client getClientByEntity(final int entityID) {
+		for (Client c : clientMap) {
+			if (c.getEntity() != null
+					&& c.getEntity().getEntityID() == entityID) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Disposes the client linked to the given identification number and removes
 	 * the client from the mapping.
 	 * 

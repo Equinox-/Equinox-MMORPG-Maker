@@ -238,8 +238,17 @@ public class NetServerHandler extends NetHandler {
 										ent.getWrappedEntity()
 												.getEntityID());
 					} else {
-						netClient
-								.send(Packet18Health.create(lE));
+						Packet pack = Packet18Health.create(lE);
+						netClient.send(pack);
+						Client attackedClient =
+								server.getClientManager()
+										.getClientByEntity(
+												lE.getEntityID());
+						if (attackedClient != null
+								&& attackedClient.getNetClient() != null) {
+							attackedClient.getNetClient().send(
+									pack);
+						}
 					}
 					break;
 				}
