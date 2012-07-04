@@ -1,5 +1,7 @@
 package com.pi.server.logic.entity;
 
+import java.util.Random;
+
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.game.Entity;
@@ -16,15 +18,16 @@ public abstract class EntityLogic {
 	/**
 	 * The entity wrapper this logic instance is bound to.
 	 */
-	protected final ServerEntity sEntity;
-	/**
-	 * The actual entity this logic instance is bound to.
-	 */
-	protected final Entity entity;
+	private final ServerEntity sEntity;
 	/**
 	 * The server this logic instance is bound to.
 	 */
-	protected final Server server;
+	private final Server server;
+
+	/**
+	 * The random instance bound to this logic instance.
+	 */
+	private final Random rand = new Random();
 
 	/**
 	 * Creates a logic instance of the given server entity and server.
@@ -36,7 +39,42 @@ public abstract class EntityLogic {
 			final Server sServer) {
 		this.server = sServer;
 		this.sEntity = sSEntity;
-		this.entity = sEntity.getWrappedEntity();
+	}
+
+	/**
+	 * Gets the server this logic instance is bound to.
+	 * 
+	 * @return the server instance
+	 */
+	protected final Server getServer() {
+		return server;
+	}
+
+	/**
+	 * Gets the entity this logic instance is bound to.
+	 * 
+	 * @return the entity
+	 */
+	protected final Entity getEntity() {
+		return sEntity.getWrappedEntity();
+	}
+
+	/**
+	 * Gets the random instance this logic is bound to.
+	 * 
+	 * @return the random instance
+	 */
+	protected final Random getRandom() {
+		return rand;
+	}
+
+	/**
+	 * Gets the entity wrapper this logic instance is bound to.
+	 * 
+	 * @return the server entity
+	 */
+	protected final ServerEntity getServerEntity() {
+		return sEntity;
 	}
 
 	/**
@@ -46,15 +84,16 @@ public abstract class EntityLogic {
 	 * @return if the entity was moved
 	 */
 	protected final boolean tryMove(final Direction d) {
-		if (entity.canMoveIn(server.getWorld(), d)
+		if (getEntity().canMoveIn(server.getWorld(), d)
 				&& !sEntity.isStillMoving()) {
-			entity.setDir(d);
+			getEntity().setDir(d);
 			Location curr =
-					new Location(entity.x, entity.plane,
-							entity.z);
+					new Location(getEntity().x,
+							getEntity().plane, getEntity().z);
 			sEntity.doTimedMovement();
 			server.getEntityManager().sendEntityMove(
-					entity.getEntityID(), curr, entity, d);
+					getEntity().getEntityID(), curr,
+					getEntity(), d);
 			return true;
 		}
 		return false;

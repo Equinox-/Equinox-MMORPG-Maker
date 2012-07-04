@@ -34,7 +34,7 @@ public final class Demonstration {
 				TileGraphicsObject obj =
 						new TileGraphicsObject();
 				obj.setGraphic(2);
-				obj.setPosition(0, 32, 0, 0);
+				obj.setPosition(0, TileConstants.TILE_HEIGHT, 0, 0);
 				t.setLayer(TileLayer.GROUND, obj);
 				sec.setLocalTile(x, y, t);
 				if (Math.random() < 0.75f) {
@@ -44,8 +44,8 @@ public final class Demonstration {
 						new TileGraphicsObject();
 				obj2.setGraphic(2);
 				obj2.setPosition(
-						32 + (Math.round(Math.random() * 2D) * 32),
-						Math.round(Math.random()) * 32, 0, 0);
+						TileConstants.TILE_WIDTH + (Math.round(Math.random() * 2D) * TileConstants.TILE_WIDTH),
+						Math.round(Math.random()) * TileConstants.TILE_HEIGHT, 0, 0);
 				t.setLayer(TileLayer.MASK1, obj2);
 
 			}

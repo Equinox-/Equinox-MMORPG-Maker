@@ -1,7 +1,5 @@
 package com.pi.server.logic.entity;
 
-import java.util.Random;
-
 import com.pi.common.contants.Direction;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
@@ -25,11 +23,6 @@ public class RandomEntityLogic extends EntityLogic {
 	private static final long MOVEMENT_CHECK_TIME = 500;
 
 	/**
-	 * The random instance bound to this logic instance.
-	 */
-	protected final Random rand = new Random();
-
-	/**
 	 * The last movement check.
 	 */
 	private long lastMovementCheck = -1;
@@ -48,23 +41,23 @@ public class RandomEntityLogic extends EntityLogic {
 
 	@Override
 	public void doLogic() {
-		if (sEntity.isStillMoving()
+		if (getServerEntity().isStillMoving()
 				|| lastMovementCheck + MOVEMENT_CHECK_TIME > System
 						.currentTimeMillis()) {
 			return;
 		}
 		lastMovementCheck = System.currentTimeMillis();
-		if (rand.nextFloat() < RANDOM_MOVEMENT_CHANCE) {
+		if (getRandom().nextFloat() < RANDOM_MOVEMENT_CHANCE) {
 			// It would appear that we should move randomly.
 			Direction d = null;
 			for (int i = 0; i < 3
-					&& (d == null || entity.getDir()
+					&& (d == null || getEntity().getDir()
 							.getInverse() == d); i++) {
 				// The inverse thing is to try to not just have entities moving
 				// back and forth. Three tries.
 				d =
-						Direction.values()[rand
-								.nextInt(Direction.values().length)];
+						Direction.values()[getRandom().nextInt(
+								Direction.values().length)];
 			}
 			tryMove(d);
 		}

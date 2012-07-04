@@ -230,8 +230,8 @@ public class NetServerHandler extends NetHandler {
 					LivingEntity lE =
 							(LivingEntity) ent
 									.getWrappedEntity();
-					lE.setHealth(lE.getHealth() - 1);// TODO Based on levels
-														// and stuff
+					lE.setHealth(lE.getHealth() - 1);
+					// TODO Based on levels and stuff
 					Client attackedClient =
 							server.getClientManager()
 									.getClientByEntity(

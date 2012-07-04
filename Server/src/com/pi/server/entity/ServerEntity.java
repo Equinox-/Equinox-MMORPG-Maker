@@ -1,6 +1,6 @@
 package com.pi.server.entity;
 
-import com.pi.common.contants.MovementConstants;
+import com.pi.common.contants.EntityConstants;
 import com.pi.common.game.Entity;
 import com.pi.server.logic.entity.EntityLogic;
 
@@ -49,7 +49,7 @@ public class ServerEntity {
 		if (!isStillMoving()) {
 			nextMove =
 					System.currentTimeMillis()
-							+ MovementConstants.WALK_TIME;
+							+ EntityConstants.WALK_TIME;
 			wrap.doMovement();
 		}
 	}

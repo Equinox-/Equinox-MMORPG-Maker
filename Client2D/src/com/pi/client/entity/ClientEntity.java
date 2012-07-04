@@ -1,6 +1,6 @@
 package com.pi.client.entity;
 
-import com.pi.common.contants.MovementConstants;
+import com.pi.common.contants.EntityConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.game.Entity;
 
@@ -31,7 +31,7 @@ public class ClientEntity {
 	/**
 	 * How long it should take this entity to move one tile.
 	 */
-	private long movementTime = MovementConstants.WALK_TIME;
+	private long movementTime = EntityConstants.WALK_TIME;
 
 	/**
 	 * Creates a client entity that wraps the provided entity.
@@ -77,9 +77,9 @@ public class ClientEntity {
 	public final void doMovement(final boolean isRunning) {
 		if (!isMoving()) {
 			if (isRunning) {
-				movementTime = MovementConstants.RUN_TIME;
+				movementTime = EntityConstants.RUN_TIME;
 			} else {
-				movementTime = MovementConstants.WALK_TIME;
+				movementTime = EntityConstants.WALK_TIME;
 			}
 			wrapped.doMovement();
 			moveStart = System.currentTimeMillis();

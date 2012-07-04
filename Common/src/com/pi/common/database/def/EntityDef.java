@@ -2,6 +2,7 @@ package com.pi.common.database.def;
 
 import java.io.IOException;
 
+import com.pi.common.contants.EntityConstants;
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.game.Entity;
@@ -39,7 +40,7 @@ public class EntityDef extends GraphicsObject {
 	 * The maximum health of this entity. This is only set, or able to be set if
 	 * the entity type is a sub type of the living entity type.
 	 */
-	private int maximumHealth = 10;
+	private int maximumHealth = EntityConstants.DEFAULT_MAXIMUM_HEALTH;
 
 	/**
 	 * Creates an entity definition with the given identification number.

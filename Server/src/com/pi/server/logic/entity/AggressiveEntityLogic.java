@@ -8,7 +8,7 @@ import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 
 /**
- * Entity logic class that targets another entity, or randomly moves if no
+ * Entity logic class that targets another getEntity(), or randomly moves if no
  * target is found.
  * 
  * @author Westin
@@ -21,7 +21,8 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 	private int target = -1;
 
 	/**
-	 * Creates an aggressive logic instance for the given entity and server.
+	 * Creates an aggressive logic instance for the given getEntity() and
+	 * server.
 	 * 
 	 * @param entity the entity to create logic for
 	 * @param server the server to bind to
@@ -32,24 +33,24 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 	}
 
 	/**
-	 * Find a new target for this entity.
+	 * Find a new target for this getEntity().
 	 * 
 	 * @return the new target, or <code>null</code> if not found
 	 */
 	public final ServerEntity grabNewTarget() {
 		List<ServerEntity> entList =
-				server.getEntityManager()
+				getServer().getEntityManager()
 						.getEntitiesInSector(
-								entity.getSectorLocation());
+								getEntity().getSectorLocation());
 		int minDist = Integer.MAX_VALUE;
 		ServerEntity best = null;
 		for (ServerEntity e : entList) {
-			if (e != sEntity) {
+			if (e != getServerEntity()) {
 				int nDist =
 						Math.abs(e.getWrappedEntity().x
-								- entity.x)
+								- getEntity().x)
 								+ Math.abs(e.getWrappedEntity().z
-										- entity.z);
+										- getEntity().z);
 				if (nDist < minDist) {
 					minDist = nDist;
 					best = e;
@@ -61,7 +62,7 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 
 	@Override
 	public final void doLogic() {
-		if (sEntity.isStillMoving()) {
+		if (getServerEntity().isStillMoving()) {
 			return;
 		}
 
@@ -74,13 +75,13 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 			}
 		} else {
 			ServerEntity wrapper =
-					server.getEntityManager().getEntity(
+					getServer().getEntityManager().getEntity(
 							this.target);
 			if (wrapper != null) {
 				Entity eTarget = wrapper.getWrappedEntity();
 				if (eTarget != null) {
-					int xDir = (eTarget.x - entity.x);
-					int zDir = (eTarget.z - entity.z);
+					int xDir = (eTarget.x - getEntity().x);
+					int zDir = (eTarget.z - getEntity().z);
 					Direction[] pDirs;
 					if (xDir != 0) {
 						if (zDir != 0) {
@@ -113,8 +114,8 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 					int[] triedDirs = new int[0];
 					if (pDirs.length >= 2) {
 						triedDirs =
-								new int[] { rand
-										.nextInt(pDirs.length) };
+								new int[] { getRandom().nextInt(
+										pDirs.length) };
 						if (tryMove(pDirs[triedDirs[0]])) {
 							return;
 						}
