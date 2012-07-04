@@ -71,7 +71,6 @@ public final class Paths {
 	public static File getAccountsDatabase() {
 		File f = new File(getDatabaseFolder(), "accounts.db");
 		if (!f.exists()) {
-			System.out.println(f.getAbsolutePath());
 			try {
 				f.createNewFile();
 			} catch (Exception e) {

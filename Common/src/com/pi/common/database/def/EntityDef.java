@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.GraphicsObject;
+import com.pi.common.game.Entity;
 import com.pi.common.game.EntityType;
+import com.pi.common.game.LivingEntity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -18,7 +20,7 @@ public class EntityDef extends GraphicsObject {
 	/**
 	 * This definintion's identification number.
 	 */
-	private int defID;
+	private int defID = -1;
 	/**
 	 * The number of horizontal frames for the movement animation.
 	 */
@@ -32,6 +34,21 @@ public class EntityDef extends GraphicsObject {
 	 * The entity type this definition uses.
 	 */
 	private EntityType eType = EntityType.Normal;
+
+	/**
+	 * The maximum health of this entity. This is only set, or able to be set if
+	 * the entity type is a sub type of the living entity type.
+	 */
+	private int maximumHealth = 10;
+
+	/**
+	 * Creates an entity definition with the given identification number.
+	 * 
+	 * @param eDefID the definition id
+	 */
+	public EntityDef(final int eDefID) {
+		this.defID = eDefID;
+	}
 
 	/**
 	 * Gets the number of horizontal frames for the movement animation.
@@ -103,6 +120,9 @@ public class EntityDef extends GraphicsObject {
 		pOut.writeInt(horizFrames);
 		pOut.writeString(logicClass);
 		pOut.writeInt(eType.ordinal());
+		if (eType.isSubtype(EntityType.Living)) {
+			pOut.writeInt(maximumHealth);
+		}
 	}
 
 	@Override
@@ -112,13 +132,69 @@ public class EntityDef extends GraphicsObject {
 		horizFrames = pIn.readInt();
 		logicClass = pIn.readString();
 		eType = EntityType.values()[pIn.readInt()];
+		if (eType.isSubtype(EntityType.Living)) {
+			maximumHealth = pIn.readInt();
+		}
 	}
 
 	@Override
 	public final int getLength() {
-		return super.getLength()
-				+ (2 * SizeOf.INT)
-				+ PacketOutputStream
-						.stringByteLength(logicClass);
+		int length =
+				super.getLength()
+						+ (2 * SizeOf.INT)
+						+ PacketOutputStream
+								.stringByteLength(logicClass);
+		if (eType.isSubtype(EntityType.Living)) {
+			length += SizeOf.INT; // Max Health
+		}
+		return length;
+	}
+
+	/**
+	 * Gets maximum health of this entity.
+	 * 
+	 * @return the maximum health
+	 * @throws UnsupportedOperationException if this entity definition's type
+	 *             isn't a sub-type of the Living entity type
+	 */
+	public final int getMaximumHealth() {
+		if (eType.isSubtype(EntityType.Living)) {
+			return maximumHealth;
+		} else {
+			throw new UnsupportedOperationException(
+					"Unable to get the maximum health of an entity definition with a type that isn't a subtype of the Living entity type");
+		}
+	}
+
+	/**
+	 * Sets maximum health of this entity.
+	 * 
+	 * @param sMaximumHealth the maximum health of this entity
+	 * @throws UnsupportedOperationException if this entity definition's type
+	 *             isn't a sub-type of the Living entity type
+	 */
+	public final void setMaximumHealth(final int sMaximumHealth) {
+		if (eType.isSubtype(EntityType.Living)) {
+			this.maximumHealth = sMaximumHealth;
+		} else {
+			throw new UnsupportedOperationException(
+					"Unable to set the maximum health of an entity definition with a type that isn't a subtype of the Living entity type");
+		}
+	}
+
+	/**
+	 * Creates an entity instance of the proper type and variables for this
+	 * entity definition.
+	 * 
+	 * @return the created entity
+	 */
+	public final Entity createEntityInstance() {
+		Entity ent = eType.createInstance();
+		ent.setEntityDef(defID);
+		if (ent instanceof LivingEntity) {
+			((LivingEntity) ent).setHealth(maximumHealth);
+		}
+		return ent;
+
 	}
 }

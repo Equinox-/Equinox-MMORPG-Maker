@@ -91,7 +91,7 @@ public class ServerEntityManager {
 			}
 			id++;
 		}
-		Entity e = eDef.getEntityType().createInstance();
+		Entity e = eDef.createEntityInstance();
 		if (e != null) {
 			if (e.setEntityID(id)) {
 				e.setLocation(ePos.x, ePos.plane, ePos.z);

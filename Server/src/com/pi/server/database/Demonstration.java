@@ -10,6 +10,7 @@ import com.pi.common.database.TileGraphicsObject;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.game.EntityType;
 
 /**
  * Creates and saves demonstration information to the server's database.
@@ -79,16 +80,19 @@ public final class Demonstration {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		EntityDef d = new EntityDef();
-		d.setGraphic(3);
-		d.setPosition(0, 0, 128, 192);
+		EntityDef d0 = new EntityDef(0);
+		d0.setGraphic(3);
+		d0.setPosition(0, 0, 128, 192);
+		d0.setEntityType(EntityType.Combat);
 		// d.setLogicClass("com.pi.server.logic.entity.AggressiveEntityLogic");
-		DatabaseIO.write(Paths.getEntityDef(0), d);
+		DatabaseIO.write(Paths.getEntityDef(0), d0);
 
-		d.setGraphic(4);
-		d.setPosition(0, 0, 128, 128);
-		d.setLogicClass("com.pi.server.logic.entity.RandomEntityLogic");
-		DatabaseIO.write(Paths.getEntityDef(1), d);
+		EntityDef d1 = new EntityDef(1);
+		d1.setGraphic(4);
+		d1.setPosition(0, 0, 128, 128);
+		d1.setEntityType(EntityType.Combat);
+		d1.setLogicClass("com.pi.server.logic.entity.RandomEntityLogic");
+		DatabaseIO.write(Paths.getEntityDef(1), d1);
 	}
 
 	/**

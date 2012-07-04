@@ -86,7 +86,7 @@ public class GraphicsAnimation extends GraphicsObject {
 	}
 
 	@Override
-	public void setPosition(final float x, final float y,
+	public final void setPosition(final float x, final float y,
 			final float width, final float height) {
 		super.setPosition(x, y, width, height);
 		this.frameWidth =
@@ -94,13 +94,13 @@ public class GraphicsAnimation extends GraphicsObject {
 	}
 
 	@Override
-	public float getPositionX() {
+	public final float getPositionX() {
 		advanceFrames();
 		return super.getPositionX() + currentFrameX;
 	}
 
 	@Override
-	public float getPositionWidth() {
+	public final float getPositionWidth() {
 		advanceFrames();
 		return frameWidth;
 	}

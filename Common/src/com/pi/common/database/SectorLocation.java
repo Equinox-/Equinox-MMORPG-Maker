@@ -1,5 +1,6 @@
 package com.pi.common.database;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.contants.SectorConstants;
 
 /**
@@ -128,7 +129,7 @@ public class SectorLocation {
 
 	@Override
 	public final int hashCode() {
-		return (x << 18) ^ (z << 4) ^ plane;
+		return (x << SizeOf.LONG) ^ (z << SizeOf.INT) ^ plane;
 	}
 
 	@Override

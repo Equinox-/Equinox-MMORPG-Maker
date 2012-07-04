@@ -179,4 +179,13 @@ public class PacketInputStream {
 	public final ByteBuffer getByteBuffer() {
 		return bb;
 	}
+
+	/**
+	 * Gets the number of remaining bytes in this byte buffer stream.
+	 * 
+	 * @return the number of remaining bytes
+	 */
+	public final int available() {
+		return bb.remaining();
+	}
 }

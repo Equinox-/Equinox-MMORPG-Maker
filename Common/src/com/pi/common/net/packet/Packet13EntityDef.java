@@ -23,7 +23,7 @@ public class Packet13EntityDef extends Packet {
 			throws IOException {
 		pOut.writeInt(entityID);
 		if (def == null) {
-			def = new EntityDef();
+			def = new EntityDef(entityID);
 		}
 		def.writeData(pOut);
 	}
@@ -33,7 +33,7 @@ public class Packet13EntityDef extends Packet {
 			throws IOException {
 		entityID = pIn.readInt();
 		if (def == null) {
-			def = new EntityDef();
+			def = new EntityDef(entityID);
 		}
 		def.readData(pIn);
 	}
@@ -41,7 +41,7 @@ public class Packet13EntityDef extends Packet {
 	@Override
 	public final int getLength() {
 		if (def == null) {
-			def = new EntityDef();
+			def = new EntityDef(entityID);
 		}
 		return SizeOf.INT + def.getLength();
 	}

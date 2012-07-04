@@ -10,14 +10,14 @@ public class LivingEntity extends Entity {
 	/**
 	 * Entity's current health.
 	 */
-	private float health = 1f;
+	private int health = 1;
 
 	/**
 	 * Sets an entity's current health.
 	 * 
 	 * @param sHealth the new health
 	 */
-	public final void setHealth(final float sHealth) {
+	public final void setHealth(final int sHealth) {
 		this.health = sHealth;
 	}
 
@@ -26,7 +26,7 @@ public class LivingEntity extends Entity {
 	 * 
 	 * @return the entity's health
 	 */
-	public final float getHealth() {
+	public final int getHealth() {
 		return health;
 	}
 }

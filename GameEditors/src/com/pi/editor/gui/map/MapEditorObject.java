@@ -368,7 +368,7 @@ public class MapEditorObject extends PIContainer implements
 					lastDirectory = new File(file.getParent());
 					try {
 						viewer.setSector((Sector) DatabaseIO
-								.read(file, Sector.class));
+								.read(file, new Sector()));
 					} catch (Exception ex) {
 						JOptionPane.showMessageDialog(null,
 								ex.toString());

@@ -16,6 +16,7 @@ import com.pi.common.database.Tile;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
+import com.pi.common.game.EntityType;
 import com.pi.common.game.LivingEntity;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
@@ -135,12 +136,17 @@ public class GameRenderLoop implements Renderable {
 
 			if (ent.getWrappedEntity() instanceof LivingEntity
 					&& ((LivingEntity) ent.getWrappedEntity())
-							.getHealth() != 1f) {
+							.getHealth() != 1f
+					&& def.getEntityType().isSubtype(
+							EntityType.Living)) {
+				float scalarHealth =
+						((LivingEntity) ent.getWrappedEntity())
+								.getHealth()
+								/ ((float) def
+										.getMaximumHealth());
 				int goodHealthWidth =
 						Math.round(((float) Constants.HEALTH_BAR_WIDTH)
-								* ((LivingEntity) ent
-										.getWrappedEntity())
-										.getHealth());
+								* scalarHealth);
 				int barY = p.y - 5 - Constants.HEALTH_BAR_HEIGHT;
 				int barX =
 						p.x

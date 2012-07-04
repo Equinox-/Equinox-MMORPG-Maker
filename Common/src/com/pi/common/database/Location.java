@@ -104,7 +104,7 @@ public class Location implements PacketObject {
 
 	@Override
 	public final int hashCode() {
-		return (x << 18) ^ (z << 4) ^ plane;
+		return (x << SizeOf.LONG) ^ (z << SizeOf.INT) ^ plane;
 	}
 
 	@Override

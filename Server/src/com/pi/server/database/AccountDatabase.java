@@ -98,7 +98,6 @@ public class AccountDatabase implements PacketObject {
 		list.clear();
 		if (pIn.getByteBuffer().remaining() >= 4) {
 			int size = pIn.readInt();
-			System.out.println(size);
 			list.ensureCapacity(size);
 			for (int i = 0; i < size; i++) {
 				Account a = new Account();

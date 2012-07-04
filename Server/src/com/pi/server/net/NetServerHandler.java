@@ -212,31 +212,27 @@ public class NetServerHandler extends NetHandler {
 				server.getClientManager().getClient(
 						netClient.getID());
 		if (cli != null) {
-			Location otherLoc =
-					new Location(
-							cli.getEntity().x
-									+ cli.getEntity().getDir()
-											.getXOff(),
-							cli.getEntity().plane,
-							cli.getEntity().z
-									+ cli.getEntity().getDir()
-											.getZOff());
 			List<ServerEntity> entz =
 					server.getEntityManager()
-							.getEntitiesAtLocation(otherLoc);
+							.getEntitiesAtLocation(
+									new Location(
+											cli.getEntity().x
+													+ cli.getEntity()
+															.getDir()
+															.getXOff(),
+											cli.getEntity().plane,
+											cli.getEntity().z
+													+ cli.getEntity()
+															.getDir()
+															.getZOff()));
 			for (ServerEntity ent : entz) {
 				if (ent.getWrappedEntity() instanceof LivingEntity) {
 					LivingEntity lE =
 							(LivingEntity) ent
 									.getWrappedEntity();
-					lE.setHealth(lE.getHealth() - 0.1f);// TODO Based on levels
+					lE.setHealth(lE.getHealth() - 1);// TODO Based on levels
 														// and stuff
-					if (lE.getHealth() <= 0f) {
-						server.getLog().severe("Kill the entity");
-						server.getEntityManager()
-								.deRegisterEntity(
-										ent.getWrappedEntity()
-												.getEntityID());
+					if (lE.getHealth() <= 0) {
 						server.getEntityManager()
 								.sendEntityDispose(
 										ent.getWrappedEntity()

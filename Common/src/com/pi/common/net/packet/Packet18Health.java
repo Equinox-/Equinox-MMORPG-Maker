@@ -21,13 +21,13 @@ public class Packet18Health extends Packet {
 	/**
 	 * The new health value.
 	 */
-	public float health;
+	public int health;
 
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		pOut.writeInt(entityID);
-		pOut.writeFloat(health);
+		pOut.writeInt(health);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class Packet18Health extends Packet {
 	public final void readData(final PacketInputStream pIn)
 			throws IOException {
 		entityID = pIn.readInt();
-		health = pIn.readFloat();
+		health = pIn.readInt();
 	}
 
 	/**

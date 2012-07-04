@@ -57,21 +57,20 @@ public final class DatabaseIO {
 	 * provided input stream.
 	 * 
 	 * @param in the stream to read from
-	 * @param clazz the class to read into
+	 * @param readTo the object to read into
 	 * @return the read object
 	 * @throws IOException if there is a problem reading the stream, or with the
 	 *             contents of the stream
 	 */
 	public static PacketObject read(final InputStream in,
-			final Class<? extends PacketObject> clazz)
+			final PacketObject readTo)
 			throws IOException {
 		try {
 
 			PacketInputStream pIn =
 					new PacketInputStream(readByteBuffer(in));
-			PacketObject obj = clazz.newInstance();
-			obj.readData(pIn);
-			return obj;
+			readTo.readData(pIn);
+			return readTo;
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -86,15 +85,15 @@ public final class DatabaseIO {
 	 * 
 	 * @see DatabaseIO#read(InputStream, Class)
 	 * @param f the file to read from
-	 * @param clazz the class to read into
+	 * @param readTo the object to read into
 	 * @return the read object
 	 * @throws IOException if there is a problem reading the stream, or with the
 	 *             contents of the stream
 	 */
 	public static PacketObject read(final File f,
-			final Class<? extends PacketObject> clazz)
+			final PacketObject readTo)
 			throws IOException {
-		return read(new FileInputStream(f), clazz);
+		return read(new FileInputStream(f), readTo);
 	}
 
 	/**

@@ -58,6 +58,18 @@ public enum EntityType {
 	}
 
 	/**
+	 * Checks if this entity type is the sub type of another entity type. This
+	 * returns <code>true</code> if an entity instance created by this type is
+	 * an instance of an instance created by the entity type in the parameter.
+	 * 
+	 * @param superType the super type to check
+	 * @return if this type is a sub type of the given type
+	 */
+	public boolean isSubtype(final EntityType superType) {
+		return superType.clazz.isAssignableFrom(clazz);
+	}
+
+	/**
 	 * Gets the entity type of the given entity.
 	 * 
 	 * @param entity the entity

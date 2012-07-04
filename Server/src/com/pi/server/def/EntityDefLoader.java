@@ -43,13 +43,13 @@ public class EntityDefLoader extends
 		File[] defFiles =
 				Paths.getEntityDefDirectory().listFiles();
 		for (File defF : defFiles) {
-			String[] parts = defF.getName().split(".");
-			if (parts.length == 2 && parts[1] == "def") {
+			String[] parts = defF.getName().split("\\.");
+			if (parts.length == 2 && parts[1].equals("def")) {
 				try {
 					int defID = Integer.valueOf(parts[0]);
 					EntityDef sDef =
 							(EntityDef) DatabaseIO.read(defF,
-									EntityDef.class);
+									new EntityDef(defID));
 					if (sDef != null) {
 						setDef(defID, sDef);
 					}

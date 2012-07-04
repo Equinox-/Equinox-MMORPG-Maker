@@ -1,55 +1,13 @@
 [INFO] Started selector
 [FINE] Started: SectorManager
-[FINE] Started: Definitions
 [FINE] Started: ServerLogic
 [FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
-[FINEST] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
-[FINEST] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
-[FINEST] Recieved Packet1Login on 0
-[FINEST] Send Packet11LocalEntityID size: 4 on 0
-[FINEST] Send Packet9EntityData size: 28 on 0
-[FINEST] Send Packet9EntityData size: 28 on 0
-[FINEST] Send Packet15GameState size: 4 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
 [INFO] 2:0
-[FINEST] Sending raw data size: 27905 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
-[FINEST] Recieved Packet5SectorRequest on 0
-[FINEST] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
 [INFO] Request sector
-[FINEST] Send Packet6BlankSector size: 12 on 0
-[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
-[FINEST] Send Packet6BlankSector size: 12 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 124 on 0
-[FINEST] Recieved Packet12EntityDefRequest on 0
-[FINEST] Send Packet13EntityDef size: 36 on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet14ClientMove on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[FINEST] Send Packet18Health size: 8 on 0
-[FINEST] Recieved Packet19Attack on 0
-[SEVERE] Kill the entity
-[SEVERE] NetServerHandler: No custom method for packet: Packet19Attack
+[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.CombatEntity@10
+[FINE] Stopped: ServerLogic
+[INFO] Stopped selector
+[FINE] Stopped: SectorManager

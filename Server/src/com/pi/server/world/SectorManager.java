@@ -98,7 +98,7 @@ public class SectorManager extends ServerThread implements
 								getServer().getClientManager()
 										.getClient(clientID);
 						cli.getNetClient().sendRaw(sec.pack);
-						//cli.getNetClient().send(packet);
+						// cli.getNetClient().send(packet);
 					}
 				}
 			}
@@ -199,7 +199,7 @@ public class SectorManager extends ServerThread implements
 					try {
 						sX.setSector((Sector) DatabaseIO.read(
 								Paths.getSectorFile(oldestSector),
-								Sector.class));
+								new Sector()));
 						sX.updatePacketData();
 						sX.setEmpty(false);
 						sX.updateLastTimeUsed();

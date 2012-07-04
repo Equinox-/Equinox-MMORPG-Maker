@@ -154,7 +154,7 @@ public class SectorManager extends ClientThread implements
 			if (f.exists()) {
 				try {
 					sX.setSector((Sector) DatabaseIO.read(f,
-							Sector.class));
+							new Sector()));
 					revision = sX.getSectorRaw().getRevision();
 				} catch (IOException e) {
 					getClient().getLog().severe(
