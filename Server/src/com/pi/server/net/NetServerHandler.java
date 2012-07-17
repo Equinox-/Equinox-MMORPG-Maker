@@ -1,6 +1,6 @@
 package com.pi.server.net;
 
-import java.util.List;
+import java.util.Iterator;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Account;
@@ -212,7 +212,7 @@ public class NetServerHandler extends NetHandler {
 				server.getClientManager().getClient(
 						netClient.getID());
 		if (cli != null) {
-			List<ServerEntity> entz =
+			Iterator<ServerEntity> entz =
 					server.getEntityManager()
 							.getEntitiesAtLocation(
 									new Location(
@@ -225,12 +225,15 @@ public class NetServerHandler extends NetHandler {
 													+ cli.getEntity()
 															.getDir()
 															.getZOff()));
-			for (ServerEntity ent : entz) {
+			while (entz.hasNext()) {
+				ServerEntity ent = entz.next();
 				if (ent.getWrappedEntity() instanceof LivingEntity) {
 					LivingEntity lE =
 							(LivingEntity) ent
 									.getWrappedEntity();
 					lE.setHealth(lE.getHealth() - 1);
+					ent.setAttacker(cli.getEntity()
+							.getEntityID());
 					// TODO Based on levels and stuff
 					Client attackedClient =
 							server.getClientManager()

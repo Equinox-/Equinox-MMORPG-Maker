@@ -6,16 +6,16 @@ import com.pi.common.database.TileLayer;
 import com.pi.graphics.device.IGraphics;
 
 public interface MapInfoRenderer {
-    public void renderMapTile(IGraphics g, int baseX, int baseY, int tileX,
-	    int tileY, Tile tile);
+	void renderMapTile(IGraphics g, int baseX, int baseY,
+			int tileX, int tileY, Tile tile);
 
-    public void onMapClick(Sector s, int button, int tileX, int tileY,
-	    int internalX, int internalY);
+	void onMapClick(Sector s, int button, int tileX,
+			int tileY, int internalX, int internalY);
 
-    public void onMapDrag(Sector s, int button, int tileX, int tileY,
-	    int internalX, int internalY);
-    
-    public int[] getCurrentTiledata();
-    
-    public TileLayer getCurrentTileLayer();
+	void onMapDrag(Sector s, int button, int tileX,
+			int tileY, int internalX, int internalY);
+
+	int[] getCurrentTiledata();
+
+	TileLayer getCurrentTileLayer();
 }

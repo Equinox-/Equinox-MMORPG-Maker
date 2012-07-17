@@ -3,7 +3,7 @@ package com.pi.client.graphics;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.List;
+import java.util.Iterator;
 
 import com.pi.client.Client;
 import com.pi.client.constants.Constants;
@@ -78,7 +78,7 @@ public class GameRenderLoop implements Renderable {
 							.getLocalEntity() != null
 							&& sec != null) {
 						getTileView();
-						List<ClientEntity> entities =
+						Iterator<ClientEntity> entities =
 								client.getEntityManager()
 										.getEntitiesWithin(e,
 												renderDistance);
@@ -86,7 +86,9 @@ public class GameRenderLoop implements Renderable {
 								.ordinal(); tI++) {
 							t = TileLayer.values()[tI];
 							renderLayer(t);
-							for (ClientEntity ent : entities) {
+							while (entities.hasNext()) {
+								ClientEntity ent =
+										entities.next();
 								if (ent.getWrappedEntity()
 										.getLayer() == t) {
 									renderEntity(ent);

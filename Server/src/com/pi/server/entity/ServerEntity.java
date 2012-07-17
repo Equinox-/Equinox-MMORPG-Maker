@@ -2,6 +2,7 @@ package com.pi.server.entity;
 
 import com.pi.common.contants.EntityConstants;
 import com.pi.common.game.Entity;
+import com.pi.server.constants.ServerConstants;
 import com.pi.server.logic.entity.EntityLogic;
 
 /**
@@ -23,6 +24,15 @@ public class ServerEntity {
 	 * The entity this container wraps.
 	 */
 	private Entity wrap;
+
+	/**
+	 * The last entity to attack this entity.
+	 */
+	private int lastAttacker;
+	/**
+	 * The last time this entity was attacked.
+	 */
+	private long lastAttackerTime;
 
 	/**
 	 * Creates an entity container around the given entity.
@@ -86,5 +96,36 @@ public class ServerEntity {
 	 */
 	public final Entity getWrappedEntity() {
 		return wrap;
+	}
+
+	/**
+	 * Sets the last entity to attack this entity, and updates the last attack
+	 * time.
+	 * 
+	 * @param attacker the attacking entity
+	 */
+	public final void setAttacker(final int attacker) {
+		this.lastAttacker = attacker;
+		this.lastAttackerTime = System.currentTimeMillis();
+	}
+
+	/**
+	 * Gets the last entity to attack this entity, or <code>-1</code> if there
+	 * isn't a recent attacker.
+	 * 
+	 * More specifically, this will return <code>-1</code> if it was never
+	 * attacked, or if the last attacker has expired, according to {@see
+	 * ServerConstants#ENTITY_ATTACKER_TOLERANCE}.
+	 * 
+	 * @return the attacker
+	 */
+	public final int getAttacker() {
+		if (lastAttackerTime
+				+ ServerConstants.ENTITY_ATTACKER_TOLERANCE >= System
+					.currentTimeMillis()) {
+			return lastAttacker;
+		} else {
+			return -1;
+		}
 	}
 }

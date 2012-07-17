@@ -1,14 +1,14 @@
 package com.pi.server.entity;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
+import com.pi.common.game.Filter;
+import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
@@ -120,16 +120,17 @@ public class ServerEntityManager {
 	 * @param loc the sector location
 	 * @return the entities if the given sector
 	 */
-	public final List<ServerEntity> getEntitiesInSector(
+	public final Iterator<ServerEntity> getEntitiesInSector(
 			final SectorLocation loc) {
-		List<ServerEntity> sector =
-				new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (loc.containsLocation(e.getWrappedEntity())) {
-				sector.add(e);
-			}
-		}
-		return sector;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return loc.containsLocation(e
+								.getWrappedEntity());
+					}
+				});
 	}
 
 	/**
@@ -138,15 +139,16 @@ public class ServerEntityManager {
 	 * @param loc the location to scan
 	 * @return the entities at the given location
 	 */
-	public final List<ServerEntity> getEntitiesAtLocation(
+	public final Iterator<ServerEntity> getEntitiesAtLocation(
 			final Location loc) {
-		List<ServerEntity> ents = new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (loc.equals(e.getWrappedEntity())) {
-				ents.add(e);
-			}
-		}
-		return ents;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return loc.equals(e.getWrappedEntity());
+					}
+				});
 	}
 
 	/**
@@ -157,16 +159,17 @@ public class ServerEntityManager {
 	 * @param maxDist the maximum distance
 	 * @return the entities within the given distance
 	 */
-	public final List<ServerEntity> getEntitiesWithin(
+	public final Iterator<ServerEntity> getEntitiesWithin(
 			final Location l, final int maxDist) {
-		List<ServerEntity> entities =
-				new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (Location.dist(l, e.getWrappedEntity()) <= maxDist) {
-				entities.add(e);
-			}
-		}
-		return entities;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return Location.dist(l,
+								e.getWrappedEntity()) <= maxDist;
+					}
+				});
 	}
 
 	/**
