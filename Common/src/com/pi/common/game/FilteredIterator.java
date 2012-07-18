@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * A frontend for an abstract iterator that filters out objects based on an
- * instance of the {@see Filter} class.
+ * instance of the {@link Filter} class.
  * 
  * @author Westin
  * 

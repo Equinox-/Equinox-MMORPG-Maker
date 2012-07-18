@@ -114,7 +114,7 @@ public class ServerEntity {
 	 * isn't a recent attacker.
 	 * 
 	 * More specifically, this will return <code>-1</code> if it was never
-	 * attacked, or if the last attacker has expired, according to {@see
+	 * attacked, or if the last attacker has expired, according to {@link
 	 * ServerConstants#ENTITY_ATTACKER_TOLERANCE}.
 	 * 
 	 * @return the attacker
