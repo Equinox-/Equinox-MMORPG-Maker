@@ -23,7 +23,8 @@ public class PILogger {
 	/**
 	 * The default minimum displayed log level.
 	 */
-	private static final Level DEFAULT_LOGGING_LEVEL = Level.FINER;
+	private static final Level DEFAULT_LOGGING_LEVEL =
+			Level.FINEST;
 	/**
 	 * The last message displayed by this logger.
 	 */

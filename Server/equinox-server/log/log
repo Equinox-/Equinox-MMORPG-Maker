@@ -2,12 +2,364 @@
 [FINE] Started: SectorManager
 [FINE] Started: ServerLogic
 [FINER] Loaded sector SectorLocation[x=0, z=0, plane=0]
+[FINEST] Flagged as empty: SectorLocation[x=0, z=-1, plane=0]
+[FINEST] Recieved Packet1Login on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet15GameState size: 4 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
 [INFO] 2:0
+[FINEST] Sending raw data size: 27989 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
+[FINEST] Recieved Packet5SectorRequest on 0
+[FINEST] Flagged as empty: SectorLocation[x=-1, z=-1, plane=0]
 [INFO] Request sector
+[FINEST] Send Packet6BlankSector size: 12 on 0
+[FINEST] Recieved Packet5SectorRequest on 0
 [INFO] Request sector
-[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.CombatEntity@10
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Flagged as empty: SectorLocation[x=-1, z=0, plane=0]
+[FINEST] Send Packet13EntityDef size: 130 on 0
+[FINEST] Recieved Packet12EntityDefRequest on 0
+[FINEST] Send Packet13EntityDef size: 40 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Recieved Packet19Attack on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet21EntityFace size: 0 on 0
+[SEVERE] 
+java.nio.BufferOverflowException
+java.nio.Buffer.nextPutIndex(Unknown Source)
+java.nio.HeapByteBuffer.putInt(Unknown Source)
+com.pi.common.net.PacketOutputStream.writeInt(PacketOutputStream.java:99)
+com.pi.common.net.packet.Packet21EntityFace.writeData(Packet21EntityFace.java:43)
+com.pi.common.net.packet.Packet.writePacket(Packet.java:45)
+com.pi.common.net.NetClient.send(NetClient.java:189)
+com.pi.server.entity.ServerEntityManager.sendEntityRotate(ServerEntityManager.java:330)
+com.pi.server.logic.entity.NeutralEntityLogic.attack(NeutralEntityLogic.java:112)
+com.pi.server.logic.entity.NeutralEntityLogic.doLogic(NeutralEntityLogic.java:43)
+com.pi.server.logic.ServerLogic.doEntityLogic(ServerLogic.java:49)
+com.pi.server.logic.ServerLogic.loop(ServerLogic.java:34)
+com.pi.server.ServerThread.run(ServerThread.java:91)
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet16EntityMove size: 6 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[SEVERE] NetServerHandler: No custom method for packet: Packet10EntityDataRequest
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[SEVERE] NetServerHandler: No custom method for packet: Packet10EntityDataRequest
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet14ClientMove on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet11LocalEntityID size: 4 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Recieved Packet10EntityDataRequest on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet9EntityData size: 28 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet18Health size: 8 on 0
+[FINEST] Send Packet8EntityDispose size: 4 on 0
+[INFO] Client disconnected: Client(id=0 ,network=NetClient[0,127.0.0.1] ,account=314piwm ,entity=com.pi.common.game.CombatEntity@0
 [FINE] Stopped: ServerLogic
 [INFO] Stopped selector
 [FINE] Stopped: SectorManager

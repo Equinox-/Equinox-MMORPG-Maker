@@ -18,7 +18,7 @@ public final class FilteredIterator<E> implements Iterator<E> {
 	/**
 	 * The temporary next object.
 	 */
-	private E eNext = getNext();
+	private E eNext;
 	/**
 	 * The iterator backing this one.
 	 */
@@ -35,6 +35,7 @@ public final class FilteredIterator<E> implements Iterator<E> {
 			final Filter<E> sFilter) {
 		this.backing = sBacking;
 		this.filter = sFilter;
+		this.eNext = getNext();
 	}
 
 	@Override

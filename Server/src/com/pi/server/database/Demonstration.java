@@ -91,7 +91,7 @@ public final class Demonstration {
 		d1.setGraphic(4);
 		d1.setPosition(0, 0, 128, 128);
 		d1.setEntityType(EntityType.Combat);
-		d1.setLogicClass("com.pi.server.logic.entity.RandomEntityLogic");
+		d1.setLogicClass("com.pi.server.logic.entity.NeutralEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(1), d1);
 	}
 

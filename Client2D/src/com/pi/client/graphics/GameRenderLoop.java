@@ -17,6 +17,8 @@ import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityType;
+import com.pi.common.game.Filter;
+import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.LivingEntity;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
@@ -66,26 +68,37 @@ public class GameRenderLoop implements Renderable {
 	public final void render(final IGraphics iG) {
 		this.g = iG;
 		if (client.getWorld() != null) {
-			TileLayer t;
 			Sector sec = client.getWorld().getSector(0, 0, 0);
 			if (client.getEntityManager().getLocalEntity() != null) {
-				Entity e =
+				final Entity myEntity =
 						client.getEntityManager()
 								.getLocalEntity()
 								.getWrappedEntity();
-				if (e != null) {
+				if (myEntity != null) {
 					if (client.getEntityManager()
 							.getLocalEntity() != null
 							&& sec != null) {
 						getTileView();
-						Iterator<ClientEntity> entities =
-								client.getEntityManager()
-										.getEntitiesWithin(e,
-												renderDistance);
 						for (int tI = 0; tI < TileLayer.MAX_VALUE
 								.ordinal(); tI++) {
-							t = TileLayer.values()[tI];
+							final TileLayer t =
+									TileLayer.values()[tI];
 							renderLayer(t);
+							Iterator<ClientEntity> entities =
+									new FilteredIterator<ClientEntity>(
+											client.getEntityManager()
+													.getEntities(),
+											new Filter<ClientEntity>() {
+												@Override
+												public boolean accept(
+														final ClientEntity e) {
+													return Location
+															.dist(myEntity,
+																	e.getWrappedEntity()) <= renderDistance
+															&& e.getWrappedEntity()
+																	.getLayer() == t;
+												}
+											});
 							while (entities.hasNext()) {
 								ClientEntity ent =
 										entities.next();

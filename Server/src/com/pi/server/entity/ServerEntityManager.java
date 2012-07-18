@@ -12,6 +12,7 @@ import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
+import com.pi.common.net.packet.Packet21EntityFace;
 import com.pi.common.net.packet.Packet7EntityTeleport;
 import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
@@ -299,6 +300,36 @@ public class ServerEntityManager {
 						cli.getNetClient().send(
 								Packet8EntityDispose
 										.create(entity));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sends an entity rotate packet for the given entity to all nearby clients.
+	 * 
+	 * @param entity the entity to inform on
+	 * @param face the entity's new rotation
+	 */
+	public final void sendEntityRotate(final int entity,
+			final Direction face) {
+		ServerEntity e = getEntity(entity);
+		if (e != null) {
+			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+				Client cli =
+						server.getClientManager().getClient(i);
+				if (cli != null
+						&& cli.getEntity() != null
+						&& cli.getNetClient() != null
+						&& cli.getEntity().getEntityID() != entity) {
+					int dist =
+							Location.dist(cli.getEntity(),
+									e.getWrappedEntity());
+					if (dist <= ServerConstants.ENTITY_UPDATE_DIST) {
+						cli.getNetClient().send(
+								Packet21EntityFace.create(
+										entity, face));
 					}
 				}
 			}
