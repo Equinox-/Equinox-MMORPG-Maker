@@ -137,7 +137,7 @@ public class ServerEntity {
 	}
 
 	/**
-	 * Clears the last entity to this entity. This is the same as calling {@see
+	 * Clears the last entity to this entity. This is the same as calling {@link
 	 * #setAttacker(int)} with the argument <code>-1</code>, but without
 	 * updating the last attack time.
 	 */
