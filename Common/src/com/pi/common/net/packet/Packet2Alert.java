@@ -42,4 +42,9 @@ public class Packet2Alert extends Packet {
 	public final int getLength() {
 		return PacketOutputStream.stringByteLength(message);
 	}
+
+	@Override
+	public final boolean requiresHandshake() {
+		return true;
+	}
 }

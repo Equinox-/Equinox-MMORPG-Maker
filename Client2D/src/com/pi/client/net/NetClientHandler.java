@@ -1,7 +1,5 @@
 package com.pi.client.net;
 
-import javax.swing.JOptionPane;
-
 import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.database.Location;
@@ -12,7 +10,7 @@ import com.pi.common.game.EntityType;
 import com.pi.common.game.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet0Disconnect;
+import com.pi.common.net.packet.Packet0Handshake;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.common.net.packet.Packet13EntityDef;
@@ -66,6 +64,11 @@ public class NetClientHandler extends NetHandler {
 	public void process(final Packet p) {
 	}
 
+	@Override
+	public final void sendHandshake(final int packetID) {
+		this.netClient.send(Packet0Handshake.create(packetID));
+	}
+
 	/**
 	 * Processes the clock packet, id 17.
 	 * 
@@ -76,18 +79,6 @@ public class NetClientHandler extends NetHandler {
 				(System.currentTimeMillis() - p.clientSendTime) / 2;
 		long offset = p.serverSendTime - ping - p.clientSendTime;
 		netClient.syncServerClock(ping, offset);
-	}
-
-	/**
-	 * Processes the disconnect/kick packet, id 0.
-	 * 
-	 * @param p the disconnect packet
-	 */
-	public final void process(final Packet0Disconnect p) {
-		JOptionPane.showMessageDialog(null,
-				((Packet0Disconnect) p).reason + "\n"
-						+ ((Packet0Disconnect) p).details);
-		netClient.dispose();
 	}
 
 	/**

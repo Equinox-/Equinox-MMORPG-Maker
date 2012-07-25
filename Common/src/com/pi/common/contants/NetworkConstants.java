@@ -24,6 +24,11 @@ public final class NetworkConstants {
 			1000;
 
 	/**
+	 * The time in milliseconds to resend a bad handshake.
+	 */
+	public static final long HANDSHAKE_EXPIRY_TIME = 5000L;
+
+	/**
 	 * A class to get the size of primitives.
 	 * 
 	 * @author Westin

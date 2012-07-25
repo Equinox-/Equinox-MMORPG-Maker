@@ -11,7 +11,7 @@ import com.pi.common.game.GameState;
 import com.pi.common.game.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet0Disconnect;
+import com.pi.common.net.packet.Packet0Handshake;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet12EntityDefRequest;
 import com.pi.common.net.packet.Packet14ClientMove;
@@ -86,12 +86,12 @@ public class NetServerHandler extends NetHandler {
 	}
 
 	/**
-	 * Processes a disconnect packet, id 0.
+	 * Processes a handshake packet, id 0.
 	 * 
 	 * @param p the packet
 	 */
-	public final void process(final Packet0Disconnect p) {
-		netClient.dispose(p.reason, p.details);
+	public final void process(final Packet0Handshake p) {
+		netClient.onHandshake(p.packetShake);
 	}
 
 	/**

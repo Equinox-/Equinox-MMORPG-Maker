@@ -87,6 +87,7 @@ public class NetServer extends Thread {
 		server.getLog().info("Started selector");
 		while (isConnected()) {
 			server.getClientManager().removeDeadClients();
+			server.getClientManager().updateHandshakes();
 			try {
 				// Process any pending changes
 				synchronized (this.pendingChanges) {

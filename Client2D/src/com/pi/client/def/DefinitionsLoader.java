@@ -104,7 +104,7 @@ public abstract class DefinitionsLoader<E> {
 
 	/**
 	 * Assigns a definition instance to a definition ID. Should be invoked by
-	 * the handling method for data packet recieved from the server.
+	 * the handling method for data packet received from the server.
 	 * 
 	 * @param defID the definition id
 	 * @param eDef the definition instance

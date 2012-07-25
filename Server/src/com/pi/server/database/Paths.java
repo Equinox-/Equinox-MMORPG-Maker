@@ -149,6 +149,10 @@ public final class Paths {
 	 */
 	public static File getLogFile() {
 		return new File(getLogDirectory(), "log");
+		/*
+		 * _" + new SimpleDateFormat( "HH-mm-ss_MM-dd-yyyy") .format
+		 * (Calendar.getInstance() .getTime()));
+		 */
 	}
 
 	/**
