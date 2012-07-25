@@ -96,7 +96,8 @@ public class ServerEntityManager {
 		if (e != null) {
 			if (e.setEntityID(id)) {
 				e.setLocation(ePos.x, ePos.plane, ePos.z);
-				entityMap.set(id, new ServerEntity(e));
+				entityMap.set(id, new ServerEntity(server
+						.getDefs().getEntityLoader(), e));
 				return e;
 			}
 		}
@@ -105,13 +106,20 @@ public class ServerEntityManager {
 
 	/**
 	 * Removes the entity registered to the given identification number from the
-	 * mapping.
+	 * mapping.This also removes all references to this entity.
+	 * 
+	 * The references this removes are last attacked references.
 	 * 
 	 * @param id the entity id to remove
 	 * @return the entity that was removed, or <code>null</code> if there wasn't
 	 *         one removed
 	 */
 	public final ServerEntity deRegisterEntity(final int id) {
+		for (ServerEntity e : entityMap) {
+			if (e.getAttacker() == id) {
+				e.removeAttacker();
+			}
+		}
 		return entityMap.remove(id);
 	}
 

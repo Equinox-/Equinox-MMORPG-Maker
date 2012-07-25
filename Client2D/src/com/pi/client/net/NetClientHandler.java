@@ -20,6 +20,7 @@ import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet18Health;
+import com.pi.common.net.packet.Packet21EntityFace;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -238,7 +239,7 @@ public class NetClientHandler extends NetHandler {
 	}
 
 	/**
-	 * Processes a entity health update packet, id 18.
+	 * Processes an entity health update packet, id 18.
 	 * 
 	 * @param p the health packet
 	 */
@@ -259,6 +260,25 @@ public class NetClientHandler extends NetHandler {
 		if (cEnt.getWrappedEntity() instanceof LivingEntity) {
 			((LivingEntity) cEnt.getWrappedEntity())
 					.setHealth(p.health);
+		}
+	}
+
+	/**
+	 * Processes an entity face packet, id 21.
+	 * 
+	 * @param p the entity face packet
+	 */
+	public final void process(final Packet21EntityFace p) {
+		ClientEntity cEnt =
+				client.getEntityManager().getEntity(p.entityID);
+		if (cEnt == null) {
+			client.getNetwork()
+					.send(Packet10EntityDataRequest
+							.create(p.entityID));
+			return;
+		}
+		if (cEnt.getWrappedEntity() instanceof LivingEntity) {
+			cEnt.getWrappedEntity().setDir(p.face);
 		}
 	}
 }

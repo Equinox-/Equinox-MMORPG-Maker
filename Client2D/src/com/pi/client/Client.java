@@ -166,7 +166,8 @@ public class Client implements Disposable, DeviceRegistration {
 				new DisplayManager(this, renderLoop);
 
 		// PRE POST INIT
-		GraphicsLoader.load(this);
+		// GraphicsLoader.load(this); TODO This should be an escapable loop in
+		// case of timeouts.
 
 		reView.addTab("Graphics", new GraphicsMonitorPanel(
 				displayManager));

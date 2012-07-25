@@ -3,6 +3,7 @@ package com.pi.common.net.packet;
 import java.io.IOException;
 
 import com.pi.common.contants.Direction;
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -50,7 +51,7 @@ public class Packet21EntityFace extends Packet {
 
 	@Override
 	public final int getLength() {
-		return 0;
+		return SizeOf.INT + SizeOf.BYTE;
 	}
 
 	@Override

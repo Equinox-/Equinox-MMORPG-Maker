@@ -12,6 +12,8 @@ import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
 import com.pi.client.graphics.GameRenderLoop;
 import com.pi.common.contants.Direction;
+import com.pi.common.contants.EntityConstants;
+import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet19Attack;
@@ -39,6 +41,11 @@ public class MainGame implements Renderable, KeyListener,
 	 * If this client is running.
 	 */
 	private boolean isRunning = false;
+
+	/**
+	 * The last time this client attacked something.
+	 */
+	private long lastAttackTime;
 
 	/**
 	 * Creates the Main Game render loop and controls for the specified client.
@@ -75,7 +82,22 @@ public class MainGame implements Renderable, KeyListener,
 				dir = Direction.RIGHT;
 				break;
 			case KeyEvent.VK_CONTROL:
-				client.getNetwork().send(new Packet19Attack());
+				long timeToAttack =
+						EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
+				EntityDef eDef =
+						client.getDefs()
+								.getEntityLoader()
+								.getDef(cEnt.getWrappedEntity()
+										.getEntityDef());
+				if (eDef != null) {
+					timeToAttack = eDef.getAttackSpeed();
+				}
+				if (System.currentTimeMillis() >= lastAttackTime
+						+ timeToAttack) {
+					client.getNetwork().send(
+							new Packet19Attack());
+					lastAttackTime = System.currentTimeMillis();
+				}
 				break;
 			default:
 				return;

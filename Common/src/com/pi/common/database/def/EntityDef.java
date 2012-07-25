@@ -40,7 +40,14 @@ public class EntityDef extends GraphicsObject {
 	 * The maximum health of this entity. This is only set, or able to be set if
 	 * the entity type is a sub type of the living entity type.
 	 */
-	private int maximumHealth = EntityConstants.DEFAULT_MAXIMUM_HEALTH;
+	private int maximumHealth =
+			EntityConstants.DEFAULT_MAXIMUM_HEALTH;
+
+	/**
+	 * The amount of time in milliseconds for an entity to attack something.
+	 */
+	private long attackSpeed =
+			EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
 
 	/**
 	 * Creates an entity definition with the given identification number.
@@ -124,6 +131,9 @@ public class EntityDef extends GraphicsObject {
 		if (eType.isSubtype(EntityType.Living)) {
 			pOut.writeInt(maximumHealth);
 		}
+		if (eType.isSubtype(EntityType.Combat)) {
+			pOut.writeLong(attackSpeed);
+		}
 	}
 
 	@Override
@@ -136,6 +146,9 @@ public class EntityDef extends GraphicsObject {
 		if (eType.isSubtype(EntityType.Living)) {
 			maximumHealth = pIn.readInt();
 		}
+		if (eType.isSubtype(EntityType.Combat)) {
+			attackSpeed = pIn.readLong();
+		}
 	}
 
 	@Override
@@ -147,6 +160,9 @@ public class EntityDef extends GraphicsObject {
 								.stringByteLength(logicClass);
 		if (eType.isSubtype(EntityType.Living)) {
 			length += SizeOf.INT; // Max Health
+		}
+		if (eType.isSubtype(EntityType.Combat)) {
+			length += SizeOf.LONG;
 		}
 		return length;
 	}
@@ -180,6 +196,38 @@ public class EntityDef extends GraphicsObject {
 		} else {
 			throw new UnsupportedOperationException(
 					"Unable to set the maximum health of an entity definition with a type that isn't a subtype of the Living entity type");
+		}
+	}
+
+	/**
+	 * Gets maximum health of this entity.
+	 * 
+	 * @return the maximum health
+	 * @throws UnsupportedOperationException if this entity definition's type
+	 *             isn't a sub-type of the Combat entity type
+	 */
+	public final long getAttackSpeed() {
+		if (eType.isSubtype(EntityType.Combat)) {
+			return attackSpeed;
+		} else {
+			throw new UnsupportedOperationException(
+					"Unable to get the attack speed of an entity definition with a type that isn't a subtype of the Combat entity type");
+		}
+	}
+
+	/**
+	 * Sets maximum health of this entity.
+	 * 
+	 * @param sAttackSpeed the attack speed in milliseconds for this entity
+	 * @throws UnsupportedOperationException if this entity definition's type
+	 *             isn't a sub-type of the Combat entity type
+	 */
+	public final void setAttackSpeed(final long sAttackSpeed) {
+		if (eType.isSubtype(EntityType.Combat)) {
+			this.attackSpeed = sAttackSpeed;
+		} else {
+			throw new UnsupportedOperationException(
+					"Unable to set the attack speed of an entity definition with a type that isn't a subtype of the Combat entity type");
 		}
 	}
 

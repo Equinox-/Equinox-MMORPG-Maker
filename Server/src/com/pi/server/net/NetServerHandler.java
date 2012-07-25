@@ -211,51 +211,58 @@ public class NetServerHandler extends NetHandler {
 		Client cli =
 				server.getClientManager().getClient(
 						netClient.getID());
-		if (cli != null) {
-			Iterator<ServerEntity> entz =
-					server.getEntityManager()
-							.getEntitiesAtLocation(
-									new Location(
-											cli.getEntity().x
-													+ cli.getEntity()
-															.getDir()
-															.getXOff(),
-											cli.getEntity().plane,
-											cli.getEntity().z
-													+ cli.getEntity()
-															.getDir()
-															.getZOff()));
-			while (entz.hasNext()) {
-				ServerEntity ent = entz.next();
-				if (ent.getWrappedEntity() instanceof LivingEntity) {
-					LivingEntity lE =
-							(LivingEntity) ent
-									.getWrappedEntity();
-					lE.setHealth(lE.getHealth() - 1);
-					ent.setAttacker(cli.getEntity()
-							.getEntityID());
-					// TODO Based on levels and stuff
-					Client attackedClient =
-							server.getClientManager()
-									.getClientByEntity(
-											lE.getEntityID());
-					if (lE.getHealth() <= 0) {
+		if (cli != null && cli.getEntity() != null) {
+			ServerEntity sE =
+					server.getEntityManager().getEntity(
+							cli.getEntity().getEntityID());
+			if (!sE.isAttacking()) {
+				Iterator<ServerEntity> entz =
 						server.getEntityManager()
-								.sendEntityDispose(
-										ent.getWrappedEntity()
-												.getEntityID());
-						if (attackedClient != null) {
-							attackedClient.onEntityDeath();
+								.getEntitiesAtLocation(
+										new Location(
+												cli.getEntity().x
+														+ cli.getEntity()
+																.getDir()
+																.getXOff(),
+												cli.getEntity().plane,
+												cli.getEntity().z
+														+ cli.getEntity()
+																.getDir()
+																.getZOff()));
+				while (entz.hasNext()) {
+					ServerEntity ent = entz.next();
+					if (ent.getWrappedEntity() instanceof LivingEntity) {
+						LivingEntity lE =
+								(LivingEntity) ent
+										.getWrappedEntity();
+						lE.setHealth(lE.getHealth() - 1);
+						sE.updateAttackTime();
+						ent.setAttacker(cli.getEntity()
+								.getEntityID());
+						// TODO Based on levels and stuff
+						Client attackedClient =
+								server.getClientManager()
+										.getClientByEntity(
+												lE.getEntityID());
+						if (lE.getHealth() <= 0) {
+							server.getEntityManager()
+									.sendEntityDispose(
+											ent.getWrappedEntity()
+													.getEntityID());
+							if (attackedClient != null) {
+								attackedClient.onEntityDeath();
+							}
+						} else {
+							Packet pack =
+									Packet18Health.create(lE);
+							netClient.send(pack);
+							if (attackedClient != null) {
+								attackedClient.getNetClient()
+										.send(pack);
+							}
 						}
-					} else {
-						Packet pack = Packet18Health.create(lE);
-						netClient.send(pack);
-						if (attackedClient != null) {
-							attackedClient.getNetClient().send(
-									pack);
-						}
+						break;
 					}
-					break;
 				}
 			}
 		}

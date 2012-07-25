@@ -42,6 +42,8 @@ public final class PacketManager {
 			registerPacket(Packet17Clock.class);
 			registerPacket(Packet18Health.class);
 			registerPacket(Packet19Attack.class);
+			registerPacket(Packet20EntityAttack.class);
+			registerPacket(Packet21EntityFace.class);
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString());
 		}

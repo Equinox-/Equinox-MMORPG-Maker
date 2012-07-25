@@ -222,4 +222,13 @@ public class Entity extends Location {
 	public final boolean canMove(final SectorManager sec) {
 		return canMoveIn(sec, getDir());
 	}
+
+	/**
+	 * Gets the type of this entity.
+	 * 
+	 * @return this entity's type
+	 */
+	public final EntityType getEntityType() {
+		return EntityType.getEntityType(this);
+	}
 }

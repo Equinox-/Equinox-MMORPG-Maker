@@ -193,11 +193,12 @@ public abstract class EntityLogic {
 							.sendEntityRotate(
 									getEntity().getEntityID(),
 									pDirs[0]);
-				} else {
+				} else if (!sEntity.isAttacking()) {
 					// Attack!
 					if (eTarget instanceof LivingEntity) {
 						LivingEntity lE = (LivingEntity) eTarget;
 						lE.setHealth(lE.getHealth() - 1);
+						sEntity.updateAttackTime();
 						wrapper.setAttacker(getEntity()
 								.getEntityID());
 						// TODO Based on levels and stuff
