@@ -106,7 +106,7 @@ public class NetClientHandler extends NetHandler {
 	 */
 	public final void process(final Packet6BlankSector p) {
 		client.getWorld().flagSectorAsBlank(
-				new SectorLocation(p.baseX, p.baseY, p.baseZ));
+				new SectorLocation(p.baseX, p.plane, p.baseZ));
 	}
 
 	/**

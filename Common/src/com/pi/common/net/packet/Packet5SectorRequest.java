@@ -15,7 +15,7 @@ import com.pi.common.net.PacketOutputStream;
  */
 public class Packet5SectorRequest extends Packet {
 	public int baseX;
-	public int baseY;
+	public int plane;
 	public int baseZ;
 	public int revision;
 
@@ -23,7 +23,7 @@ public class Packet5SectorRequest extends Packet {
 	public final void writeData(final PacketOutputStream dOut)
 			throws IOException {
 		dOut.writeInt(baseX);
-		dOut.writeInt(baseY);
+		dOut.writeInt(plane);
 		dOut.writeInt(baseZ);
 		dOut.writeInt(revision);
 	}
@@ -32,7 +32,7 @@ public class Packet5SectorRequest extends Packet {
 	public final void readData(final PacketInputStream dIn)
 			throws IOException {
 		baseX = dIn.readInt();
-		baseY = dIn.readInt();
+		plane = dIn.readInt();
 		baseZ = dIn.readInt();
 		revision = dIn.readInt();
 	}

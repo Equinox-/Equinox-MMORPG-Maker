@@ -123,6 +123,9 @@ public class NetServerClient extends NetClient {
 			if (handshakes[i] != null
 					&& handshakes[i].needToResend()) {
 				Packet p = handshakes[i].getPacket();
+				getLog().severe(
+						"Have to resend " + p.getName()
+								+ " due to a handshake timeout!");
 				handshakes[i] = null;
 				send(p);
 			}

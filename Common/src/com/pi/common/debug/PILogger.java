@@ -240,7 +240,7 @@ public class PILogger {
 	public static String exceptionToString(final Throwable e) {
 		String s = e.toString();
 		int i;
-		for (i = 0; i < e.getStackTrace().length; i++) {
+		for (i = 0; i < Math.min(e.getStackTrace().length, 1); i++) {
 			s += "\n" + e.getStackTrace()[i];
 		}
 		return s;

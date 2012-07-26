@@ -9,14 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
-import com.pi.client.entity.ClientEntity;
 import com.pi.client.graphics.GameRenderLoop;
-import com.pi.common.contants.Direction;
-import com.pi.common.contants.EntityConstants;
-import com.pi.common.database.def.EntityDef;
-import com.pi.common.game.Entity;
-import com.pi.common.net.packet.Packet14ClientMove;
-import com.pi.common.net.packet.Packet19Attack;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
@@ -38,14 +31,9 @@ public class MainGame implements Renderable, KeyListener,
 	private final GameRenderLoop gameRenderLoop;
 
 	/**
-	 * If this client is running.
+	 * The AWT event processor.
 	 */
-	private boolean isRunning = false;
-
-	/**
-	 * The last time this client attacked something.
-	 */
-	private long lastAttackTime;
+	private final EventLoop eventLoop;
 
 	/**
 	 * Creates the Main Game render loop and controls for the specified client.
@@ -55,6 +43,7 @@ public class MainGame implements Renderable, KeyListener,
 	public MainGame(final Client sClient) {
 		this.client = sClient;
 		this.gameRenderLoop = new GameRenderLoop(client);
+		this.eventLoop = new EventLoop(sClient);
 	}
 
 	@Override
@@ -63,100 +52,49 @@ public class MainGame implements Renderable, KeyListener,
 	}
 
 	@Override
+	public final void mouseWheelMoved(final MouseWheelEvent e) {
+	}
+
+	@Override
+	public final void mouseDragged(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mouseMoved(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mouseClicked(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mousePressed(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mouseReleased(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mouseEntered(final MouseEvent e) {
+	}
+
+	@Override
+	public final void mouseExited(final MouseEvent e) {
+	}
+
+	@Override
+	public final void keyTyped(final KeyEvent e) {
+		eventLoop.keyTyped(e);
+	}
+
+	@Override
 	public final void keyPressed(final KeyEvent e) {
-		ClientEntity cEnt =
-				client.getEntityManager().getLocalEntity();
-		if (cEnt != null) {
-			Direction dir = null;
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_UP:
-				dir = Direction.UP;
-				break;
-			case KeyEvent.VK_DOWN:
-				dir = Direction.DOWN;
-				break;
-			case KeyEvent.VK_LEFT:
-				dir = Direction.LEFT;
-				break;
-			case KeyEvent.VK_RIGHT:
-				dir = Direction.RIGHT;
-				break;
-			case KeyEvent.VK_CONTROL:
-				long timeToAttack =
-						EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
-				EntityDef eDef =
-						client.getDefs()
-								.getEntityLoader()
-								.getDef(cEnt.getWrappedEntity()
-										.getEntityDef());
-				if (eDef != null) {
-					timeToAttack = eDef.getAttackSpeed();
-				}
-				if (System.currentTimeMillis() >= lastAttackTime
-						+ timeToAttack) {
-					client.getNetwork().send(
-							new Packet19Attack());
-					lastAttackTime = System.currentTimeMillis();
-				}
-				break;
-			default:
-				return;
-			}
-			if (!cEnt.isMoving() && dir != null) {
-				Entity local = cEnt.getWrappedEntity();
-				local.setDir(dir);
-				if (local.canMove(client.getWorld())) {
-					cEnt.doMovement(isRunning);
-					client.getNetwork().send(
-							Packet14ClientMove.create(local));
-				}
-			}
-		}
+		eventLoop.keyPressed(e);
 	}
 
 	@Override
 	public final void keyReleased(final KeyEvent e) {
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_SHIFT:
-			isRunning = !isRunning;
-		default:
-			break;
-		}
-	}
-
-	@Override
-	public void keyTyped(final KeyEvent arg0) {
-	}
-
-	@Override
-	public void mouseWheelMoved(final MouseWheelEvent arg0) {
-	}
-
-	@Override
-	public void mouseDragged(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseMoved(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseClicked(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseEntered(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseExited(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mousePressed(final MouseEvent arg0) {
-	}
-
-	@Override
-	public void mouseReleased(final MouseEvent arg0) {
+		eventLoop.keyReleased(e);
 	}
 }
