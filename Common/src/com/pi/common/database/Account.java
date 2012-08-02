@@ -13,8 +13,7 @@ import com.pi.common.net.packet.PacketObject;
 /**
  * A class describing an account, for storage in a database.
  * 
- * @autho		// TODO Auto-generated method stub
-r Westin
+ * @author Westin
  * 
  */
 public class Account implements PacketObject {
