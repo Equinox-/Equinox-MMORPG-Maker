@@ -34,4 +34,9 @@ public class Packet3Register extends Packet {
 		return PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream.stringByteLength(password);
 	}
+
+	@Override
+	public final boolean requiresHandshake() {
+		return true;
+	}
 }

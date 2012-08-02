@@ -177,7 +177,7 @@ public class SectorManager extends ClientThread implements
 					Packet5SectorRequest pack =
 							new Packet5SectorRequest();
 					pack.baseX = oldestSector.getSectorX();
-					pack.baseY = oldestSector.getPlane();
+					pack.plane = oldestSector.getPlane();
 					pack.baseZ = oldestSector.getSectorZ();
 					pack.revision = revision;
 					getClient().getNetwork().send(pack);

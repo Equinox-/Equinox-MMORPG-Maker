@@ -27,7 +27,7 @@ public class RenderLoop implements Renderable, MouseListener,
 	 */
 	private final Client client;
 	/**
-	 * The loading bar displayed until all the client initilization is complete.
+	 * The loading bar displayed until all the client initialization is complete.
 	 */
 	private final LoadingBar loadBar;
 	/**

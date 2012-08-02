@@ -23,7 +23,8 @@ public class PILogger {
 	/**
 	 * The default minimum displayed log level.
 	 */
-	private static final Level DEFAULT_LOGGING_LEVEL = Level.FINER;
+	private static final Level DEFAULT_LOGGING_LEVEL =
+			Level.FINEST;
 	/**
 	 * The last message displayed by this logger.
 	 */
@@ -239,7 +240,7 @@ public class PILogger {
 	public static String exceptionToString(final Throwable e) {
 		String s = e.toString();
 		int i;
-		for (i = 0; i < e.getStackTrace().length; i++) {
+		for (i = 0; i < Math.min(e.getStackTrace().length, 1); i++) {
 			s += "\n" + e.getStackTrace()[i];
 		}
 		return s;

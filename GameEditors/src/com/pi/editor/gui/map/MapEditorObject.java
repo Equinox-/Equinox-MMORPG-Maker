@@ -71,8 +71,8 @@ public class MapEditorObject extends PIContainer implements
 
 	private MapViewerObject viewer;
 
-	public MapEditorObject(MapViewerObject viewer,
-			MapRenderLoop loop) {
+	public MapEditorObject(final MapViewerObject viewer,
+			final MapRenderLoop loop) {
 		setLocation(500, 0);
 		this.loop = loop;
 
@@ -85,7 +85,7 @@ public class MapEditorObject extends PIContainer implements
 
 		graphicsData = new PIComponent() {
 			@Override
-			public void render(IGraphics g) {
+			public void render(final IGraphics g) {
 				super.render(g);
 				if (isVisible && g.getImageWidth(tileset) > 0) {
 					g.setColor(Color.BLACK);
@@ -246,7 +246,7 @@ public class MapEditorObject extends PIContainer implements
 		directionBlockMode.setChecked(false);
 		directionBlockMode.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 				tileSelector.setVisible(!directionBlockMode
 						.isChecked());
 			}
@@ -272,7 +272,7 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	public final void setSize(final int width, final int height) {
 		super.setSize(width, height);
 
 		tileSelector.setSize(300, height);
@@ -297,7 +297,7 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public void onScroll(ScrollEvent e) {
+	public final void onScroll(final ScrollEvent e) {
 		if (e.getSource() == tilesetSelector) {
 			int nTiles =
 					Math.round(e.getScrollPosition()
@@ -333,11 +333,12 @@ public class MapEditorObject extends PIContainer implements
 			MouseMotionListener {
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mouseClicked(final MouseEvent e) {
 			if (e.getSource() == save) {
 				JFileChooser fc = new JFileChooser();
-				if (lastDirectory != null)
+				if (lastDirectory != null) {
 					fc.setCurrentDirectory(lastDirectory);
+				}
 				fc.requestFocus();
 				int returnVal =
 						fc.showSaveDialog(loop.getEditor()
@@ -356,8 +357,9 @@ public class MapEditorObject extends PIContainer implements
 				}
 			} else if (e.getSource() == load) {
 				JFileChooser fc = new JFileChooser();
-				if (lastDirectory != null)
+				if (lastDirectory != null) {
 					fc.setCurrentDirectory(lastDirectory);
+				}
 				fc.requestFocus();
 				int returnVal =
 						fc.showOpenDialog(loop.getEditor()
@@ -399,12 +401,12 @@ public class MapEditorObject extends PIContainer implements
 		}
 
 		@Override
-		public void mousePressed(MouseEvent e) {
+		public void mousePressed(final MouseEvent e) {
 			mouseDown = e.getSource() == graphicsData;
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
+		public void mouseReleased(final MouseEvent e) {
 			if (mouseDown) {
 				tileAX = Math.min(tileX, dragTileX);
 				tileAY = Math.min(tileY, dragTileY);
@@ -415,17 +417,17 @@ public class MapEditorObject extends PIContainer implements
 		}
 
 		@Override
-		public void mouseEntered(MouseEvent e) {
+		public void mouseEntered(final MouseEvent e) {
 
 		}
 
 		@Override
-		public void mouseExited(MouseEvent e) {
+		public void mouseExited(final MouseEvent e) {
 
 		}
 
 		@Override
-		public void mouseDragged(MouseEvent e) {
+		public void mouseDragged(final MouseEvent e) {
 			if (e.getSource() == graphicsData) {
 				dragTileX =
 						(e.getX() + currentTileOffX)
@@ -437,7 +439,7 @@ public class MapEditorObject extends PIContainer implements
 		}
 
 		@Override
-		public void mouseMoved(MouseEvent e) {
+		public void mouseMoved(final MouseEvent e) {
 			if (e.getSource() == graphicsData) {
 				tileX =
 						(e.getX() + currentTileOffX)
@@ -456,8 +458,8 @@ public class MapEditorObject extends PIContainer implements
 	private static final int voffset = 4;
 
 	@Override
-	public void renderMapTile(IGraphics g, int baseX, int baseY,
-			int tileX, int tileY, Tile tile) {
+	public final void renderMapTile(final IGraphics g, final int baseX, final int baseY,
+			final int tileX, final int tileY, final Tile tile) {
 		if (directionBlockMode.isChecked()) {
 			g.drawText(
 					"<",
@@ -511,8 +513,8 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public void onMapClick(Sector s, int button, int tileX,
-			int tileY, int internalX, int internalY) {
+	public final void onMapClick(final Sector s, final int button, final int tileX,
+			final int tileY, final int internalX, final int internalY) {
 		if (s != null) {
 			if (button == MouseEvent.BUTTON1) {
 				if (!directionBlockMode.isChecked()) {
@@ -546,30 +548,34 @@ public class MapEditorObject extends PIContainer implements
 					if (internalX < (TileConstants.TILE_WIDTH / 3)) {
 						if (internalY > (TileConstants.TILE_HEIGHT / 3)
 								&& internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
-							if ((flags & TileFlags.WALL_WEST) == TileFlags.WALL_WEST)
+							if ((flags & TileFlags.WALL_WEST) == TileFlags.WALL_WEST) {
 								flags &= (~TileFlags.WALL_WEST);
-							else
+							} else {
 								flags |= TileFlags.WALL_WEST;
+							}
 						}
 					} else if (internalX > 2 * (TileConstants.TILE_WIDTH / 3)) {
 						if (internalY > (TileConstants.TILE_HEIGHT / 3)
 								&& internalY < 2 * (TileConstants.TILE_HEIGHT / 3)) {
-							if ((flags & TileFlags.WALL_EAST) == TileFlags.WALL_EAST)
+							if ((flags & TileFlags.WALL_EAST) == TileFlags.WALL_EAST) {
 								flags &= (~TileFlags.WALL_EAST);
-							else
+							} else {
 								flags |= TileFlags.WALL_EAST;
+							}
 						}
 					} else {
 						if (internalY < (TileConstants.TILE_HEIGHT / 3)) {
-							if ((flags & TileFlags.WALL_NORTH) == TileFlags.WALL_NORTH)
+							if ((flags & TileFlags.WALL_NORTH) == TileFlags.WALL_NORTH) {
 								flags &= (~TileFlags.WALL_NORTH);
-							else
+							} else {
 								flags |= TileFlags.WALL_NORTH;
+							}
 						} else if (internalY > 2 * (TileConstants.TILE_HEIGHT / 3)) {
-							if ((flags & TileFlags.WALL_SOUTH) == TileFlags.WALL_SOUTH)
+							if ((flags & TileFlags.WALL_SOUTH) == TileFlags.WALL_SOUTH) {
 								flags &= (~TileFlags.WALL_SOUTH);
-							else
+							} else {
 								flags |= TileFlags.WALL_SOUTH;
+							}
 						} else {
 							if ((flags & TileFlags.BLOCKED) == TileFlags.BLOCKED) {
 								flags = 0;
@@ -645,21 +651,22 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public void onMapDrag(Sector s, int button, int tileX,
-			int tileY, int internalX, int internalY) {
-		if (button == MouseEvent.BUTTON1)
+	public final void onMapDrag(final Sector s, final int button, final int tileX,
+			final int tileY, final int internalX, final int internalY) {
+		if (button == MouseEvent.BUTTON1) {
 			onMapClick(s, button, tileX, tileY, internalX,
 					internalY);
+		}
 	}
 
 	@Override
-	public int[] getCurrentTiledata() {
+	public final int[] getCurrentTiledata() {
 		return new int[] { tileset, tileAX, tileAY, dragTileAX,
 				dragTileAY };
 	}
 
 	@Override
-	public TileLayer getCurrentTileLayer() {
+	public final TileLayer getCurrentTileLayer() {
 		return directionBlockMode.isChecked() || tileAX < 0 ? null
 				: currentTileLayer;
 	}

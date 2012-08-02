@@ -1,17 +1,18 @@
 package com.pi.server.entity;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.game.Entity;
+import com.pi.common.game.Filter;
+import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
+import com.pi.common.net.packet.Packet21EntityFace;
 import com.pi.common.net.packet.Packet7EntityTeleport;
 import com.pi.common.net.packet.Packet8EntityDispose;
 import com.pi.common.net.packet.Packet9EntityData;
@@ -95,7 +96,8 @@ public class ServerEntityManager {
 		if (e != null) {
 			if (e.setEntityID(id)) {
 				e.setLocation(ePos.x, ePos.plane, ePos.z);
-				entityMap.set(id, new ServerEntity(e));
+				entityMap.set(id, new ServerEntity(server
+						.getDefs().getEntityLoader(), e));
 				return e;
 			}
 		}
@@ -104,13 +106,20 @@ public class ServerEntityManager {
 
 	/**
 	 * Removes the entity registered to the given identification number from the
-	 * mapping.
+	 * mapping.This also removes all references to this entity.
+	 * 
+	 * The references this removes are last attacked references.
 	 * 
 	 * @param id the entity id to remove
 	 * @return the entity that was removed, or <code>null</code> if there wasn't
 	 *         one removed
 	 */
 	public final ServerEntity deRegisterEntity(final int id) {
+		for (ServerEntity e : entityMap) {
+			if (e.getAttacker() == id) {
+				e.removeAttacker();
+			}
+		}
 		return entityMap.remove(id);
 	}
 
@@ -120,16 +129,17 @@ public class ServerEntityManager {
 	 * @param loc the sector location
 	 * @return the entities if the given sector
 	 */
-	public final List<ServerEntity> getEntitiesInSector(
+	public final Iterator<ServerEntity> getEntitiesInSector(
 			final SectorLocation loc) {
-		List<ServerEntity> sector =
-				new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (loc.containsLocation(e.getWrappedEntity())) {
-				sector.add(e);
-			}
-		}
-		return sector;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return loc.containsLocation(e
+								.getWrappedEntity());
+					}
+				});
 	}
 
 	/**
@@ -138,15 +148,16 @@ public class ServerEntityManager {
 	 * @param loc the location to scan
 	 * @return the entities at the given location
 	 */
-	public final List<ServerEntity> getEntitiesAtLocation(
+	public final Iterator<ServerEntity> getEntitiesAtLocation(
 			final Location loc) {
-		List<ServerEntity> ents = new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (loc.equals(e.getWrappedEntity())) {
-				ents.add(e);
-			}
-		}
-		return ents;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return loc.equals(e.getWrappedEntity());
+					}
+				});
 	}
 
 	/**
@@ -157,16 +168,17 @@ public class ServerEntityManager {
 	 * @param maxDist the maximum distance
 	 * @return the entities within the given distance
 	 */
-	public final List<ServerEntity> getEntitiesWithin(
+	public final Iterator<ServerEntity> getEntitiesWithin(
 			final Location l, final int maxDist) {
-		List<ServerEntity> entities =
-				new ArrayList<ServerEntity>();
-		for (ServerEntity e : entityMap) {
-			if (Location.dist(l, e.getWrappedEntity()) <= maxDist) {
-				entities.add(e);
-			}
-		}
-		return entities;
+		return new FilteredIterator<ServerEntity>(
+				entityMap.iterator(),
+				new Filter<ServerEntity>() {
+					@Override
+					public boolean accept(final ServerEntity e) {
+						return Location.dist(l,
+								e.getWrappedEntity()) <= maxDist;
+					}
+				});
 	}
 
 	/**
@@ -296,6 +308,36 @@ public class ServerEntityManager {
 						cli.getNetClient().send(
 								Packet8EntityDispose
 										.create(entity));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sends an entity rotate packet for the given entity to all nearby clients.
+	 * 
+	 * @param entity the entity to inform on
+	 * @param face the entity's new rotation
+	 */
+	public final void sendEntityRotate(final int entity,
+			final Direction face) {
+		ServerEntity e = getEntity(entity);
+		if (e != null) {
+			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+				Client cli =
+						server.getClientManager().getClient(i);
+				if (cli != null
+						&& cli.getEntity() != null
+						&& cli.getNetClient() != null
+						&& cli.getEntity().getEntityID() != entity) {
+					int dist =
+							Location.dist(cli.getEntity(),
+									e.getWrappedEntity());
+					if (dist <= ServerConstants.ENTITY_UPDATE_DIST) {
+						cli.getNetClient().send(
+								Packet21EntityFace.create(
+										entity, face));
 					}
 				}
 			}

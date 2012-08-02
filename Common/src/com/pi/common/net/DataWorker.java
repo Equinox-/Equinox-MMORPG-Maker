@@ -95,7 +95,7 @@ public abstract class DataWorker extends Thread {
 						dataEvent = queue.poll();
 						dataEvent.packet.readData(dataEvent.pIn);
 						getLog().finest(
-								"Recieved "
+								"Received "
 										+ dataEvent.packet
 												.getName()
 										+ dataEvent.socket

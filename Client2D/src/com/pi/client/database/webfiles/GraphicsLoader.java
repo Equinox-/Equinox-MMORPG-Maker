@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,11 @@ import com.pi.common.contants.NetworkConstants;
  * 
  */
 public final class GraphicsLoader {
+	/**
+	 * The web socket connection timeout, in milliseconds.
+	 */
+	private static final int CONNECT_TIMEOUT = 10000;
+
 	/**
 	 * Gets a map of the current graphical versions from a file.
 	 * 
@@ -149,11 +155,14 @@ public final class GraphicsLoader {
 	private static void download(final URL url, final File dest)
 			throws IOException {
 		BufferedInputStream in = null;
+		URLConnection conn;
 		FileOutputStream fout = null;
 		File f = new File(dest.getAbsolutePath() + ".part");
 		f.createNewFile();
 		try {
-			in = new BufferedInputStream(url.openStream());
+			conn = url.openConnection();
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
+			in = new BufferedInputStream(conn.getInputStream());
 			fout = new FileOutputStream(f);
 			byte[] data =
 					new byte[NetworkConstants.DOWNLOAD_CACHE_SIZE];

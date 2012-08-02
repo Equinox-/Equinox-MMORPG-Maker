@@ -6,14 +6,14 @@ import com.pi.graphics.device.Renderable;
 
 public class MainMenuGUI implements Renderable {
 
-    private Editor editor;
+	private Editor editor;
 
-    public MainMenuGUI(Editor edit) {
-	this.editor = edit;
-    }
+	public MainMenuGUI(Editor edit) {
+		this.editor = edit;
+	}
 
-    @Override
-    public void render(IGraphics graphics) {
-    }
+	@Override
+	public void render(IGraphics graphics) {
+	}
 
 }

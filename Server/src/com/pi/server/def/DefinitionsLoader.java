@@ -35,7 +35,6 @@ public abstract class DefinitionsLoader<E> {
 	 * 
 	 * @param defID the definition id
 	 * @return the definitions instance, or <code>null</code> if empty.
-	 * @see DefinitionsLoader#getStorage(int)
 	 */
 	public final E getDef(final int defID) {
 		return map.get(defID);

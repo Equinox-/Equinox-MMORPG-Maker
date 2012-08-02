@@ -22,7 +22,7 @@ public final class PacketManager {
 
 	static {
 		try {
-			registerPacket(Packet0Disconnect.class);
+			registerPacket(Packet0Handshake.class);
 			registerPacket(Packet1Login.class);
 			registerPacket(Packet2Alert.class);
 			registerPacket(Packet3Register.class);
@@ -42,6 +42,8 @@ public final class PacketManager {
 			registerPacket(Packet17Clock.class);
 			registerPacket(Packet18Health.class);
 			registerPacket(Packet19Attack.class);
+			registerPacket(Packet20EntityAttack.class);
+			registerPacket(Packet21EntityFace.class);
 			registerPacket(Packet22ItemDefRequest.class);
 			registerPacket(Packet23ItemDef.class);
 			registerPacket(Packet24InventoryData.class);
@@ -125,6 +127,18 @@ public final class PacketManager {
 		}
 		// packet.timeStamp = pIn.readLong();
 		return packet;
+	}
+
+	/**
+	 * Gets the maximum ID number plus 1 registered to this packet manager.
+	 * 
+	 * This should mainly be used when allocation an array that needs to be able
+	 * to represent every packet.
+	 * 
+	 * @return the maximum id number
+	 */
+	public static int getPacketCount() {
+		return idMapping.length;
 	}
 
 	/**

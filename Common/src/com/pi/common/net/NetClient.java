@@ -42,7 +42,7 @@ public abstract class NetClient {
 	/**
 	 * The number of bytes received since the last update.
 	 */
-	private int recieveSinceUpdate = 0;
+	private int receiveSinceUpdate = 0;
 
 	/**
 	 * The queue that manages packets that are to be sent.
@@ -144,7 +144,7 @@ public abstract class NetClient {
 		while (readBuffer.position() > SizeOf.INT) {
 			int len = readBuffer.getInt(0);
 			if (readBuffer.position() >= len + SizeOf.INT) {
-				recieveSinceUpdate += len + SizeOf.INT;
+				receiveSinceUpdate += len + SizeOf.INT;
 				processData(readBuffer.array(),
 						readBuffer.arrayOffset() + SizeOf.INT,
 						len);
@@ -192,9 +192,18 @@ public abstract class NetClient {
 						.flip());
 			}
 			wakeSelector();
+			onSend(pack);
 		} catch (Exception e) {
 			getLog().printStackTrace(e);
 		}
+	}
+
+	/**
+	 * Called when this client sends a packet.
+	 * 
+	 * @param p the packet sent
+	 */
+	protected void onSend(final Packet p) {
 	}
 
 	/**
@@ -289,10 +298,10 @@ public abstract class NetClient {
 			cacheUploadRate =
 					(int) ((sendSinceUpdate * 1000) / delta);
 			cacheDownloadRate =
-					(int) ((recieveSinceUpdate * 1000) / delta);
+					(int) ((receiveSinceUpdate * 1000) / delta);
 			lastUpdateTime = System.currentTimeMillis();
 			sendSinceUpdate = 0;
-			recieveSinceUpdate = 0;
+			receiveSinceUpdate = 0;
 		}
 	}
 

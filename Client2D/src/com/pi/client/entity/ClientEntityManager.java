@@ -1,14 +1,14 @@
 package com.pi.client.entity;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import com.pi.client.Client;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.game.Entity;
 import com.pi.common.game.EntityType;
+import com.pi.common.game.Filter;
+import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
 
 /**
@@ -133,41 +133,61 @@ public class ClientEntityManager {
 	}
 
 	/**
-	 * Get all the entities in the provided sector.
+	 * Gets all the entities if the given sector.
 	 * 
-	 * @param loc the sector to scan
-	 * @return the entities in the sector
+	 * @param loc the sector location
+	 * @return the entities if the given sector
 	 */
-	public final List<ClientEntity> getEntitiesInSector(
+	public final Iterator<ClientEntity> getEntitiesInSector(
 			final SectorLocation loc) {
-		List<ClientEntity> sector =
-				new ArrayList<ClientEntity>();
-		for (ClientEntity e : entityMap) {
-			if (loc.containsLocation(e.getWrappedEntity())) {
-				sector.add(e);
-			}
-		}
-		return sector;
+		return new FilteredIterator<ClientEntity>(
+				entityMap.iterator(),
+				new Filter<ClientEntity>() {
+					@Override
+					public boolean accept(final ClientEntity e) {
+						return loc.containsLocation(e
+								.getWrappedEntity());
+					}
+				});
 	}
 
 	/**
-	 * Get all the entities within the provided distance of the specified
+	 * Gets all the entities at the given location.
+	 * 
+	 * @param loc the location to scan
+	 * @return the entities at the given location
+	 */
+	public final Iterator<ClientEntity> getEntitiesAtLocation(
+			final Location loc) {
+		return new FilteredIterator<ClientEntity>(
+				entityMap.iterator(),
+				new Filter<ClientEntity>() {
+					@Override
+					public boolean accept(final ClientEntity e) {
+						return loc.equals(e.getWrappedEntity());
+					}
+				});
+	}
+
+	/**
+	 * Gets all the entities within the specified distance of the given
 	 * location.
 	 * 
 	 * @param l the base location
-	 * @param maxDist the maximum distance from the base
-	 * @return the entities within the specified range
+	 * @param maxDist the maximum distance
+	 * @return the entities within the given distance
 	 */
-	public final List<ClientEntity> getEntitiesWithin(
+	public final Iterator<ClientEntity> getEntitiesWithin(
 			final Location l, final int maxDist) {
-		List<ClientEntity> entities =
-				new ArrayList<ClientEntity>();
-		for (ClientEntity e : entityMap) {
-			if (Location.dist(l, e.getWrappedEntity()) <= maxDist) {
-				entities.add(e);
-			}
-		}
-		return entities;
+		return new FilteredIterator<ClientEntity>(
+				entityMap.iterator(),
+				new Filter<ClientEntity>() {
+					@Override
+					public boolean accept(final ClientEntity e) {
+						return Location.dist(l,
+								e.getWrappedEntity()) <= maxDist;
+					}
+				});
 	}
 
 	/**

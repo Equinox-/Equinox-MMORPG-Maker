@@ -3,8 +3,10 @@ package com.pi.server.world;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -70,37 +72,54 @@ public class SectorManager extends ServerThread implements
 			getServer().getLog().info("Request sector");
 			ServerSectorStorage sec =
 					(ServerSectorStorage) getSectorStorage(
-							req.baseX, req.baseY, req.baseZ);
+							req.baseX, req.plane, req.baseZ);
 			if (sec != null
 					&& (sec.getSectorRaw() != null || sec
 							.isEmpty())) {
-				if (sec.isEmpty()) {
-					Packet6BlankSector packet =
-							new Packet6BlankSector();
-					packet.baseX = req.baseX;
-					packet.baseY = req.baseY;
-					packet.baseZ = req.baseZ;
-					getServer().getClientManager()
-							.getClient(clientID).getNetClient()
-							.send(packet);
-				} else {
-					Sector sector = sec.getSector();
-					getServer().getLog().info(
-							sector.getRevision() + ":"
-									+ req.revision);
-					if (sector.getRevision() != req.revision) {
-
-						Packet4Sector packet =
-								new Packet4Sector();
-						packet.sector = sector;
-
-						Client cli =
-								getServer().getClientManager()
-										.getClient(clientID);
-						cli.getNetClient().sendRaw(sec.pack);
-						// cli.getNetClient().send(packet);
-					}
+				sendSectorToClient(getServer()
+						.getClientManager().getClient(clientID),
+						req.baseX, req.plane, req.baseZ, sec,
+						req.revision);
+			} else {
+				if (sec != null) {
+					sec.requestedClients
+							.add(new ServerSectorStorage.ClientSectorRequest(
+									clientID, req.revision));
 				}
+			}
+		}
+	}
+
+	/**
+	 * Sends a sector packet or empty sector packet to the client.
+	 * 
+	 * @param baseX the sector's x position
+	 * @param plane the sector's plane
+	 * @param baseZ the sector's z position
+	 * @param client the client to send to
+	 * @param sector the sector storage instance to send with
+	 * @param clientRevision the client's revision
+	 */
+	private void sendSectorToClient(final Client client,
+			final int baseX, final int plane, final int baseZ,
+			final ServerSectorStorage sector,
+			final int clientRevision) {
+		if (sector.isEmpty()) {
+			Packet6BlankSector packet = new Packet6BlankSector();
+			packet.baseX = baseX;
+			packet.plane = plane;
+			packet.baseZ = baseZ;
+			client.getNetClient().send(packet);
+		} else {
+			Sector sReal = sector.getSector();
+			getServer().getLog().info(
+					sReal.getRevision() + ":" + clientRevision);
+			if (sReal.getRevision() != clientRevision) {
+
+				// Packet4Sector packet = new Packet4Sector();
+				// packet.sector = sReal;
+				client.getNetClient().sendRaw(sector.pack);
+				// cli.getNetClient().send(packet);
 			}
 		}
 	}
@@ -208,6 +227,16 @@ public class SectorManager extends ServerThread implements
 										+ oldestSector
 												.toString());
 						map.put(oldestSector, sX);
+						for (ServerSectorStorage.ClientSectorRequest sS : sX.requestedClients) {
+							sendSectorToClient(getServer()
+									.getClientManager()
+									.getClient(sS.clientID),
+									oldestSector.getSectorX(),
+									oldestSector.getPlane(),
+									oldestSector.getSectorZ(),
+									sX, sS.revision);
+						}
+						sX.requestedClients.clear();
 					} catch (FileNotFoundException e) {
 						sX.setSector(null);
 						sX.setEmpty(true);
@@ -217,6 +246,16 @@ public class SectorManager extends ServerThread implements
 								"Flagged as empty: "
 										+ oldestSector
 												.toString());
+						for (ServerSectorStorage.ClientSectorRequest sS : sX.requestedClients) {
+							sendSectorToClient(getServer()
+									.getClientManager()
+									.getClient(sS.clientID),
+									oldestSector.getSectorX(),
+									oldestSector.getPlane(),
+									oldestSector.getSectorZ(),
+									sX, sS.revision);
+						}
+						sX.requestedClients.clear();
 					} catch (IOException e) {
 						getServer().getLog().printStackTrace(e);
 					}
@@ -250,6 +289,12 @@ public class SectorManager extends ServerThread implements
 		private byte[] pack;
 
 		/**
+		 * The clients that have requested this sector.
+		 */
+		private List<ClientSectorRequest> requestedClients =
+				new ArrayList<ClientSectorRequest>();
+
+		/**
 		 * Updates the raw packet data for this sector.
 		 */
 		private void updatePacketData() {
@@ -264,6 +309,37 @@ public class SectorManager extends ServerThread implements
 				pack = pO.getByteBuffer().array();
 			} catch (Exception e) {
 				pack = null;
+			}
+		}
+
+		/**
+		 * A class representing a request by the client to the server to load a
+		 * sector, when stored within a SectorStorage instance.
+		 * 
+		 * @author Westin
+		 * 
+		 */
+		private static final class ClientSectorRequest {
+			/**
+			 * The client ID that requested this sector.
+			 */
+			private final int clientID;
+			/**
+			 * The revision the client has on file.
+			 */
+			private final int revision;
+
+			/**
+			 * Creates a client sector request instance for the given client,
+			 * with the given revision.
+			 * 
+			 * @param client the client id number
+			 * @param sRevision the sector revision
+			 */
+			public ClientSectorRequest(final int client,
+					final int sRevision) {
+				this.clientID = client;
+				this.revision = sRevision;
 			}
 		}
 	}

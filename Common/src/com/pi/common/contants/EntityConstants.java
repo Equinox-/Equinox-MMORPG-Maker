@@ -22,6 +22,12 @@ public final class EntityConstants {
 	public static final int DEFAULT_MAXIMUM_HEALTH = 10;
 
 	/**
+	 * The default amount of time in milliseconds for an entity to attack
+	 * something.
+	 */
+	public static final long DEFAULT_ENTITY_ATTACK_SPEED = 750;
+
+	/**
 	 * Overridden constructor to prevent instances of this class from being
 	 * created.
 	 */

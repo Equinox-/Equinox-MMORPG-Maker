@@ -1,8 +1,12 @@
 package com.pi.gui;
 
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * An extension of the component class that provides a text field.
@@ -23,6 +27,17 @@ public class PITextField extends PIComponent {
 	private int maxLength = -1;
 
 	/**
+	 * Action listeners that check for text changes.
+	 */
+	private List<ActionListener> actListener =
+			new ArrayList<ActionListener>();
+
+	/**
+	 * The text to display when there is no content.
+	 */
+	private String exampleString = "";
+
+	/**
 	 * Creates a new text field with the default text field style set.
 	 * 
 	 * @see GUIKit#TEXTFIELD_STYLE_SET
@@ -34,6 +49,9 @@ public class PITextField extends PIComponent {
 
 	@Override
 	public final String getDisplay() {
+		if (!isFocused && content.length() == 0) {
+			return exampleString;
+		}
 		String disp;
 		if (mask != null) {
 			char[] maskedCharacters = new char[content.length()];
@@ -53,17 +71,25 @@ public class PITextField extends PIComponent {
 	public final void keyTyped(final KeyEvent e) {
 		super.keyTyped(e);
 		if (isFocused) {
+			ActionEvent evt = null;
 			char c = e.getKeyChar();
 			if (c == '\b') {
 				if (content.length() >= 1) {
 					content =
 							content.substring(0,
 									content.length() - 1);
+					evt = new ActionEvent(this, 0, getContent());
 				}
 			} else {
-				if (maxLength == -1
-						|| content.length() < maxLength) {
+				if ((maxLength == -1 || content.length() < maxLength)
+						&& c >= ' ' && c <= '~') {
 					content += c;
+					evt = new ActionEvent(this, 0, getContent());
+				}
+			}
+			if (evt != null) {
+				for (ActionListener l : actListener) {
+					l.actionPerformed(evt);
 				}
 			}
 		}
@@ -94,5 +120,23 @@ public class PITextField extends PIComponent {
 	 */
 	public final void setMask(final Character sMask) {
 		this.mask = sMask;
+	}
+
+	/**
+	 * Adds the action listener to the action listener array.
+	 * 
+	 * @param l the action listener to add
+	 */
+	public final void addActionListener(final ActionListener l) {
+		actListener.add(l);
+	}
+
+	/**
+	 * The text to display when there is no content in this text field.
+	 * 
+	 * @param s the example string
+	 */
+	public final void setExampleString(final String s) {
+		this.exampleString = s;
 	}
 }

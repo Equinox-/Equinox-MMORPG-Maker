@@ -83,7 +83,7 @@ public final class DatabaseIO {
 	 * Reads a packet object by the type defined by the provided class, from the
 	 * provided file.
 	 * 
-	 * @see DatabaseIO#read(InputStream, Class)
+	 * @see DatabaseIO#read(InputStream, PacketObject)
 	 * @param f the file to read from
 	 * @param readTo the object to read into
 	 * @return the read object

@@ -53,4 +53,9 @@ public class Packet15GameState extends Packet {
 	public final int getLength() {
 		return SizeOf.INT;
 	}
+
+	@Override
+	public final boolean requiresHandshake() {
+		return true;
+	}
 }

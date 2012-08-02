@@ -6,6 +6,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +120,16 @@ public class PIScrollBar extends PIContainer {
 		scrollUp.addMouseListener(mListen);
 		scrollDown.addMouseListener(mListen);
 		scrollContainer.addMouseListener(mListen);
+
+		this.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved(final MouseWheelEvent e) {
+				setScrollAmount(scrollAmount
+						- (((float) (e.getUnitsToScroll() / e
+								.getScrollAmount())) * step));
+				triggerScrollEvent();
+			}
+		});
 
 		add(scrollDown);
 		add(scrollUp);

@@ -162,12 +162,6 @@ public class Server {
 
 			entityManager.spawnEntity(defs.getEntityLoader()
 					.getDef(1), new Location());
-			entityManager.spawnEntity(defs.getEntityLoader()
-					.getDef(1), new Location());
-			entityManager.spawnEntity(defs.getEntityLoader()
-					.getDef(1), new Location());
-			entityManager.spawnEntity(defs.getEntityLoader()
-					.getDef(1), new Location());
 
 		} catch (BindException e1) {
 			dispose();

@@ -36,4 +36,9 @@ public class Packet1Login extends Packet {
 		return PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream.stringByteLength(password);
 	}
+
+	@Override
+	public final boolean requiresHandshake() {
+		return true;
+	}
 }

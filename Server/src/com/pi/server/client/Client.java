@@ -4,7 +4,7 @@ import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet11LocalEntityID;
 import com.pi.server.Server;
-import com.pi.server.constants.Configuration;
+import com.pi.server.constants.ServerConstants;
 import com.pi.server.net.NetServerClient;
 
 /**
@@ -166,7 +166,7 @@ public class Client {
 	 * Called when this client's entity dies.
 	 */
 	public final void onEntityDeath() {
-		acc.setLocation(Configuration.SPAWN_POINT);
+		acc.setLocation(ServerConstants.SPAWN_POINT);
 		this.entity =
 				server.getEntityManager().spawnEntity(
 						server.getDefs().getEntityLoader()

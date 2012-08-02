@@ -98,6 +98,20 @@ public class ClientManager {
 	}
 
 	/**
+	 * Updates the handshake confirmation packets of all connected clients.
+	 */
+	public final void updateHandshakes() {
+		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+			Client c = clientMap.get(i);
+			if (c != null
+					&& (c.getNetClient() == null || !c
+							.getNetClient().isConnected())) {
+				c.getNetClient().checkHandshakes();
+			}
+		}
+	}
+
+	/**
 	 * Registers the client to this manager, returning the identification number
 	 * it was registered to, or <code>-1</code> if there wasn't an available
 	 * slot.

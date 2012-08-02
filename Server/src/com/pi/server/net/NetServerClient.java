@@ -8,6 +8,8 @@ import com.pi.common.debug.PILogger;
 import com.pi.common.net.NetChangeRequest;
 import com.pi.common.net.NetClient;
 import com.pi.common.net.NetHandler;
+import com.pi.common.net.packet.Packet;
+import com.pi.common.net.packet.PacketManager;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 
@@ -34,6 +36,14 @@ public class NetServerClient extends NetClient {
 	 * The client bound to this network instance.
 	 */
 	private Client cliRef = null;
+
+	/**
+	 * An array of handshake confirmation objects with enough elements for each
+	 * packet ID number to be set.
+	 */
+	private HandshakeConfirmation[] handshakes =
+			new HandshakeConfirmation[PacketManager
+					.getPacketCount()];
 
 	/**
 	 * Creates a network server client for the given server and channel.
@@ -103,6 +113,42 @@ public class NetServerClient extends NetClient {
 	public final void dispose() {
 		server.getNetwork()
 				.deregisterSocketChannel(getChannel());
+	}
+
+	/**
+	 * Runs through the handshakes, looking for any that need to be resent.
+	 */
+	public final void checkHandshakes() {
+		for (int i = 0; i < handshakes.length; i++) {
+			if (handshakes[i] != null
+					&& handshakes[i].needToResend()) {
+				Packet p = handshakes[i].getPacket();
+				getLog().severe(
+						"Have to resend " + p.getName()
+								+ " due to a handshake timeout!");
+				handshakes[i] = null;
+				send(p);
+			}
+		}
+	}
+
+	/**
+	 * Called when this client receives a handshake packet.
+	 * 
+	 * @param packetID the packet id number
+	 */
+	public final void onHandshake(final int packetID) {
+		if (packetID >= 0 && packetID < handshakes.length) {
+			handshakes[packetID] = null;
+		}
+	}
+
+	@Override
+	public final void onSend(final Packet p) {
+		if (p.requiresHandshake() && p.getID() >= 0
+				&& p.getID() < handshakes.length) {
+			handshakes[p.getID()] = new HandshakeConfirmation(p);
+		}
 	}
 
 	@Override

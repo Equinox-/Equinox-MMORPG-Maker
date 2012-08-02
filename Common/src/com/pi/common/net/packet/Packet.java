@@ -5,12 +5,12 @@ import java.io.IOException;
 import com.pi.common.net.PacketOutputStream;
 
 /**
- * Get network packet class that represents any packet sent or recieved through
+ * Get network packet class that represents any packet sent or received through
  * the network.
  * <p>
- * If the {@link Packet#getID()} method is not ovverridden in the sub class,
- * then the class name must have a single solid block of numbers that represent
- * the packet's id number. In addition, all packets must be registered with the
+ * If the {@link Packet#getID()} method is not overridden in the sub class, then
+ * the class name must have a single solid block of numbers that represent the
+ * packet's id number. In addition, all packets must be registered with the
  * packet manager, using the {@link PacketManager#registerPacket(Class)} method.
  * 
  * @author Westin
@@ -76,7 +76,7 @@ public abstract class Packet implements PacketObject,
 			return Integer.valueOf(num);
 		}
 		throw new UnsupportedOperationException(
-				"The class name doesn't contain ID, please ovveride getID()");
+				"The class name doesn't contain ID, please override getID()");
 	}
 
 	@Override
@@ -107,5 +107,16 @@ public abstract class Packet implements PacketObject,
 	 */
 	public final long getTimeStamp() {
 		return timeStamp;
+	}
+
+	/**
+	 * Checks if this packet requires a handshake to be send to the server to
+	 * confirm it's reception.
+	 * 
+	 * @return <code>true</code> if this packet requires a handshake,
+	 *         <code>false</code> if not
+	 */
+	public boolean requiresHandshake() {
+		return false;
 	}
 }
