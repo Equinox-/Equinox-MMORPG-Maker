@@ -117,6 +117,14 @@ public final class Paths {
 		}
 		return f;
 	}
+	
+	public static File getItemDefDirectory() {
+		File f = new File(getDefDirectory(), "item");
+		if (!f.exists()) {
+			f.mkdir();
+		}
+		return f;
+	}
 
 	/**
 	 * Gets the file the entity definition with the given identification number

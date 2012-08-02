@@ -3,7 +3,9 @@ package com.pi.common.database;
 import java.io.IOException;
 
 import com.pi.common.PICryptUtils;
+import com.pi.common.contants.ItemConstants;
 import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.game.Item;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.PacketObject;
@@ -11,7 +13,8 @@ import com.pi.common.net.packet.PacketObject;
 /**
  * A class describing an account, for storage in a database.
  * 
- * @author Westin
+ * @autho		// TODO Auto-generated method stub
+r Westin
  * 
  */
 public class Account implements PacketObject {
