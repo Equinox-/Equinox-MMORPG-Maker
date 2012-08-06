@@ -48,6 +48,7 @@ public class PacketInputStream {
 			for (int i = count; i < data.length; i++) {
 				data[i] = 0;
 			}
+			close();
 		}
 	}
 
@@ -64,6 +65,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.BYTE) {
 			return bb.get();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -81,6 +83,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.CHAR) {
 			return bb.getChar();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -98,6 +101,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.SHORT) {
 			return bb.getShort();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -115,6 +119,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.INT) {
 			return bb.getInt();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -132,6 +137,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.FLOAT) {
 			return bb.getFloat();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -149,6 +155,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.LONG) {
 			return bb.getLong();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -166,6 +173,7 @@ public class PacketInputStream {
 		if (bb.remaining() >= SizeOf.DOUBLE) {
 			return bb.getDouble();
 		} else {
+			close();
 			return 0;
 		}
 	}
@@ -256,5 +264,13 @@ public class PacketInputStream {
 	 */
 	public final int available() {
 		return bb.remaining();
+	}
+
+	/**
+	 * Closes this buffer by making the remaining bytes readable by this buffer
+	 * 0.
+	 */
+	public final void close() {
+		bb.position(bb.capacity());
 	}
 }
