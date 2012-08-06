@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.database;
 
 import java.io.IOException;
 
@@ -24,58 +24,63 @@ public class Item implements PacketObject {
 	 */
 	private int itemCount;
 
-	// private final ItemDefinition itemDefinition;
-
 	/**
-	 * Creates an item and sets it's ID and count
+	 * Creates an item and sets it's ID and count.
 	 * 
-	 * @param itemID the item's ID
-	 * @param itemCount the amount of the item
+	 * @param sItemID the item's ID
+	 * @param sItemCount the amount of the item
 	 */
-	public Item(int itemID, int itemCount) {
-		this.itemID = itemID;
-		this.itemCount = itemCount;
-		// this.itemDefinition = ItemDefiner.getDefinition(itemID);
+	public Item(final int sItemID, final int sItemCount) {
+		this.itemID = sItemID;
+		this.itemCount = sItemCount;
 	}
 
 	/**
-	 * Get the current amount of the item
+	 * Get the current amount of the item.
 	 * 
 	 * @return the amount of the item
 	 */
-	public int getItemCount() {
+	public final int getItemCount() {
 		return itemCount;
 	}
 
-	public void setItemCount(int count) {
+	/**
+	 * Sets the stack count of this item.
+	 * 
+	 * @param count the new stack size
+	 */
+	public final void setItemCount(final int count) {
 		itemCount = count;
 	}
 
 	/**
-	 * Get the item's ID
+	 * Get the item's ID.
 	 * 
 	 * @return the item's ID
 	 */
-	public int getItemID() {
+	public final int getItemID() {
 		return itemID;
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut)
+	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		pOut.writeInt(itemID);
 		pOut.writeInt(itemCount);
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return 2 * SizeOf.INT;
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn)
+	public final void readData(final PacketInputStream pIn)
 			throws IOException {
 		itemID = pIn.readInt();
 		itemCount = pIn.readInt();
+		if (itemCount == 0) {
+			itemID = -1;
+		}
 	}
 }

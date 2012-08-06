@@ -21,6 +21,7 @@ import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet18Health;
 import com.pi.common.net.packet.Packet19Attack;
 import com.pi.common.net.packet.Packet1Login;
+import com.pi.common.net.packet.Packet22ItemDefRequest;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet3Register;
 import com.pi.common.net.packet.Packet5SectorRequest;
@@ -266,5 +267,15 @@ public class NetServerHandler extends NetHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Processes the item definition request packet, id 22.
+	 * 
+	 * @param p the packet
+	 */
+	public final void process(final Packet22ItemDefRequest p) {
+		server.getDefs().getItemLoader()
+				.requestDefinition(netClient.getID(), p.defID);
 	}
 }

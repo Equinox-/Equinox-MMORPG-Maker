@@ -67,8 +67,9 @@ public class EventLoop extends ClientThread implements
 			if (eDef != null) {
 				timeToAttack = eDef.getAttackSpeed();
 			}
-			if (System.currentTimeMillis() >= lastAttackTime
-					+ timeToAttack) {
+			if (keyState[KeyEvent.VK_CONTROL]
+					&& System.currentTimeMillis() >= lastAttackTime
+							+ timeToAttack) {
 				getClient().getNetwork().send(
 						new Packet19Attack());
 				lastAttackTime = System.currentTimeMillis();

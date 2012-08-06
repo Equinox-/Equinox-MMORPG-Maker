@@ -23,8 +23,7 @@ public class Packet22ItemDefRequest extends Packet {
 	 * @return the packet instance
 	 */
 	public static Packet22ItemDefRequest create(final int defID) {
-		Packet22ItemDefRequest r =
-				new Packet22ItemDefRequest();
+		Packet22ItemDefRequest r = new Packet22ItemDefRequest();
 		r.defID = defID;
 		return r;
 	}

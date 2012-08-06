@@ -36,6 +36,12 @@ public class MainGame implements Renderable, KeyListener,
 	private final EventLoop eventLoop;
 
 	/**
+	 * The data cache for this client.
+	 */
+	private final ClientDataCache dataCache =
+			new ClientDataCache();
+
+	/**
 	 * Creates the Main Game render loop and controls for the specified client.
 	 * 
 	 * @param sClient the client instance
@@ -49,6 +55,15 @@ public class MainGame implements Renderable, KeyListener,
 	@Override
 	public final void render(final IGraphics g) {
 		this.gameRenderLoop.render(g);
+	}
+
+	/**
+	 * Gets this client's data cache.
+	 * 
+	 * @return the data cache
+	 */
+	public final ClientDataCache getClientCache() {
+		return dataCache;
 	}
 
 	@Override

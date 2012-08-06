@@ -117,7 +117,12 @@ public final class Paths {
 		}
 		return f;
 	}
-	
+
+	/**
+	 * Gets the item definition directory.
+	 * 
+	 * @return the item definition directory
+	 */
 	public static File getItemDefDirectory() {
 		File f = new File(getDefDirectory(), "item");
 		if (!f.exists()) {

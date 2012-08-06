@@ -19,6 +19,9 @@ import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet18Health;
 import com.pi.common.net.packet.Packet21EntityFace;
+import com.pi.common.net.packet.Packet23ItemDef;
+import com.pi.common.net.packet.Packet24InventoryData;
+import com.pi.common.net.packet.Packet25InventoryUpdate;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet4Sector;
 import com.pi.common.net.packet.Packet6BlankSector;
@@ -270,6 +273,44 @@ public class NetClientHandler extends NetHandler {
 		}
 		if (cEnt.getWrappedEntity() instanceof LivingEntity) {
 			cEnt.getWrappedEntity().setDir(p.face);
+		}
+	}
+
+	/**
+	 * Processes an item definition packet, id 23.
+	 * 
+	 * @param p the item definition packet
+	 */
+	public final void process(final Packet23ItemDef p) {
+		client.getDefs().getItemLoader().setDef(p.itemID, p.def);
+	}
+
+	/**
+	 * Processes an inventory data packet, id 24.
+	 * 
+	 * @param p the inventory data packet
+	 */
+	public final void process(final Packet24InventoryData p) {
+		client.getMainGame().getClientCache()
+				.setInventory(p.inventory);
+	}
+
+	/**
+	 * Processes an inventory update packet, id 25.
+	 * 
+	 * @param p the inventory update packet
+	 */
+	public final void process(final Packet25InventoryUpdate p) {
+		try {
+			client.getMainGame()
+					.getClientCache()
+					.getInventory()
+					.setInventoryAt(p.inventoryID, p.updatedItem);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			client.getLog()
+					.severe("Bad inventory index '"
+							+ p.inventoryID
+							+ "' for packet 25 inventory update");
 		}
 	}
 }

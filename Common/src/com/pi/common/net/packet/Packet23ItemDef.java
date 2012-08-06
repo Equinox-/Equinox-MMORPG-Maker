@@ -3,7 +3,6 @@ package com.pi.common.net.packet;
 import java.io.IOException;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
-import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.def.ItemDef;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
@@ -20,7 +19,7 @@ public class Packet23ItemDef extends Packet {
 	public ItemDef def;
 
 	@Override
-	public void writeData(PacketOutputStream pOut)
+	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		pOut.writeInt(itemID);
 		if (def == null) {
@@ -31,7 +30,7 @@ public class Packet23ItemDef extends Packet {
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		if (def == null) {
 			def = new ItemDef(itemID);
 		}
@@ -39,7 +38,7 @@ public class Packet23ItemDef extends Packet {
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn)
+	public final void readData(final PacketInputStream pIn)
 			throws IOException {
 		itemID = pIn.readInt();
 		if (def == null) {

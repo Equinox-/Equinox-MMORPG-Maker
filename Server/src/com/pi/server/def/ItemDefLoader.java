@@ -26,8 +26,8 @@ public class ItemDefLoader extends DefinitionsLoader<ItemDef> {
 	}
 
 	@Override
-	protected boolean sendDefinitionTo(int client, int defID,
-			ItemDef def) {
+	protected final boolean sendDefinitionTo(final int client,
+			final int defID, final ItemDef def) {
 		Packet23ItemDef packet = new Packet23ItemDef();
 		packet.def = def;
 		packet.itemID = defID;
@@ -37,7 +37,7 @@ public class ItemDefLoader extends DefinitionsLoader<ItemDef> {
 	}
 
 	@Override
-	protected void loadAllDefinitions() {
+	protected final void loadAllDefinitions() {
 		File[] defFiles =
 				Paths.getItemDefDirectory().listFiles();
 		for (File defF : defFiles) {

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
+
 /**
  * A wrapper around a byte buffer for reading from it in a way comparable to a
  * stream.
@@ -30,86 +32,150 @@ public class PacketInputStream {
 	/**
 	 * Reads an array of bytes from the buffer.
 	 * 
+	 * More specifically this method reads array length bytes from the buffer
+	 * into the array, padding the array with 0s if there aren't enough bytes
+	 * remaining.
+	 * 
 	 * @see ByteBuffer#get(byte[])t
 	 * @param data the array to read in
 	 */
 	public final void readBytes(final byte[] data) {
-		bb.get(data);
+		if (bb.remaining() >= data.length) {
+			bb.get(data);
+		} else {
+			int count = bb.remaining();
+			bb.get(data, 0, count);
+			for (int i = count; i < data.length; i++) {
+				data[i] = 0;
+			}
+		}
 	}
 
 	/**
 	 * Reads a byte from the buffer.
 	 * 
+	 * More specifically this method reads 1 byte from the buffer if it has at
+	 * least 1 byte remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#get()
 	 * @return the byte read
 	 */
 	public final byte readByte() {
-		return bb.get();
+		if (bb.remaining() >= SizeOf.BYTE) {
+			return bb.get();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a char from the buffer.
 	 * 
+	 * More specifically this method reads 1 byte from the buffer if it has at
+	 * least 1 byte remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getChar()
 	 * @return the char read
 	 */
 	public final char readChar() {
-		return bb.getChar();
+		if (bb.remaining() >= SizeOf.CHAR) {
+			return bb.getChar();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a 2 byte short from the buffer.
 	 * 
+	 * More specifically this method reads 2 bytes from the buffer if it has at
+	 * least 2 bytes remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getShort()
 	 * @return the short read
 	 */
 	public final short readShort() {
-		return bb.getShort();
+		if (bb.remaining() >= SizeOf.SHORT) {
+			return bb.getShort();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a 4 byte integer from the buffer.
 	 * 
+	 * More specifically this method reads 4 bytes from the buffer if it has at
+	 * least 4 bytes remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getInt()
 	 * @return the integer read
 	 */
 	public final int readInt() {
-		return bb.getInt();
+		if (bb.remaining() >= SizeOf.INT) {
+			return bb.getInt();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a 4 byte float from the buffer.
 	 * 
+	 * More specifically this method reads 4 bytes from the buffer if it has at
+	 * least 4 bytes remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getFloat()
 	 * @return the float read
 	 */
 	public final float readFloat() {
-		return bb.getFloat();
+		if (bb.remaining() >= SizeOf.FLOAT) {
+			return bb.getFloat();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a 8 byte long from the buffer.
 	 * 
+	 * More specifically this method reads 8 bytes from the buffer if it has at
+	 * least 8 bytes remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getLong()
 	 * @return the long read
 	 */
 	public final long readLong() {
-		return bb.getLong();
+		if (bb.remaining() >= SizeOf.LONG) {
+			return bb.getLong();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a 8 byte double from the buffer.
 	 * 
+	 * More specifically this method reads 8 bytes from the buffer if it has at
+	 * least 8 bytes remaining, otherwise, this method returns 0.
+	 * 
 	 * @see ByteBuffer#getDouble()
 	 * @return the double read
 	 */
 	public final double readDouble() {
-		return bb.getDouble();
+		if (bb.remaining() >= SizeOf.DOUBLE) {
+			return bb.getDouble();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
 	 * Reads a string as an integer length and an array of characters from the
 	 * buffer.
+	 * 
+	 * This method will also pad the string with characters with the code of 0
+	 * if the buffer doesn't have enough remaining elements in the buffer.
 	 * 
 	 * @return the string read
 	 * @throws IOException if the string length was invalid
@@ -133,6 +199,9 @@ public class PacketInputStream {
 	/**
 	 * Reads a byte array from the buffer as an integer length and an array of
 	 * bytes.
+	 * 
+	 * This method will also pad the byte array with 0s if there isn't enough
+	 * remaining elements in the buffer.
 	 * 
 	 * @return the read byte array
 	 * @throws IOException if the array length was invalid

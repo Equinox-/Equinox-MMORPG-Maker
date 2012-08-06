@@ -3,6 +3,7 @@ package com.pi.server.client;
 import com.pi.common.database.Account;
 import com.pi.common.game.Entity;
 import com.pi.common.net.packet.Packet11LocalEntityID;
+import com.pi.common.net.packet.Packet24InventoryData;
 import com.pi.server.Server;
 import com.pi.server.constants.ServerConstants;
 import com.pi.server.net.NetServerClient;
@@ -71,7 +72,8 @@ public class Client {
 						account.getLocation());
 		network.send(Packet11LocalEntityID.create(entity
 				.getEntityID()));
-		// TODO Find a better way to request entities for clients on move
+		network.send(Packet24InventoryData.create(account
+				.getInventory()));
 		server.getEntityManager().sendClientEntities(this);
 	}
 

@@ -1,26 +1,31 @@
 package com.pi.common.contants;
 
-import com.pi.common.game.Item;
+import com.pi.common.database.Item;
 
 /**
- * Constants containing for items and the inventory
+ * Constants containing for items and the inventory.
  * 
  * @author mark
  * 
  */
 public final class ItemConstants {
 	/**
-	 * Inventory size
+	 * The default inventory size for a player.
 	 */
-	public static final int inventorySize = 16;
+	public static final int PLAYER_INVENTORY_SIZE = 16;
 	/**
-	 * Stack size
+	 * The maximum stack size.
 	 */
-	public static final int stackSize = 64;
+	public static final int MAX_STACK_SIZE = 64;
+
 	/**
-	 * Null item
+	 * Creates a null, or empty item.
+	 * 
+	 * @return a null, or empty item
 	 */
-	public static final Item nullItem = new Item(-1, 0);
+	public static Item createNullItem() {
+		return new Item(-1, 0);
+	}
 
 	/**
 	 * Overridden constructor to prevent instances of this class from being

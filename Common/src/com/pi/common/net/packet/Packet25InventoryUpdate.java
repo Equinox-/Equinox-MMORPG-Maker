@@ -2,9 +2,9 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
+import com.pi.common.contants.ItemConstants;
 import com.pi.common.contants.NetworkConstants.SizeOf;
-import com.pi.common.game.Inventory;
-import com.pi.common.game.Item;
+import com.pi.common.database.Item;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -17,38 +17,49 @@ import com.pi.common.net.PacketOutputStream;
 public class Packet25InventoryUpdate extends Packet {
 	public Item updatedItem;
 	public int inventoryID;
-	
+
 	/**
 	 * Creates the packet with a given Item and inventory slot (ID).
+	 * 
 	 * @param updatedItem the new item
 	 * @param inventoryID where it is in the inventory
 	 * @return the packet instance
 	 */
 	public static Packet25InventoryUpdate create(
 			final Item updatedItem, final int inventoryID) {
-		Packet25InventoryUpdate p = new Packet25InventoryUpdate();
+		Packet25InventoryUpdate p =
+				new Packet25InventoryUpdate();
 		p.updatedItem = updatedItem;
 		p.inventoryID = inventoryID;
 		return p;
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut)
+	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
-		updatedItem.writeData(pOut);
+		if (updatedItem == null) {
+			updatedItem = ItemConstants.createNullItem();
+		}
 		pOut.writeInt(inventoryID);
+		updatedItem.writeData(pOut);
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
+		if (updatedItem == null) {
+			updatedItem = ItemConstants.createNullItem();
+		}
 		return updatedItem.getLength() + SizeOf.INT;
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn)
+	public final void readData(final PacketInputStream pIn)
 			throws IOException {
-		updatedItem.readData(pIn);
+		if (updatedItem == null) {
+			updatedItem = ItemConstants.createNullItem();
+		}
 		inventoryID = pIn.readInt();
+		updatedItem.readData(pIn);
 
 	}
 

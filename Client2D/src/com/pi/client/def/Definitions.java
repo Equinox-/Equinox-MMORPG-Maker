@@ -16,6 +16,11 @@ public class Definitions extends ClientThread {
 	private final EntityDefLoader entityDefLoader;
 
 	/**
+	 * The item definition loader.
+	 */
+	private final ItemDefLoader itemDefLoader;
+
+	/**
 	 * Creates a definitions loader for the specified client, and starts the
 	 * thread.
 	 * 
@@ -24,6 +29,7 @@ public class Definitions extends ClientThread {
 	public Definitions(final Client client) {
 		super(client);
 		this.entityDefLoader = new EntityDefLoader(client);
+		this.itemDefLoader = new ItemDefLoader(client);
 		super.start();
 	}
 
@@ -35,6 +41,16 @@ public class Definitions extends ClientThread {
 	 */
 	public final EntityDefLoader getEntityLoader() {
 		return entityDefLoader;
+	}
+
+	/**
+	 * Gets the item definitions loader.
+	 * 
+	 * @return the item definitions loader instance
+	 * @see com.pi.client.def.ItemDefLoader
+	 */
+	public final ItemDefLoader getItemLoader() {
+		return itemDefLoader;
 	}
 
 	@Override

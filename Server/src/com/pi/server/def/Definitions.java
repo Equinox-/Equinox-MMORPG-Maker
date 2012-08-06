@@ -13,6 +13,10 @@ public class Definitions {
 	 * The entity definition loader.
 	 */
 	private final EntityDefLoader entityDefLoader;
+	/**
+	 * The item definition loader.
+	 */
+	private final ItemDefLoader itemDefLoader;
 
 	/**
 	 * Creates a definitions loader for the specified server, and starts the
@@ -23,6 +27,8 @@ public class Definitions {
 	public Definitions(final Server server) {
 		this.entityDefLoader = new EntityDefLoader(server);
 		this.entityDefLoader.loadAllDefinitions();
+		this.itemDefLoader = new ItemDefLoader(server);
+		this.itemDefLoader.loadAllDefinitions();
 	}
 
 	/**
@@ -33,5 +39,15 @@ public class Definitions {
 	 */
 	public final EntityDefLoader getEntityLoader() {
 		return entityDefLoader;
+	}
+
+	/**
+	 * Gets the item definitions loader.
+	 * 
+	 * @return the item definitions loader instance
+	 * @see com.pi.server.def.EntityDefLoader
+	 */
+	public final ItemDefLoader getItemLoader() {
+		return itemDefLoader;
 	}
 }

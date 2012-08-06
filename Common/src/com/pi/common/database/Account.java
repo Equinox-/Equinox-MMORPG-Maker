@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.pi.common.PICryptUtils;
 import com.pi.common.contants.ItemConstants;
 import com.pi.common.contants.NetworkConstants.SizeOf;
-import com.pi.common.game.Item;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.PacketObject;
@@ -29,6 +28,12 @@ public class Account implements PacketObject {
 	 * The entity definition id.
 	 */
 	private int entityDef;
+
+	/**
+	 * This account's current inventory.
+	 */
+	private final Inventory inventory = new Inventory(
+			ItemConstants.PLAYER_INVENTORY_SIZE);
 
 	/**
 	 * The current entity location.
@@ -128,6 +133,15 @@ public class Account implements PacketObject {
 		return entityLocation;
 	}
 
+	/**
+	 * Gets this account's inventory.
+	 * 
+	 * @return the inventory
+	 */
+	public final Inventory getInventory() {
+		return inventory;
+	}
+
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
@@ -135,6 +149,7 @@ public class Account implements PacketObject {
 		pOut.writeString(username);
 		pOut.writeString(passwordHash);
 		entityLocation.writeData(pOut);
+		inventory.writeData(pOut);
 	}
 
 	@Override
@@ -144,6 +159,7 @@ public class Account implements PacketObject {
 		username = pIn.readString();
 		passwordHash = pIn.readString();
 		entityLocation.readData(pIn);
+		inventory.readData(pIn);
 	}
 
 	@Override
@@ -152,7 +168,8 @@ public class Account implements PacketObject {
 				+ PacketOutputStream.stringByteLength(username)
 				+ PacketOutputStream
 						.stringByteLength(passwordHash)
-				+ entityLocation.getLength();
+				+ entityLocation.getLength()
+				+ inventory.getLength();
 	}
 
 	@Override
