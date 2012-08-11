@@ -181,10 +181,11 @@ public abstract class EntityLogic {
 			int xDir = (eTarget.x - getEntity().x);
 			int zDir = (eTarget.z - getEntity().z);
 			Direction[] pDirs = getDirectionsTo(eTarget);
-			if (Math.abs(xDir) + Math.abs(zDir) != 1
-					&& pDirs.length == 1) {
+			if (Math.abs(xDir) + Math.abs(zDir) > 1) {
 				tryMove(pDirs);
-			} else {
+			} else if (Math.abs(xDir) + Math.abs(zDir) == 0) {
+				tryMove(Direction.values());
+			} else if (pDirs.length == 1) {
 				// We are close enough to attack, but are we facing the
 				// right way
 				if (getEntity().getDir() != pDirs[0]) {

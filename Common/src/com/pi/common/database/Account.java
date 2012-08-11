@@ -160,6 +160,10 @@ public class Account implements PacketObject {
 		passwordHash = pIn.readString();
 		entityLocation.readData(pIn);
 		inventory.readData(pIn);
+		if (inventory.getSlotCount() != ItemConstants.PLAYER_INVENTORY_SIZE) {
+			inventory
+					.resize(ItemConstants.PLAYER_INVENTORY_SIZE);
+		}
 	}
 
 	@Override

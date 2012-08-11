@@ -31,6 +31,15 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	}
 
 	/**
+	 * Gets the number of slots in this inventory.
+	 * 
+	 * @return the slot count
+	 */
+	public final int getSlotCount() {
+		return inventory.length;
+	}
+
+	/**
 	 * Get the item in the inventory at the current location (0 based).
 	 * 
 	 * More specifically this returns the inventory item at the given index if
@@ -78,6 +87,18 @@ public class Inventory implements PacketObject, Iterable<Item> {
 		for (int i = 0; i < inventory.length; i++) {
 			inventory[i] = ItemConstants.createNullItem();
 		}
+	}
+
+	/**
+	 * Resizes this inventory to the given new size, preserving the data.
+	 * 
+	 * @param newSize the new size
+	 */
+	public final void resize(final int newSize) {
+		Item[] temp = new Item[newSize];
+		System.arraycopy(inventory, 0, temp, 0,
+				Math.min(newSize, inventory.length));
+		inventory = temp;
 	}
 
 	@Override
