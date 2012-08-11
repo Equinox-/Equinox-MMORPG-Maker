@@ -3,18 +3,12 @@ package com.pi.client.gui.mainmenu;
 import java.awt.Color;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
 import com.pi.client.Client;
 import com.pi.graphics.device.IGraphics;
-import com.pi.graphics.device.Renderable;
 import com.pi.gui.GUIKit;
 import com.pi.gui.PIButton;
 import com.pi.gui.PIComponent;
@@ -29,8 +23,7 @@ import com.pi.gui.PIStyle.StyleType;
  * @author Westin
  * 
  */
-public class MainMenu implements Renderable, MouseListener,
-		MouseMotionListener, MouseWheelListener, KeyListener {
+public class MainMenu extends PIContainer {
 	/**
 	 * The scalar button width.
 	 */
@@ -57,30 +50,22 @@ public class MainMenu implements Renderable, MouseListener,
 	private static final float FONT_SIZE_WIDTH = 0.025f;
 
 	/**
-	 * The menu container.
-	 */
-	private PIContainer buttonContainer = new PIContainer();
-	/**
 	 * The menu buttons.
 	 */
-	private PIButton loginButton = new PIButton(),
-			newAccount = new PIButton(),
-			credits = new PIButton(), settings = new PIButton();
+	private PIButton[] optButtons = new PIButton[] {
+			new PIButton(), new PIButton(), new PIButton(),
+			new PIButton() };
 	/**
 	 * The button style set.
 	 */
 	private PIStyle.PIStyleSet set;
 	/**
-	 * The currently open sub container.
-	 */
-	private PIContainer currentOption = null;
-	/**
 	 * The sub-container options.
 	 */
-	private PIContainer loginOption = new LoginContainer(this),
-			creditsOption = new CreditsContainer(),
-			registerOption = new RegisterContainer(this),
-			settingsOption = new SettingsContainer(this);
+	private PIContainer[] options = new PIContainer[] {
+			new LoginContainer(this),
+			new RegisterContainer(this), new CreditsContainer(),
+			new SettingsContainer(this) };
 	/**
 	 * The server status component.
 	 */
@@ -106,48 +91,28 @@ public class MainMenu implements Renderable, MouseListener,
 		serverStatusStyle.hAlign = false;
 		serverStatus.setStyle(StyleType.NORMAL,
 				serverStatusStyle);
-		loginButton.setContent("Login");
-		loginButton.setStyleSet(set, false);
-		loginButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				currentOption = loginOption;
-				selectButton(loginButton);
-			}
-		});
-		newAccount.setContent("New Account");
-		newAccount.setStyleSet(set, false);
-		newAccount.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				currentOption = registerOption;
-				selectButton(newAccount);
-			}
-		});
-		credits.setContent("Credits");
-		credits.setStyleSet(set, false);
-		credits.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				currentOption = creditsOption;
-				selectButton(credits);
-			}
-		});
-		settings.setContent("Settings");
-		settings.setStyleSet(set, false);
-		settings.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				currentOption = settingsOption;
-				selectButton(settings);
-			}
-		});
+		add(serverStatus);
 
-		buttonContainer.add(loginButton);
-		buttonContainer.add(newAccount);
-		buttonContainer.add(credits);
-		buttonContainer.add(serverStatus);
-		buttonContainer.add(settings);
+		for (int i = 0; i < options.length; i++) {
+			options[i].setVisible(false);
+			add(options[i]);
+			add(optButtons[i]);
+			final int btnTMP = i;
+			optButtons[i].setStyleSet(set, false);
+			optButtons[i].addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(final MouseEvent e) {
+					selectButton(btnTMP);
+				}
+			});
+		}
+
+		optButtons[0].setContent("Login");
+		optButtons[1].setContent("New Account");
+		optButtons[2].setContent("Credits");
+		optButtons[3].setContent("Settings");
+
+		add(serverStatus);
 		onResize(c.getApplet().getWidth(), c.getApplet()
 				.getHeight());
 		c.getApplet().addComponentListener(
@@ -164,15 +129,12 @@ public class MainMenu implements Renderable, MouseListener,
 	/**
 	 * Sets the currently active button.
 	 * 
-	 * @param button the button to select.
+	 * @param button the button index selected
 	 */
-	private void selectButton(final PIComponent button) {
-		for (PIComponent p : buttonContainer.getChildren()) {
-			if (p == button) {
-				p.setActive(true);
-			} else {
-				p.setActive(false);
-			}
+	private void selectButton(final int button) {
+		for (int i = 0; i < optButtons.length; i++) {
+			optButtons[i].setActive(button == i);
+			options[i].setVisible(button == i);
 		}
 	}
 
@@ -185,13 +147,7 @@ public class MainMenu implements Renderable, MouseListener,
 			serverStatusStyle.foreground = Color.red;
 			serverStatus.setContent("Offline");
 		}
-		serverStatus.setStyle(StyleType.NORMAL,
-				serverStatusStyle);
-
-		buttonContainer.render(g);
-		if (currentOption != null) {
-			currentOption.render(g);
-		}
+		super.render(g);
 	}
 
 	/**
@@ -219,128 +175,19 @@ public class MainMenu implements Renderable, MouseListener,
 				set.getStyle(type).setFontSize(fontSize);
 			}
 		}
-
-		loginOption.setSize(menuWidth, menuHeight);
-		loginOption.setLocation(buttonX, menuLocY);
-		creditsOption.setSize(menuWidth, menuHeight);
-		creditsOption.setLocation(buttonX, menuLocY);
-		registerOption.setSize(menuWidth, menuHeight);
-		registerOption.setLocation(buttonX, menuLocY);
-		settingsOption.setSize(menuWidth, menuHeight);
-		settingsOption.setLocation(buttonX, menuLocY);
+		for (PIContainer p : options) {
+			p.setSize(menuWidth, menuHeight);
+			p.setLocation(buttonX, menuLocY);
+		}
 		serverStatus.setSize(3 * 5 * 5, 5 * 5);
 		serverStatus.setLocation(5, height - (5 * 2 * 5));
 
-		loginButton.setSize(bWidth, bHeight);
-		newAccount.setSize(bWidth, bHeight);
-		credits.setSize(bWidth, bHeight);
-		settings.setSize(bWidth, bHeight);
-		loginButton.setLocation(buttonX, buttonY);
-		buttonX += buttonSpacing;
-
-		newAccount.setLocation(buttonX, buttonY);
-		buttonX += buttonSpacing;
-
-		credits.setLocation(buttonX, buttonY);
-		buttonX += buttonSpacing;
-
-		settings.setLocation(buttonX, buttonY);
-		buttonX += buttonSpacing;
-
-		loginOption.compile();
-		creditsOption.compile();
-		registerOption.compile();
-		settingsOption.compile();
-		serverStatus.compile();
-		buttonContainer.compile();
-	}
-
-	@Override
-	public final void mouseWheelMoved(final MouseWheelEvent e) {
-		buttonContainer.mouseWheelMoved(e);
-		if (currentOption != null) {
-			currentOption.mouseWheelMoved(e);
+		for (PIButton btn : optButtons) {
+			btn.setSize(bWidth, bHeight);
+			btn.setLocation(buttonX, buttonY);
+			buttonX += buttonSpacing;
 		}
-	}
-
-	@Override
-	public final void mouseDragged(final MouseEvent e) {
-		buttonContainer.mouseDragged(e);
-		if (currentOption != null) {
-			currentOption.mouseDragged(e);
-		}
-	}
-
-	@Override
-	public final void mouseMoved(final MouseEvent e) {
-		buttonContainer.mouseMoved(e);
-		if (currentOption != null) {
-			currentOption.mouseMoved(e);
-		}
-	}
-
-	@Override
-	public final void mouseClicked(final MouseEvent e) {
-		buttonContainer.mouseClicked(e);
-		if (currentOption != null) {
-			currentOption.mouseClicked(e);
-		}
-	}
-
-	@Override
-	public final void mouseEntered(final MouseEvent e) {
-		buttonContainer.mouseEntered(e);
-		if (currentOption != null) {
-			currentOption.mouseEntered(e);
-		}
-	}
-
-	@Override
-	public final void mouseExited(final MouseEvent e) {
-		buttonContainer.mouseExited(e);
-		if (currentOption != null) {
-			currentOption.mouseExited(e);
-		}
-	}
-
-	@Override
-	public final void mousePressed(final MouseEvent e) {
-		buttonContainer.mousePressed(e);
-		if (currentOption != null) {
-			currentOption.mousePressed(e);
-		}
-	}
-
-	@Override
-	public final void mouseReleased(final MouseEvent e) {
-		buttonContainer.mouseReleased(e);
-		if (currentOption != null) {
-			currentOption.mouseReleased(e);
-		}
-	}
-
-	@Override
-	public final void keyPressed(final KeyEvent e) {
-		buttonContainer.keyPressed(e);
-		if (currentOption != null) {
-			currentOption.keyPressed(e);
-		}
-	}
-
-	@Override
-	public final void keyReleased(final KeyEvent e) {
-		buttonContainer.keyReleased(e);
-		if (currentOption != null) {
-			currentOption.keyReleased(e);
-		}
-	}
-
-	@Override
-	public final void keyTyped(final KeyEvent e) {
-		buttonContainer.keyTyped(e);
-		if (currentOption != null) {
-			currentOption.keyTyped(e);
-		}
+		compile();
 	}
 
 	/**

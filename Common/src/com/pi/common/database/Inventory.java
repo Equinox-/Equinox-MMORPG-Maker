@@ -43,8 +43,8 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	 * Get the item in the inventory at the current location (0 based).
 	 * 
 	 * More specifically this returns the inventory item at the given index if
-	 * it not <code>null</code>, otherwise this method returns {@see
-	 * ItemConstants#NULL_ITEM}.
+	 * it not <code>null</code>, otherwise this method returns
+	 * {@link ItemConstants#createNullItem()}.
 	 * 
 	 * @param inventoryID the inventory location
 	 * @return the item in the location
@@ -62,7 +62,7 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	 * 
 	 * More specifically this method sets the inventory item at the given index
 	 * to the given argument, unless the argument is null, in which case this
-	 * method sets the inventory item to {@see ItemConstants#NULL_ITEM}.
+	 * method sets the inventory item to {@link ItemConstants#createNullItem()}.
 	 * 
 	 * @param inventoryID the inventory location
 	 * @param item the item in the location
@@ -80,8 +80,8 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	/**
 	 * Clears all items in the inventory.
 	 * 
-	 * More specifically this method sets every item in this inventory to {@see
-	 * ItemConstants#NULL_ITEM}.
+	 * More specifically this method sets every item in this inventory to
+	 * {@link ItemConstants#createNullItem()}.
 	 */
 	public final void clear() {
 		for (int i = 0; i < inventory.length; i++) {

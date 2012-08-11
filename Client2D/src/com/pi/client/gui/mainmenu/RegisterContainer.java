@@ -7,6 +7,7 @@ import com.pi.common.PICryptUtils;
 import com.pi.common.contants.UserConstants;
 import com.pi.common.net.packet.Packet3Register;
 import com.pi.gui.GUIKit;
+import com.pi.gui.PIButton;
 import com.pi.gui.PIComponent;
 import com.pi.gui.PIContainer;
 import com.pi.gui.PIStyle.StyleType;
@@ -39,7 +40,7 @@ public class RegisterContainer extends PIContainer {
 	/**
 	 * The registration button, to send the verification packet to the server.
 	 */
-	private PIComponent registerButton = new PIComponent();
+	private PIButton registerButton = new PIButton();
 	/**
 	 * The username field identification.
 	 */
