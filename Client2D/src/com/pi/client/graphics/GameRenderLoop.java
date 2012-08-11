@@ -15,11 +15,13 @@ import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
+import com.pi.common.database.def.ItemDef;
 import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
-import com.pi.common.game.LivingEntity;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.EntityType;
+import com.pi.common.game.entity.ItemEntity;
+import com.pi.common.game.entity.LivingEntity;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
@@ -126,7 +128,20 @@ public class GameRenderLoop implements Renderable {
 						.getEntityLoader()
 						.getDef(ent.getWrappedEntity()
 								.getEntityDef());
-		if (def != null) {
+		if (ent.getWrappedEntity() instanceof ItemEntity) {
+			ItemDef iDef =
+					client.getDefs()
+							.getItemLoader()
+							.getDef(((ItemEntity) ent
+									.getWrappedEntity())
+									.getItem());
+			if (iDef != null) {
+				Point p =
+						locationToScreen(ent.getWrappedEntity());
+				p.x += ent.getXOff();
+				g.drawImage(iDef, p.x, p.y);
+			}
+		} else if (def != null) {
 			float frameWidth =
 					def.getPositionWidth()
 							/ def.getHorizontalFrames();

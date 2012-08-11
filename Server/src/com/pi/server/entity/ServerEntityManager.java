@@ -6,10 +6,12 @@ import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.game.Entity;
 import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.EntityType;
+import com.pi.common.game.entity.ItemEntity;
 import com.pi.common.net.packet.Packet10EntityDataRequest;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet21EntityFace;
@@ -98,6 +100,40 @@ public class ServerEntityManager {
 				e.setLocation(ePos.x, ePos.plane, ePos.z);
 				entityMap.set(id, new ServerEntity(server
 						.getDefs().getEntityLoader(), e));
+				sendSpawnEntity(id);
+				return e;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Spawns an item entity for the given item at the given location and
+	 * returns it.
+	 * 
+	 * @param itemID the item to spawn
+	 * @param ePos the location to spawn at
+	 * @return the entity that was created
+	 */
+	public final Entity spawnItemEntity(final int itemID,
+			final Location ePos) {
+		int id = 0;
+		while (true) {
+			if (entityMap.get(id) == null) {
+				break;
+			}
+			id++;
+		}
+		Entity e = EntityType.Item.createInstance();
+		if (e != null) {
+			if (e.setEntityID(id)) {
+				e.setLocation(ePos.x, ePos.plane, ePos.z);
+				if (e instanceof ItemEntity) {
+					((ItemEntity) e).setItem(itemID);
+				}
+				entityMap.set(id, new ServerEntity(server
+						.getDefs().getEntityLoader(), e));
+				sendSpawnEntity(id);
 				return e;
 			}
 		}
@@ -246,6 +282,32 @@ public class ServerEntityManager {
 						cli.getNetClient().send(
 								Packet8EntityDispose
 										.create(entity));
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sends entity data for the given entity to all nearby clients.
+	 * 
+	 * @param entity the entity ID
+	 */
+	public final void sendSpawnEntity(final int entity) {
+		ServerEntity e = getEntity(entity);
+		if (e != null) {
+			for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
+				Client cli =
+						server.getClientManager().getClient(i);
+				if (cli != null && cli.getEntity() != null
+						&& cli.getNetClient() != null) {
+					int dist =
+							Location.dist(cli.getEntity(),
+									cli.getEntity());
+					if (dist <= ServerConstants.ENTITY_UPDATE_DIST) {
+						cli.getNetClient().send(
+								Packet9EntityData.create(e
+										.getWrappedEntity()));
 					}
 				}
 			}

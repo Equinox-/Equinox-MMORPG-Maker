@@ -5,8 +5,9 @@ import java.io.IOException;
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
 import com.pi.common.database.TileLayer;
-import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.EntityType;
+import com.pi.common.game.entity.ItemEntity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -31,10 +32,11 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
+		pOut.writeInt(eType.ordinal());
+
 		loc.writeData(pOut);
 		pOut.writeInt(layer.ordinal());
 		pOut.writeInt(defID);
-		pOut.writeInt(eType.ordinal());
 	}
 
 	@Override
@@ -44,6 +46,13 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
+		int type = pIn.readInt();
+		if (type >= 0 && type < EntityType.values().length) {
+			eType = EntityType.values()[type];
+		} else {
+			eType = EntityType.Normal;
+		}
+
 		loc.readData(pIn);
 		int lI = pIn.readInt();
 		if (lI >= 0 && lI < TileLayer.MAX_VALUE.ordinal()) {
@@ -52,12 +61,6 @@ public class Packet9EntityData extends Packet {
 			layer = TileLayer.MASK1;
 		}
 		defID = pIn.readInt();
-		int type = pIn.readInt();
-		if (type >= 0 && type < EntityType.values().length) {
-			eType = EntityType.values()[type];
-		} else {
-			eType = EntityType.Normal;
-		}
 	}
 
 	/**
@@ -68,7 +71,11 @@ public class Packet9EntityData extends Packet {
 	 */
 	public static Packet9EntityData create(final Entity e) {
 		Packet9EntityData pack = new Packet9EntityData();
-		pack.defID = e.getEntityDef();
+		if (e instanceof ItemEntity) {
+			pack.defID = ((ItemEntity) e).getItem();
+		} else {
+			pack.defID = e.getEntityDef();
+		}
 		pack.entID = e.getEntityID();
 		pack.layer = e.getLayer();
 		pack.loc = e;

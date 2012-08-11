@@ -132,6 +132,17 @@ public final class Paths {
 	}
 
 	/**
+	 * Gets the file the item definition with the given identification number is
+	 * stored in.
+	 * 
+	 * @param def the id number
+	 * @return the item definition file
+	 */
+	public static File getItemDef(final int def) {
+		return new File(getItemDefDirectory(), def + ".def");
+	}
+
+	/**
 	 * Gets the file the entity definition with the given identification number
 	 * is stored in.
 	 * 

@@ -4,8 +4,8 @@ import java.util.Random;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
-import com.pi.common.game.Entity;
-import com.pi.common.game.LivingEntity;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.LivingEntity;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet18Health;
 import com.pi.server.Server;

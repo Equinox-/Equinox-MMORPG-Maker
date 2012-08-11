@@ -8,7 +8,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.debug.PIResourceViewer;
-import com.pi.common.game.Entity;
+import com.pi.common.game.entity.Entity;
 import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
 

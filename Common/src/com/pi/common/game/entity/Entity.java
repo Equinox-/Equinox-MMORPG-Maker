@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.game.entity;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.contants.SectorConstants;
@@ -176,33 +176,35 @@ public class Entity extends Location {
 		Sector sec =
 				mgr.getSector(getSectorX(), getPlane(),
 						getSectorZ());
-		int moveSX =
-				SectorConstants.worldToSectorX(x
-						+ sDir.getXOff());
-		int moveSZ =
-				SectorConstants.worldToSectorZ(z
-						+ sDir.getZOff());
-		Sector move;
-		if (moveSX != sec.getSectorX()
-				|| moveSZ != sec.getSectorZ()) {
-			move = mgr.getSector(moveSX, getPlane(), moveSZ);
-		} else {
-			move = sec;
-		}
-		if (sec != null && move != null) {
-			Tile t = sec.getGlobalTile(x, z);
-			if (t != null) {
-				switch (sDir) {
-				case UP:
-					return !t.hasFlag(TileFlags.WALL_NORTH);
-				case DOWN:
-					return !t.hasFlag(TileFlags.WALL_SOUTH);
-				case RIGHT:
-					return !t.hasFlag(TileFlags.WALL_EAST);
-				case LEFT:
-					return !t.hasFlag(TileFlags.WALL_WEST);
-				default:
-					break;
+		if (sec != null) {
+			int moveSX =
+					SectorConstants.worldToSectorX(x
+							+ sDir.getXOff());
+			int moveSZ =
+					SectorConstants.worldToSectorZ(z
+							+ sDir.getZOff());
+			Sector move;
+			if (moveSX != sec.getSectorX()
+					|| moveSZ != sec.getSectorZ()) {
+				move = mgr.getSector(moveSX, getPlane(), moveSZ);
+			} else {
+				move = sec;
+			}
+			if (move != null) {
+				Tile t = sec.getGlobalTile(x, z);
+				if (t != null) {
+					switch (sDir) {
+					case UP:
+						return !t.hasFlag(TileFlags.WALL_NORTH);
+					case DOWN:
+						return !t.hasFlag(TileFlags.WALL_SOUTH);
+					case RIGHT:
+						return !t.hasFlag(TileFlags.WALL_EAST);
+					case LEFT:
+						return !t.hasFlag(TileFlags.WALL_WEST);
+					default:
+						break;
+					}
 				}
 			}
 		}

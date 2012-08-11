@@ -17,35 +17,48 @@ public class ItemDef extends GraphicsObject {
 	 * This definintion's identification number.
 	 */
 	private int defID = -1;
-	
-	// Other item attribs
-	
+
+	/**
+	 * Creates an item definitions with the given definition ID.
+	 * 
+	 * @param iDefID the definition ID
+	 */
 	public ItemDef(final int iDefID) {
 		this.defID = iDefID;
 	}
 
-	public int getDefID() {
+	/**
+	 * Get's this definition's ID.
+	 * 
+	 * @return the definition ID
+	 */
+	public final int getDefID() {
 		return defID;
 	}
 
-	public void setDefID(int defID) {
-		this.defID = defID;
+	/**
+	 * Sets the definition ID of this item definition.
+	 * 
+	 * @param sDefID the definition ID
+	 */
+	public final void setDefID(final int sDefID) {
+		this.defID = sDefID;
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut)
+	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		super.writeData(pOut);
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn)
+	public final void readData(final PacketInputStream pIn)
 			throws IOException {
 		super.readData(pIn);
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return super.getLength();
 	}
 }

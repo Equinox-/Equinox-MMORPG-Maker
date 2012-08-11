@@ -5,11 +5,11 @@ import java.util.Iterator;
 import com.pi.client.Client;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
-import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
 import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.EntityType;
 
 /**
  * A class to manage all the entities registered with this client.

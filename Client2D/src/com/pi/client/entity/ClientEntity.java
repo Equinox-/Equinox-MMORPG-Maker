@@ -2,7 +2,7 @@ package com.pi.client.entity;
 
 import com.pi.common.contants.EntityConstants;
 import com.pi.common.contants.TileConstants;
-import com.pi.common.game.Entity;
+import com.pi.common.game.entity.Entity;
 
 /**
  * An entity container class that manages special variables for client entities.

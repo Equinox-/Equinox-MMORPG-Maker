@@ -9,7 +9,7 @@ import com.pi.client.entity.ClientEntity;
 import com.pi.common.contants.Direction;
 import com.pi.common.contants.EntityConstants;
 import com.pi.common.database.def.EntityDef;
-import com.pi.common.game.Entity;
+import com.pi.common.game.entity.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet19Attack;
 

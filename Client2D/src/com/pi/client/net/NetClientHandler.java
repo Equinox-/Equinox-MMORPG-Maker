@@ -5,9 +5,10 @@ import com.pi.client.entity.ClientEntity;
 import com.pi.common.database.Location;
 import com.pi.common.database.SectorLocation;
 import com.pi.common.debug.PILogger;
-import com.pi.common.game.Entity;
-import com.pi.common.game.EntityType;
-import com.pi.common.game.LivingEntity;
+import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.EntityType;
+import com.pi.common.game.entity.ItemEntity;
+import com.pi.common.game.entity.LivingEntity;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Handshake;
@@ -196,7 +197,12 @@ public class NetClientHandler extends NetHandler {
 								+ p.eType.name());
 			}
 		}
-		ent.setEntityDef(p.defID);
+		if (ent instanceof ItemEntity) {
+			ent.setEntityDef(-1);
+			((ItemEntity) ent).setItem(p.defID);
+		} else {
+			ent.setEntityDef(p.defID);
+		}
 		ent.setLocation(p.loc);
 		ent.setLayer(p.layer);
 	}

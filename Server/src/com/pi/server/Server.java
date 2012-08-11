@@ -155,13 +155,14 @@ public class Server {
 					world));
 			defs = new Definitions(this);
 
-			world.getSector(0, 0, 0);
-
 			sLogic = new ServerLogic(this);
 			sLogic.start();
 
 			entityManager.spawnEntity(defs.getEntityLoader()
 					.getDef(1), new Location());
+
+			entityManager.spawnItemEntity(0, new Location(5, 0,
+					5));
 
 		} catch (BindException e1) {
 			dispose();

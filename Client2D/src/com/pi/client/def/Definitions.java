@@ -56,5 +56,6 @@ public class Definitions extends ClientThread {
 	@Override
 	protected final void loop() {
 		entityDefLoader.loadLoop();
+		itemDefLoader.loadLoop();
 	}
 }

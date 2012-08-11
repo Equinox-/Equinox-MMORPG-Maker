@@ -3,7 +3,7 @@ package com.pi.common.net.packet;
 import java.io.IOException;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
-import com.pi.common.game.LivingEntity;
+import com.pi.common.game.entity.LivingEntity;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 

@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.game.entity;
 
 /**
  * An enum representing the possible entity types.
@@ -18,7 +18,11 @@ public enum EntityType {
 	/**
 	 * Entity with combat abilities.
 	 */
-	Combat(CombatEntity.class);
+	Combat(CombatEntity.class),
+	/**
+	 * Entity that represents an item on the map.
+	 */
+	Item(ItemEntity.class);
 
 	/**
 	 * The class describing this entity.

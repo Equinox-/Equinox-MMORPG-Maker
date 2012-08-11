@@ -9,8 +9,9 @@ import com.pi.common.database.Tile;
 import com.pi.common.database.TileGraphicsObject;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.ItemDef;
 import com.pi.common.database.io.DatabaseIO;
-import com.pi.common.game.EntityType;
+import com.pi.common.game.entity.EntityType;
 
 /**
  * Creates and saves demonstration information to the server's database.
@@ -34,7 +35,8 @@ public final class Demonstration {
 				TileGraphicsObject obj =
 						new TileGraphicsObject();
 				obj.setGraphic(2);
-				obj.setPosition(0, TileConstants.TILE_HEIGHT, 0, 0);
+				obj.setPosition(0, TileConstants.TILE_HEIGHT, 0,
+						0);
 				t.setLayer(TileLayer.GROUND, obj);
 				sec.setLocalTile(x, y, t);
 				if (Math.random() < 0.75f) {
@@ -44,8 +46,11 @@ public final class Demonstration {
 						new TileGraphicsObject();
 				obj2.setGraphic(2);
 				obj2.setPosition(
-						TileConstants.TILE_WIDTH + (Math.round(Math.random() * 2D) * TileConstants.TILE_WIDTH),
-						Math.round(Math.random()) * TileConstants.TILE_HEIGHT, 0, 0);
+						TileConstants.TILE_WIDTH
+								+ (Math.round(Math.random() * 2D) * TileConstants.TILE_WIDTH),
+						Math.round(Math.random())
+								* TileConstants.TILE_HEIGHT, 0,
+						0);
 				t.setLayer(TileLayer.MASK1, obj2);
 
 			}
@@ -93,6 +98,11 @@ public final class Demonstration {
 		d1.setEntityType(EntityType.Combat);
 		d1.setLogicClass("com.pi.server.logic.entity.NeutralEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(1), d1);
+
+		ItemDef iDef = new ItemDef(0);
+		iDef.setGraphic(5);
+		iDef.setPosition(0, 0, 32, 32);
+		DatabaseIO.write(Paths.getItemDef(0), iDef);
 	}
 
 	/**
