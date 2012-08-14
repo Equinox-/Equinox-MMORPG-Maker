@@ -1,7 +1,10 @@
 package com.pi.client.gui.game;
 
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 
+import com.pi.common.contants.GraphicsConstants;
 import com.pi.common.contants.ItemConstants;
 import com.pi.common.database.Inventory;
 import com.pi.common.database.Item;
@@ -79,7 +82,7 @@ public class InventoryGUI extends PIComponent {
 	 */
 	private void renderItemInSlot(final IGraphics g,
 			final Item i, final int slot) {
-		if (i == null) {
+		if (i == null || i.getItemCount() < 1) {
 			return;
 		}
 		ItemDef def =
@@ -123,6 +126,18 @@ public class InventoryGUI extends PIComponent {
 					p.y
 							+ (int) (INVENTORY_SLOT_SIZE - def
 									.getPositionHeight()) / 2);
+		}
+		if (i.getItemCount() > 1) {
+			Rectangle2D bounds =
+					g.getStringBounds(GraphicsConstants.FONT,
+							Integer.toString(i.getItemCount()));
+			g.drawText(
+					Integer.toString(i.getItemCount()),
+					p.x + INVENTORY_SLOT_SIZE
+							- (int) bounds.getWidth(),
+					p.y + INVENTORY_SLOT_SIZE
+							- (int) bounds.getHeight(),
+					GraphicsConstants.FONT, Color.RED);
 		}
 	}
 

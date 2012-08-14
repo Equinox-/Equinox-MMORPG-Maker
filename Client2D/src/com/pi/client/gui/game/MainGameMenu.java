@@ -47,6 +47,11 @@ public class MainGameMenu extends PIContainer {
 	private MainGameGUI gui;
 
 	/**
+	 * The dimension the current layout is for.
+	 */
+	private Dimension currentLayout = null;
+
+	/**
 	 * Creates the main game buttons and sub menus for the given GUI instance.
 	 * 
 	 * @param sGUI the GUI instance to bind to
@@ -100,16 +105,26 @@ public class MainGameMenu extends PIContainer {
 		}
 	}
 
+	@Override
+	public final void update() {
+		if (!gui.getClient().getApplet().getSize()
+				.equals(currentLayout)) {
+			reLayout();
+		}
+	}
+
 	/**
 	 * Layouts all the components of this container.
 	 */
 	private void reLayout() {
-		Dimension size = gui.getClient().getApplet().getSize();
+		currentLayout = gui.getClient().getApplet().getSize();
 		for (int i = 0; i < menuButtons.length; i++) {
 			if (LAYOUT_VERTICALLY) {
-				menuButtons[i].setLocation((int) size.getWidth()
-						- BUTTON_WIDTH, (int) size.getHeight()
-						- ((i + 1) * BUTTON_HEIGHT));
+				menuButtons[i].setLocation(
+						(int) currentLayout.getWidth()
+								- BUTTON_WIDTH,
+						(int) currentLayout.getHeight()
+								- ((i + 1) * BUTTON_HEIGHT));
 				if (menuOptions[i] != null) {
 					menuOptions[i]
 							.setLocation(
@@ -122,9 +137,15 @@ public class MainGameMenu extends PIContainer {
 													.getHeight());
 				}
 			} else {
-				menuButtons[i].setLocation((int) size.getWidth()
-						- ((i + 1) * BUTTON_WIDTH),
-						(int) size.getHeight() - BUTTON_HEIGHT);
+				menuButtons[i].setLocation(
+						(int) currentLayout.getWidth()
+								- ((i + 1) * BUTTON_WIDTH),
+						(int) currentLayout.getHeight()
+								- BUTTON_HEIGHT);
+				gui.getClient()
+						.getLog()
+						.info(menuButtons[i].getX() + ","
+								+ menuButtons[i].getY());
 				if (menuOptions[i] != null) {
 					menuOptions[i]
 							.setLocation(
@@ -138,5 +159,6 @@ public class MainGameMenu extends PIContainer {
 				}
 			}
 		}
+		compile();
 	}
 }

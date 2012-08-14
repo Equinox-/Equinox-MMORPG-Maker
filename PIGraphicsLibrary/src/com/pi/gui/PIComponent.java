@@ -145,7 +145,7 @@ public class PIComponent implements Renderable,
 	}
 
 	/**
-	 * Updates the absolute x and y position of this component. Called every
+	 * Updates the absolute x and y position of this component. Should be called every
 	 * time the x and y position of this component, or any parent components
 	 * changes.
 	 */

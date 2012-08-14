@@ -35,7 +35,7 @@ public class ClientViewerFrame extends JFrame {
 		setLocation(0, 0);
 		setVisible(true);
 		cApplet = new ClientApplet();
-		add(cApplet);
+		getContentPane().add(cApplet);
 		cApplet.init();
 		cApplet.start();
 		addWindowListener(new WindowAdapter() {
@@ -47,7 +47,7 @@ public class ClientViewerFrame extends JFrame {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				cApplet.setSize(getSize());
+				cApplet.setSize(getContentPane().getSize());
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
