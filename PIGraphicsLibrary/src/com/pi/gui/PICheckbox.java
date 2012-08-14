@@ -28,7 +28,7 @@ public class PICheckbox extends PIComponent {
 	 * @return the checked state
 	 */
 	public final boolean isChecked() {
-		return isActive;
+		return isActive();
 	}
 
 	/**
@@ -37,15 +37,15 @@ public class PICheckbox extends PIComponent {
 	 * @param checked the new checked state
 	 */
 	public final void setChecked(final boolean checked) {
-		this.isActive = checked;
+		this.setActive(checked);
 	}
 
 	@Override
 	public final PIStyle getCurrentStyle() {
-		if (hovering && containsStyle(PIStyle.StyleType.HOVER)) {
+		if (isHovering() && containsStyle(PIStyle.StyleType.HOVER)) {
 			return getStyle(PIStyle.StyleType.HOVER);
 		}
-		if (isActive && containsStyle(PIStyle.StyleType.ACTIVE)) {
+		if (isActive() && containsStyle(PIStyle.StyleType.ACTIVE)) {
 			return getStyle(PIStyle.StyleType.ACTIVE);
 		}
 		return getStyle(PIStyle.StyleType.NORMAL);
@@ -53,7 +53,7 @@ public class PICheckbox extends PIComponent {
 
 	@Override
 	public final void paintBackground(final IGraphics g) {
-		if (isVisible) {
+		if (isVisible()) {
 			PIStyle style = getCurrentStyle();
 			if (style == null) {
 				return;
@@ -74,8 +74,8 @@ public class PICheckbox extends PIComponent {
 
 	@Override
 	public final void mouseClicked(final MouseEvent e) {
-		if (isFocused) {
-			isActive = !isActive;
+		if (isFocused()) {
+			setActive(!isActive());
 		}
 		super.mouseClicked(e);
 	}
@@ -91,13 +91,13 @@ public class PICheckbox extends PIComponent {
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		super.keyPressed(e);
-		if (e.getKeyChar() == '\n' && isFocused) {
+		if (e.getKeyChar() == '\n' && isFocused()) {
 			MouseEvent ev =
 					new MouseEvent(e.getComponent(),
 							MouseEvent.MOUSE_CLICKED,
-							System.currentTimeMillis(), 0, absX
-									+ (width / 2), absY
-									+ (height / 2), 1, false);
+							System.currentTimeMillis(), 0, getAbsoluteX()
+									+ (getWidth() / 2), getAbsoluteY()
+									+ (getHeight() / 2), 1, false);
 			ev.setSource(this);
 			mouseClicked(ev);
 		}

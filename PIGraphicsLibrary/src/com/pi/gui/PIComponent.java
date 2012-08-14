@@ -30,69 +30,70 @@ public class PIComponent implements Renderable,
 	/**
 	 * The current style mapping for each different state.
 	 */
-	protected PIStyle[] styles = new PIStyle[PIStyle.StyleType
+	private PIStyle[] styles = new PIStyle[PIStyle.StyleType
 			.values().length];
 	/**
 	 * The relative x, y position of this component.
 	 */
-	protected int x, y;
+	private int x, y;
 	/**
 	 * The size of this component.
 	 */
-	protected int width, height;
+	private int width, height;
 	/**
 	 * The text content of this component.
 	 */
-	protected String content = "";
+	private String content = "";
 	/**
 	 * The parent component or <code>null</code> if none exists.
 	 */
-	protected PIContainer parent;
+	private PIContainer parent;
 	/**
 	 * If this component is has the cursor above it.
 	 */
-	protected boolean hovering = false;
+	private boolean hovering = false;
 	/**
 	 * The mouse listeners registered to this component.
 	 */
-	protected List<MouseListener> mouseListeners =
+	private List<MouseListener> mouseListeners =
 			new ArrayList<MouseListener>();
 	/**
 	 * The mouse wheel listeners registered to this component.
 	 */
-	protected List<MouseWheelListener> mouseWheelListeners =
+	private List<MouseWheelListener> mouseWheelListeners =
 			new ArrayList<MouseWheelListener>();
 	/**
 	 * The mouse motion listeners registered to this component.
 	 */
-	protected List<MouseMotionListener> mouseMotionListeners =
+	private List<MouseMotionListener> mouseMotionListeners =
 			new ArrayList<MouseMotionListener>();
 	/**
 	 * The key listeners registered to this component.
 	 */
-	protected List<KeyListener> keyListeners =
+	private List<KeyListener> keyListeners =
 			new ArrayList<KeyListener>();
 	/**
 	 * If this component is visible.
 	 */
-	protected boolean isVisible = true;
+	private boolean isVisible = true;
 	/**
 	 * This component has focus. (Was clicked on, and the mouse hasn't clicked
 	 * anywhere else recently.)
 	 */
-	protected boolean isFocused = false;
+	private boolean isFocused = false;
 	/**
 	 * General purpose is active flag.
 	 */
-	protected boolean isActive = false;
+	private boolean isActive = false;
+
 	/**
 	 * If the contents of this component should be clipped.
 	 */
-	protected boolean clipContents = false;
+	private boolean clipContents = false;
 	/**
 	 * The compiled absolute x and y position.
 	 */
-	protected int absX, absY;
+	private int absX, absY;
 
 	/**
 	 * Creates a new PIComponent with the {@link GUIKit#DEFAULT_STYLE} for
@@ -179,7 +180,7 @@ public class PIComponent implements Renderable,
 		if (hovering && containsStyle(PIStyle.StyleType.HOVER)) {
 			return styles[PIStyle.StyleType.HOVER.ordinal()];
 		}
-		if ((isFocused || isActive)
+		if ((isFocused || isActive())
 				&& containsStyle(PIStyle.StyleType.ACTIVE)) {
 			return styles[PIStyle.StyleType.ACTIVE.ordinal()];
 		}
@@ -295,6 +296,13 @@ public class PIComponent implements Renderable,
 	 */
 	public final boolean isVisible() {
 		return isVisible;
+	}
+
+	/**
+	 * @return the isFocused
+	 */
+	public final boolean isFocused() {
+		return isFocused;
 	}
 
 	/**
@@ -552,7 +560,8 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseClicked(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()) {
+		if (r.contains(e.getPoint()) && isVisible()
+				&& !e.isConsumed()) {
 			isFocused = true;
 			MouseEvent nE =
 					new MouseEvent(e.getComponent(), e.getID(),
@@ -572,7 +581,8 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mousePressed(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()) {
+		if (r.contains(e.getPoint()) && isVisible()
+				&& !e.isConsumed()) {
 			MouseEvent nE =
 					new MouseEvent(e.getComponent(), e.getID(),
 							e.getWhen(), e.getModifiers(),
@@ -592,7 +602,8 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()) {
+		if (r.contains(e.getPoint()) && isVisible()
+				&& !e.isConsumed()) {
 			MouseEvent nE =
 					new MouseEvent(e.getComponent(), e.getID(),
 							e.getWhen(), e.getModifiers(),
@@ -609,7 +620,8 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseMoved(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()) {
+		if (r.contains(e.getPoint()) && isVisible()
+				&& !e.isConsumed()) {
 			MouseEvent nE =
 					new MouseEvent(e.getComponent(), e.getID(),
 							e.getWhen(), e.getModifiers(),
@@ -629,7 +641,8 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()) {
+		if (r.contains(e.getPoint()) && isVisible()
+				&& !e.isConsumed()) {
 			MouseEvent nE =
 					new MouseEvent(e.getComponent(), e.getID(),
 							e.getWhen(), e.getModifiers(),
@@ -683,7 +696,7 @@ public class PIComponent implements Renderable,
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (isFocused) {
+		if (isFocused && !e.isConsumed() && isVisible()) {
 			for (KeyListener l : keyListeners) {
 				l.keyPressed(e);
 			}
@@ -692,7 +705,7 @@ public class PIComponent implements Renderable,
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		if (isFocused) {
+		if (isFocused && !e.isConsumed() && isVisible()) {
 			for (KeyListener l : keyListeners) {
 				l.keyReleased(e);
 			}
@@ -701,7 +714,7 @@ public class PIComponent implements Renderable,
 
 	@Override
 	public void keyTyped(final KeyEvent e) {
-		if (isFocused) {
+		if (isFocused && !e.isConsumed() && isVisible()) {
 			for (KeyListener l : keyListeners) {
 				l.keyTyped(e);
 			}
@@ -718,7 +731,7 @@ public class PIComponent implements Renderable,
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
-		if (hovering) {
+		if (hovering && !e.isConsumed() && isVisible()) {
 			for (MouseWheelListener l : mouseWheelListeners) {
 				l.mouseWheelMoved(e);
 			}
@@ -739,7 +752,25 @@ public class PIComponent implements Renderable,
 	 * 
 	 * @return if this component clips it's contents
 	 */
-	public final boolean doesClipContents() {
+	protected final boolean doesClipContents() {
 		return this.clipContents;
+	}
+
+	/**
+	 * Checks if this component is active.
+	 * 
+	 * @return the active state
+	 */
+	protected final boolean isActive() {
+		return isActive;
+	}
+
+	/**
+	 * Checks if this component currently has the mouse hovering over it.
+	 * 
+	 * @return the hovering
+	 */
+	protected final boolean isHovering() {
+		return hovering;
 	}
 }

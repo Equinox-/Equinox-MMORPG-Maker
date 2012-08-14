@@ -143,6 +143,21 @@ public final class GUIKit {
 			new PIStyle();
 
 	/**
+	 * The default scroll bar container style.
+	 * 
+	 * @see PIScrollBar
+	 */
+	public static final PIStyle DEFAULT_SCROLLBAR_CONTAINER_STYLE =
+			new PIStyle();
+	/**
+	 * The default scroll bar current scroll amount style.
+	 * 
+	 * @see PIScrollBar
+	 */
+	public static final PIStyle DEFAULT_SCROLLBAR_CURRENT_STYLE =
+			new PIStyle();
+
+	/**
 	 * If this GUIKit instance has been configured.
 	 */
 	private static boolean initiated = false;
@@ -241,6 +256,13 @@ public final class GUIKit {
 			DEFAULT_LOADING_BAR_STYLE.border = Color.lightGray;
 			DEFAULT_LOADING_BAR_STYLE.background =
 					Color.darkGray;
+
+			// Scroll bar start
+			DEFAULT_SCROLLBAR_CONTAINER_STYLE.background =
+					new Color(0.2f, 0.2f, 0.2f, 0.2f);
+			DEFAULT_SCROLLBAR_CURRENT_STYLE.background =
+					new Color(0.1f, 0.1f, 0.1f);
+			// Scroll bar end
 
 			initiated = true;
 		}

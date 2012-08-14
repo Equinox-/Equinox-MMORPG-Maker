@@ -20,10 +20,6 @@ public class CreditsContainer extends PIContainer {
 	 * The scalar width of the credits label.
 	 */
 	private static final float CREDITS_LABEL_WIDTH = 0.8f;
-	/**
-	 * The scalar height of the credits label.
-	 */
-	private static final float CREDITS_LABEL_HEIGHT = 0.8f;
 
 	/**
 	 * The component that actually shows the credits.
@@ -35,7 +31,7 @@ public class CreditsContainer extends PIContainer {
 		@Override
 		public void update() {
 			if (!isVisible()
-					|| (parent != null && !parent.isVisible())) {
+					|| (getParent() != null && !getParent().isVisible())) {
 				lastUpdate = -1;
 				yPosition = 0;
 				return;
@@ -44,7 +40,7 @@ public class CreditsContainer extends PIContainer {
 				yPosition +=
 						(double) (System.currentTimeMillis() - lastUpdate)
 								* PIXELS_PER_MILLISECOND;
-				setY(parent.getHeight() - (int) yPosition);
+				setY(getParent().getHeight() - (int) yPosition);
 				compile();
 			}
 			lastUpdate = System.currentTimeMillis();

@@ -49,18 +49,18 @@ public class PITextField extends PIComponent {
 
 	@Override
 	public final String getDisplay() {
-		if (!isFocused && content.length() == 0) {
+		if (!isFocused() && getContent().length() == 0) {
 			return exampleString;
 		}
 		String disp;
 		if (mask != null) {
-			char[] maskedCharacters = new char[content.length()];
+			char[] maskedCharacters = new char[getContent().length()];
 			Arrays.fill(maskedCharacters, mask);
 			disp = new String(maskedCharacters);
 		} else {
-			disp = content;
+			disp = getContent();
 		}
-		if (isFocused) {
+		if (isFocused()) {
 			return disp + "_";
 		} else {
 			return disp;
@@ -70,20 +70,19 @@ public class PITextField extends PIComponent {
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		super.keyTyped(e);
-		if (isFocused) {
+		if (isFocused()) {
 			ActionEvent evt = null;
 			char c = e.getKeyChar();
 			if (c == '\b') {
-				if (content.length() >= 1) {
-					content =
-							content.substring(0,
-									content.length() - 1);
+				if (getContent().length() >= 1) {
+					setContent(getContent().substring(0,
+							getContent().length() - 1));
 					evt = new ActionEvent(this, 0, getContent());
 				}
 			} else {
-				if ((maxLength == -1 || content.length() < maxLength)
+				if ((maxLength == -1 || getContent().length() < maxLength)
 						&& c >= ' ' && c <= '~') {
-					content += c;
+					setContent(getContent() + c);
 					evt = new ActionEvent(this, 0, getContent());
 				}
 			}

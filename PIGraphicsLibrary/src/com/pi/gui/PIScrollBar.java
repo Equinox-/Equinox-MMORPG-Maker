@@ -1,7 +1,6 @@
 package com.pi.gui;
 
 import java.awt.AWTEvent;
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -109,13 +108,10 @@ public class PIScrollBar extends PIContainer {
 		scrollCurrent = new PIComponent();
 		scrollContainer = new PIComponent();
 
-		// TODO: Make this use styles set in the GUIKit class
-		PIStyle style = GUIKit.DEFAULT_STYLE.clone();
-		style.background = new Color(0.2f, 0.2f, 0.2f, 0.2f);
-		scrollContainer.setStyle(StyleType.NORMAL, style);
-		style = style.clone();
-		style.background = style.background.darker().darker();
-		scrollCurrent.setStyle(StyleType.NORMAL, style);
+		scrollContainer.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_SCROLLBAR_CONTAINER_STYLE);
+		scrollCurrent.setStyle(StyleType.NORMAL,
+				GUIKit.DEFAULT_SCROLLBAR_CURRENT_STYLE);
 
 		scrollUp.addMouseListener(mListen);
 		scrollDown.addMouseListener(mListen);
@@ -136,7 +132,7 @@ public class PIScrollBar extends PIContainer {
 		add(scrollCurrent);
 		add(scrollContainer);
 
-		setSize(width, height);
+		setSize(getWidth(), getHeight());
 	}
 
 	/**
@@ -176,7 +172,7 @@ public class PIScrollBar extends PIContainer {
 			Rectangle bounds =
 					scrollContainer.getAbsoluteBounds();
 			if (style.foreground != null && style.font != null
-					&& content != null) {
+					&& getContent() != null) {
 				g.drawWrappedText(bounds, style.font,
 						overlayText, style.foreground,
 						style.hAlign, style.vAlign);

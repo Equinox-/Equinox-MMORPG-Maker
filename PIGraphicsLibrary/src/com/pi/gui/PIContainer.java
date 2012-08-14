@@ -83,19 +83,19 @@ public class PIContainer extends PIComponent {
 	@Override
 	public void render(final IGraphics g) {
 		super.render(g);
-		if (isVisible) {
+		if (isVisible()) {
 			Rectangle currentBounds = null;
 			Rectangle bounds = getAbsolutePaddedBounds();
-			if (clipContents) {
+			if (doesClipContents()) {
 				currentBounds = (Rectangle) g.getClip().clone();
 			}
 			for (PIComponent child : children) {
-				if (clipContents) {
+				if (doesClipContents()) {
 					g.setClip(bounds);
 				}
 				child.render(g);
 			}
-			if (clipContents) {
+			if (doesClipContents()) {
 				g.setClip(currentBounds);
 			}
 		}
@@ -112,63 +112,75 @@ public class PIContainer extends PIComponent {
 	@Override
 	public final void mousePressed(final MouseEvent e) {
 		super.mousePressed(e);
-		for (PIComponent child : children) {
-			child.mousePressed(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mousePressed(e);
+			}
 		}
 	}
 
 	@Override
 	public final void mouseReleased(final MouseEvent e) {
 		super.mouseReleased(e);
-		for (PIComponent child : children) {
-			child.mouseReleased(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mouseReleased(e);
+			}
 		}
 	}
 
 	@Override
 	public final void mouseMoved(final MouseEvent e) {
 		super.mouseMoved(e);
-		for (PIComponent child : children) {
-			child.mouseMoved(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mouseMoved(e);
+			}
 		}
 	}
 
 	@Override
 	public final void mouseDragged(final MouseEvent e) {
 		super.mouseDragged(e);
-		for (PIComponent child : children) {
-			child.mouseDragged(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mouseDragged(e);
+			}
 		}
 	}
 
 	@Override
 	public final void mouseWheelMoved(final MouseWheelEvent e) {
 		super.mouseWheelMoved(e);
-		for (PIComponent child : children) {
-			child.mouseWheelMoved(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mouseWheelMoved(e);
+			}
 		}
 	}
 
 	@Override
 	public final void keyReleased(final KeyEvent e) {
 		super.keyReleased(e);
-		for (PIComponent child : children) {
-			child.keyReleased(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.keyReleased(e);
+			}
 		}
 	}
 
 	@Override
 	public final void keyPressed(final KeyEvent e) {
 		super.keyPressed(e);
-		for (PIComponent child : children) {
-			child.keyPressed(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.keyPressed(e);
+			}
 		}
 	}
 
 	@Override
 	public final void keyTyped(final KeyEvent e) {
-		boolean consumed = false;
-
 		if (e.getKeyChar() == '\t') {
 			int newIDX = getCurrentTabIndex() + 1;
 			if (newIDX >= tabIndex.size()) {
@@ -182,11 +194,11 @@ public class PIContainer extends PIComponent {
 						children.get(tabIndex.get(newIDX));
 				if (c != null) {
 					c.setFocused(true);
-					consumed = true;
+					e.consume();
 				}
 			}
 		}
-		if (!consumed) {
+		if (isVisible() && !e.isConsumed() && !e.isConsumed()) {
 			super.keyTyped(e);
 			for (PIComponent child : children) {
 				child.keyTyped(e);
@@ -204,7 +216,7 @@ public class PIContainer extends PIComponent {
 		int idx = -1;
 		for (int i = 0; i < children.size(); i++) {
 			PIComponent c = children.get(i);
-			if (c.isFocused) {
+			if (c.isFocused()) {
 				int nI = tabIndex.indexOf(i);
 				if (nI != -1) {
 					idx = nI;

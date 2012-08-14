@@ -1,0 +1,6 @@
+1.png	loading bar
+2.png	tileset
+3.png	character
+4.png	wolf NPC
+5.png	item
+6.png	game buttons

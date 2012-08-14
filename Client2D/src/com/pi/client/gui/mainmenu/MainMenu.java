@@ -5,7 +5,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import com.pi.client.Client;
 import com.pi.graphics.device.IGraphics;
@@ -17,7 +16,7 @@ import com.pi.gui.PIStyle;
 import com.pi.gui.PIStyle.StyleType;
 
 /**
- * The main menu renderable for displaying the main menu controls and sub
+ * The main menu container for displaying the main menu controls and sub
  * containers.
  * 
  * @author Westin

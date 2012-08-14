@@ -87,7 +87,7 @@ public class MapEditorObject extends PIContainer implements
 			@Override
 			public void render(final IGraphics g) {
 				super.render(g);
-				if (isVisible && g.getImageWidth(tileset) > 0) {
+				if (isVisible() && g.getImageWidth(tileset) > 0) {
 					g.setColor(Color.BLACK);
 					g.fillRect(getAbsoluteX(), getAbsoluteY(),
 							getWidth(), getHeight());
