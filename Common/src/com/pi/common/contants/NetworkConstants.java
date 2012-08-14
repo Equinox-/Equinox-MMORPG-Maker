@@ -26,7 +26,7 @@ public final class NetworkConstants {
 	/**
 	 * The time in milliseconds to resend a bad handshake.
 	 */
-	public static final long HANDSHAKE_EXPIRY_TIME = 5000L;
+	public static final long HANDSHAKE_EXPIRY_TIME = 1000L;
 
 	/**
 	 * A class to get the size of primitives.
@@ -63,6 +63,39 @@ public final class NetworkConstants {
 		 * The size in bytes of a byte.
 		 */
 		public static final int BYTE = 1;
+
+		/**
+		 * The size in bits of a long.
+		 */
+		public static final int LONG_BITS = 64;
+		/**
+		 * The size in bits of a double.
+		 */
+		public static final int DOUBLE_BITS = 64;
+		/**
+		 * The size in bits of an integer.
+		 */
+		public static final int INT_BITS = 32;
+		/**
+		 * The size in bits of a float.
+		 */
+		public static final int FLOAT_BITS = 32;
+		/**
+		 * The size in bits of a short.
+		 */
+		public static final int SHORT_BITS = 16;
+		/**
+		 * The size in bits of a char.
+		 */
+		public static final int CHAR_BITS = 16;
+		/**
+		 * The size in bits of a byte.
+		 */
+		public static final int BYTE_BITS = 8;
+		/**
+		 * The size in bits of a nibble.
+		 */
+		public static final int NIBBLE_BITS = 4;
 
 		/**
 		 * Overridden constructor to forbid the construction of instances.

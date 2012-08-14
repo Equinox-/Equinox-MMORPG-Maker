@@ -59,7 +59,7 @@ public abstract class Packet implements PacketObject,
 	 * 
 	 * @return the packet id
 	 */
-	public int getID() {
+	public final int getID() {
 		// This is a janky way to do it.
 		char[] name = getClass().getSimpleName().toCharArray();
 		boolean numStart = false;

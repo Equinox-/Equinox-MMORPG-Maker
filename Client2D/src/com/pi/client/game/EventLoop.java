@@ -22,9 +22,13 @@ import com.pi.common.net.packet.Packet19Attack;
 public class EventLoop extends ClientThread implements
 		KeyListener {
 	/**
+	 * The maximum key code, for creating the array.
+	 */
+	private static final int MAXIMUM_KEY_CODE = 1024;
+	/**
 	 * The pressed state of various keys.
 	 */
-	private boolean[] keyState = new boolean[512];
+	private boolean[] keyState = new boolean[MAXIMUM_KEY_CODE];
 
 	/**
 	 * The last time this client attacked something.

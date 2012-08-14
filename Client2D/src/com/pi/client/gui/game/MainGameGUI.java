@@ -16,9 +16,9 @@ public class MainGameGUI extends PIContainer {
 	private Client client;
 
 	/**
-	 * The GUI component displaying this container's inventory.
+	 * The main game menu.
 	 */
-	private InventoryGUI inventoryGUI;
+	private MainGameMenu menu;
 
 	/**
 	 * Creates a main game GUI for the given client.
@@ -27,9 +27,9 @@ public class MainGameGUI extends PIContainer {
 	 */
 	public MainGameGUI(final Client cli) {
 		this.client = cli;
-		this.inventoryGUI = new InventoryGUI(this);
-		add(this.inventoryGUI);
-		setLocation(0,0);
+		this.menu = new MainGameMenu(this);
+		add(menu);
+		setLocation(0, 0);
 		compile();
 	}
 

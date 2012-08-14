@@ -80,29 +80,18 @@ public abstract class ClientThread extends Thread {
 	 * @return the loop state
 	 */
 	public final boolean isRunning() {
-		return running && shouldLoop();
+		return running;
 	}
 
 	@Override
 	public final void run() {
 		client.getLog().fine(
 				"Started: " + getClass().getSimpleName());
-		while (running && shouldLoop()) {
+		while (running) {
 			loop();
 		}
 		client.getLog().fine(
 				"Stopped: " + getClass().getSimpleName());
-	}
-
-	/**
-	 * This method, in addition to the
-	 * {@link com.pi.client.ClientThread#running} variable determine if the
-	 * thread should continue looping.
-	 * 
-	 * @return if the thread should continue
-	 */
-	protected boolean shouldLoop() {
-		return true;
 	}
 
 	/**

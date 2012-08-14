@@ -12,7 +12,7 @@ public final class ItemConstants {
 	/**
 	 * The default inventory size for a player.
 	 */
-	public static final int PLAYER_INVENTORY_SIZE = 16;
+	public static final int PLAYER_INVENTORY_SIZE = 24;
 	/**
 	 * The maximum stack size.
 	 */

@@ -2,6 +2,7 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
+import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
@@ -51,7 +52,8 @@ public abstract class EntityMovementPacket extends Packet {
 	 * @param x the world x coordinate
 	 * @param z the world z coordinate
 	 */
-	protected final void setCoordinateParts(int x, int z) {
+	protected final void setCoordinateParts(final int x,
+			final int z) {
 		xPart = x % DATA_MAX;
 		zPart = z % DATA_MAX;
 	}
@@ -63,16 +65,16 @@ public abstract class EntityMovementPacket extends Packet {
 				((xPart << DATA_SIZE_BITS) & (DATA_MASK << DATA_SIZE_BITS))
 						+ (zPart & DATA_MASK);
 		switch (DATA_SIZE_BITS) {
-		case 4:
+		case SizeOf.NIBBLE_BITS:
 			pOut.writeByte((byte) dat);
 			break;
-		case 8:
+		case SizeOf.BYTE_BITS:
 			pOut.writeShort((int) dat);
 			break;
-		case 16:
+		case SizeOf.SHORT_BITS:
 			pOut.writeInt((int) dat);
 			break;
-		case 32:
+		case SizeOf.INT_BITS:
 			pOut.writeLong(dat);
 			break;
 		default:
@@ -85,16 +87,16 @@ public abstract class EntityMovementPacket extends Packet {
 	public void readData(final PacketInputStream pIn)
 			throws IOException {
 		switch (DATA_SIZE_BITS) {
-		case 4:
+		case SizeOf.NIBBLE_BITS:
 			dat = pIn.readByte();
 			break;
-		case 8:
+		case SizeOf.BYTE_BITS:
 			dat = pIn.readShort();
 			break;
-		case 16:
+		case SizeOf.SHORT_BITS:
 			dat = pIn.readInt();
 			break;
-		case 32:
+		case SizeOf.INT_BITS:
 			dat = pIn.readLong();
 			break;
 		default:
