@@ -15,7 +15,7 @@ public abstract class Constants {
 	 * The port to establish a network connection on.
 	 */
 	public static final int NETWORK_PORT = 9999;
-
+	
 	/**
 	 * The default width of the client viewing container.
 	 */

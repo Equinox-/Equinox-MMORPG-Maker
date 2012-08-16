@@ -2,6 +2,8 @@ package com.pi.launcher;
 
 import java.applet.Applet;
 
+import javax.swing.JOptionPane;
+
 import com.pi.common.Disposable;
 
 /**
@@ -33,9 +35,14 @@ public final class ClientLoader {
 				ClientClassLoader.getClientClassLoader();
 		try {
 			bind.removeAll();
-			return (Disposable) cLoader.loadClass(APPLET_CLASS)
-					.getConstructor(Applet.class)
-					.newInstance(bind);
+			return (Disposable) cLoader
+					.loadClass(APPLET_CLASS)
+					.getMethod("create", Applet.class,
+							String[].class)
+					.invoke(null,
+							bind,
+							new String[] { JOptionPane
+									.showInputDialog("Please enter an IP and port in the format 000.000.000.000:port:") });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,7 +66,9 @@ public final class ClientLoader {
 	public static void runClientFrame() {
 		ClientClassLoader cLoader =
 				ClientClassLoader.getClientClassLoader();
-		Object[] args = new Object[] { new String[] {} };
+		Object[] args =
+				new Object[] { new String[] { JOptionPane
+						.showInputDialog("Please enter an IP and port in the format 000.000.000.000:port:") } };
 		try {
 			cLoader.loadClass(FRAME_CLASS)
 					.getMethod("main", String[].class)

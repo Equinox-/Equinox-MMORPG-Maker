@@ -142,13 +142,20 @@ public class PILogger {
 
 			@Override
 			public void publish(final LogRecord record) {
-				String s = getFormatter().format(record);
-				if (record.getLevel().intValue() >= getLevel()
-						.intValue()) {
-					lastMessage = record.getMessage();
-					streamOut.println(s);
-					if (fileOut != null) {
-						fileOut.println(s);
+				if (getFormatter() != null) {
+					String s = getFormatter().format(record);
+					if (record != null
+							&& getLevel() != null
+							&& record.getLevel() != null
+							&& record.getLevel().intValue() >= getLevel()
+									.intValue()) {
+						lastMessage = record.getMessage();
+						if (streamOut != null) {
+							streamOut.println(s);
+						}
+						if (fileOut != null) {
+							fileOut.println(s);
+						}
 					}
 				}
 			}

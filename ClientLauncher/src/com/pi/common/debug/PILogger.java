@@ -21,13 +21,14 @@ import java.util.logging.LogRecord;
  */
 public class PILogger {
 	/**
+	 * The default minimum displayed log level.
+	 */
+	private static final Level DEFAULT_LOGGING_LEVEL =
+			Level.FINEST;
+	/**
 	 * The last message displayed by this logger.
 	 */
 	private String lastMessage = "Loading...";
-	/**
-	 * The minimum displayed log level.
-	 */
-	private final Level level = Level.ALL;
 	/**
 	 * The log entry handler.
 	 */
@@ -75,8 +76,92 @@ public class PILogger {
 			}
 		}
 		this.streamOut = streamOutt;
-		this.handler = getHandler();
-		this.formatter = getFormatter();
+		this.formatter = new Formatter() {
+			private Date dat = new Date();
+			private DateFormat dForm = DateFormat
+					.getDateInstance();
+			private DateFormat tForm = DateFormat
+					.getTimeInstance();
+
+			@Override
+			public String format(final LogRecord record) {
+				dat.setTime(record.getMillis());
+				String source;
+				if (record.getSourceClassName() != null) {
+					source = record.getSourceClassName();
+					if (record.getSourceMethodName() != null) {
+						source +=
+								":"
+										+ record.getSourceMethodName();
+					}
+				} else {
+					source = record.getLoggerName();
+				}
+				String message = formatMessage(record);
+				String throwable = "";
+				if (record.getThrown() != null) {
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					pw.println();
+					record.getThrown().printStackTrace(pw);
+					pw.close();
+					throwable = sw.toString();
+				}
+				String s = "";
+				String date = dForm.format(dat);
+				String time = tForm.format(dat);
+				if (showDate) {
+					s += date + " ";
+				}
+				if (showTime) {
+					s += time + " ";
+				}
+				if (showCode) {
+					s += source + " ";
+				}
+				if (showLevel) {
+					s +=
+							"[" + record.getLevel().getName()
+									+ "] ";
+				}
+				s += message;
+				if (!throwable.equals("")) {
+					s += "\n" + throwable;
+				}
+				return s;
+			}
+		};
+		this.handler = new Handler() {
+			@Override
+			public void close() {
+			}
+
+			@Override
+			public void flush() {
+			}
+
+			@Override
+			public void publish(final LogRecord record) {
+				if (getFormatter() != null) {
+					String s = getFormatter().format(record);
+					if (record != null
+							&& getLevel() != null
+							&& record.getLevel() != null
+							&& record.getLevel().intValue() >= getLevel()
+									.intValue()) {
+						lastMessage = record.getMessage();
+						if (streamOut != null) {
+							streamOut.println(s);
+						}
+						if (fileOut != null) {
+							fileOut.println(s);
+						}
+					}
+				}
+			}
+		};
+		handler.setFormatter(this.formatter);
+		handler.setLevel(DEFAULT_LOGGING_LEVEL);
 	}
 
 	/**
@@ -162,7 +247,7 @@ public class PILogger {
 	public static String exceptionToString(final Throwable e) {
 		String s = e.toString();
 		int i;
-		for (i = 0; i < e.getStackTrace().length; i++) {
+		for (i = 0; i < Math.min(e.getStackTrace().length, 1); i++) {
 			s += "\n" + e.getStackTrace()[i];
 		}
 		return s;
@@ -178,106 +263,12 @@ public class PILogger {
 	}
 
 	/**
-	 * Gets this logger's handler, or creates one if one doesn't exist yet.
+	 * Gets this logger's handler.
 	 * 
 	 * @return the handler
 	 */
 	private Handler getHandler() {
-		if (this.handler == null) {
-			return new Handler() {
-				@Override
-				public void close() {
-				}
-
-				@Override
-				public void flush() {
-				}
-
-				@Override
-				public void publish(final LogRecord record) {
-					String s = getFormatter().format(record);
-					if (record.getLevel().intValue() >= level
-							.intValue()) {
-						lastMessage = record.getMessage();
-						streamOut.println(s);
-						if (fileOut != null) {
-							fileOut.println(s);
-						}
-					}
-				}
-			};
-		} else {
-			return handler;
-		}
-	}
-
-	/**
-	 * Gets this logger's formatter, or creates one if one doesn't exist yet.
-	 * 
-	 * @return the formatter
-	 */
-	private Formatter getFormatter() {
-		if (formatter == null) {
-			return new Formatter() {
-				private Date dat = new Date();
-				private DateFormat dForm = DateFormat
-						.getDateInstance();
-				private DateFormat tForm = DateFormat
-						.getTimeInstance();
-
-				@Override
-				public String format(final LogRecord record) {
-					dat.setTime(record.getMillis());
-					String source;
-					if (record.getSourceClassName() != null) {
-						source = record.getSourceClassName();
-						if (record.getSourceMethodName() != null) {
-							source +=
-									":"
-											+ record.getSourceMethodName();
-						}
-					} else {
-						source = record.getLoggerName();
-					}
-					String message = formatMessage(record);
-					String throwable = "";
-					if (record.getThrown() != null) {
-						StringWriter sw = new StringWriter();
-						PrintWriter pw = new PrintWriter(sw);
-						pw.println();
-						record.getThrown().printStackTrace(pw);
-						pw.close();
-						throwable = sw.toString();
-					}
-					String s = "";
-					String date = dForm.format(dat);
-					String time = tForm.format(dat);
-					if (showDate) {
-						s += date + " ";
-					}
-					if (showTime) {
-						s += time + " ";
-					}
-					if (showCode) {
-						s += source + " ";
-					}
-					if (showLevel) {
-						s +=
-								"["
-										+ record.getLevel()
-												.getName()
-										+ "] ";
-					}
-					s += message;
-					if (!throwable.equals("")) {
-						s += "\n" + throwable;
-					}
-					return s;
-				}
-			};
-		} else {
-			return formatter;
-		}
+		return handler;
 	}
 
 	/**

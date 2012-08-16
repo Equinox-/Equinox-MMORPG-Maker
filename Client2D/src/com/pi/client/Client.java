@@ -139,11 +139,42 @@ public class Client implements Disposable, DeviceRegistration {
 	// Debug End
 
 	/**
+	 * Creates a client on the given applet and the given arguments.
+	 * 
+	 * Currently the arguments this accepts is a network connection definition
+	 * for an IP and port in the format 000.000.000.000:port, or the format
+	 * 000.000.000.000, which only defines the IP address.
+	 * 
+	 * @param applet the applet
+	 * @param args the string arguments
+	 * 
+	 * @return the new client instance
+	 */
+	public static Client create(final Applet applet,
+			final String[] args) {
+		String ip = Constants.NETWORK_IP;
+		int port = Constants.NETWORK_PORT;
+		if (args.length == 1) {
+			String[] parts = ip.split(":");
+			if (parts.length == 2) {
+				ip = parts[0];
+				port = Integer.valueOf(parts[1]);
+			} else {
+				ip = parts[0];
+			}
+		}
+		return new Client(applet, ip, port);
+	}
+
+	/**
 	 * Creates a instance of the whole game client on the provided applet.
 	 * 
 	 * @param applet The game container
+	 * @param ip the IP address
+	 * @param port the port
 	 */
-	public Client(final Applet applet) {
+	public Client(final Applet applet, final String ip,
+			final int port) {
 		clientThreads = new ThreadGroup("ClientThreads");
 		reView = new PIResourceViewer("Client");
 		reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -175,9 +206,7 @@ public class Client implements Disposable, DeviceRegistration {
 		reView.addTab("Sectors", new SectorMonitorPanel(
 				this.world));
 		this.defs = new Definitions(this);
-		network =
-				new ClientNetwork(this, Constants.NETWORK_IP,
-						Constants.NETWORK_PORT);
+		network = new ClientNetwork(this, ip, port);
 		this.entityManager = new ClientEntityManager(this);
 		reView.addTab("Entities", new EntityMonitorPanel(this));
 

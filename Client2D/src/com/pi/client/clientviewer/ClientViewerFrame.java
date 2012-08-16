@@ -25,16 +25,19 @@ public class ClientViewerFrame extends JFrame {
 	 * Creates a client viewer frame instance with the default width and height,
 	 * as defined in the {@link com.pi.client.constants.Constants} class.
 	 * 
+	 * @param sIp the IP address to connect to
+	 * @param sPort the port to connect to
+	 * 
 	 * @see com.pi.client.constants.Constants#DEFAULT_CLIENT_WIDTH
 	 * @see com.pi.client.constants.Constants#DEFAULT_CLIENT_HEIGHT
 	 */
-	public ClientViewerFrame() {
+	public ClientViewerFrame(final String sIp, final int sPort) {
 		super("Client");
 		setSize(Constants.DEFAULT_CLIENT_WIDTH,
 				Constants.DEFAULT_CLIENT_HEIGHT);
 		setLocation(0, 0);
 		setVisible(true);
-		cApplet = new ClientApplet();
+		cApplet = new ClientApplet(sIp, sPort);
 		getContentPane().add(cApplet);
 		cApplet.init();
 		cApplet.start();
@@ -59,6 +62,17 @@ public class ClientViewerFrame extends JFrame {
 	 * @param args unused.
 	 */
 	public static void main(final String[] args) {
-		new ClientViewerFrame();
+		String ip = Constants.NETWORK_IP;
+		int port = Constants.NETWORK_PORT;
+		if (args.length == 1) {
+			String[] parts = ip.split(":");
+			if (parts.length == 2) {
+				ip = parts[0];
+				port = Integer.valueOf(parts[1]);
+			} else {
+				ip = parts[0];
+			}
+		}
+		new ClientViewerFrame(ip, port);
 	}
 }

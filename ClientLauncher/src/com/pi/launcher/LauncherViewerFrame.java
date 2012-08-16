@@ -35,6 +35,7 @@ public final class LauncherViewerFrame {
 		try {
 			Updater.update(log);
 		} catch (IOException e) {
+			System.out.println("OK");
 			e.printStackTrace();
 		}
 		if (ClientLoader.canRun()) {
