@@ -52,6 +52,15 @@ public class GameRenderLoop implements Renderable {
 	 * The z coordinate the current tile view was calculated at.
 	 */
 	private int currentTileViewZ = -1;
+
+	/**
+	 * The window width the current tile view was calculated at.
+	 */
+	private int currentTileViewWidth = -1;
+	/**
+	 * The window height the current tile view was calculated at.
+	 */
+	private int currentTileViewHeight = -1;
 	/**
 	 * The render distance for entities.
 	 */
@@ -256,8 +265,12 @@ public class GameRenderLoop implements Renderable {
 		ClientEntity ent =
 				client.getEntityManager().getLocalEntity();
 		if (ent != null
-				&& (currentTileViewX != ent.getWrappedEntity().x || currentTileViewZ != ent
-						.getWrappedEntity().z)) {
+				&& (currentTileViewX != ent.getWrappedEntity().x
+						|| currentTileViewZ != ent
+								.getWrappedEntity().z
+						|| currentTileViewWidth != client
+								.getApplet().getWidth() || currentTileViewHeight != client
+						.getApplet().getHeight())) {
 			int tileWidth =
 					(int) Math.ceil(clip.getWidth()
 							/ TileConstants.TILE_WIDTH / 2 + 1);
@@ -270,6 +283,9 @@ public class GameRenderLoop implements Renderable {
 					- tileHeight, tileWidth * 2, tileHeight * 2);
 			currentTileViewX = ent.getWrappedEntity().x;
 			currentTileViewZ = ent.getWrappedEntity().z;
+			currentTileViewWidth = client.getApplet().getWidth();
+			currentTileViewHeight =
+					client.getApplet().getHeight();
 			return tileView;
 		}
 		return tileView;
