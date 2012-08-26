@@ -1,6 +1,7 @@
 package com.pi.graphics.device.opengl;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -65,20 +66,19 @@ public class GLGraphics extends IGraphics implements
 	 */
 	public GLGraphics(final DisplayManager mgr) {
 		super(mgr);
-		GLProfile.initSingleton(false);
+		GLProfile.initSingleton();
 		canvas = new GLCanvas();
 		getDisplayManager().getSource().getContainer()
 				.add(getCanvas());
-		getCanvas().addGLEventListener(this);
-		getCanvas().setSize(
-				getDisplayManager().getSource().getContainer()
-						.getSize());
+		canvas.addGLEventListener(this);
+		canvas.setSize(getDisplayManager().getSource()
+				.getContainer().getSize());
 		cliparea = getCanvas().getBounds();
-		getCanvas().setLocation(0, 0);
+		canvas.setLocation(0, 0);
 		animator =
 				new FPSAnimator(
 						DisplayManager.MAXIMUM_FRAMES_PER_SECOND);
-		animator.add(getCanvas());
+		animator.add(canvas);
 		animator.start();
 		mgr.getSource().getLog().fine("Started graphics thread");
 		txtRender = new TextRendererProvider(mgr.getSource());
@@ -159,8 +159,8 @@ public class GLGraphics extends IGraphics implements
 		if (tex != null) {
 			double width = tex.getWidth();
 			double height = tex.getHeight();
-			tex.enable();
-			tex.bind();
+			tex.enable(gl);
+			tex.bind(gl);
 			setColor(new Color(1f, 1f, 1f, opacity));
 			gl.glBegin(GL2.GL_QUADS);
 			gl.glTexCoord2d(sx / width, sy / height);
@@ -173,7 +173,7 @@ public class GLGraphics extends IGraphics implements
 			gl.glTexCoord2d(sx / width, (sy + sheight) / height);
 			gl.glVertex2f(dx, (dy + dheight));
 			gl.glEnd();
-			tex.disable();
+			tex.disable(gl);
 		}
 	}
 
@@ -200,11 +200,8 @@ public class GLGraphics extends IGraphics implements
 					getDisplayManager().getSource()
 							.getContainer().getSize());
 			cliparea = getCanvas().getBounds();
-			getCanvas().reshape(
-					0,
-					0,
-					getDisplayManager().getSource()
-							.getContainer().getWidth(),
+			canvas.reshape(0, 0, getDisplayManager().getSource()
+					.getContainer().getWidth(),
 					getDisplayManager().getSource()
 							.getContainer().getHeight());
 		}
@@ -252,8 +249,8 @@ public class GLGraphics extends IGraphics implements
 				.fine("Killed OpenGL Graphics thread");
 		txtRender.dispose();
 		textureManager.dispose();
-		if (getCanvas() != null) {
-			getCanvas().destroy();
+		if (canvas != null) {
+			canvas.destroy();
 		}
 	}
 
@@ -277,11 +274,7 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final int getFPS() {
-		long duration = animator.getDuration() / 1000;
-		if (duration != 0) {
-			return (int) (animator.getTotalFrames() / duration);
-		}
-		return 0;
+		return animator.getUpdateFPSFrames();
 	}
 
 	@Override
@@ -335,12 +328,8 @@ public class GLGraphics extends IGraphics implements
 		return textureManager.loadedMap();
 	}
 
-	/**
-	 * Gets the OpenGL canvas being rendered to.
-	 * 
-	 * @return the GLCanvas
-	 */
-	public final GLCanvas getCanvas() {
+	@Override
+	public final Component getCanvas() {
 		return canvas;
 	}
 }

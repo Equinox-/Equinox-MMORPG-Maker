@@ -10,7 +10,6 @@ import java.awt.event.MouseWheelListener;
 
 import com.pi.common.game.ObjectHeap;
 import com.pi.graphics.device.awt.AWTGraphics;
-import com.pi.graphics.device.opengl.GLGraphics;
 
 /**
  * A display manager that allows switching between {@link IGraphics}
@@ -75,7 +74,8 @@ public class DisplayManager {
 	 *         if it does not.
 	 */
 	public final boolean hasOpenGL() {
-		return hasOpenGL;
+		return hasOpenGL
+				&& GraphicsMode.OpenGL.getGraphicsClass() != null;
 	}
 
 	/**
@@ -83,6 +83,7 @@ public class DisplayManager {
 	 * method will check if the computer has Open GL, and sets the cached value.
 	 */
 	public void postInititation() {
+		hasOpenGL = true;
 		/*
 		 * TODO try { client.getLog().info("Checking for opengl..."); new
 		 * GLCapabilities(GLProfile.getDefault()); hasOpenGL = true; } catch
@@ -112,9 +113,8 @@ public class DisplayManager {
 	 * @return the component to register listeners
 	 */
 	public final Component getListenerRegistration() {
-		if (graphics != null
-				&& getMode().equals(GraphicsMode.OpenGL)) {
-			return ((GLGraphics) graphics).getCanvas();
+		if (graphics != null) {
+			return graphics.getCanvas();
 		} else {
 			return dev.getContainer();
 		}
@@ -274,7 +274,7 @@ public class DisplayManager {
 		 * A graphics mode that uses the Open Graphics Library to render to the
 		 * screen.
 		 */
-		OpenGL(GLGraphics.class),
+		OpenGL("com.pi.graphics.device.opengl.GLGraphics"),
 		/**
 		 * A graphics mode that uses the Java 2D library, or Abstract Windowing
 		 * Toolkit (AWT).
@@ -283,7 +283,7 @@ public class DisplayManager {
 		/**
 		 * The class that is represented by this graphics mode.
 		 */
-		private final Class<? extends IGraphics> clazz;
+		private Class<? extends IGraphics> clazz;
 
 		/**
 		 * Create a graphics mode that represents the provided class.
@@ -293,6 +293,27 @@ public class DisplayManager {
 		private GraphicsMode(
 				final Class<? extends IGraphics> sClazz) {
 			this.clazz = sClazz;
+		}
+
+		@SuppressWarnings("unchecked")
+		private GraphicsMode(final String clazz) {
+			try {
+				Class<?> tmpClazz =
+						GraphicsMode.class.getClassLoader()
+								.loadClass(clazz);
+				if (IGraphics.class.isAssignableFrom(tmpClazz)) {
+					this.clazz =
+							(Class<? extends IGraphics>) tmpClazz;
+				} else {
+					throw new ClassCastException(clazz
+							+ " is not a subclass of "
+							+ IGraphics.class.getName());
+				}
+			} catch (ClassNotFoundException e) {
+				this.clazz = null;
+			} catch (ClassCastException e) {
+				this.clazz = null;
+			}
 		}
 
 		/**

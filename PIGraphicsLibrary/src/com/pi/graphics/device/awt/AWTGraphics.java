@@ -1,6 +1,7 @@
 package com.pi.graphics.device.awt;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -298,5 +299,10 @@ public class AWTGraphics extends IGraphics {
 					+ dheight, sx, sy, sx + swidth,
 					sy + sheight, null);
 		}
+	}
+
+	@Override
+	public Component getCanvas() {
+		return getDisplayManager().getSource().getContainer();
 	}
 }

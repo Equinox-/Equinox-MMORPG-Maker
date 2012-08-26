@@ -1,6 +1,7 @@
 package com.pi.graphics.device;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -601,4 +602,11 @@ public abstract class IGraphics {
 	protected final DisplayManager getDisplayManager() {
 		return mgr;
 	}
+
+	/**
+	 * Gets the component this graphics object is bound to.
+	 * 
+	 * @return the AWT component
+	 */
+	public abstract Component getCanvas();
 }

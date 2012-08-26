@@ -1,5 +1,4 @@
-jogl	1
+jogl	2
 client	9
-natives	1
-nativewindow	1
-gluegen	1
+natives	2
+gluegen	2

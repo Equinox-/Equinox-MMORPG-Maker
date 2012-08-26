@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.contants.TileFlags;
-import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Sector;
 import com.pi.common.database.Tile;
 import com.pi.common.database.TileGraphicsObject;
@@ -458,8 +457,9 @@ public class MapEditorObject extends PIContainer implements
 	private static final int voffset = 4;
 
 	@Override
-	public final void renderMapTile(final IGraphics g, final int baseX, final int baseY,
-			final int tileX, final int tileY, final Tile tile) {
+	public final void renderMapTile(final IGraphics g,
+			final int baseX, final int baseY, final int tileX,
+			final int tileY, final Tile tile) {
 		if (directionBlockMode.isChecked()) {
 			g.drawText(
 					"<",
@@ -513,8 +513,9 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public final void onMapClick(final Sector s, final int button, final int tileX,
-			final int tileY, final int internalX, final int internalY) {
+	public final void onMapClick(final Sector s,
+			final int button, final int tileX, final int tileY,
+			final int internalX, final int internalY) {
 		if (s != null) {
 			if (button == MouseEvent.BUTTON1) {
 				if (!directionBlockMode.isChecked()) {
@@ -651,8 +652,9 @@ public class MapEditorObject extends PIContainer implements
 	}
 
 	@Override
-	public final void onMapDrag(final Sector s, final int button, final int tileX,
-			final int tileY, final int internalX, final int internalY) {
+	public final void onMapDrag(final Sector s,
+			final int button, final int tileX, final int tileY,
+			final int internalX, final int internalY) {
 		if (button == MouseEvent.BUTTON1) {
 			onMapClick(s, button, tileX, tileY, internalX,
 					internalY);

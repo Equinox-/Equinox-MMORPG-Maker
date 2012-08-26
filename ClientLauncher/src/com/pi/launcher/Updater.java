@@ -301,6 +301,7 @@ public final class Updater {
 			out.close();
 			in.close();
 		}
+		arc.close();
 		jarfile.delete();
 		log.info("Extraction of natives complete");
 	}

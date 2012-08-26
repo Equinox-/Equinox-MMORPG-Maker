@@ -20,7 +20,7 @@ public final class ServerConfiguration {
 	 */
 	public static final String[] BINARY_FILES = {
 			"jogl.all.jar", "gluegen-rt.jar",
-			"nativewindow.all.jar", "EquinoxClient.jar" };
+			"EquinoxClient.jar" };
 	/**
 	 * Binary keys to download, but not unzip.
 	 * 
@@ -34,7 +34,7 @@ public final class ServerConfiguration {
 	 */
 	public static final int DOWNLOAD_CACHE = 1024;
 	/**
-	 * A two kilobyte unzip cache.
+	 * A one kilobyte unzip cache.
 	 */
 	public static final int UNZIP_CACHE = 1024;
 
