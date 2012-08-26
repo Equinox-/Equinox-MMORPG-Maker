@@ -10,10 +10,8 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 
-import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.pi.common.game.ObjectHeap;
@@ -66,7 +64,6 @@ public class GLGraphics extends IGraphics implements
 	 */
 	public GLGraphics(final DisplayManager mgr) {
 		super(mgr);
-		GLProfile.initSingleton();
 		canvas = new GLCanvas();
 		getDisplayManager().getSource().getContainer()
 				.add(getCanvas());
@@ -99,6 +96,9 @@ public class GLGraphics extends IGraphics implements
 	public final void drawLine(final int x1, final int y1,
 			final Color aC, final int x2, final int y2,
 			final Color bC) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4i(aC.getRed(), aC.getGreen(), aC.getBlue(),
 				aC.getAlpha());
@@ -112,6 +112,9 @@ public class GLGraphics extends IGraphics implements
 	@Override
 	public final void drawLine(final int x1, final int y1,
 			final int x2, final int y2) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glBegin(GL.GL_LINES);
 		gl.glVertex2f(x1, y1);
 		gl.glVertex2f(x2, y2);
@@ -121,6 +124,9 @@ public class GLGraphics extends IGraphics implements
 	@Override
 	public final void drawRect(final int x, final int y,
 			final int width, final int height) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glBegin(GL2.GL_LINE_LOOP);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + width, y);
@@ -132,6 +138,9 @@ public class GLGraphics extends IGraphics implements
 	@Override
 	public final void fillRect(final int x, final int y,
 			final int width, final int height) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glVertex2f(x, y);
 		gl.glVertex2f(x + width, y);
@@ -155,6 +164,9 @@ public class GLGraphics extends IGraphics implements
 			final int dheight, final int sx, final int sy,
 			final int swidth, final int sheight,
 			final float opacity) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		Texture tex = textureManager.fetchTexture(texID);
 		if (tex != null) {
 			double width = tex.getWidth();
@@ -179,6 +191,9 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final void drawPoint(final int x, final int y) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glBegin(GL.GL_POINTS);
 		gl.glVertex2f(x, y);
 		gl.glEnd();
@@ -186,6 +201,9 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final void setColor(final Color color) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		gl.glColor4f(color.getRed() / 255f,
 				color.getGreen() / 255f, color.getBlue() / 255f,
 				color.getAlpha() / 255f);
@@ -222,6 +240,8 @@ public class GLGraphics extends IGraphics implements
 	public final void dispose(final GLAutoDrawable arg0) {
 		this.gl = arg0.getGL().getGL2();
 		this.glCore = arg0;
+		txtRender.dispose();
+		textureManager.dispose();
 	}
 
 	@Override
@@ -244,19 +264,20 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final void dispose() {
-		animator.stop();
+		if (canvas != null
+				&& (!animator.isStarted() || animator.stop())) {
+			// canvas.destroy();
+		}
 		getDisplayManager().getSource().getLog()
 				.fine("Killed OpenGL Graphics thread");
-		txtRender.dispose();
-		textureManager.dispose();
-		if (canvas != null) {
-			canvas.destroy();
-		}
 	}
 
 	@Override
 	public final void drawText(final String text, final int x,
 			final int y, final Font f, final Color color) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		TextRenderer tRender = txtRender.fetchRenderer(f);
 		tRender.beginRendering(getCanvas().getWidth(),
 				getCanvas().getHeight());
@@ -274,7 +295,7 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final int getFPS() {
-		return animator.getUpdateFPSFrames();
+		return (int) animator.getLastFPS();
 	}
 
 	@Override
@@ -297,6 +318,9 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final void setClip(final Rectangle r) {
+		if (!animator.isAnimating()) {
+			return;
+		}
 		if (r != null) {
 			gl.glClipPlane(GL2.GL_CLIP_PLANE0, new double[] { 1,
 					0, 0, -r.x }, 0);

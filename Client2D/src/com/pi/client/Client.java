@@ -2,11 +2,7 @@ package com.pi.client;
 
 import java.applet.Applet;
 import java.awt.Container;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
-
-import javax.swing.JFrame;
 
 import com.pi.client.constants.Constants;
 import com.pi.client.database.Paths;
@@ -155,6 +151,7 @@ public class Client implements Disposable, DeviceRegistration {
 		String ip = Constants.NETWORK_IP;
 		int port = Constants.NETWORK_PORT;
 		if (args.length == 1) {
+			ip = args[0];
 			String[] parts = ip.split(":");
 			if (parts.length == 2) {
 				ip = parts[0];
@@ -177,13 +174,6 @@ public class Client implements Disposable, DeviceRegistration {
 			final int port) {
 		clientThreads = new ThreadGroup("ClientThreads");
 		reView = new PIResourceViewer("Client");
-		reView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		reView.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent e) {
-				dispose();
-			}
-		});
 		PILoggerPane plp = new PILoggerPane();
 		logger =
 				new PILogger(plp.getLogOutput(),
@@ -266,6 +256,9 @@ public class Client implements Disposable, DeviceRegistration {
 	public final void dispose() {
 		if (!disposing) {
 			disposing = true;
+			if (mainGame != null) {
+				mainGame.dispose();
+			}
 			if (displayManager != null) {
 				displayManager.dispose();
 			}

@@ -53,7 +53,6 @@ public class ClientApplet extends Applet {
 
 	@Override
 	public final void destroy() {
-		super.destroy();
 		this.client.dispose();
 	}
 }

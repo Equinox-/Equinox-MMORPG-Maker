@@ -66,6 +66,15 @@ public class MainGame implements Renderable, KeyListener,
 	}
 
 	/**
+	 * Disposes of this game's event loop.
+	 */
+	public void dispose() {
+		if (eventLoop != null) {
+			eventLoop.dispose();
+		}
+	}
+
+	/**
 	 * Gets this client's data cache.
 	 * 
 	 * @return the data cache
