@@ -26,7 +26,7 @@ public class AwtImageManager extends ImageManager<BufferedImage> {
 	}
 
 	@Override
-	protected BufferedImage loadImage(File f) {
+	protected final BufferedImage loadImage(final File f) {
 		if (f == null) {
 			return null;
 		} else {
@@ -39,7 +39,7 @@ public class AwtImageManager extends ImageManager<BufferedImage> {
 	}
 
 	@Override
-	protected void dispose(GraphicsStorage obj) {
+	protected final void dispose(final GraphicsStorage obj) {
 		if (obj.getGraphic() != null) {
 			((BufferedImage) obj.getGraphic()).flush();
 		}

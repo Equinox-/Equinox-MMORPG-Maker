@@ -23,7 +23,7 @@ public class GraphicsStorage {
 	 * 
 	 * @return the object
 	 */
-	public Object getGraphic() {
+	public final Object getGraphic() {
 		return gObj;
 	}
 
@@ -32,7 +32,7 @@ public class GraphicsStorage {
 	 * 
 	 * @param t the new object
 	 */
-	public void setGraphic(Object t) {
+	public final void setGraphic(final Object t) {
 		this.gObj = t;
 	}
 

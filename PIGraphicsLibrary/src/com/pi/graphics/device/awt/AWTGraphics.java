@@ -303,7 +303,7 @@ public class AWTGraphics extends IGraphics {
 	}
 
 	@Override
-	public Component getCanvas() {
+	public final Component getCanvas() {
 		return getDisplayManager().getSource().getContainer();
 	}
 }

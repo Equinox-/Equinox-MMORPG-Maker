@@ -41,8 +41,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.media.opengl.GLAutoDrawable;
-
 import com.jogamp.opengl.util.AnimatorBase;
 
 /**
@@ -59,49 +57,17 @@ public class FPSAnimator extends AnimatorBase {
 	private volatile boolean shouldRun;
 
 	@Override
-	protected String getBaseName(String prefix) {
+	protected final String getBaseName(final String prefix) {
 		return "FPS" + prefix + "Animator";
 	}
 
 	/**
 	 * Creates an FPSAnimator with a given target frames-per-second value.
-	 * Equivalent to <code>FPSAnimator(null, fps)</code>.
+	 * 
+	 * @param sFps The target frames-per-second
 	 */
-	public FPSAnimator(int fps) {
-		this(null, fps);
-	}
-
-	/**
-	 * Creates an FPSAnimator with a given target frames-per-second value and a
-	 * flag indicating whether to use fixed-rate scheduling. Equivalent to
-	 * <code>FPSAnimator(null, fps,
-    scheduleAtFixedRate)</code>.
-	 */
-	public FPSAnimator(int fps, boolean scheduleAtFixedRate) {
-		this(null, fps, scheduleAtFixedRate);
-	}
-
-	/**
-	 * Creates an FPSAnimator with a given target frames-per-second value and an
-	 * initial drawable to animate. Equivalent to
-	 * <code>FPSAnimator(null, fps, false)</code>.
-	 */
-	public FPSAnimator(GLAutoDrawable drawable, int fps) {
-		this(drawable, fps, false);
-	}
-
-	/**
-	 * Creates an FPSAnimator with a given target frames-per-second value, an
-	 * initial drawable to animate, and a flag indicating whether to use
-	 * fixed-rate scheduling.
-	 */
-	public FPSAnimator(GLAutoDrawable drawable, int fps,
-			boolean scheduleAtFixedRate) {
-		this.fps = fps;
-		if (drawable != null) {
-			add(drawable);
-		}
-		this.scheduleAtFixedRate = scheduleAtFixedRate;
+	public FPSAnimator(final int sFps) {
+		this.fps = sFps;
 	}
 
 	@Override
@@ -118,7 +84,8 @@ public class FPSAnimator extends AnimatorBase {
 	public final boolean isAnimating() {
 		stateSync.lock();
 		try {
-			return (timer != null) && (task != null) && shouldRun;
+			return (timer != null) && (task != null)
+					&& shouldRun;
 		} finally {
 			stateSync.unlock();
 		}
@@ -134,6 +101,9 @@ public class FPSAnimator extends AnimatorBase {
 		}
 	}
 
+	/**
+	 * Starts the animator task.
+	 */
 	private void startTask() {
 		if (null != task) {
 			return;
@@ -165,7 +135,7 @@ public class FPSAnimator extends AnimatorBase {
 	}
 
 	@Override
-	public synchronized boolean start() {
+	public final synchronized boolean start() {
 		if (timer != null) {
 			return false;
 		}
@@ -183,9 +153,11 @@ public class FPSAnimator extends AnimatorBase {
 	 * Stops this FPSAnimator. Due to the implementation of the FPSAnimator it
 	 * is not guaranteed that the FPSAnimator will be completely stopped by the
 	 * time this method returns.
+	 * 
+	 * @return if the animator shut down successfully
 	 */
 	@Override
-	public synchronized boolean stop() {
+	public final synchronized boolean stop() {
 		if (timer == null) {
 			return false;
 		}
@@ -218,7 +190,7 @@ public class FPSAnimator extends AnimatorBase {
 	}
 
 	@Override
-	public synchronized boolean pause() {
+	public final synchronized boolean pause() {
 		if (timer == null) {
 			return false;
 		}
@@ -237,7 +209,7 @@ public class FPSAnimator extends AnimatorBase {
 	}
 
 	@Override
-	public synchronized boolean resume() {
+	public final synchronized boolean resume() {
 		if (timer == null) {
 			return false;
 		}

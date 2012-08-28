@@ -26,7 +26,7 @@ public class GraphicsMonitorPanel extends JPanel {
 	 * Creates a graphics monitor panel with the specified display manager
 	 * providing the contents.
 	 * 
-	 * @param displayManager the information provider.
+	 * @param ig the information provider.
 	 * @see com.pi.graphics.device.DisplayManager
 	 */
 	public GraphicsMonitorPanel(final DisplayManager ig) {
@@ -41,7 +41,7 @@ public class GraphicsMonitorPanel extends JPanel {
 		text.setVisible(true);
 		text.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 				StringBuilder build = new StringBuilder();
 				for (int i = 0; i < ig.loadedGraphics()
 						.capacity(); i++) {

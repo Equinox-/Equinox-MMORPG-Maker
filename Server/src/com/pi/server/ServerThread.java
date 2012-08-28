@@ -80,29 +80,18 @@ public abstract class ServerThread extends Thread {
 	 * @return the loop state
 	 */
 	public final boolean isRunning() {
-		return running && shouldLoop();
+		return running;
 	}
 
 	@Override
 	public final void run() {
 		server.getLog().fine(
 				"Started: " + getClass().getSimpleName());
-		while (running && shouldLoop()) {
+		while (running) {
 			loop();
 		}
 		server.getLog().fine(
 				"Stopped: " + getClass().getSimpleName());
-	}
-
-	/**
-	 * This method, in addition to the
-	 * {@link com.pi.server.ServerThread#running} variable determine if the
-	 * thread should continue looping.
-	 * 
-	 * @return if the thread should continue
-	 */
-	protected boolean shouldLoop() {
-		return true;
 	}
 
 	/**

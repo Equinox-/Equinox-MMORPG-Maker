@@ -82,7 +82,7 @@ public class DisplayManager {
 	 * Method that performs post initiation for this display manager. This
 	 * method will check if the computer has Open GL, and sets the cached value.
 	 */
-	public void postInititation() {
+	public final void postInititation() {
 		hasOpenGL = true;
 		/*
 		 * TODO try { client.getLog().info("Checking for opengl..."); new
@@ -296,12 +296,17 @@ public class DisplayManager {
 			this.clazz = sClazz;
 		}
 
+		/**
+		 * Creates a graphics mode for the given class name.
+		 * 
+		 * @param clazzName the class name
+		 */
 		@SuppressWarnings("unchecked")
-		private GraphicsMode(final String clazz) {
+		private GraphicsMode(final String clazzName) {
 			try {
 				Class<?> tmpClazz =
 						GraphicsMode.class.getClassLoader()
-								.loadClass(clazz);
+								.loadClass(clazzName);
 				if (IGraphics.class.isAssignableFrom(tmpClazz)) {
 					this.clazz =
 							(Class<? extends IGraphics>) tmpClazz;

@@ -32,23 +32,25 @@ public class GLImageManager extends ImageManager<Texture> {
 
 	@Override
 	public final Texture fetchImage(final int graphic) {
-		synchronized (map) {
-			if (!running) {
+		synchronized (getDataMap()) {
+			if (!isRunning()) {
 				return null;
 			}
 			ObjectHeap<GraphicsStorage> heap =
-					map.get(graphic >>> GraphicsDirectories.DIRECTORY_BIT_SHIFT);
+					getDataMap()
+							.get(graphic >>> GraphicsDirectories.DIRECTORY_BIT_SHIFT);
 			if (heap == null) {
 				heap = new ObjectHeap<GraphicsStorage>();
-				map.set(graphic >>> GraphicsDirectories.DIRECTORY_BIT_SHIFT,
-						heap);
+				getDataMap()
+						.set(graphic >>> GraphicsDirectories.DIRECTORY_BIT_SHIFT,
+								heap);
 			}
 			GraphicsStorage tS =
 					heap.get(graphic
 							& GraphicsDirectories.FILE_MASK);
 			if (tS == null) {
-				loadQueue.add(graphic);
-				map.notify();
+				addToLoadQueue(graphic);
+				getDataMap().notify();
 				return null;
 			}
 			tS.updateLastUsed();
@@ -63,6 +65,8 @@ public class GLImageManager extends ImageManager<Texture> {
 						tS.setGraphic(tex);
 						return tex;
 					} catch (Exception e) {
+						getDeviceRegistration().getLog()
+								.printStackTrace(e);
 					}
 				}
 				if (tS.getGraphic() instanceof Texture) {
@@ -74,7 +78,7 @@ public class GLImageManager extends ImageManager<Texture> {
 	}
 
 	@Override
-	protected TextureData loadImage(File tex) {
+	protected final TextureData loadImage(final File tex) {
 		if (tex == null) {
 			return null;
 		} else {
@@ -98,7 +102,7 @@ public class GLImageManager extends ImageManager<Texture> {
 	}
 
 	@Override
-	protected void dispose(GraphicsStorage obj) {
+	protected final void dispose(final GraphicsStorage obj) {
 		if (obj.getGraphic() != null) {
 			((BufferedImage) obj.getGraphic()).flush();
 		}

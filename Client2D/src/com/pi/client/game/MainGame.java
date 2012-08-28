@@ -68,7 +68,7 @@ public class MainGame implements Renderable, KeyListener,
 	/**
 	 * Disposes of this game's event loop.
 	 */
-	public void dispose() {
+	public final void dispose() {
 		if (eventLoop != null) {
 			eventLoop.dispose();
 		}

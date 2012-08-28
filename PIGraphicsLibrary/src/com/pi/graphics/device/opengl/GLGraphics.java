@@ -272,7 +272,7 @@ public class GLGraphics extends IGraphics implements
 	public final void dispose() {
 		if (canvas != null
 				&& (!animator.isStarted() || animator.stop())) {
-			// canvas.destroy();
+			canvas.destroy();
 		}
 		getDisplayManager().getSource().getLog()
 				.fine("Killed OpenGL Graphics thread");

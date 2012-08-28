@@ -183,7 +183,7 @@ public final class Paths {
 	 * @param dir the graphics directory
 	 * @return the file path
 	 */
-	public static File getGraphicsFile(final int dir, int id) {
+	public static File getGraphicsFile(final int dir, final int id) {
 		File gDir = getGraphicsDirectory(dir);
 		for (String ext : IMAGE_FILES) {
 			File f = new File(gDir, id + "." + ext);
@@ -201,7 +201,7 @@ public final class Paths {
 	 * 
 	 * @return the folder path
 	 */
-	public static File getGraphicsDirectory(int dir) {
+	public static File getGraphicsDirectory(final int dir) {
 		String subPath = "";
 		if (dir >= 0
 				&& dir < GraphicsDirectories.values().length) {

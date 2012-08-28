@@ -10,8 +10,8 @@ import com.pi.common.game.ObjectHeap;
 /**
  * Class for loading images into the ram using a threaded model.
  * 
+ * @param <T> the type this image manager provides
  * @author Westin
- * 
  */
 public abstract class ImageManager<T> extends Thread {
 	/**
@@ -22,18 +22,18 @@ public abstract class ImageManager<T> extends Thread {
 	/**
 	 * The object heap used to store the images.
 	 */
-	protected ObjectHeap<ObjectHeap<GraphicsStorage>> map =
+	private ObjectHeap<ObjectHeap<GraphicsStorage>> map =
 			new ObjectHeap<ObjectHeap<GraphicsStorage>>(
 					GraphicsDirectories.values().length);
 	/**
 	 * The image load queue.
 	 */
-	protected Queue<Integer> loadQueue =
+	private Queue<Integer> loadQueue =
 			new LinkedBlockingQueue<Integer>();
 	/**
 	 * Boolean representing the running state of this thread.
 	 */
-	protected volatile boolean running = true;
+	private volatile boolean running = true;
 	/**
 	 * The object this manager is registered to.
 	 */
@@ -59,7 +59,7 @@ public abstract class ImageManager<T> extends Thread {
 	@SuppressWarnings("unchecked")
 	public T fetchImage(final int graphic) {
 		synchronized (map) {
-			if (!running) {
+			if (!isRunning()) {
 				return null;
 			}
 			ObjectHeap<GraphicsStorage> heap =
@@ -94,7 +94,7 @@ public abstract class ImageManager<T> extends Thread {
 	@Override
 	public final void run() {
 		source.getLog().fine("Starting Image Manager Thread");
-		while (running) {
+		while (isRunning()) {
 			int oldestRequest = oldestRequest();
 			if (oldestRequest != -1
 					&& map.get(oldestRequest) == null) {
@@ -196,6 +196,11 @@ public abstract class ImageManager<T> extends Thread {
 		}
 	}
 
+	/**
+	 * Disposes of the given graphics resource.
+	 * 
+	 * @param obj the resource to dispose
+	 */
 	protected abstract void dispose(GraphicsStorage obj);
 
 	/**
@@ -203,7 +208,34 @@ public abstract class ImageManager<T> extends Thread {
 	 * 
 	 * @return the storage heap
 	 */
-	public ObjectHeap<ObjectHeap<GraphicsStorage>> getDataMap() {
+	public final ObjectHeap<ObjectHeap<GraphicsStorage>> getDataMap() {
 		return map;
+	}
+
+	/**
+	 * Gets the running state of this image manager.
+	 * 
+	 * @return the running state
+	 */
+	public final boolean isRunning() {
+		return running;
+	}
+
+	/**
+	 * Adds the provided ID to the load queue.
+	 * 
+	 * @param id the ID to be added
+	 */
+	protected final void addToLoadQueue(final int id) {
+		loadQueue.add(id);
+	}
+
+	/**
+	 * Gets the device this image manager is registered to.
+	 * 
+	 * @return the device
+	 */
+	protected final DeviceRegistration getDeviceRegistration() {
+		return source;
 	}
 }
