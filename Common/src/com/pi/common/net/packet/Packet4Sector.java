@@ -2,7 +2,7 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.database.Sector;
+import com.pi.common.database.world.Sector;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 

@@ -4,8 +4,8 @@ import java.io.File;
 
 import javax.swing.filechooser.FileSystemView;
 
-import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.GraphicsDirectories;
+import com.pi.common.database.world.SectorLocation;
 
 /**
  * A class defining the locations of everything the client saves to the disk.

@@ -3,7 +3,7 @@ package com.pi.client.net;
 import com.pi.client.Client;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.database.Location;
-import com.pi.common.database.SectorLocation;
+import com.pi.common.database.world.SectorLocation;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.EntityType;

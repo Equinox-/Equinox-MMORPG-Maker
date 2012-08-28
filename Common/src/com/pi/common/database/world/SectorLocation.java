@@ -1,7 +1,8 @@
-package com.pi.common.database;
+package com.pi.common.database.world;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.contants.SectorConstants;
+import com.pi.common.database.Location;
 
 /**
  * Class describing the location of a sector.

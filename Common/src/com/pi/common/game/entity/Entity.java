@@ -4,9 +4,9 @@ import com.pi.common.contants.Direction;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileFlags;
 import com.pi.common.database.Location;
-import com.pi.common.database.Sector;
-import com.pi.common.database.Tile;
-import com.pi.common.database.TileLayer;
+import com.pi.common.database.world.Sector;
+import com.pi.common.database.world.Tile;
+import com.pi.common.database.world.TileLayer;
 import com.pi.common.world.SectorManager;
 
 /**

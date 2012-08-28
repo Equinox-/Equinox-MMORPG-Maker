@@ -2,7 +2,7 @@ package com.pi.server.database;
 
 import java.io.File;
 
-import com.pi.common.database.SectorLocation;
+import com.pi.common.database.world.SectorLocation;
 
 /**
  * A class defining the locations of everything the server saves to the disk.

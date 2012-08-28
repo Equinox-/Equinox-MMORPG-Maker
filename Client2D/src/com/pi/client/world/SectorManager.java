@@ -11,9 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.pi.client.Client;
 import com.pi.client.ClientThread;
 import com.pi.client.database.Paths;
-import com.pi.common.database.Sector;
-import com.pi.common.database.SectorLocation;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.database.world.Sector;
+import com.pi.common.database.world.SectorLocation;
 import com.pi.common.net.packet.Packet5SectorRequest;
 
 /**

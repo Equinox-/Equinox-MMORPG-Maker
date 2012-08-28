@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.common.database.SectorLocation;
+import com.pi.common.database.world.SectorLocation;
 import com.pi.common.world.SectorManager;
 import com.pi.common.world.SectorManager.SectorStorage;
 

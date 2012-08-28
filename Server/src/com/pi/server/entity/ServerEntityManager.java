@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
-import com.pi.common.database.SectorLocation;
 import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.world.SectorLocation;
 import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.ObjectHeap;

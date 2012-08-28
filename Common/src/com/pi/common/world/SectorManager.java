@@ -2,8 +2,8 @@ package com.pi.common.world;
 
 import java.util.Map;
 
-import com.pi.common.database.Sector;
-import com.pi.common.database.SectorLocation;
+import com.pi.common.database.world.Sector;
+import com.pi.common.database.world.SectorLocation;
 
 /**
  * An interface specifying the common methods of a sector manager.

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.contants.SectorConstants;
+import com.pi.common.database.world.SectorLocation;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.PacketObject;

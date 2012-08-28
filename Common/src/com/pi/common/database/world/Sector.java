@@ -1,4 +1,4 @@
-package com.pi.common.database;
+package com.pi.common.database.world;
 
 import java.io.IOException;
 
