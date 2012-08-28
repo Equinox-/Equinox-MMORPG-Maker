@@ -14,6 +14,7 @@ import javax.media.opengl.awt.GLCanvas;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
 import com.pi.common.game.ObjectHeap;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
@@ -38,7 +39,7 @@ public class GLGraphics extends IGraphics implements
 	/**
 	 * The texture manager used for loading textures into the cache.
 	 */
-	private final TextureManager textureManager;
+	private final GLImageManager textureManager;
 	/**
 	 * The current clip area of this graphics object.
 	 */
@@ -79,8 +80,7 @@ public class GLGraphics extends IGraphics implements
 		animator.start();
 		mgr.getSource().getLog().fine("Started graphics thread");
 		txtRender = new TextRendererProvider(mgr.getSource());
-		textureManager =
-				new TextureManager(this, mgr.getSource());
+		textureManager = new GLImageManager(mgr.getSource());
 	}
 
 	/**
@@ -167,22 +167,28 @@ public class GLGraphics extends IGraphics implements
 		if (!animator.isAnimating()) {
 			return;
 		}
-		Texture tex = textureManager.fetchTexture(texID);
+		Texture tex = textureManager.fetchImage(texID);
 		if (tex != null) {
-			double width = tex.getWidth();
-			double height = tex.getHeight();
+			TextureCoords coords = tex.getImageTexCoords();
+			float width = coords.right() - coords.left();
+			float height = coords.bottom() - coords.top();
 			tex.enable(gl);
 			tex.bind(gl);
 			setColor(new Color(1f, 1f, 1f, opacity));
 			gl.glBegin(GL2.GL_QUADS);
-			gl.glTexCoord2d(sx / width, sy / height);
+			gl.glTexCoord2d((sx / width) + coords.left(),
+					(sy / height) + coords.top());
 			gl.glVertex2f(dx, dy);
-			gl.glTexCoord2d((sx + swidth) / width, sy / height);
+			gl.glTexCoord2d(
+					((sx + swidth) / width) + coords.left(),
+					(sy / height) + coords.top());
 			gl.glVertex2f(dx + dwidth, dy);
-			gl.glTexCoord2d((sx + swidth) / width,
-					(sy + sheight) / height);
+			gl.glTexCoord2d(
+					((sx + swidth) / width) + coords.left(),
+					((sy + sheight) / height) + coords.top());
 			gl.glVertex2f(dx + dwidth, (dy + dheight));
-			gl.glTexCoord2d(sx / width, (sy + sheight) / height);
+			gl.glTexCoord2d((sx / width) + coords.left(),
+					((sy + sheight) / height) + coords.top());
 			gl.glVertex2f(dx, (dy + dheight));
 			gl.glEnd();
 			tex.disable(gl);
@@ -300,7 +306,7 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final int getImageWidth(final int graphic) {
-		Texture tex = textureManager.fetchTexture(graphic);
+		Texture tex = textureManager.fetchImage(graphic);
 		if (tex != null) {
 			return tex.getWidth();
 		}
@@ -309,7 +315,7 @@ public class GLGraphics extends IGraphics implements
 
 	@Override
 	public final int getImageHeight(final int graphic) {
-		Texture tex = textureManager.fetchTexture(graphic);
+		Texture tex = textureManager.fetchImage(graphic);
 		if (tex != null) {
 			return tex.getHeight();
 		}
@@ -348,8 +354,8 @@ public class GLGraphics extends IGraphics implements
 	}
 
 	@Override
-	public final ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
-		return textureManager.loadedMap();
+	public final ObjectHeap<ObjectHeap<GraphicsStorage>> loadedGraphics() {
+		return textureManager.getDataMap();
 	}
 
 	@Override

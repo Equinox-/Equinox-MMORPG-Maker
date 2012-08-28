@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.filechooser.FileSystemView;
 
 import com.pi.common.database.SectorLocation;
+import com.pi.common.database.io.GraphicsDirectories;
 
 /**
  * A class defining the locations of everything the client saves to the disk.
@@ -179,10 +180,11 @@ public final class Paths {
 	 * Gets the path to a graphics file with the given id.
 	 * 
 	 * @param id the graphics id
+	 * @param dir the graphics directory
 	 * @return the file path
 	 */
-	public static File getGraphicsFile(final int id) {
-		File gDir = getGraphicsDirectory();
+	public static File getGraphicsFile(final int dir, int id) {
+		File gDir = getGraphicsDirectory(dir);
 		for (String ext : IMAGE_FILES) {
 			File f = new File(gDir, id + "." + ext);
 			if (f.exists()) {
@@ -194,6 +196,31 @@ public final class Paths {
 
 	/**
 	 * Gets the path to the graphics directory.
+	 * 
+	 * @param dir the graphics directory
+	 * 
+	 * @return the folder path
+	 */
+	public static File getGraphicsDirectory(int dir) {
+		String subPath = "";
+		if (dir >= 0
+				&& dir < GraphicsDirectories.values().length) {
+			subPath =
+					GraphicsDirectories.values()[dir].getPath();
+		}
+		if (subPath.length() <= 0) {
+			return getGraphicsDirectory();
+		} else {
+			File f = new File(getGraphicsDirectory(), subPath);
+			if (!f.exists()) {
+				f.mkdir();
+			}
+			return f;
+		}
+	}
+
+	/**
+	 * Gets the path to the root graphics directory.
 	 * 
 	 * @return the folder path
 	 */

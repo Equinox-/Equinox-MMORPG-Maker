@@ -3,6 +3,7 @@ package com.pi.gui;
 import java.awt.Color;
 
 import com.pi.common.database.GraphicsAnimation;
+import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.gui.PIStyle.StyleType;
 
 /**
@@ -23,7 +24,7 @@ public final class GUIKit {
 		 * A graphical animation of a loading bar.
 		 */
 		public static final GraphicsAnimation LOADER =
-				new GraphicsAnimation(12, 150, 1, 0, 0,
+				new GraphicsAnimation(12, 150, GraphicsDirectories.GUI.getFileID(1), 0, 0,
 						126 * 12, 22);
 	}
 

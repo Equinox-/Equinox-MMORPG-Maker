@@ -11,6 +11,7 @@ import com.pi.common.database.TileLayer;
 import com.pi.common.database.def.EntityDef;
 import com.pi.common.database.def.ItemDef;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.common.game.entity.EntityType;
 
 /**
@@ -27,14 +28,14 @@ public final class Demonstration {
 	 */
 	public static Sector create() {
 		Sector sec = new Sector();
-		sec.setRevision(2);
+		sec.setRevision(4);
 		sec.setSectorLocation(0, 0, 0);
 		for (int x = 0; x < SectorConstants.SECTOR_WIDTH; x++) {
 			for (int y = 0; y < SectorConstants.SECTOR_HEIGHT; y++) {
 				Tile t = new Tile();
 				TileGraphicsObject obj =
 						new TileGraphicsObject();
-				obj.setGraphic(2);
+				obj.setGraphic(GraphicsDirectories.TILES.getFileID(1));
 				obj.setPosition(0, TileConstants.TILE_HEIGHT, 0,
 						0);
 				t.setLayer(TileLayer.GROUND, obj);
@@ -44,7 +45,7 @@ public final class Demonstration {
 				}
 				TileGraphicsObject obj2 =
 						new TileGraphicsObject();
-				obj2.setGraphic(2);
+				obj2.setGraphic(GraphicsDirectories.TILES.getFileID(1));
 				obj2.setPosition(
 						TileConstants.TILE_WIDTH
 								+ (Math.round(Math.random() * 2D) * TileConstants.TILE_WIDTH),
@@ -59,7 +60,7 @@ public final class Demonstration {
 			for (int y = 0; y < 5; y++) {
 				TileGraphicsObject obj =
 						new TileGraphicsObject();
-				obj.setGraphic(2);
+				obj.setGraphic(GraphicsDirectories.TILES.getFileID(1));
 				obj.setPosition(x * TileConstants.TILE_WIDTH,
 						(5 + y) * TileConstants.TILE_HEIGHT,
 						TileConstants.TILE_WIDTH,
@@ -86,21 +87,21 @@ public final class Demonstration {
 			e.printStackTrace();
 		}
 		EntityDef d0 = new EntityDef(0);
-		d0.setGraphic(3);
+		d0.setGraphic(GraphicsDirectories.ENTITIES.getFileID(1));
 		d0.setPosition(0, 0, 128, 192);
 		d0.setEntityType(EntityType.Combat);
 		// d.setLogicClass("com.pi.server.logic.entity.AggressiveEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(0), d0);
 
 		EntityDef d1 = new EntityDef(1);
-		d1.setGraphic(4);
+		d1.setGraphic(GraphicsDirectories.ENTITIES.getFileID(2));
 		d1.setPosition(0, 0, 128, 128);
 		d1.setEntityType(EntityType.Combat);
 		d1.setLogicClass("com.pi.server.logic.entity.NeutralEntityLogic");
 		DatabaseIO.write(Paths.getEntityDef(1), d1);
 
 		ItemDef iDef = new ItemDef(0);
-		iDef.setGraphic(5);
+		iDef.setGraphic(GraphicsDirectories.ITEMS.getFileID(1));
 		iDef.setPosition(0, 0, 32, 32);
 		DatabaseIO.write(Paths.getItemDef(0), iDef);
 	}

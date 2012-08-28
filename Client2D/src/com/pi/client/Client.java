@@ -370,8 +370,8 @@ public class Client implements Disposable, DeviceRegistration {
 	}
 
 	@Override
-	public final File getGraphicsFile(final int id) {
-		return Paths.getGraphicsFile(id);
+	public final File getGraphicsFile(final int dir, final int id) {
+		return Paths.getGraphicsFile(dir, id);
 	}
 
 	/**

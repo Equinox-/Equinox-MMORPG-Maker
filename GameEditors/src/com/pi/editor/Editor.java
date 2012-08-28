@@ -11,6 +11,7 @@ import java.io.File;
 import javax.swing.JFrame;
 
 import com.pi.common.Disposable;
+import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
@@ -77,7 +78,9 @@ public class Editor implements Disposable, Renderable,
 		this.displayManager.postInititation();
 
 		logger.info("Put image files here: "
-				+ Paths.getGraphicsDirectory().getAbsolutePath());
+				+ Paths.getGraphicsDirectory(
+						GraphicsDirectories.TILES.getMask())
+						.getAbsolutePath());
 		MapEditorObject.init();
 
 		// Create editor pages
@@ -165,8 +168,8 @@ public class Editor implements Disposable, Renderable,
 	}
 
 	@Override
-	public File getGraphicsFile(int id) {
-		return Paths.getGraphicsFile(id);
+	public File getGraphicsFile(int dir, int id) {
+		return Paths.getGraphicsFile(dir, id);
 	}
 
 	@Override

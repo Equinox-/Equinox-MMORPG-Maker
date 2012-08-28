@@ -592,7 +592,7 @@ public abstract class IGraphics {
 	 * 
 	 * @return the loaded graphics in a heap
 	 */
-	public abstract ObjectHeap<? extends GraphicsStorage> loadedGraphics();
+	public abstract ObjectHeap<ObjectHeap<GraphicsStorage>> loadedGraphics();
 
 	/**
 	 * Gets the display manager this graphics instance is registered to.

@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import com.pi.common.database.GraphicsObject;
+import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.gui.PIComponent;
 import com.pi.gui.PIContainer;
 import com.pi.gui.PIStyle;
@@ -68,7 +69,7 @@ public class MainGameMenu extends PIContainer {
 					new PIStyle());
 			menuButtons[i].setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
 			menuButtons[i].getStyle(StyleType.NORMAL).bgImage =
-					new GraphicsObject(6, 0, i * BUTTON_HEIGHT,
+					new GraphicsObject(GraphicsDirectories.GUI.getFileID(2), 0, i * BUTTON_HEIGHT,
 							BUTTON_WIDTH, BUTTON_HEIGHT);
 			add(menuButtons[i]);
 			final int tempIndex = i;

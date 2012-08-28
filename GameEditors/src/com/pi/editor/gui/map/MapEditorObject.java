@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -18,6 +19,7 @@ import com.pi.common.database.Tile;
 import com.pi.common.database.TileGraphicsObject;
 import com.pi.common.database.TileLayer;
 import com.pi.common.database.io.DatabaseIO;
+import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.editor.Paths;
 import com.pi.graphics.device.IGraphics;
 import com.pi.gui.GUIKit;
@@ -32,20 +34,34 @@ import com.pi.gui.PIStyle.StyleType;
 
 public class MapEditorObject extends PIContainer implements
 		ScrollBarListener, MapInfoRenderer {
-	private static int[] TILESETS = new int[] { 2 };
+	private static int[] TILESETS = new int[] {};
 	private File lastDirectory;
 	private MapRenderLoop loop;
 
 	public static void init() {
-		String s =
-				JOptionPane
-						.showInputDialog("List tileset image IDs, comma seperated values\n(From "
-								+ Paths.getGraphicsDirectory()
-										.getAbsolutePath() + ")");
-		String[] dat = s.split(",");
-		TILESETS = new int[dat.length];
-		for (int i = 0; i < dat.length; i++) {
-			TILESETS[i] = Integer.valueOf(dat[i]);
+		File[] gPath =
+				Paths.getGraphicsDirectory(
+						GraphicsDirectories.TILES.getMask())
+						.listFiles(new FilenameFilter() {
+							@Override
+							public boolean accept(File dir,
+									String name) {
+								for (String s : Paths.IMAGE_FILES) {
+									if (name.endsWith(s)) {
+										return true;
+									}
+								}
+								return false;
+							}
+						});
+		TILESETS = new int[gPath.length];
+		for (int i = 0; i < TILESETS.length; i++) {
+			String[] parts = gPath[i].getName().split("\\.");
+			try {
+				int s = Integer.valueOf(parts[0]);
+				TILESETS[i] = s;
+			} catch (Exception e) {
+			}
 		}
 	}
 
@@ -60,7 +76,8 @@ public class MapEditorObject extends PIContainer implements
 
 	private PICheckbox directionBlockMode;
 
-	private int tileset = TILESETS[0];
+	private int tileset = GraphicsDirectories.TILES
+			.getFileID(TILESETS[0]);
 
 	private TileSelectionHandler tileSelectionHandler =
 			new TileSelectionHandler();
@@ -304,7 +321,9 @@ public class MapEditorObject extends PIContainer implements
 			if (nTiles != tileset) {
 				horizontalTile.setScrollAmount(0);
 				verticalTile.setScrollAmount(0);
-				tileset = nTiles;
+				tileset =
+						GraphicsDirectories.TILES
+								.getFileID(nTiles);
 				tileX = 0;
 				tileY = 0;
 				dragTileX = 0;

@@ -16,8 +16,8 @@ import java.util.TimerTask;
 
 import com.pi.common.game.ObjectHeap;
 import com.pi.graphics.device.DisplayManager;
+import com.pi.graphics.device.GraphicsStorage;
 import com.pi.graphics.device.IGraphics;
-import com.pi.graphics.device.awt.ImageManager.ImageStorage;
 
 /**
  * Class representing a Java 2D or Abstract Windowing Toolkit based graphics
@@ -54,7 +54,7 @@ public class AWTGraphics extends IGraphics {
 	/**
 	 * The image manager used for loading images into the cache.
 	 */
-	private ImageManager imageManager;
+	private AwtImageManager imageManager;
 
 	/**
 	 * Creates an Java 2D or Abstract Windowing Toolkit graphics object linked
@@ -66,7 +66,8 @@ public class AWTGraphics extends IGraphics {
 		super(mgr);
 		lastFPSUpdate = System.currentTimeMillis();
 		imageManager =
-				new ImageManager(getDisplayManager().getSource());
+				new AwtImageManager(getDisplayManager()
+						.getSource());
 
 		timer = new Timer();
 		// Create the Timer Task
@@ -276,8 +277,8 @@ public class AWTGraphics extends IGraphics {
 	}
 
 	@Override
-	public final ObjectHeap<ImageStorage> loadedGraphics() {
-		return imageManager.loadedMap();
+	public final ObjectHeap<ObjectHeap<GraphicsStorage>> loadedGraphics() {
+		return imageManager.getDataMap();
 	}
 
 	@Override

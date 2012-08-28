@@ -46,10 +46,12 @@ public interface DeviceRegistration {
 	ThreadGroup getThreadGroup();
 
 	/**
-	 * Gets the path to the graphics file with the given identification number.
+	 * Gets the path to the graphics file with the given identification number,
+	 * in the given directory.
 	 * 
+	 * @param dir the graphics directory
 	 * @param id the graphics identification.
 	 * @return the file instance
 	 */
-	File getGraphicsFile(int id);
+	File getGraphicsFile(int dir, int id);
 }

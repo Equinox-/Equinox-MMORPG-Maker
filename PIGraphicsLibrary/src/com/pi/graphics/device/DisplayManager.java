@@ -59,7 +59,7 @@ public class DisplayManager {
 	 * 
 	 * @return the graphics heap
 	 */
-	public final ObjectHeap<? extends GraphicsStorage> loadedGraphics() {
+	public final ObjectHeap<ObjectHeap<GraphicsStorage>> loadedGraphics() {
 		if (graphics != null) {
 			return graphics.loadedGraphics();
 		} else {
@@ -220,11 +220,12 @@ public class DisplayManager {
 	 */
 	public final GraphicsMode getMode() {
 		for (GraphicsMode m : GraphicsMode.values()) {
-			if (graphics
-					.getClass()
-					.getCanonicalName()
-					.equals(m.getGraphicsClass()
-							.getCanonicalName())) {
+			if (m.getGraphicsClass() != null
+					&& graphics
+							.getClass()
+							.getCanonicalName()
+							.equals(m.getGraphicsClass()
+									.getCanonicalName())) {
 				return m;
 			}
 		}

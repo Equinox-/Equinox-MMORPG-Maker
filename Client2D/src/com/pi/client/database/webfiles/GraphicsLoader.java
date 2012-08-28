@@ -35,28 +35,21 @@ public final class GraphicsLoader {
 	 * @return a map of the graphics ID to the version.
 	 * @throws IOException if there is a file read exception
 	 */
-	private static Map<Integer, Float> getCurrentVersions(
+	private static Map<String, Float> getCurrentVersions(
 			final File filelistCurrent) throws IOException {
-		HashMap<Integer, Float> currentVersions =
-				new HashMap<Integer, Float>();
+		HashMap<String, Float> currentVersions =
+				new HashMap<String, Float>();
 		if (filelistCurrent.exists()) {
 			BufferedReader reader =
 					new BufferedReader(new FileReader(
 							filelistCurrent));
 			while (reader.ready()) {
 				String[] line = reader.readLine().split("\t");
-				String cleanedName = line[0];
-				for (String s : Paths.IMAGE_FILES) {
-					cleanedName =
-							cleanedName.replace("." + s, "");
-				}
+				String name = line[0];
 				try {
-					Integer name = Integer.valueOf(cleanedName);
 					float ver;
 					ver = Float.valueOf(line[1]);
-					if (Paths.getGraphicsFile(name) != null) {
-						currentVersions.put(name, ver);
-					}
+					currentVersions.put(name, ver);
 				} catch (Exception e) {
 					continue;
 				}
@@ -88,20 +81,14 @@ public final class GraphicsLoader {
 			client.getLog().info("Downloading filelist...");
 			download(new URL(Constants.GRAPHICS_FILELIST),
 					filelistNew);
-			Map<Integer, Float> currentVersions =
+			Map<String, Float> currentVersions =
 					getCurrentVersions(filelistCurrent);
 			BufferedReader reader =
 					new BufferedReader(new FileReader(
 							filelistNew));
 			while (reader.ready()) {
 				String[] line = reader.readLine().split("\t");
-				String rawName = line[0];
-				String cleanedName = rawName;
-				for (String s : Paths.IMAGE_FILES) {
-					cleanedName =
-							cleanedName.replace("." + s, "");
-				}
-				Integer name = Integer.valueOf(cleanedName);
+				String name = line[0];
 				float ver;
 				try {
 					ver = Float.valueOf(line[1]);
@@ -119,12 +106,17 @@ public final class GraphicsLoader {
 						File dest =
 								new File(
 										Paths.getGraphicsDirectory(),
-										rawName);
+										name);
+						if (dest.getParentFile() != null
+								&& !dest.getParentFile()
+										.exists()) {
+							dest.getParentFile().mkdir();
+						}
 						if (!dest.exists()) {
 							dest.createNewFile();
 						}
 						download(new URL(Constants.GRAPHICS_URL
-								+ rawName), dest);
+								+ name), dest);
 					} catch (IOException e) {
 						client.getLog().printStackTrace(e);
 					}

@@ -7,18 +7,34 @@ package com.pi.graphics.device;
  * @author Westin
  * 
  */
-public abstract class GraphicsStorage {
+public class GraphicsStorage {
 	/**
 	 * The last time at which this graphics object was used.
 	 */
 	private long lastUsed;
 
 	/**
+	 * The graphics object this class is storing.
+	 */
+	private Object gObj;
+
+	/**
 	 * The graphics object that is wrapped by this storage object.
 	 * 
 	 * @return the object
 	 */
-	public abstract Object getGraphic();
+	public Object getGraphic() {
+		return gObj;
+	}
+
+	/**
+	 * Sets the graphics object that is wrapped by this storage object.
+	 * 
+	 * @param t the new object
+	 */
+	public void setGraphic(Object t) {
+		this.gObj = t;
+	}
 
 	/**
 	 * Updates the last used time to the current time.
