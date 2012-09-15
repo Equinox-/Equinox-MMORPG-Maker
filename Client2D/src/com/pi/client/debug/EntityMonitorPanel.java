@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.game.entity.Entity;
 import com.pi.client.Client;
@@ -123,12 +123,13 @@ public class EntityMonitorPanel extends JPanel {
 				case 6:
 					return ent.getEntityDef();
 				case 7:
-					if (def != null) {
+					/*if (def != null) {
 						return Boolean.toString(def
 								.getLogicCLass().length() > 0);
 					} else {
 						return "No Def";
-					}
+					}*/
+					return "";//TODO
 				default:
 					return "";
 				}

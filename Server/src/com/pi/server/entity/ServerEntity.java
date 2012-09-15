@@ -1,9 +1,9 @@
 package com.pi.server.entity;
 
 import com.pi.common.contants.EntityConstants;
-import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.game.entity.Entity;
-import com.pi.common.game.entity.EntityType;
+import com.pi.common.game.entity.EntityContainer;
 import com.pi.server.constants.ServerConstants;
 import com.pi.server.def.DefinitionsLoader;
 import com.pi.server.logic.entity.EntityLogic;
@@ -14,7 +14,7 @@ import com.pi.server.logic.entity.EntityLogic;
  * @author Westin
  * 
  */
-public class ServerEntity {
+public class ServerEntity extends EntityContainer {
 	/**
 	 * The time in milliseconds that the next entity movement will be.
 	 */
@@ -23,11 +23,6 @@ public class ServerEntity {
 	 * The logic class instance.
 	 */
 	private EntityLogic logicClass;
-	/**
-	 * The entity this container wraps.
-	 */
-	private Entity wrap;
-
 	/**
 	 * The last entity to attack this entity.
 	 */
@@ -50,14 +45,16 @@ public class ServerEntity {
 	/**
 	 * Creates an entity container around the given entity.
 	 * 
-	 * @param eDef the definitions loader used to look up this entity's
+	 * @param eDef
+	 *            the definitions loader used to look up this entity's
 	 *            definition
-	 * @param wrapped the entity to wrap
+	 * @param wrapped
+	 *            the entity to wrap
 	 */
 	public ServerEntity(final DefinitionsLoader<EntityDef> eDef,
 			final Entity wrapped) {
+		super(wrapped);
 		this.defLoader = eDef;
-		this.wrap = wrapped;
 	}
 
 	/**
@@ -67,7 +64,7 @@ public class ServerEntity {
 	 * @return the entity definition, or <code>null</code> if empty
 	 */
 	public final EntityDef getDefinition() {
-		return defLoader.getDef(wrap.getEntityDef());
+		return defLoader.getDef(getWrappedEntity().getEntityDef());
 	}
 
 	/**
@@ -84,10 +81,8 @@ public class ServerEntity {
 	 */
 	public final void doTimedMovement() {
 		if (!isStillMoving()) {
-			nextMove =
-					System.currentTimeMillis()
-							+ EntityConstants.WALK_TIME;
-			wrap.doMovement();
+			nextMove = System.currentTimeMillis() + EntityConstants.WALK_TIME;
+			getWrappedEntity().doMovement();
 		}
 	}
 
@@ -104,7 +99,8 @@ public class ServerEntity {
 	 * Assigns the given entity logic instance to this server entity if not
 	 * already assigned.
 	 * 
-	 * @param l the logic instance to assign
+	 * @param l
+	 *            the logic instance to assign
 	 * @return <code>true</code> if the logic instance was assigned,
 	 *         <code>false</code> if not
 	 */
@@ -117,19 +113,11 @@ public class ServerEntity {
 	}
 
 	/**
-	 * Gets the entity that this container wraps.
-	 * 
-	 * @return the wrapped entity
-	 */
-	public final Entity getWrappedEntity() {
-		return wrap;
-	}
-
-	/**
 	 * Sets the last entity to attack this entity, and updates the last attack
 	 * time.
 	 * 
-	 * @param attacker the attacking entity
+	 * @param attacker
+	 *            the attacking entity
 	 */
 	public final void setAttacker(final int attacker) {
 		this.lastAttacker = attacker;
@@ -137,8 +125,8 @@ public class ServerEntity {
 	}
 
 	/**
-	 * Clears the last entity to this entity. This is the same as calling {@link
-	 * #setAttacker(int)} with the argument <code>-1</code>, but without
+	 * Clears the last entity to this entity. This is the same as calling
+	 * {@link #setAttacker(int)} with the argument <code>-1</code>, but without
 	 * updating the last attack time.
 	 */
 	public final void removeAttacker() {
@@ -157,9 +145,8 @@ public class ServerEntity {
 	 * @return the attacker
 	 */
 	public final int getAttacker() {
-		if (lastAttackerTime
-				+ ServerConstants.ENTITY_ATTACKER_TOLERANCE >= System
-					.currentTimeMillis()) {
+		if (lastAttackerTime + ServerConstants.ENTITY_ATTACKER_TOLERANCE >= System
+				.currentTimeMillis()) {
 			return lastAttacker;
 		} else {
 			return -1;
@@ -181,9 +168,13 @@ public class ServerEntity {
 	 * @return checks if this entity is currently attacking another entity
 	 */
 	public final boolean isAttacking() {
-		return wrap.getEntityType().isSubtype(EntityType.Combat)
-				&& System.currentTimeMillis() <= lastAttackTime
-						+ getDefinition().getAttackSpeed();
+		return System.currentTimeMillis() <= lastAttackTime
+				+ EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
+		/*
+		 * wrap.getEntityType ().isSubtype( EntityType .Combat) && System
+		 * .currentTimeMillis () <= lastAttackTime + getDefinition
+		 * ().getAttackSpeed ();
+		 */
 	}
 
 	/**

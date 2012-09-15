@@ -1,7 +1,7 @@
 package com.pi.client.def;
 
 import com.pi.client.Client;
-import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.net.packet.Packet12EntityDefRequest;
 
 /**

@@ -32,7 +32,7 @@ public class NeutralEntityLogic extends RandomEntityLogic {
 			super.doLogic();
 		} else {
 			ServerEntity wrapper =
-					getServer().getEntityManager().getEntity(
+					getServer().getEntityManager().getEntityContainer(
 							target);
 			if (wrapper != null) {
 				attack(wrapper);

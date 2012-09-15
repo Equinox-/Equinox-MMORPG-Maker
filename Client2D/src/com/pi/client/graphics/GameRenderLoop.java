@@ -11,17 +11,15 @@ import com.pi.client.entity.ClientEntity;
 import com.pi.common.contants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;
-import com.pi.common.database.def.EntityDef;
-import com.pi.common.database.def.ItemDef;
+import com.pi.common.database.def.entity.EntityDef;
+import com.pi.common.database.def.entity.HealthDefComponent;
 import com.pi.common.database.world.Sector;
 import com.pi.common.database.world.Tile;
 import com.pi.common.database.world.TileLayer;
 import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.entity.Entity;
-import com.pi.common.game.entity.EntityType;
-import com.pi.common.game.entity.ItemEntity;
-import com.pi.common.game.entity.LivingEntity;
+import com.pi.common.game.entity.comp.HealthComponent;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
 
@@ -69,7 +67,8 @@ public class GameRenderLoop implements Renderable {
 	/**
 	 * Creates the game render loop for a specified client.
 	 * 
-	 * @param sClient the bound client
+	 * @param sClient
+	 *            the bound client
 	 */
 	public GameRenderLoop(final Client sClient) {
 		this.client = sClient;
@@ -81,40 +80,30 @@ public class GameRenderLoop implements Renderable {
 		if (client.getWorld() != null) {
 			Sector sec = client.getWorld().getSector(0, 0, 0);
 			if (client.getEntityManager().getLocalEntity() != null) {
-				final Entity myEntity =
-						client.getEntityManager()
-								.getLocalEntity()
-								.getWrappedEntity();
+				final Entity myEntity = client.getEntityManager()
+						.getLocalEntity().getWrappedEntity();
 				if (myEntity != null) {
-					if (client.getEntityManager()
-							.getLocalEntity() != null
+					if (client.getEntityManager().getLocalEntity() != null
 							&& sec != null) {
 						getTileView();
-						for (int tI = 0; tI < TileLayer.MAX_VALUE
-								.ordinal(); tI++) {
-							final TileLayer t =
-									TileLayer.values()[tI];
+						for (int tI = 0; tI < TileLayer.MAX_VALUE.ordinal(); tI++) {
+							final TileLayer t = TileLayer.values()[tI];
 							renderLayer(t);
-							Iterator<ClientEntity> entities =
-									new FilteredIterator<ClientEntity>(
-											client.getEntityManager()
-													.getEntities(),
-											new Filter<ClientEntity>() {
-												@Override
-												public boolean accept(
-														final ClientEntity e) {
-													return Location
-															.dist(myEntity,
-																	e.getWrappedEntity()) <= renderDistance
-															&& e.getWrappedEntity()
-																	.getLayer() == t;
-												}
-											});
+							Iterator<ClientEntity> entities = new FilteredIterator<ClientEntity>(
+									client.getEntityManager().getEntities(),
+									new Filter<ClientEntity>() {
+										@Override
+										public boolean accept(
+												final ClientEntity e) {
+											return Location.dist(myEntity,
+													e.getWrappedEntity()) <= renderDistance
+													&& e.getWrappedEntity()
+															.getLayer() == t;
+										}
+									});
 							while (entities.hasNext()) {
-								ClientEntity ent =
-										entities.next();
-								if (ent.getWrappedEntity()
-										.getLayer() == t) {
+								ClientEntity ent = entities.next();
+								if (ent.getWrappedEntity().getLayer() == t) {
 									renderEntity(ent);
 								}
 							}
@@ -128,76 +117,53 @@ public class GameRenderLoop implements Renderable {
 	/**
 	 * Renders the specified entity.
 	 * 
-	 * @param ent the entity
+	 * @param ent
+	 *            the entity
 	 */
 	private void renderEntity(final ClientEntity ent) {
 		ent.processMovement();
-		EntityDef def =
-				client.getDefs()
-						.getEntityLoader()
-						.getDef(ent.getWrappedEntity()
-								.getEntityDef());
-		if (ent.getWrappedEntity() instanceof ItemEntity) {
-			ItemDef iDef =
-					client.getDefs()
-							.getItemLoader()
-							.getDef(((ItemEntity) ent
-									.getWrappedEntity())
-									.getItem());
-			if (iDef != null) {
-				Point p =
-						locationToScreen(ent.getWrappedEntity());
-				p.x += ent.getXOff();
-				g.drawImage(iDef, p.x, p.y);
-			}
-		} else if (def != null) {
-			float frameWidth =
-					def.getPositionWidth()
-							/ def.getHorizontalFrames();
+		EntityDef def = client.getDefs().getEntityLoader()
+				.getDef(ent.getWrappedEntity().getEntityDef());
+		if (def != null) {
+			float frameWidth = def.getPositionWidth()
+					/ def.getHorizontalFrames();
 			float frameHeight = def.getPositionHeight() / 4;
 			Point p = locationToScreen(ent.getWrappedEntity());
 			p.x += ent.getXOff();
-			p.y +=
-					ent.getZOff() - frameHeight
-							+ TileConstants.TILE_HEIGHT;
+			p.y += ent.getZOff() - frameHeight + TileConstants.TILE_HEIGHT;
 			g.drawImage(
 					def.getGraphic(),
 					p.x,
 					p.y,
 					(int) def.getPositionX()
-							+ (int) ((int) (ent
-									.getMovementPercent() * def
+							+ (int) ((int) (ent.getMovementPercent() * def
 									.getHorizontalFrames()) * frameWidth),
 					(int) (def.getPositionY() + (frameHeight * ent
-							.getWrappedEntity().getDir()
-							.ordinal())), (int) frameWidth,
-					(int) frameHeight);
+							.getWrappedEntity().getDir().ordinal())),
+					(int) frameWidth, (int) frameHeight);
 
-			if (ent.getWrappedEntity() instanceof LivingEntity
-					&& ((LivingEntity) ent.getWrappedEntity())
-							.getHealth() != 1f
-					&& def.getEntityType().isSubtype(
-							EntityType.Living)) {
-				float scalarHealth =
-						((LivingEntity) ent.getWrappedEntity())
-								.getHealth()
-								/ ((float) def
-										.getMaximumHealth());
-				int goodHealthWidth =
-						Math.round(((float) Constants.HEALTH_BAR_WIDTH)
-								* scalarHealth);
-				int barY = p.y - 5 - Constants.HEALTH_BAR_HEIGHT;
-				int barX =
-						p.x
-								- ((int) (Constants.HEALTH_BAR_WIDTH - frameWidth) / 2);
-				g.setColor(Color.GREEN);
-				g.fillRect(barX, barY, goodHealthWidth,
-						Constants.HEALTH_BAR_HEIGHT);
-				g.setColor(Color.RED);
-				g.fillRect(barX + goodHealthWidth, barY,
-						Constants.HEALTH_BAR_WIDTH
-								- goodHealthWidth,
-						Constants.HEALTH_BAR_HEIGHT);
+			HealthComponent hC = (HealthComponent) ent.getWrappedEntity()
+					.getComponent(HealthComponent.class);
+			HealthDefComponent lDC = (HealthDefComponent) def
+					.getComponent(HealthDefComponent.class);
+			if (hC != null && lDC != null && lDC.getMaximumHealth() > 0) {
+				float scalarHealth = hC.getHealth()
+						/ ((float) lDC.getMaximumHealth());
+				if (scalarHealth != 1.0f) {
+					int goodHealthWidth = Math
+							.round(((float) Constants.HEALTH_BAR_WIDTH)
+									* scalarHealth);
+					int barY = p.y - 5 - Constants.HEALTH_BAR_HEIGHT;
+					int barX = p.x
+							- ((int) (Constants.HEALTH_BAR_WIDTH - frameWidth) / 2);
+					g.setColor(Color.GREEN);
+					g.fillRect(barX, barY, goodHealthWidth,
+							Constants.HEALTH_BAR_HEIGHT);
+					g.setColor(Color.RED);
+					g.fillRect(barX + goodHealthWidth, barY,
+							Constants.HEALTH_BAR_WIDTH - goodHealthWidth,
+							Constants.HEALTH_BAR_HEIGHT);
+				}
 			}
 		}
 	}
@@ -205,21 +171,18 @@ public class GameRenderLoop implements Renderable {
 	/**
 	 * Renders the specified layer using the current tile view.
 	 * 
-	 * @param l the tile layer to render
+	 * @param l
+	 *            the tile layer to render
 	 */
 	private void renderLayer(final TileLayer l) {
 		Location tile = new Location(0, 0, 0);
-		for (int x = tileView.x; x <= tileView.x
-				+ tileView.width; x++) {
-			for (int z = tileView.y; z <= tileView.y
-					+ tileView.height; z++) {
+		for (int x = tileView.x; x <= tileView.x + tileView.width; x++) {
+			for (int z = tileView.y; z <= tileView.y + tileView.height; z++) {
 				tile.setLocation(x, 0, z);
-				Sector s =
-						client.getWorld().getSector(
-								tile.getSectorX(), 0,
-								tile.getSectorZ());
+				Sector s = client.getWorld().getSector(tile.getSectorX(), 0,
+						tile.getSectorZ());
 				Point screen = locationToScreen(tile);
-				if (s != null) {
+				if (s != null && screen != null) {
 					Tile lTile = s.getGlobalTile(x, z);
 					if (lTile != null) {
 						GraphicsObject gO = lTile.getLayer(l);
@@ -235,12 +198,12 @@ public class GameRenderLoop implements Renderable {
 	/**
 	 * Converts the location in the world to a point on the screen.
 	 * 
-	 * @param t the world location
+	 * @param t
+	 *            the world location
 	 * @return the screen location, or <code>null</code> if unable to calculate.
 	 */
 	private Point locationToScreen(final Location t) {
-		ClientEntity ent =
-				client.getEntityManager().getLocalEntity();
+		ClientEntity ent = client.getEntityManager().getLocalEntity();
 		if (ent != null) {
 			float xT = t.x - ent.getWrappedEntity().x;
 			float zT = t.z - ent.getWrappedEntity().z;
@@ -248,8 +211,7 @@ public class GameRenderLoop implements Renderable {
 			zT *= TileConstants.TILE_HEIGHT;
 			xT += g.getClip().getCenterX();
 			zT += g.getClip().getCenterY();
-			return new Point((int) xT - ent.getXOff(), (int) zT
-					- ent.getZOff());
+			return new Point((int) xT - ent.getXOff(), (int) zT - ent.getZOff());
 		}
 		return null;
 	}
@@ -262,30 +224,25 @@ public class GameRenderLoop implements Renderable {
 	 */
 	private Rectangle getTileView() {
 		Rectangle clip = g.getClip();
-		ClientEntity ent =
-				client.getEntityManager().getLocalEntity();
+		ClientEntity ent = client.getEntityManager().getLocalEntity();
 		if (ent != null
 				&& (currentTileViewX != ent.getWrappedEntity().x
-						|| currentTileViewZ != ent
-								.getWrappedEntity().z
-						|| currentTileViewWidth != client
-								.getApplet().getWidth() || currentTileViewHeight != client
+						|| currentTileViewZ != ent.getWrappedEntity().z
+						|| currentTileViewWidth != client.getApplet()
+								.getWidth() || currentTileViewHeight != client
 						.getApplet().getHeight())) {
-			int tileWidth =
-					(int) Math.ceil(clip.getWidth()
-							/ TileConstants.TILE_WIDTH / 2 + 1);
-			int tileHeight =
-					(int) Math.ceil(clip.getHeight()
-							/ TileConstants.TILE_HEIGHT / 2 + 1);
+			int tileWidth = (int) Math.ceil(clip.getWidth()
+					/ TileConstants.TILE_WIDTH / 2 + 1);
+			int tileHeight = (int) Math.ceil(clip.getHeight()
+					/ TileConstants.TILE_HEIGHT / 2 + 1);
 			renderDistance = tileWidth + tileHeight;
-			tileView.setBounds(ent.getWrappedEntity().x
-					- tileWidth, ent.getWrappedEntity().z
-					- tileHeight, tileWidth * 2, tileHeight * 2);
+			tileView.setBounds(ent.getWrappedEntity().x - tileWidth,
+					ent.getWrappedEntity().z - tileHeight, tileWidth * 2,
+					tileHeight * 2);
 			currentTileViewX = ent.getWrappedEntity().x;
 			currentTileViewZ = ent.getWrappedEntity().z;
 			currentTileViewWidth = client.getApplet().getWidth();
-			currentTileViewHeight =
-					client.getApplet().getHeight();
+			currentTileViewHeight = client.getApplet().getHeight();
 			return tileView;
 		}
 		return tileView;

@@ -17,8 +17,7 @@ public final class PacketManager {
 	 * The packet class mapping array of this packet manager.
 	 */
 	@SuppressWarnings("unchecked")
-	private static Class<? extends Packet>[] idMapping =
-			new Class[0];
+	private static Class<? extends Packet>[] idMapping = new Class[0];
 
 	static {
 		try {
@@ -40,7 +39,7 @@ public final class PacketManager {
 			registerPacket(Packet15GameState.class);
 			registerPacket(Packet16EntityMove.class);
 			registerPacket(Packet17Clock.class);
-			registerPacket(Packet18Health.class);
+			registerPacket(Packet18EntityComponent.class);
 			registerPacket(Packet19Attack.class);
 			registerPacket(Packet20EntityAttack.class);
 			registerPacket(Packet21EntityFace.class);
@@ -56,25 +55,24 @@ public final class PacketManager {
 	/**
 	 * Registers a packet with this packet manager.
 	 * 
-	 * @param pClass the packet class
-	 * @throws InstantiationException if the identification number wasn't
-	 *             fetched through the {@link Packet#getID()} method.
-	 * @throws IllegalAccessException if the identification number wasn't
-	 *             fetched through the {@link Packet#getID()} method.
+	 * @param pClass
+	 *            the packet class
+	 * @throws InstantiationException
+	 *             if the identification number wasn't fetched through the
+	 *             {@link Packet#getID()} method.
+	 * @throws IllegalAccessException
+	 *             if the identification number wasn't fetched through the
+	 *             {@link Packet#getID()} method.
 	 */
-	public static void registerPacket(
-			final Class<? extends Packet> pClass)
-			throws IllegalAccessException,
-			InstantiationException {
+	public static void registerPacket(final Class<? extends Packet> pClass)
+			throws IllegalAccessException, InstantiationException {
 		int id = pClass.newInstance().getID();
 		if (id < idMapping.length && idMapping[id] != null) {
-			throw new IllegalStateException(
-					"Duplicate packet id: " + id);
+			throw new IllegalStateException("Duplicate packet id: " + id);
 		} else {
 			if (id >= idMapping.length) {
-				idMapping =
-						Arrays.copyOf(idMapping.clone(), Math
-								.max(id + 1, idMapping.length));
+				idMapping = Arrays.copyOf(idMapping.clone(),
+						Math.max(id + 1, idMapping.length));
 			}
 			idMapping[id] = pClass;
 		}
@@ -84,13 +82,14 @@ public final class PacketManager {
 	 * Creates an instance of the packet with the specified identification
 	 * number, and returns it.
 	 * 
-	 * @param log the logger for errors
-	 * @param id the packet id to create an instance of
+	 * @param log
+	 *            the logger for errors
+	 * @param id
+	 *            the packet id to create an instance of
 	 * @return the packet instance, or <code>null</code> if the identification
 	 *         number is bad, or there was a problem invoking the method.
 	 */
-	public static Packet getPacket(final PILogger log,
-			final int id) {
+	public static Packet getPacket(final PILogger log, final int id) {
 		try {
 			if (id >= 0 && id < idMapping.length) {
 				Class<? extends Packet> clazz = idMapping[id];
@@ -113,10 +112,13 @@ public final class PacketManager {
 	 * reading the data.
 	 * 
 	 * @see PacketManager#getPacket(PILogger, int)
-	 * @param log the logger for errors
-	 * @param pIn the input stream
+	 * @param log
+	 *            the logger for errors
+	 * @param pIn
+	 *            the input stream
 	 * @return the packet instance
-	 * @throws IOException if the packet identification number was invalid
+	 * @throws IOException
+	 *             if the packet identification number was invalid
 	 */
 	public static Packet getPacket(final PILogger log,
 			final PacketInputStream pIn) throws IOException {

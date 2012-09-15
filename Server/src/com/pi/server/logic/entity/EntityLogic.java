@@ -5,9 +5,9 @@ import java.util.Random;
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.game.entity.Entity;
-import com.pi.common.game.entity.LivingEntity;
+import com.pi.common.game.entity.comp.HealthComponent;
 import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet18Health;
+import com.pi.common.net.packet.Packet18EntityComponent;
 import com.pi.server.Server;
 import com.pi.server.client.Client;
 import com.pi.server.entity.ServerEntity;
@@ -36,11 +36,12 @@ public abstract class EntityLogic {
 	/**
 	 * Creates a logic instance of the given server entity and server.
 	 * 
-	 * @param sSEntity the entity wrapper
-	 * @param sServer the server
+	 * @param sSEntity
+	 *            the entity wrapper
+	 * @param sServer
+	 *            the server
 	 */
-	public EntityLogic(final ServerEntity sSEntity,
-			final Server sServer) {
+	public EntityLogic(final ServerEntity sSEntity, final Server sServer) {
 		this.server = sServer;
 		this.sEntity = sSEntity;
 	}
@@ -85,7 +86,8 @@ public abstract class EntityLogic {
 	 * Try to move the entity in the given direction, or a randomly choosen
 	 * direction from the array.
 	 * 
-	 * @param d the direction(s) to move in
+	 * @param d
+	 *            the direction(s) to move in
 	 * @return if the entity was moved
 	 */
 	protected final boolean tryMove(final Direction... d) {
@@ -96,16 +98,14 @@ public abstract class EntityLogic {
 		int triedDir = -1;
 		if (d.length >= 2) {
 			triedDir = getRandom().nextInt(d.length);
-			if (getEntity().canMoveIn(server.getWorld(),
-					d[triedDir])) {
+			if (getEntity().canMoveIn(server.getWorld(), d[triedDir])) {
 				getEntity().setDir(d[triedDir]);
-				Location curr =
-						new Location(getEntity().x,
-								getEntity().plane, getEntity().z);
+				Location curr = new Location(getEntity().x, getEntity().plane,
+						getEntity().z);
 				sEntity.doTimedMovement();
 				server.getEntityManager().sendEntityMove(
-						getEntity().getEntityID(), curr,
-						getEntity(), d[triedDir]);
+						getEntity().getEntityID(), curr, getEntity(),
+						d[triedDir]);
 				return true;
 			}
 		}
@@ -115,13 +115,11 @@ public abstract class EntityLogic {
 			}
 			if (getEntity().canMoveIn(server.getWorld(), d[i])) {
 				getEntity().setDir(d[i]);
-				Location curr =
-						new Location(getEntity().x,
-								getEntity().plane, getEntity().z);
+				Location curr = new Location(getEntity().x, getEntity().plane,
+						getEntity().z);
 				sEntity.doTimedMovement();
 				server.getEntityManager().sendEntityMove(
-						getEntity().getEntityID(), curr,
-						getEntity(), d[i]);
+						getEntity().getEntityID(), curr, getEntity(), d[i]);
 				return true;
 			}
 		}
@@ -138,7 +136,8 @@ public abstract class EntityLogic {
 	 * all the directions specified by {@link Direction#values()} if on the
 	 * target.
 	 * 
-	 * @param l the target
+	 * @param l
+	 *            the target
 	 * @return the possible directions
 	 */
 	protected final Direction[] getDirectionsTo(final Location l) {
@@ -147,22 +146,14 @@ public abstract class EntityLogic {
 		Direction[] pDirs;
 		if (xDir != 0) {
 			if (zDir != 0) {
-				pDirs =
-						new Direction[] {
-								Direction.getBestDirection(0,
-										zDir),
-								Direction.getBestDirection(xDir,
-										0) };
+				pDirs = new Direction[] { Direction.getBestDirection(0, zDir),
+						Direction.getBestDirection(xDir, 0) };
 			} else {
-				pDirs =
-						new Direction[] { Direction
-								.getBestDirection(xDir, 0) };
+				pDirs = new Direction[] { Direction.getBestDirection(xDir, 0) };
 			}
 		} else {
 			if (zDir != 0) {
-				pDirs =
-						new Direction[] { Direction
-								.getBestDirection(0, zDir) };
+				pDirs = new Direction[] { Direction.getBestDirection(0, zDir) };
 			} else {
 				pDirs = Direction.values();
 			}
@@ -173,7 +164,8 @@ public abstract class EntityLogic {
 	/**
 	 * Moves towards and attacks the given entity.
 	 * 
-	 * @param wrapper the entity to attack
+	 * @param wrapper
+	 *            the entity to attack
 	 */
 	protected final void attack(final ServerEntity wrapper) {
 		Entity eTarget = wrapper.getWrappedEntity();
@@ -190,39 +182,30 @@ public abstract class EntityLogic {
 				// right way
 				if (getEntity().getDir() != pDirs[0]) {
 					getEntity().setDir(pDirs[0]);
-					getServer().getEntityManager()
-							.sendEntityRotate(
-									getEntity().getEntityID(),
-									pDirs[0]);
+					getServer().getEntityManager().sendEntityRotate(
+							getEntity().getEntityID(), pDirs[0]);
 				} else if (!sEntity.isAttacking()) {
 					// Attack!
-					if (eTarget instanceof LivingEntity) {
-						LivingEntity lE = (LivingEntity) eTarget;
-						lE.setHealth(lE.getHealth() - 1);
+					HealthComponent hC = (HealthComponent) eTarget
+							.getComponent(HealthComponent.class);
+					if (hC != null) {
+						hC.setHealth(hC.getHealth() - 1);
 						sEntity.updateAttackTime();
-						wrapper.setAttacker(getEntity()
-								.getEntityID());
+						wrapper.setAttacker(getEntity().getEntityID());
 						// TODO Based on levels and stuff
-						Client attackedClient =
-								getServer()
-										.getClientManager()
-										.getClientByEntity(
-												lE.getEntityID());
-						if (lE.getHealth() <= 0) {
-							getServer()
-									.getEntityManager()
-									.sendEntityDispose(
-											eTarget.getEntityID());
+						Client attackedClient = getServer().getClientManager()
+								.getClientByEntity(eTarget.getEntityID());
+						if (hC.getHealth() <= 0) {
+							getServer().getEntityManager().sendEntityDispose(
+									eTarget.getEntityID());
 							if (attackedClient != null) {
 								attackedClient.onEntityDeath();
 							}
 						} else {
 							if (attackedClient != null) {
-								Packet pack =
-										Packet18Health
-												.create(lE);
-								attackedClient.getNetClient()
-										.send(pack);
+								Packet pack = Packet18EntityComponent.create(
+										eTarget, HealthComponent.class);
+								attackedClient.getNetClient().send(pack);
 							}
 						}
 					}

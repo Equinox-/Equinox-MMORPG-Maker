@@ -1,13 +1,15 @@
 package com.pi.common.net.packet;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
 import com.pi.common.database.world.TileLayer;
 import com.pi.common.game.entity.Entity;
-import com.pi.common.game.entity.EntityType;
-import com.pi.common.game.entity.ItemEntity;
+import com.pi.common.game.entity.comp.EntityComponent;
+import com.pi.common.game.entity.comp.EntityComponentType;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -23,7 +25,7 @@ public class Packet9EntityData extends Packet {
 	public TileLayer layer;
 	public int defID;
 	public int entID;
-	public EntityType eType = EntityType.Normal;
+	public List<EntityComponent> components = new ArrayList<EntityComponent>();
 
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
@@ -32,25 +34,29 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
-		pOut.writeInt(eType.ordinal());
 
 		loc.writeData(pOut);
 		pOut.writeInt(layer.ordinal());
 		pOut.writeInt(defID);
+
+		pOut.writeInt(components.size());
+		EntityComponent comp;
+		for (int i = 0; i < components.size(); i++) {
+			comp = components.get(i);
+			if (comp != null) {
+				pOut.writeByte(1);
+				comp.writeData(pOut);
+			} else {
+				pOut.writeByte(0);
+			}
+		}
 	}
 
 	@Override
-	public final void readData(final PacketInputStream pIn)
-			throws IOException {
+	public final void readData(final PacketInputStream pIn) throws IOException {
 		entID = pIn.readInt();
 		if (loc == null) {
 			loc = new Location();
-		}
-		int type = pIn.readInt();
-		if (type >= 0 && type < EntityType.values().length) {
-			eType = EntityType.values()[type];
-		} else {
-			eType = EntityType.Normal;
 		}
 
 		loc.readData(pIn);
@@ -61,25 +67,40 @@ public class Packet9EntityData extends Packet {
 			layer = TileLayer.MASK1;
 		}
 		defID = pIn.readInt();
+
+		int size = pIn.readInt();
+		components.clear();
+		for (int i = 0; i < size; i++) {
+			if (pIn.readByte() == 1) {
+				components.add(null);
+				try {
+					Class<? extends EntityComponent> clazz = EntityComponentType
+							.getComponentClass(i);
+					EntityComponent comp = clazz.newInstance();
+					components.set(i, comp);
+					comp.readData(pIn);
+				} catch (Exception e) {
+					throw new IOException("Unable to create a component: "
+							+ e.toString());
+				}
+			}
+		}
 	}
 
 	/**
 	 * Create an instance of the entity data packet for the given entity.
 	 * 
-	 * @param e the entity to create a packet for
+	 * @param e
+	 *            the entity to create a packet for
 	 * @return the packet instance
 	 */
 	public static Packet9EntityData create(final Entity e) {
 		Packet9EntityData pack = new Packet9EntityData();
-		if (e instanceof ItemEntity) {
-			pack.defID = ((ItemEntity) e).getItem();
-		} else {
-			pack.defID = e.getEntityDef();
-		}
+		pack.defID = e.getEntityDef();
 		pack.entID = e.getEntityID();
 		pack.layer = e.getLayer();
 		pack.loc = e;
-		pack.eType = EntityType.getEntityType(e);
+		pack.components = e.getComponents();
 		return pack;
 	}
 
@@ -88,6 +109,15 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
-		return (4 * SizeOf.INT) + loc.getLength();
+		int size = (4 * SizeOf.INT) + loc.getLength()
+				+ (SizeOf.BYTE * components.size());
+		EntityComponent comp;
+		for (int i = 0; i < components.size(); i++) {
+			comp = components.get(i);
+			if (comp != null) {
+				size += comp.getLength();
+			}
+		}
+		return size;
 	}
 }

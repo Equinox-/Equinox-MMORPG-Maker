@@ -8,7 +8,7 @@ import com.pi.client.ClientThread;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.contants.Direction;
 import com.pi.common.contants.EntityConstants;
-import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet19Attack;
@@ -68,9 +68,9 @@ public class EventLoop extends ClientThread implements
 							.getEntityLoader()
 							.getDef(cEnt.getWrappedEntity()
 									.getEntityDef());
-			if (eDef != null) {
-				timeToAttack = eDef.getAttackSpeed();
-			}
+			//if (eDef != null) {
+			//	timeToAttack = eDef.getAttackSpeed();
+			//}
 			if (keyState[KeyEvent.VK_CONTROL]
 					&& System.currentTimeMillis() >= lastAttackTime
 							+ timeToAttack) {

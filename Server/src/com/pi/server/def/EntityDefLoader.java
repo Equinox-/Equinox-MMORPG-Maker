@@ -2,7 +2,7 @@ package com.pi.server.def;
 
 import java.io.File;
 
-import com.pi.common.database.def.EntityDef;
+import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.net.packet.Packet13EntityDef;
 import com.pi.server.Server;

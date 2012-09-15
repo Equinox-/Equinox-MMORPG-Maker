@@ -1,3 +1,6 @@
+Server/equinox-server/log/*
+Server/equinox-server/database/accounts.db
+
 #################
 ## Eclipse
 #################

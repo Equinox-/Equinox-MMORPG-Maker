@@ -78,7 +78,7 @@ public class AggressiveEntityLogic extends RandomEntityLogic {
 			}
 		} else {
 			ServerEntity wrapper =
-					getServer().getEntityManager().getEntity(
+					getServer().getEntityManager().getEntityContainer(
 							this.target);
 			if (wrapper != null) {
 				attack(wrapper);
