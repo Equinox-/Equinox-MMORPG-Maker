@@ -6,10 +6,7 @@ import com.pi.common.contants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.HealthComponent;
-import com.pi.common.net.packet.Packet;
-import com.pi.common.net.packet.Packet18EntityComponent;
 import com.pi.server.Server;
-import com.pi.server.client.Client;
 import com.pi.server.entity.ServerEntity;
 
 /**
@@ -189,25 +186,8 @@ public abstract class EntityLogic {
 					HealthComponent hC = (HealthComponent) eTarget
 							.getComponent(HealthComponent.class);
 					if (hC != null) {
-						hC.setHealth(hC.getHealth() - 1);
-						sEntity.updateAttackTime();
-						wrapper.setAttacker(getEntity().getEntityID());
-						// TODO Based on levels and stuff
-						Client attackedClient = getServer().getClientManager()
-								.getClientByEntity(eTarget.getEntityID());
-						if (hC.getHealth() <= 0) {
-							getServer().getEntityManager().sendEntityDispose(
-									eTarget.getEntityID());
-							if (attackedClient != null) {
-								attackedClient.onEntityDeath();
-							}
-						} else {
-							if (attackedClient != null) {
-								Packet pack = Packet18EntityComponent.create(
-										eTarget, HealthComponent.class);
-								attackedClient.getNetClient().send(pack);
-							}
-						}
+						server.getLogic().getCombatLogic()
+								.entityAttackEntity(getServerEntity(), wrapper);
 					}
 				}
 			}

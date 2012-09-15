@@ -11,7 +11,7 @@ import com.pi.common.contants.EntityConstants;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
-import com.pi.common.net.packet.Packet19Attack;
+import com.pi.common.net.packet.Packet19Interact;
 
 /**
  * The event processor loop.
@@ -75,7 +75,7 @@ public class EventLoop extends ClientThread implements
 					&& System.currentTimeMillis() >= lastAttackTime
 							+ timeToAttack) {
 				getClient().getNetwork().send(
-						new Packet19Attack());
+						new Packet19Interact());
 				lastAttackTime = System.currentTimeMillis();
 			}
 			if (dir != null && !cEnt.isMoving()) {

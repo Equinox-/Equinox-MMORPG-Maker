@@ -40,7 +40,7 @@ public final class PacketManager {
 			registerPacket(Packet16EntityMove.class);
 			registerPacket(Packet17Clock.class);
 			registerPacket(Packet18EntityComponent.class);
-			registerPacket(Packet19Attack.class);
+			registerPacket(Packet19Interact.class);
 			registerPacket(Packet20EntityAttack.class);
 			registerPacket(Packet21EntityFace.class);
 			registerPacket(Packet22ItemDefRequest.class);

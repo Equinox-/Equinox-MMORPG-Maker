@@ -127,8 +127,7 @@ public class Server {
 		rcView = new PIResourceViewer("Server");
 		PILoggerPane pn = new PILoggerPane();
 		rcView.addTab("Logger", pn);
-		rcView.addTab("Threads", new ThreadMonitorPanel(
-				serverThreads));
+		rcView.addTab("Threads", new ThreadMonitorPanel(serverThreads));
 		rcView.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		rcView.addWindowListener(new WindowAdapter() {
 			@Override
@@ -136,33 +135,28 @@ public class Server {
 				dispose();
 			}
 		});
-		log =
-				new PILogger(pn.getLogOutput(),
-						Paths.getLogFile());
+		log = new PILogger(pn.getLogOutput(), Paths.getLogFile());
 
 		entityManager = new ServerEntityManager(this);
 		rcView.addTab("Entities", new EntityMonitorPanel(this));
 		clientManager = new ClientManager();
 		database = new ServerDatabase(this);
 		try {
-			network =
-					new NetServer(this,
-							ServerConstants.NETWORK_PORT);
-			rcView.addTab("Network Clients",
-					new ClientMonitorPanel(clientManager));
+			network = new NetServer(this, ServerConstants.NETWORK_PORT);
+			rcView.addTab("Network Clients", new ClientMonitorPanel(
+					clientManager));
 			world = new SectorManager(this);
-			rcView.addTab("Sectors", new SectorMonitorPanel(
-					world));
+			rcView.addTab("Sectors", new SectorMonitorPanel(world));
 			defs = new Definitions(this);
 
 			sLogic = new ServerLogic(this);
 			sLogic.start();
 
-			entityManager.spawnEntity(defs.getEntityLoader()
-					.getDef(1), new Location());
+			entityManager.spawnEntity(defs.getEntityLoader().getDef(1),
+					new Location());
 
-			//entityManager.spawnItemEntity(0, new Location(5, 0,
-			//		5));
+			// entityManager.spawnItemEntity(0, new Location(5, 0,
+			// 5));
 
 		} catch (BindException e1) {
 			dispose();
@@ -210,7 +204,8 @@ public class Server {
 	/**
 	 * Launches the default server instance.
 	 * 
-	 * @param args unused
+	 * @param args
+	 *            unused
 	 */
 	public static void main(final String[] args) {
 		new Server();
@@ -250,5 +245,9 @@ public class Server {
 	 */
 	public final boolean isNetworkConnected() {
 		return network.isConnected();
+	}
+
+	public final ServerLogic getLogic() {
+		return sLogic;
 	}
 }

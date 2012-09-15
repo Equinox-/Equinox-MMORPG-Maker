@@ -18,8 +18,7 @@ import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet15GameState;
 import com.pi.common.net.packet.Packet16EntityMove;
 import com.pi.common.net.packet.Packet17Clock;
-import com.pi.common.net.packet.Packet18EntityComponent;
-import com.pi.common.net.packet.Packet19Attack;
+import com.pi.common.net.packet.Packet19Interact;
 import com.pi.common.net.packet.Packet1Login;
 import com.pi.common.net.packet.Packet22ItemDefRequest;
 import com.pi.common.net.packet.Packet2Alert;
@@ -207,7 +206,7 @@ public class NetServerHandler extends NetHandler {
 	 * @param p
 	 *            the packet
 	 */
-	public final void process(final Packet19Attack p) {
+	public final void process(final Packet19Interact p) {
 		Client cli = server.getClientManager().getClient(netClient.getID());
 		if (cli != null && cli.getEntity() != null) {
 			ServerEntity sE = server.getEntityManager().getEntityContainer(
@@ -227,29 +226,8 @@ public class NetServerHandler extends NetHandler {
 							.getWrappedEntity().getComponent(
 									HealthComponent.class);
 					if (lC != null) {
-						lC.setHealth(lC.getHealth() - 1);
-						sE.updateAttackTime();
-						ent.setAttacker(cli.getEntity().getEntityID());
-						// TODO Based on levels and stuff
-						Client attackedClient = server.getClientManager()
-								.getClientByEntity(
-										ent.getWrappedEntity().getEntityID());
-						if (lC.getHealth() <= 0) {
-							server.getEntityManager().sendEntityDispose(
-									ent.getWrappedEntity().getEntityID());
-							if (attackedClient != null) {
-								attackedClient.onEntityDeath();
-							}
-						} else {
-							Packet pack = Packet18EntityComponent.create(
-									ent.getWrappedEntity(),
-									HealthComponent.class);
-							netClient.send(pack);
-							if (attackedClient != null) {
-								attackedClient.getNetClient().send(pack);
-							}
-						}
-						break;
+						server.getLogic().getCombatLogic()
+								.entityAttackEntity(sE, ent);
 					}
 				}
 			}

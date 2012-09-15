@@ -16,6 +16,7 @@ import com.pi.server.logic.entity.EntityLogic;
  * 
  */
 public class ServerLogic extends ServerThread {
+	private final CombatLogic combatLogic;
 
 	/**
 	 * Creates a server logic instance for the given server.
@@ -25,6 +26,7 @@ public class ServerLogic extends ServerThread {
 	 */
 	public ServerLogic(final Server server) {
 		super(server);
+		this.combatLogic = new CombatLogic(server);
 	}
 
 	@Override
@@ -83,5 +85,9 @@ public class ServerLogic extends ServerThread {
 			}
 		}
 		return null;
+	}
+
+	public CombatLogic getCombatLogic() {
+		return combatLogic;
 	}
 }
