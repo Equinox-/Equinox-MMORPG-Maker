@@ -1,9 +1,8 @@
 package com.pi.common.game.entity;
 
 import java.util.Iterator;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
+import com.pi.common.IDAllocator;
 import com.pi.common.database.Location;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.def.entity.EntityDefComponent;
@@ -19,12 +18,40 @@ public abstract class EntityManager<E extends EntityContainer> {
 	 */
 	private final ObjectHeap<E> entityMap = new ObjectHeap<E>();
 
+	/**
+	 * The ID Allocator object used to handle entity spawning, and also entity
+	 * disposing.
+	 */
 	private IDAllocator idAllocator = new IDAllocator();
 
+	/**
+	 * Creates a new entity container to store the provided entity.
+	 * 
+	 * @param entity
+	 *            the entity to store
+	 * @return an entity container with the provided entity
+	 */
 	protected abstract E createEntityContainer(final Entity entity);
 
+	/**
+	 * Spawns an entity specified by the definition at the specified location.
+	 * 
+	 * More specifically, this first creates a new entity with an ID obtained
+	 * from the {@link #idAllocator} and the given definition's ID number. It
+	 * then sets the entity's location, and loops through all of the defintion's
+	 * components, and attempts to add the {@link EntityComponent} they produce
+	 * to the created entity. The last thing it does is store the entity
+	 * container created by {@link #createEntityContainer(Entity)} in this
+	 * manager and return.
+	 * 
+	 * @param def
+	 *            the definition to use when creating the entity
+	 * @param l
+	 *            the location to spawn the entity at
+	 * @return the entity that was spawned.
+	 */
 	public Entity spawnEntity(EntityDef def, Location l) {
-		Entity ent = new Entity(this, idAllocator.checkOut(), def.getDefID());
+		Entity ent = new Entity(idAllocator.checkOut(), def.getDefID());
 		ent.setLocation(l);
 		for (EntityDefComponent d : def.getComponents()) {
 			EntityComponent dC = d.createDefaultComponent();
@@ -32,29 +59,70 @@ public abstract class EntityManager<E extends EntityContainer> {
 				ent.addEntityComponent(dC);
 			}
 		}
-		entityMap.set(ent.getID(), createEntityContainer(ent));
+		entityMap.set(ent.getEntityID(), createEntityContainer(ent));
 		return ent;
 	}
 
+	/**
+	 * Spawns an entity specified by the definition ID at the specified
+	 * location, with the provided entity components.
+	 * 
+	 * More specifically, this first creates a new entity with an ID obtained
+	 * from the {@link #idAllocator} and the given definition ID number. It then
+	 * sets the entity's location, and loops through all of the provided
+	 * components, and attempts to add them to the created entity. The last
+	 * thing it does is store the entity container created by
+	 * {@link #createEntityContainer(Entity)} in this manager and return.
+	 * 
+	 * @param def
+	 *            the definition ID to use when creating the entity
+	 * @param l
+	 *            the location to spawn the entity at
+	 * @param comps
+	 *            the entity components to spawn the entity with
+	 * @return the entity that was spawned.
+	 */
 	public Entity spawnEntity(int def, Location l, EntityComponent... comps) {
-		Entity ent = new Entity(this, idAllocator.checkOut(), def);
+		Entity ent = new Entity(idAllocator.checkOut(), def);
 		ent.setLocation(l);
 		for (EntityComponent c : comps) {
 			if (c != null) {
 				ent.addEntityComponent(c);
 			}
 		}
-		entityMap.set(ent.getID(), createEntityContainer(ent));
+		entityMap.set(ent.getEntityID(), createEntityContainer(ent));
 		return ent;
 	}
 
+	/**
+	 * Forces an entity to spawn with the given entity ID, definition, location,
+	 * and components.
+	 * 
+	 * More specifically, this first checks to see if the entity is already
+	 * stored for the given ID number and disposes it. It then creates a new
+	 * entity with the given ID and definition ID number. After doing so it sets
+	 * the entity's location, and loops through all of the provided components,
+	 * and attempts to add them to the created entity. The last thing it does is
+	 * store the entity container created by
+	 * {@link #createEntityContainer(Entity)} in this manager and return.
+	 * 
+	 * @param entityID
+	 *            the entity ID to force this entity to have
+	 * @param def
+	 *            the definition ID to use when creating the entity
+	 * @param l
+	 *            the location to spawn the entity at
+	 * @param comps
+	 *            the entity components to spawn the entity with
+	 * @return the entity that was spawned.
+	 */
 	public Entity forceSpawnEntity(int entityID, int def, Location l,
 			EntityComponent... comps) {
 		E curr = entityMap.get(entityID);
 		if (curr != null) {
 			curr.getWrappedEntity().checkIn();
 		}
-		Entity ent = new Entity(this, entityID, def);
+		Entity ent = new Entity(entityID, def);
 		ent.setLocation(l);
 		for (EntityComponent c : comps) {
 			if (c != null) {
@@ -65,6 +133,16 @@ public abstract class EntityManager<E extends EntityContainer> {
 		return ent;
 	}
 
+	/**
+	 * Removes the entity with the given ID from the data map, checks it's ID
+	 * into the {@link #idAllocator}, and also changes the entity's ID to
+	 * <code>-1</code> to signify it is no longer registered.
+	 * 
+	 * @param id
+	 *            the entity ID to dispose
+	 * @return the container of the disposed entity, or <code>null</code> if no
+	 *         entity was disposed
+	 */
 	public E deRegisterEntity(int id) {
 		E ent = entityMap.remove(id);
 		if (ent != null) {
@@ -72,6 +150,21 @@ public abstract class EntityManager<E extends EntityContainer> {
 			ent.getWrappedEntity().checkIn();
 		}
 		return ent;
+	}
+
+	/**
+	 * Removes the given entity from the data map, checks it's ID into the
+	 * {@link #idAllocator}, and also changes the entity's ID to <code>-1</code>
+	 * to signify it is no longer registered.
+	 * 
+	 * @param e
+	 *            the entity to dispose
+	 * @return the container of the disposed entity, or <code>null</code> if no
+	 *         entity was disposed
+	 * @see #deRegisterEntity(int)
+	 */
+	public E deRegisterEntity(Entity e) {
+		return deRegisterEntity(e.getEntityID());
 	}
 
 	/**
@@ -86,10 +179,24 @@ public abstract class EntityManager<E extends EntityContainer> {
 		return entityMap.get(id) != null;
 	}
 
+	/**
+	 * Gets the entity container registered with the given ID number.
+	 * 
+	 * @param id
+	 *            the ID number to fetch
+	 * @return the entity container, or <code>null</code> if none exists
+	 */
 	public E getEntityContainer(int id) {
 		return entityMap.get(id);
 	}
 
+	/**
+	 * Gets the entity registered with the given ID number.
+	 * 
+	 * @param id
+	 *            the ID number to fetch
+	 * @return the entity, or <code>null</code> if none exists
+	 */
 	public Entity getEntity(int id) {
 		E container = getEntityContainer(id);
 		if (container != null) {
@@ -98,10 +205,14 @@ public abstract class EntityManager<E extends EntityContainer> {
 		return null;
 	}
 
-	public E deRegisterEntity(Entity e) {
-		return deRegisterEntity(e.getID());
-	}
-
+	/**
+	 * Creates a filtered iterator that will provide only entities that have the
+	 * given component stored in them.
+	 * 
+	 * @param comp
+	 *            the component to require
+	 * @return a filtered iterator
+	 */
 	public final Iterator<E> getEntitiesWithType(
 			final Class<? extends EntityComponent> comp) {
 		return new FilteredIterator<E>(getEntities(), new Filter<E>() {
@@ -112,12 +223,21 @@ public abstract class EntityManager<E extends EntityContainer> {
 		});
 	}
 
-	public final Iterator<E> getEntitiesWithType(final int... compIDs) {
+	/**
+	 * Creates a filtered iterator that will provide only entities that have all
+	 * the given components stored in them.
+	 * 
+	 * @param comps
+	 *            the components to require
+	 * @return a filtered iterator
+	 */
+	public final Iterator<E> getEntitiesWithType(
+			final Class<? extends EntityComponent>... comps) {
 		return new FilteredIterator<E>(getEntities(), new Filter<E>() {
 			@Override
 			public boolean accept(final E e) {
-				for (int id : compIDs) {
-					if (e.getWrappedEntity().getComponent(id) == null) {
+				for (Class<? extends EntityComponent> comp : comps) {
+					if (e.getWrappedEntity().getComponent(comp) == null) {
 						return false;
 					}
 				}
@@ -197,27 +317,10 @@ public abstract class EntityManager<E extends EntityContainer> {
 		return entityMap.iterator();
 	}
 
+	/**
+	 * The entity storage heap.
+	 */
 	protected ObjectHeap<E> getEntityMap() {
 		return entityMap;
-	}
-
-	private static class IDAllocator {
-		private Queue<Integer> availableIDs = new LinkedBlockingQueue<Integer>();
-		private int ID = 0;
-
-		public int checkOut() {
-			if (availableIDs.size() > 0) {
-				return availableIDs.poll();
-			}
-			return ID++;
-		}
-
-		public void checkIn(int id) {
-			if (id == ID - 1) {
-				ID--;
-			} else {
-				availableIDs.add(id);
-			}
-		}
 	}
 }

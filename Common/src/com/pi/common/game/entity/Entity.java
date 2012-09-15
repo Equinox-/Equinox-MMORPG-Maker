@@ -40,10 +40,6 @@ public class Entity extends Location {
 	 * The extra entity data this entity contains.
 	 */
 	private ArrayList<EntityComponent> components;
-	/**
-	 * The entity manager responsible for this entity.
-	 */
-	private final EntityManager<? extends EntityContainer> manager;
 
 	/**
 	 * Create an entity with the given definition.
@@ -52,12 +48,9 @@ public class Entity extends Location {
 	 *            the definition to use.
 	 * @param eID
 	 *            the entity ID
-	 * @param mgr
-	 *            the entity manager responsible for this entity
 	 */
-	Entity(final EntityManager<? extends EntityContainer> mgr, final int eID,
-			final int def) {
-		this(mgr, eID);
+	Entity(final int eID, final int def) {
+		this(eID);
 		this.defID = def;
 	}
 
@@ -66,12 +59,9 @@ public class Entity extends Location {
 	 * 
 	 * @param eID
 	 *            the entity ID
-	 * @param mgr
-	 *            the entity manager responsible for this entity
 	 */
-	Entity(final EntityManager<? extends EntityContainer> mgr, final int eID) {
+	Entity(final int eID) {
 		this.entityID = eID;
-		this.manager = mgr;
 		this.components = new ArrayList<EntityComponent>(0);
 	}
 
@@ -238,6 +228,14 @@ public class Entity extends Location {
 		return canMoveIn(sec, getDir());
 	}
 
+	/**
+	 * Gets the entity component with the given ID number.
+	 * 
+	 * @see EntityComponentType#getComponentID(Class)
+	 * @param id
+	 *            the component's ID number
+	 * @return the entity component, or <code>null</code> if one doesn't exist
+	 */
 	public EntityComponent getComponent(int id) {
 		if (id >= 0 && id < components.size()) {
 			return components.get(id);
@@ -245,44 +243,87 @@ public class Entity extends Location {
 		return null;
 	}
 
+	/**
+	 * Gets the entity component with the given class.
+	 * 
+	 * @see EntityComponentType#getComponentID(Class)
+	 * @param clazz
+	 *            the component's class
+	 * @return the entity component, or <code>null</code> if one doesn't exist
+	 */
 	public EntityComponent getComponent(Class<? extends EntityComponent> clazz) {
 		int id = EntityComponentType.getComponentID(clazz);
 		return getComponent(id);
 	}
 
+	/**
+	 * Utility method to ensure that the component heap can store at least
+	 * <code>i</code> items.
+	 * 
+	 * @param i
+	 *            the ending size
+	 */
 	private void ensureCapacity(int i) {
 		components.ensureCapacity(i);
-		while (components.size() < i) {
+		while (components.size() <= i) {
 			components.add(null);
 		}
 	}
 
+	/**
+	 * Adds all of the given entity components to this entity, overwriting ones
+	 * that already exist.
+	 * 
+	 * @param comps
+	 *            the entity components to add
+	 */
 	public void addEntityComponents(EntityComponent[] comps) {
 		for (EntityComponent c : comps) {
 			addEntityComponent(c);
 		}
 	}
 
+	/**
+	 * Adds the given entity component to this entity, overwriting ones that
+	 * already exist.
+	 * 
+	 * @param comp
+	 *            the entity component to set
+	 */
 	public void addEntityComponent(EntityComponent comp) {
-		int id = EntityComponentType.getComponentID(comp.getClass());
-		if (id >= 0) {
-			ensureCapacity(id + 1);
-			components.set(id, comp);
+		if (comp != null) {
+			int id = EntityComponentType.getComponentID(comp.getClass());
+			if (id >= 0) {
+				ensureCapacity(id + 1);
+				components.set(id, comp);
+			}
 		}
 	}
 
-	public int getID() {
-		return entityID;
-	}
-
+	/**
+	 * Sets this entity's ID to <code>-1</code> thus marking this entity as not
+	 * managed by any entity manager.
+	 */
 	void checkIn() {
 		entityID = -1;
 	}
 
+	/**
+	 * Gets all the components this entity currently has.
+	 * 
+	 * @return the component list
+	 */
 	public ArrayList<EntityComponent> getComponents() {
 		return components;
 	}
 
+	/**
+	 * Sets the current entity components by first clearing the list, then
+	 * adding the provided components.
+	 * 
+	 * @param components
+	 *            the components to add
+	 */
 	public void setComponents(EntityComponent[] components) {
 		this.components.clear();
 		addEntityComponents(components);

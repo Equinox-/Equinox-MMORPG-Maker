@@ -68,25 +68,29 @@ public class Packet18EntityComponent extends Packet {
 	}
 
 	/**
-	 * Creates a packet health packet for the given entity.
+	 * Creates a entity component update for the given entity.
 	 * 
 	 * @param lE
 	 *            the entity
+	 * @param component
+	 *            the component type to use
 	 * @return the created packet
 	 */
 	public static Packet18EntityComponent create(final Entity lE,
 			final Class<? extends EntityComponent> component) {
 		Packet18EntityComponent p = new Packet18EntityComponent();
-		p.entityID = lE.getID();
+		p.entityID = lE.getEntityID();
 		p.eComp = lE.getComponent(component);
 		return p;
 	}
 
 	/**
-	 * Creates a packet health packet for the given entity.
+	 * Creates a entity component update for the given entity.
 	 * 
 	 * @param lE
 	 *            the entity
+	 * @param component
+	 *            the component to use
 	 * @return the created packet
 	 */
 	public static Packet18EntityComponent create(final int entity,
