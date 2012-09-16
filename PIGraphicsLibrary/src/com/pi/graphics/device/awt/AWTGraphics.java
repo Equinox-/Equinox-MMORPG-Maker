@@ -14,7 +14,7 @@ import java.awt.image.RescaleOp;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
 import com.pi.graphics.device.IGraphics;

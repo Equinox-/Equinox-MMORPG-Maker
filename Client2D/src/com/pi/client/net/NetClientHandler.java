@@ -7,6 +7,7 @@ import com.pi.common.database.world.SectorLocation;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.EntityComponent;
+import com.pi.common.game.entity.comp.EntityComponentType;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Handshake;
@@ -189,13 +190,15 @@ public class NetClientHandler extends NetHandler {
 					p.entID,
 					p.defID,
 					p.loc,
-					p.components.toArray(new EntityComponent[p.components
-							.size()]));
+					p.components
+							.toArray(new EntityComponent[EntityComponentType
+									.getComponentCount()]));
 			ent.setLayer(p.layer);
 		} else {
 			cEnt.getWrappedEntity().setComponents(
-					p.components.toArray(new EntityComponent[p.components
-							.size()]));
+					p.components
+							.toArray(new EntityComponent[EntityComponentType
+									.getComponentCount()]));
 			cEnt.getWrappedEntity().setLayer(p.layer);
 			cEnt.getWrappedEntity().setLocation(p.loc);
 			cEnt.getWrappedEntity().setEntityDef(p.defID);
@@ -211,6 +214,10 @@ public class NetClientHandler extends NetHandler {
 	public final void process(final Packet11LocalEntityID p) {
 		client.getLog().info("LocalID: " + p.entityID);
 		client.getEntityManager().setLocalEntityID(p.entityID);
+
+		if (client.getEntityManager().getLocalEntity() == null) {
+			netClient.send(Packet10EntityDataRequest.create(p.entityID));
+		}
 	}
 
 	/**

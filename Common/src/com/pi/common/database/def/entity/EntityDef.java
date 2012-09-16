@@ -1,12 +1,12 @@
 package com.pi.common.database.def.entity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * The class representing an entity's definition.
@@ -27,7 +27,7 @@ public class EntityDef extends GraphicsObject {
 	/**
 	 * The extra entity data this entity definition contains.
 	 */
-	private ArrayList<EntityDefComponent> components;
+	private ObjectHeap<EntityDefComponent> components;
 
 	/**
 	 * Creates an entity definition with the given identification number.
@@ -37,7 +37,8 @@ public class EntityDef extends GraphicsObject {
 	 */
 	public EntityDef(final int eDefID) {
 		this.defID = eDefID;
-		components = new ArrayList<EntityDefComponent>(0);
+		components = new ObjectHeap<EntityDefComponent>(
+				EntityDefComponentType.getComponentCount(), true);
 	}
 
 	/**
@@ -73,9 +74,8 @@ public class EntityDef extends GraphicsObject {
 			throws IOException {
 		super.writeData(pOut);
 		pOut.writeInt(horizFrames);
-		pOut.writeInt(components.size());
 		EntityDefComponent comp;
-		for (int i = 0; i < components.size(); i++) {
+		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				pOut.writeByte(1);
@@ -91,11 +91,8 @@ public class EntityDef extends GraphicsObject {
 		super.readData(pIn);
 		horizFrames = pIn.readInt();
 
-		int size = pIn.readInt();
-		components.clear();
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
 			if (pIn.readByte() == 1) {
-				components.add(null);
 				try {
 					Class<? extends EntityDefComponent> clazz = EntityDefComponentType
 							.getComponentClass(i);
@@ -106,16 +103,18 @@ public class EntityDef extends GraphicsObject {
 					throw new IOException("Unable to create a component: "
 							+ e.toString());
 				}
+			} else {
+				components.set(i, null);
 			}
 		}
 	}
 
 	@Override
 	public final int getLength() {
-		int size = super.getLength() + (2 * SizeOf.INT)
-				+ (SizeOf.BYTE * components.size());
+		int size = super.getLength() + SizeOf.INT
+				+ (SizeOf.BYTE * EntityDefComponentType.getComponentCount());
 		EntityDefComponent comp;
-		for (int i = 0; i < components.size(); i++) {
+		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				size += comp.getLength();
@@ -125,23 +124,13 @@ public class EntityDef extends GraphicsObject {
 	}
 
 	public EntityDefComponent getComponent(int id) {
-		if (id >= 0 && id < components.size()) {
-			return components.get(id);
-		}
-		return null;
+		return components.get(id);
 	}
 
 	public EntityDefComponent getComponent(
 			Class<? extends EntityDefComponent> clazz) {
 		int id = EntityDefComponentType.getComponentID(clazz);
 		return getComponent(id);
-	}
-
-	private void ensureCapacity(int i) {
-		components.ensureCapacity(i);
-		while (components.size() < i) {
-			components.add(null);
-		}
 	}
 
 	public void addEntityDefComponents(EntityDefComponent[] comps) {
@@ -153,17 +142,18 @@ public class EntityDef extends GraphicsObject {
 	public void addEntityDefComponent(EntityDefComponent comp) {
 		int id = EntityDefComponentType.getComponentID(comp.getClass());
 		if (id >= 0) {
-			ensureCapacity(id + 1);
 			components.set(id, comp);
 		}
 	}
 
-	public ArrayList<EntityDefComponent> getComponents() {
+	public ObjectHeap<EntityDefComponent> getComponents() {
 		return components;
 	}
 
 	public void setComponents(EntityDefComponent[] components) {
-		this.components.clear();
+		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
+			this.components.set(i, null);
+		}
 		addEntityDefComponents(components);
 	}
 }

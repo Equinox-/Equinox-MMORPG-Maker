@@ -57,4 +57,8 @@ public class EntityComponentType {
 			this.clazz = clazz;
 		}
 	}
+
+	public static int getComponentCount() {
+		return componentById.size();
+	}
 }

@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.util;
 
 /**
  * General purpose interface for filtering abstract objects.

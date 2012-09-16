@@ -1,7 +1,5 @@
 package com.pi.common.game.entity;
 
-import java.util.ArrayList;
-
 import com.pi.common.contants.Direction;
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileFlags;
@@ -11,6 +9,7 @@ import com.pi.common.database.world.Tile;
 import com.pi.common.database.world.TileLayer;
 import com.pi.common.game.entity.comp.EntityComponent;
 import com.pi.common.game.entity.comp.EntityComponentType;
+import com.pi.common.util.ObjectHeap;
 import com.pi.common.world.SectorManager;
 
 /**
@@ -39,7 +38,7 @@ public class Entity extends Location {
 	/**
 	 * The extra entity data this entity contains.
 	 */
-	private ArrayList<EntityComponent> components;
+	private ObjectHeap<EntityComponent> components;
 
 	/**
 	 * Create an entity with the given definition.
@@ -62,7 +61,8 @@ public class Entity extends Location {
 	 */
 	Entity(final int eID) {
 		this.entityID = eID;
-		this.components = new ArrayList<EntityComponent>(0);
+		this.components = new ObjectHeap<EntityComponent>(
+				EntityComponentType.getComponentCount(), true);
 	}
 
 	/**
@@ -237,10 +237,7 @@ public class Entity extends Location {
 	 * @return the entity component, or <code>null</code> if one doesn't exist
 	 */
 	public EntityComponent getComponent(int id) {
-		if (id >= 0 && id < components.size()) {
-			return components.get(id);
-		}
-		return null;
+		return components.get(id);
 	}
 
 	/**
@@ -254,20 +251,6 @@ public class Entity extends Location {
 	public EntityComponent getComponent(Class<? extends EntityComponent> clazz) {
 		int id = EntityComponentType.getComponentID(clazz);
 		return getComponent(id);
-	}
-
-	/**
-	 * Utility method to ensure that the component heap can store at least
-	 * <code>i</code> items.
-	 * 
-	 * @param i
-	 *            the ending size
-	 */
-	private void ensureCapacity(int i) {
-		components.ensureCapacity(i);
-		while (components.size() <= i) {
-			components.add(null);
-		}
 	}
 
 	/**
@@ -294,7 +277,6 @@ public class Entity extends Location {
 		if (comp != null) {
 			int id = EntityComponentType.getComponentID(comp.getClass());
 			if (id >= 0) {
-				ensureCapacity(id + 1);
 				components.set(id, comp);
 			}
 		}
@@ -313,7 +295,7 @@ public class Entity extends Location {
 	 * 
 	 * @return the component list
 	 */
-	public ArrayList<EntityComponent> getComponents() {
+	public ObjectHeap<EntityComponent> getComponents() {
 		return components;
 	}
 
@@ -325,7 +307,9 @@ public class Entity extends Location {
 	 *            the components to add
 	 */
 	public void setComponents(EntityComponent[] components) {
-		this.components.clear();
+		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
+			this.components.set(i, null);
+		}
 		addEntityComponents(components);
 	}
 }

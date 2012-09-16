@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import com.pi.common.database.GraphicsObject;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * Abstract class that graphics modes must extend.

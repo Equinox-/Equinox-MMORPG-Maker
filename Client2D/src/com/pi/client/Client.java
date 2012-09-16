@@ -17,12 +17,12 @@ import com.pi.client.gui.mainmenu.MainMenu;
 import com.pi.client.net.ClientNetwork;
 import com.pi.client.world.SectorManager;
 import com.pi.common.Disposable;
+import com.pi.common.contants.GameState;
 import com.pi.common.debug.PILogger;
 import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
-import com.pi.common.game.GameState;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.gui.GUIKit;
@@ -110,7 +110,7 @@ public class Client implements Disposable, DeviceRegistration {
 	/**
 	 * Enum for setting the current game state.
 	 * 
-	 * @see com.pi.common.game.GameState
+	 * @see com.pi.common.contants.GameState
 	 */
 	private GameState gameState = GameState.LOADING;
 	// GUI End
@@ -325,7 +325,7 @@ public class Client implements Disposable, DeviceRegistration {
 	/**
 	 * Gets the current state of the game.
 	 * 
-	 * @see com.pi.common.game.GameState
+	 * @see com.pi.common.contants.GameState
 	 * @return the current game state
 	 */
 	public final GameState getGameState() {

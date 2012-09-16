@@ -24,8 +24,12 @@ public class CombatLogic {
 		Client attackedClient = server.getClientManager().getClientByEntity(
 				target.getWrappedEntity().getEntityID());
 		Client attackingClient = server.getClientManager().getClientByEntity(
-				target.getWrappedEntity().getEntityID());
+				attacker.getWrappedEntity().getEntityID());
 		if (targetHealth.getHealth() <= 0) {
+			if (attacker.getAttacker() == target.getWrappedEntity()
+					.getEntityID()) {
+				attacker.removeAttacker();
+			}
 			server.getEntityManager().sendEntityDispose(
 					target.getWrappedEntity().getEntityID());
 			if (attackedClient != null) {

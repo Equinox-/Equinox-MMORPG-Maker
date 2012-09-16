@@ -7,9 +7,9 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import com.pi.common.database.def.entity.EntityDef;
-import com.pi.common.database.def.entity.LogicDefComponent;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.game.entity.Entity;
+import com.pi.common.game.entity.comp.EntityComponent;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 
@@ -55,7 +55,7 @@ public class EntityMonitorPanel extends JPanel {
 		 * The names of the columns.
 		 */
 		private static final String[] COLUMN_NAMES = { "ID", "X", "Plane", "Z",
-				"Layer", "Dir", "Def" };
+				"Layer", "Dir", "Components" };
 		/**
 		 * The classes of the column.
 		 */
@@ -119,14 +119,17 @@ public class EntityMonitorPanel extends JPanel {
 				case 5:
 					return ent.getDir() + "";
 				case 6:
-					return ent.getEntityDef();
+					//return ent.getEntityDef();
 				case 7:
-					if (def != null) {
-						return Boolean.toString(def
-								.getComponent(LogicDefComponent.class) != null);
-					} else {
-						return "No Def";
+					StringBuilder b = new StringBuilder();
+					for (EntityComponent c : ent.getComponents()) {
+						if (c != null) {
+							b.append(c.getClass().getSimpleName()
+									.replace("Entity", "")
+									.replace("Component", ""));
+						}
 					}
+					return b.toString();
 				default:
 					return "";
 				}

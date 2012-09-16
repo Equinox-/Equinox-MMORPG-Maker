@@ -3,11 +3,11 @@ package com.pi.server.net;
 import java.util.Iterator;
 
 import com.pi.common.contants.Direction;
+import com.pi.common.contants.GameState;
 import com.pi.common.database.Account;
 import com.pi.common.database.Item;
 import com.pi.common.database.Location;
 import com.pi.common.debug.PILogger;
-import com.pi.common.game.GameState;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.HealthComponent;
 import com.pi.common.game.entity.comp.ItemLinkageComponent;
@@ -258,8 +258,6 @@ public class NetServerHandler extends NetHandler {
 							netClient.send(Packet25InventoryUpdate.create(itm,
 									slot));
 							server.getEntityManager().sendEntityDispose(
-									ent.getWrappedEntity().getEntityID());
-							server.getEntityManager().deRegisterEntity(
 									ent.getWrappedEntity().getEntityID());
 							break;
 						}

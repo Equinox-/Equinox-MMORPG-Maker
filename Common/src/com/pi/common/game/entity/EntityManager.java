@@ -2,15 +2,15 @@ package com.pi.common.game.entity;
 
 import java.util.Iterator;
 
-import com.pi.common.IDAllocator;
 import com.pi.common.database.Location;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.def.entity.EntityDefComponent;
 import com.pi.common.database.world.SectorLocation;
-import com.pi.common.game.Filter;
-import com.pi.common.game.FilteredIterator;
-import com.pi.common.game.ObjectHeap;
 import com.pi.common.game.entity.comp.EntityComponent;
+import com.pi.common.util.Filter;
+import com.pi.common.util.FilteredIterator;
+import com.pi.common.util.IDAllocator;
+import com.pi.common.util.ObjectHeap;
 
 public abstract class EntityManager<E extends EntityContainer> {
 	/**

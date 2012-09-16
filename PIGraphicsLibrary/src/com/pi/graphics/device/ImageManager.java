@@ -5,7 +5,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.pi.common.database.io.GraphicsDirectories;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * Class for loading images into the ram using a threaded model.

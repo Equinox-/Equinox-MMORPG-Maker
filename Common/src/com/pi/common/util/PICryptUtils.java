@@ -1,4 +1,4 @@
-package com.pi.common;
+package com.pi.common.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

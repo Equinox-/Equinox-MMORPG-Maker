@@ -4,7 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.pi.client.Client;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * A utility class for loading abstract definition types.

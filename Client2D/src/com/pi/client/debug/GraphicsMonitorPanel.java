@@ -11,7 +11,7 @@ import javax.swing.JTextArea;
 import com.pi.client.database.Paths;
 import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.common.debug.PIResourceViewer;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
 

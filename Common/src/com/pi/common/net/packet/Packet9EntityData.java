@@ -1,8 +1,6 @@
 package com.pi.common.net.packet;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.pi.common.contants.NetworkConstants.SizeOf;
 import com.pi.common.database.Location;
@@ -12,6 +10,7 @@ import com.pi.common.game.entity.comp.EntityComponent;
 import com.pi.common.game.entity.comp.EntityComponentType;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * A packet sent by the server to the client to initially create an entity on
@@ -25,7 +24,8 @@ public class Packet9EntityData extends Packet {
 	public TileLayer layer;
 	public int defID;
 	public int entID;
-	public List<EntityComponent> components = new ArrayList<EntityComponent>();
+	public ObjectHeap<EntityComponent> components = new ObjectHeap<EntityComponent>(
+			EntityComponentType.getComponentCount(), true);
 
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
@@ -39,9 +39,8 @@ public class Packet9EntityData extends Packet {
 		pOut.writeInt(layer.ordinal());
 		pOut.writeInt(defID);
 
-		pOut.writeInt(components.size());
 		EntityComponent comp;
-		for (int i = 0; i < components.size(); i++) {
+		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				pOut.writeByte(1);
@@ -68,10 +67,7 @@ public class Packet9EntityData extends Packet {
 		}
 		defID = pIn.readInt();
 
-		int size = pIn.readInt();
-		components.clear();
-		for (int i = 0; i < size; i++) {
-			components.add(null);
+		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
 			if (pIn.readByte() == 1) {
 				try {
 					Class<? extends EntityComponent> clazz = EntityComponentType
@@ -83,6 +79,8 @@ public class Packet9EntityData extends Packet {
 					throw new IOException("Unable to create a component: "
 							+ e.toString());
 				}
+			} else {
+				components.set(i, null);
 			}
 		}
 	}
@@ -109,10 +107,10 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
-		int size = (4 * SizeOf.INT) + loc.getLength()
-				+ (SizeOf.BYTE * components.size());
+		int size = (3 * SizeOf.INT) + loc.getLength()
+				+ (SizeOf.BYTE * components.capacity());
 		EntityComponent comp;
-		for (int i = 0; i < components.size(); i++) {
+		for (int i = 0; i < components.capacity(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				size += comp.getLength();

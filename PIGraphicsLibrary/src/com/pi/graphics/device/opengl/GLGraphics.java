@@ -15,7 +15,7 @@ import javax.media.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 import com.pi.graphics.device.DisplayManager;
 import com.pi.graphics.device.GraphicsStorage;
 import com.pi.graphics.device.IGraphics;

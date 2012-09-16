@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.util;
 
 import java.util.Iterator;
 

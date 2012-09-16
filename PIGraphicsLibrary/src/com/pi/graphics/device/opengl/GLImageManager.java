@@ -9,7 +9,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.pi.common.database.io.GraphicsDirectories;
-import com.pi.common.game.ObjectHeap;
+import com.pi.common.util.ObjectHeap;
 import com.pi.graphics.device.DeviceRegistration;
 import com.pi.graphics.device.GraphicsStorage;
 import com.pi.graphics.device.ImageManager;

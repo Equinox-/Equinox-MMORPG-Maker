@@ -1,4 +1,4 @@
-package com.pi.common.game;
+package com.pi.common.contants;
 
 /**
  * Enum representing the state of a client's game.
