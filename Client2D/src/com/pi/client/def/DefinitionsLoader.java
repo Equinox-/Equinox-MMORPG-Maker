@@ -64,6 +64,7 @@ public abstract class DefinitionsLoader<E> {
 						.get(defID) + REQUEST_EXPIRY < System
 							.currentTimeMillis())) {
 			loadQueue.add(defID);
+			client.getDefs().notifyMutex();
 			return null;
 		}
 		return sS;

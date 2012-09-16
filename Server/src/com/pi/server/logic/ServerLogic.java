@@ -75,9 +75,6 @@ public class ServerLogic extends ServerThread {
 							ServerEntity.class, Server.class).newInstance(e,
 							getServer());
 					e.assignLogic(l);
-					getServer().getLog().finer(
-							"Created " + clazz.getSimpleName() + " for "
-									+ e.getWrappedEntity().getEntityID());
 					return l;
 				} catch (Exception e1) {
 					getServer().getLog().printStackTrace(e1);

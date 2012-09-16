@@ -112,8 +112,6 @@ public class SectorManager extends ServerThread implements
 			client.getNetClient().send(packet);
 		} else {
 			Sector sReal = sector.getSector();
-			getServer().getLog().info(
-					sReal.getRevision() + ":" + clientRevision);
 			if (sReal.getRevision() != clientRevision) {
 
 				// Packet4Sector packet = new Packet4Sector();

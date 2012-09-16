@@ -71,8 +71,8 @@ public class Packet9EntityData extends Packet {
 		int size = pIn.readInt();
 		components.clear();
 		for (int i = 0; i < size; i++) {
+			components.add(null);
 			if (pIn.readByte() == 1) {
-				components.add(null);
 				try {
 					Class<? extends EntityComponent> clazz = EntityComponentType
 							.getComponentClass(i);

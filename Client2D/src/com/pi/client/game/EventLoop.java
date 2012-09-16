@@ -8,7 +8,8 @@ import com.pi.client.ClientThread;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.contants.Direction;
 import com.pi.common.contants.EntityConstants;
-import com.pi.common.database.def.entity.EntityDef;
+import com.pi.common.contants.InteractionButton;
+import com.pi.common.contants.ItemConstants;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.net.packet.Packet14ClientMove;
 import com.pi.common.net.packet.Packet19Interact;
@@ -19,8 +20,7 @@ import com.pi.common.net.packet.Packet19Interact;
  * @author Westin
  * 
  */
-public class EventLoop extends ClientThread implements
-		KeyListener {
+public class EventLoop extends ClientThread implements KeyListener {
 	/**
 	 * The maximum key code, for creating the array.
 	 */
@@ -35,60 +35,70 @@ public class EventLoop extends ClientThread implements
 	 */
 	private long lastAttackTime;
 
+	private long lastPickupTime;
+
+	private int keyDownCount = 0;
+
 	/**
 	 * Creates an event loop for the given client.
 	 * 
-	 * @param sClient the client
+	 * @param sClient
+	 *            the client
 	 */
 	public EventLoop(final Client sClient) {
 		super(sClient);
+		createMutex();
 		start();
 	}
 
 	@Override
 	protected final void loop() {
-		ClientEntity cEnt =
-				getClient().getEntityManager().getLocalEntity();
-		if (cEnt != null) {
-			Direction dir = null;
-			if (keyState[KeyEvent.VK_UP]) {
-				dir = Direction.UP;
-			} else if (keyState[KeyEvent.VK_DOWN]) {
-				dir = Direction.DOWN;
-			} else if (keyState[KeyEvent.VK_LEFT]) {
-				dir = Direction.LEFT;
-			} else if (keyState[KeyEvent.VK_RIGHT]) {
-				dir = Direction.RIGHT;
+		if (keyDownCount == 0) {
+			synchronized (getMutex()) {
+				try {
+					getMutex().wait();
+				} catch (InterruptedException e) {
+				}
 			}
-			long timeToAttack =
-					EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
-			EntityDef eDef =
-					getClient()
-							.getDefs()
-							.getEntityLoader()
-							.getDef(cEnt.getWrappedEntity()
-									.getEntityDef());
-			//if (eDef != null) {
-			//	timeToAttack = eDef.getAttackSpeed();
-			//}
-			if (keyState[KeyEvent.VK_CONTROL]
-					&& System.currentTimeMillis() >= lastAttackTime
-							+ timeToAttack) {
-				getClient().getNetwork().send(
-						new Packet19Interact());
-				lastAttackTime = System.currentTimeMillis();
-			}
-			if (dir != null && !cEnt.isMoving()) {
-				Entity local = cEnt.getWrappedEntity();
-				local.setDir(dir);
-				if (local.canMove(getClient().getWorld())) {
-					cEnt.doMovement(keyState[KeyEvent.VK_SHIFT]);
+		} else {
+			ClientEntity cEnt = getClient().getEntityManager().getLocalEntity();
+			if (cEnt != null) {
+				Direction dir = null;
+				if (keyState[KeyEvent.VK_UP]) {
+					dir = Direction.UP;
+				} else if (keyState[KeyEvent.VK_DOWN]) {
+					dir = Direction.DOWN;
+				} else if (keyState[KeyEvent.VK_LEFT]) {
+					dir = Direction.LEFT;
+				} else if (keyState[KeyEvent.VK_RIGHT]) {
+					dir = Direction.RIGHT;
+				}
+				long timeToAttack = EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
+				if (keyState[InteractionButton.ATTACK.getKeyCode()]
+						&& System.currentTimeMillis() >= lastAttackTime
+								+ timeToAttack) {
 					getClient().getNetwork().send(
-							Packet14ClientMove.create(local));
+							Packet19Interact.create(InteractionButton.ATTACK));
+					lastAttackTime = System.currentTimeMillis();
+				}
+				if (keyState[InteractionButton.GRAB.getKeyCode()]
+						&& System.currentTimeMillis() >= lastPickupTime
+								+ ItemConstants.DEFAULT_ITEM_PICKUP_SPEED) {
+					getClient().getNetwork().send(
+							Packet19Interact.create(InteractionButton.GRAB));
+					lastPickupTime = System.currentTimeMillis();
+				}
+				if (dir != null && !cEnt.isMoving()) {
+					Entity local = cEnt.getWrappedEntity();
+					local.setDir(dir);
+					if (local.canMove(getClient().getWorld())) {
+						cEnt.doMovement(keyState[KeyEvent.VK_SHIFT]);
+						getClient().getNetwork().send(
+								Packet14ClientMove.create(local));
+					}
 				}
 			}
 		}
-		Thread.yield();
 	}
 
 	@Override
@@ -97,16 +107,25 @@ public class EventLoop extends ClientThread implements
 
 	@Override
 	public final void keyPressed(final KeyEvent e) {
-		if (e.getKeyCode() >= 0
-				&& e.getKeyCode() < keyState.length) {
+		if (e.getKeyCode() >= 0 && e.getKeyCode() < keyState.length) {
+			if (!keyState[e.getKeyCode()]) {
+				if (keyDownCount == 0) {
+					synchronized (getMutex()) {
+						getMutex().notify();
+					}
+				}
+				keyDownCount++;
+			}
 			keyState[e.getKeyCode()] = true;
 		}
 	}
 
 	@Override
 	public final void keyReleased(final KeyEvent e) {
-		if (e.getKeyCode() >= 0
-				&& e.getKeyCode() < keyState.length) {
+		if (e.getKeyCode() >= 0 && e.getKeyCode() < keyState.length) {
+			if (keyState[e.getKeyCode()]) {
+				keyDownCount--;
+			}
 			keyState[e.getKeyCode()] = false;
 		}
 	}

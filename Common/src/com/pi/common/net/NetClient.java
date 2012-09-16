@@ -47,8 +47,7 @@ public abstract class NetClient {
 	/**
 	 * The queue that manages packets that are to be sent.
 	 */
-	private final Queue<ByteBuffer> sendQueue =
-			new LinkedBlockingQueue<ByteBuffer>();
+	private final Queue<ByteBuffer> sendQueue = new LinkedBlockingQueue<ByteBuffer>();
 	/**
 	 * The socket channel that this network client wraps.
 	 */
@@ -64,7 +63,8 @@ public abstract class NetClient {
 	 * Creates a network client instance using the specified channel as a
 	 * backing.
 	 * 
-	 * @param sSocket the backing channel
+	 * @param sSocket
+	 *            the backing channel
 	 */
 	public NetClient(final SocketChannel sSocket) {
 		this.socket = sSocket;
@@ -85,12 +85,14 @@ public abstract class NetClient {
 	 * will cause trouble, so it should be cloned using
 	 * {@link System#arraycopy(Object, int, Object, int, int)}.
 	 * 
-	 * @param data the main array
-	 * @param off the array offset
-	 * @param len the length of the data
+	 * @param data
+	 *            the main array
+	 * @param off
+	 *            the array offset
+	 * @param len
+	 *            the length of the data
 	 */
-	protected abstract void processData(byte[] data, int off,
-			int len);
+	protected abstract void processData(byte[] data, int off, int len);
 
 	/**
 	 * Adds a write request to the selector thread.
@@ -121,13 +123,13 @@ public abstract class NetClient {
 	 * Reads a readable selection key into the read buffer, and calls the
 	 * {@link NetClient#processData(byte[], int, int)} with the data read.
 	 * 
-	 * @param key the key to read on
-	 * @throws IOException if an error occurs
+	 * @param key
+	 *            the key to read on
+	 * @throws IOException
+	 *             if an error occurs
 	 */
-	public final void read(final SelectionKey key)
-			throws IOException {
-		int numRead =
-				((SocketChannel) key.channel()).read(readBuffer);
+	public final void read(final SelectionKey key) throws IOException {
+		int numRead = ((SocketChannel) key.channel()).read(readBuffer);
 		readThroughBuffer();
 
 		if (numRead == -1) {
@@ -145,19 +147,15 @@ public abstract class NetClient {
 			int len = readBuffer.getInt(0);
 			if (readBuffer.position() >= len + SizeOf.INT) {
 				receiveSinceUpdate += len + SizeOf.INT;
-				processData(readBuffer.array(),
-						readBuffer.arrayOffset() + SizeOf.INT,
-						len);
+				processData(readBuffer.array(), readBuffer.arrayOffset()
+						+ SizeOf.INT, len);
 				if (readBuffer.position() > len + SizeOf.INT) {
-					byte[] temp =
-							new byte[readBuffer.position() - len
-									- SizeOf.INT];
+					int rewindSize = readBuffer.position() - len - SizeOf.INT;
 					System.arraycopy(readBuffer.array(),
-							readBuffer.arrayOffset() + len
-									+ SizeOf.INT, temp, 0,
-							temp.length);
-					readBuffer.clear();
-					readBuffer.put(temp);
+							readBuffer.arrayOffset() + len + SizeOf.INT,
+							readBuffer.array(), readBuffer.arrayOffset(),
+							rewindSize);
+					readBuffer.position(rewindSize);
 				} else {
 					readBuffer.clear();
 				}
@@ -171,25 +169,23 @@ public abstract class NetClient {
 	 * Adds the specified packet to the send queue, for sending at a later date.
 	 * 
 	 * @see NetClient#getSendQueue()
-	 * @param pack the packet queue
+	 * @param pack
+	 *            the packet queue
 	 */
 	public final void send(final Packet pack) {
 		getLog().finest(
-				"Send " + pack.getName() + " size: "
-						+ pack.getLength() + getSuffix());
+				"Send " + pack.getName() + " size: " + pack.getLength()
+						+ getSuffix());
 		try {
 			addWriteRequest();
 			synchronized (this.sendQueue) {
 				int size = pack.getPacketLength();
-				PacketOutputStream pO =
-						new PacketOutputStream(
-								ByteBuffer.allocate(size
-										+ SizeOf.INT));
+				PacketOutputStream pO = new PacketOutputStream(
+						ByteBuffer.allocate(size + SizeOf.INT));
 				pO.writeInt(size);
 				pack.writePacket(pO);
 				sendSinceUpdate += size;
-				sendQueue.add((ByteBuffer) pO.getByteBuffer()
-						.flip());
+				sendQueue.add((ByteBuffer) pO.getByteBuffer().flip());
 			}
 			wakeSelector();
 			onSend(pack);
@@ -201,7 +197,8 @@ public abstract class NetClient {
 	/**
 	 * Called when this client sends a packet.
 	 * 
-	 * @param p the packet sent
+	 * @param p
+	 *            the packet sent
 	 */
 	protected void onSend(final Packet p) {
 	}
@@ -211,19 +208,17 @@ public abstract class NetClient {
 	 * date. This data should have the packet ID in the array.
 	 * 
 	 * @see NetClient#getSendQueue()
-	 * @param packetData the raw data to send
+	 * @param packetData
+	 *            the raw data to send
 	 */
 	public final void sendRaw(final byte[] packetData) {
 		getLog().finest(
-				"Sending raw data size: " + packetData.length
-						+ getSuffix());
+				"Sending raw data size: " + packetData.length + getSuffix());
 		try {
 			addWriteRequest();
 			synchronized (this.sendQueue) {
-				ByteBuffer bb =
-						ByteBuffer
-								.allocateDirect(packetData.length
-										+ SizeOf.INT);
+				ByteBuffer bb = ByteBuffer.allocateDirect(packetData.length
+						+ SizeOf.INT);
 				bb.putInt(packetData.length);
 
 				bb.put(packetData);
@@ -295,10 +290,8 @@ public abstract class NetClient {
 			delta = 1000;
 		}
 		if (delta >= NetworkConstants.NETWORK_SPEED_RECALCULATION_TIME) {
-			cacheUploadRate =
-					(int) ((sendSinceUpdate * 1000) / delta);
-			cacheDownloadRate =
-					(int) ((receiveSinceUpdate * 1000) / delta);
+			cacheUploadRate = (int) ((sendSinceUpdate * 1000) / delta);
+			cacheDownloadRate = (int) ((receiveSinceUpdate * 1000) / delta);
 			lastUpdateTime = System.currentTimeMillis();
 			sendSinceUpdate = 0;
 			receiveSinceUpdate = 0;

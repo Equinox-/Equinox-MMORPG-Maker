@@ -9,8 +9,10 @@ import com.pi.client.Client;
 import com.pi.client.constants.Constants;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.contants.TileConstants;
+import com.pi.common.contants.TileFlags;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;
+import com.pi.common.database.def.ItemDef;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.def.entity.HealthDefComponent;
 import com.pi.common.database.world.Sector;
@@ -20,8 +22,10 @@ import com.pi.common.game.Filter;
 import com.pi.common.game.FilteredIterator;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.HealthComponent;
+import com.pi.common.game.entity.comp.ItemLinkageComponent;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
+import com.pi.gui.GUIKit;
 
 /**
  * The render loop for the actual game.
@@ -50,6 +54,14 @@ public class GameRenderLoop implements Renderable {
 	 * The z coordinate the current tile view was calculated at.
 	 */
 	private int currentTileViewZ = -1;
+	/**
+	 * The x offset the current rendering should be based on.
+	 */
+	private int currentTileViewXOff = -1;
+	/**
+	 * The z offset the current rendering should be based on.
+	 */
+	private int currentTileViewZOff = -1;
 
 	/**
 	 * The window width the current tile view was calculated at.
@@ -165,6 +177,22 @@ public class GameRenderLoop implements Renderable {
 							Constants.HEALTH_BAR_HEIGHT);
 				}
 			}
+		} else if (ent.getWrappedEntity().getComponent(
+				ItemLinkageComponent.class) != null) {
+			ItemLinkageComponent iLC = (ItemLinkageComponent) ent
+					.getWrappedEntity()
+					.getComponent(ItemLinkageComponent.class);
+			ItemDef iDef = client.getDefs().getItemLoader()
+					.getDef(iLC.getItemID());
+			if (iDef != null) {
+				Point p = locationToScreen(ent.getWrappedEntity());
+				p.x += ent.getXOff();
+				p.y += ent.getZOff();
+				g.drawImage(iDef.getGraphic(), p.x, p.y,
+						(int) iDef.getPositionX(), (int) iDef.getPositionY(),
+						(int) iDef.getPositionWidth(),
+						(int) iDef.getPositionHeight());
+			}
 		}
 	}
 
@@ -203,17 +231,14 @@ public class GameRenderLoop implements Renderable {
 	 * @return the screen location, or <code>null</code> if unable to calculate.
 	 */
 	private Point locationToScreen(final Location t) {
-		ClientEntity ent = client.getEntityManager().getLocalEntity();
-		if (ent != null) {
-			float xT = t.x - ent.getWrappedEntity().x;
-			float zT = t.z - ent.getWrappedEntity().z;
-			xT *= TileConstants.TILE_WIDTH;
-			zT *= TileConstants.TILE_HEIGHT;
-			xT += g.getClip().getCenterX();
-			zT += g.getClip().getCenterY();
-			return new Point((int) xT - ent.getXOff(), (int) zT - ent.getZOff());
-		}
-		return null;
+		float xT = t.x - currentTileViewX;
+		float zT = t.z - currentTileViewZ;
+		xT *= TileConstants.TILE_WIDTH;
+		zT *= TileConstants.TILE_HEIGHT;
+		xT += g.getClip().getCenterX();
+		zT += g.getClip().getCenterY();
+		return new Point((int) xT - currentTileViewXOff, (int) zT
+				- currentTileViewZOff);
 	}
 
 	/**
@@ -225,25 +250,27 @@ public class GameRenderLoop implements Renderable {
 	private Rectangle getTileView() {
 		Rectangle clip = g.getClip();
 		ClientEntity ent = client.getEntityManager().getLocalEntity();
-		if (ent != null
-				&& (currentTileViewX != ent.getWrappedEntity().x
-						|| currentTileViewZ != ent.getWrappedEntity().z
-						|| currentTileViewWidth != client.getApplet()
-								.getWidth() || currentTileViewHeight != client
-						.getApplet().getHeight())) {
-			int tileWidth = (int) Math.ceil(clip.getWidth()
-					/ TileConstants.TILE_WIDTH / 2 + 1);
-			int tileHeight = (int) Math.ceil(clip.getHeight()
-					/ TileConstants.TILE_HEIGHT / 2 + 1);
-			renderDistance = tileWidth + tileHeight;
-			tileView.setBounds(ent.getWrappedEntity().x - tileWidth,
-					ent.getWrappedEntity().z - tileHeight, tileWidth * 2,
-					tileHeight * 2);
-			currentTileViewX = ent.getWrappedEntity().x;
-			currentTileViewZ = ent.getWrappedEntity().z;
-			currentTileViewWidth = client.getApplet().getWidth();
-			currentTileViewHeight = client.getApplet().getHeight();
-			return tileView;
+		if (ent != null) {
+			currentTileViewXOff = ent.getXOff();
+			currentTileViewZOff = ent.getZOff();
+			if (currentTileViewX != ent.getWrappedEntity().x
+					|| currentTileViewZ != ent.getWrappedEntity().z
+					|| currentTileViewWidth != client.getApplet().getWidth()
+					|| currentTileViewHeight != client.getApplet().getHeight()) {
+				int tileWidth = (int) Math.ceil(clip.getWidth()
+						/ TileConstants.TILE_WIDTH / 2 + 1);
+				int tileHeight = (int) Math.ceil(clip.getHeight()
+						/ TileConstants.TILE_HEIGHT / 2 + 1);
+				renderDistance = tileWidth + tileHeight;
+				tileView.setBounds(ent.getWrappedEntity().x - tileWidth,
+						ent.getWrappedEntity().z - tileHeight, tileWidth * 2,
+						tileHeight * 2);
+				currentTileViewX = ent.getWrappedEntity().x;
+				currentTileViewZ = ent.getWrappedEntity().z;
+				currentTileViewWidth = client.getApplet().getWidth();
+				currentTileViewHeight = client.getApplet().getHeight();
+				return tileView;
+			}
 		}
 		return tileView;
 	}

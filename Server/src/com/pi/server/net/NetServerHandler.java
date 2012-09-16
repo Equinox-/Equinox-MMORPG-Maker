@@ -4,11 +4,13 @@ import java.util.Iterator;
 
 import com.pi.common.contants.Direction;
 import com.pi.common.database.Account;
+import com.pi.common.database.Item;
 import com.pi.common.database.Location;
 import com.pi.common.debug.PILogger;
 import com.pi.common.game.GameState;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.HealthComponent;
+import com.pi.common.game.entity.comp.ItemLinkageComponent;
 import com.pi.common.net.NetHandler;
 import com.pi.common.net.packet.Packet;
 import com.pi.common.net.packet.Packet0Handshake;
@@ -21,6 +23,7 @@ import com.pi.common.net.packet.Packet17Clock;
 import com.pi.common.net.packet.Packet19Interact;
 import com.pi.common.net.packet.Packet1Login;
 import com.pi.common.net.packet.Packet22ItemDefRequest;
+import com.pi.common.net.packet.Packet25InventoryUpdate;
 import com.pi.common.net.packet.Packet2Alert;
 import com.pi.common.net.packet.Packet3Register;
 import com.pi.common.net.packet.Packet5SectorRequest;
@@ -211,25 +214,58 @@ public class NetServerHandler extends NetHandler {
 		if (cli != null && cli.getEntity() != null) {
 			ServerEntity sE = server.getEntityManager().getEntityContainer(
 					cli.getEntity().getEntityID());
-			if (!sE.isAttacking()) {
-				Iterator<ServerEntity> entz = server.getEntityManager()
-						.getEntitiesAtLocation(
-								new Location(cli.getEntity().x
-										+ cli.getEntity().getDir().getXOff(),
-										cli.getEntity().plane,
-										cli.getEntity().z
-												+ cli.getEntity().getDir()
-														.getZOff()));
-				while (entz.hasNext()) {
-					ServerEntity ent = entz.next();
-					HealthComponent lC = (HealthComponent) ent
-							.getWrappedEntity().getComponent(
-									HealthComponent.class);
-					if (lC != null) {
-						server.getLogic().getCombatLogic()
-								.entityAttackEntity(sE, ent);
+			Location findAt;
+			if (p.button.isTargetInMyDirection()) {
+				findAt = new Location(cli.getEntity().x
+						+ cli.getEntity().getDir().getXOff(),
+						cli.getEntity().plane, cli.getEntity().z
+								+ cli.getEntity().getDir().getZOff());
+			} else {
+				findAt = cli.getEntity();
+			}
+			Iterator<ServerEntity> entz = server.getEntityManager()
+					.getEntitiesAtLocation(findAt);
+			switch (p.button) {
+			case ATTACK:
+				if (!sE.isAttacking()) {
+					while (entz.hasNext()) {
+						ServerEntity ent = entz.next();
+						HealthComponent lC = (HealthComponent) ent
+								.getWrappedEntity().getComponent(
+										HealthComponent.class);
+						if (lC != null) {
+							server.getLogic().getCombatLogic()
+									.entityAttackEntity(sE, ent);
+							break;
+						}
 					}
 				}
+				break;
+			case GRAB:
+				while (entz.hasNext()) {
+					ServerEntity ent = entz.next();
+					ItemLinkageComponent iLC = (ItemLinkageComponent) ent
+							.getWrappedEntity().getComponent(
+									ItemLinkageComponent.class);
+					server.getLog().info("LOOKAT: " + iLC);
+					if (iLC != null) {
+						int slot = cli.getAccount().getInventory()
+								.getFreeSlot();
+						if (slot != -1) {
+							Item itm = new Item(iLC.getItemID(), 1);
+							cli.getAccount().getInventory()
+									.setInventoryAt(slot, itm);
+							netClient.send(Packet25InventoryUpdate.create(itm,
+									slot));
+							server.getEntityManager().sendEntityDispose(
+									ent.getWrappedEntity().getEntityID());
+							server.getEntityManager().deRegisterEntity(
+									ent.getWrappedEntity().getEntityID());
+							break;
+						}
+					}
+				}
+				break;
 			}
 		}
 	}

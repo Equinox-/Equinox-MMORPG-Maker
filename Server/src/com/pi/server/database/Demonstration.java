@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.pi.common.contants.SectorConstants;
 import com.pi.common.contants.TileConstants;
+import com.pi.common.contants.TileFlags;
 import com.pi.common.database.def.ItemDef;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.def.entity.HealthDefComponent;
@@ -60,7 +61,18 @@ public final class Demonstration {
 				obj.setPosition(x * TileConstants.TILE_WIDTH, (5 + y)
 						* TileConstants.TILE_HEIGHT, TileConstants.TILE_WIDTH,
 						TileConstants.TILE_HEIGHT);
-				sec.getLocalTile(5 + x, 5 + y).setLayer(TileLayer.FRINGE1, obj);
+				sec.getLocalTile(5 + x, 5 + y).setLayer(
+						y == 4 ? TileLayer.MASK1 : TileLayer.FRINGE1, obj);
+				if (y == 4) {
+					sec.getLocalTile(5 + x - 1, 5 + y).applyFlag(
+							TileFlags.WALL_EAST);
+					sec.getLocalTile(5 + x + 1, 5 + y).applyFlag(
+							TileFlags.WALL_WEST);
+					sec.getLocalTile(5 + x, 5 + y - 1).applyFlag(
+							TileFlags.WALL_SOUTH);
+					sec.getLocalTile(5 + x, 5 + y + 1).applyFlag(
+							TileFlags.WALL_NORTH);
+				}
 			}
 		}
 		return sec;

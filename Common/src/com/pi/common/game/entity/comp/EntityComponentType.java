@@ -18,6 +18,7 @@ public class EntityComponentType {
 	static {
 		// Register components
 		registerComponentType(HealthComponent.class);
+		registerComponentType(ItemLinkageComponent.class);
 	}
 
 	private static void registerComponentType(

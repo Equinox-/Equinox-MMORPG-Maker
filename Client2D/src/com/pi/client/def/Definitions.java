@@ -24,12 +24,14 @@ public class Definitions extends ClientThread {
 	 * Creates a definitions loader for the specified client, and starts the
 	 * thread.
 	 * 
-	 * @param client the client instance
+	 * @param client
+	 *            the client instance
 	 */
 	public Definitions(final Client client) {
 		super(client);
 		this.entityDefLoader = new EntityDefLoader(client);
 		this.itemDefLoader = new ItemDefLoader(client);
+		createMutex();
 		super.start();
 	}
 
@@ -55,7 +57,20 @@ public class Definitions extends ClientThread {
 
 	@Override
 	protected final void loop() {
+		synchronized (getMutex()) {
+			try {
+				getMutex().wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		entityDefLoader.loadLoop();
 		itemDefLoader.loadLoop();
+	}
+
+	public final void notifyMutex() {
+		synchronized (getMutex()) {
+			getMutex().notify();
+		}
 	}
 }

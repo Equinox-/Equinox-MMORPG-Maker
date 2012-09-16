@@ -12,6 +12,7 @@ import com.pi.common.debug.PILoggerPane;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.debug.SectorMonitorPanel;
 import com.pi.common.debug.ThreadMonitorPanel;
+import com.pi.common.game.entity.comp.ItemLinkageComponent;
 import com.pi.server.client.ClientManager;
 import com.pi.server.constants.ServerConstants;
 import com.pi.server.database.Paths;
@@ -155,8 +156,8 @@ public class Server {
 			entityManager.spawnEntity(defs.getEntityLoader().getDef(1),
 					new Location());
 
-			// entityManager.spawnItemEntity(0, new Location(5, 0,
-			// 5));
+			entityManager.spawnEntity(-1, new Location(5, 0, 5),
+					new ItemLinkageComponent(0));
 
 		} catch (BindException e1) {
 			dispose();
