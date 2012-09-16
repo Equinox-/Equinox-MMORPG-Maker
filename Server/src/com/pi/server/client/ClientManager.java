@@ -1,5 +1,6 @@
 package com.pi.server.client;
 
+import com.pi.common.util.IDAllocator;
 import com.pi.common.util.ObjectHeap;
 import com.pi.server.constants.ServerConstants;
 
@@ -14,14 +15,19 @@ public class ClientManager {
 	/**
 	 * The mapping that stores the client instances.
 	 */
-	private ObjectHeap<Client> clientMap =
-			new ObjectHeap<Client>();
+	private ObjectHeap<Client> clientMap = new ObjectHeap<Client>(
+			ServerConstants.MAX_CLIENTS, true);
+	/**
+	 * The ID number provider for this client manager.
+	 */
+	private IDAllocator idAllocator = new IDAllocator();
 
 	/**
 	 * Gets the client with the given identification number, or
 	 * <code>null</code> if there isn't a client registered.
 	 * 
-	 * @param id the identification number
+	 * @param id
+	 *            the identification number
 	 * @return the client instance
 	 */
 	public final Client getClient(final int id) {
@@ -33,7 +39,8 @@ public class ClientManager {
 	 * <code>null</code> if there isn't a client registered with the given
 	 * entity.
 	 * 
-	 * @param entityID the identification number
+	 * @param entityID
+	 *            the identification number
 	 * @return the client instance
 	 */
 	public final Client getClientByEntity(final int entityID) {
@@ -50,37 +57,26 @@ public class ClientManager {
 	 * Disposes the client linked to the given identification number and removes
 	 * the client from the mapping.
 	 * 
-	 * @param id the identification number
+	 * @param id
+	 *            the identification number
 	 */
 	public final void disposeClient(final int id) {
 		Client c = getClient(id);
 		if (c != null) {
 			c.dispose();
 			clientMap.remove(id);
+			idAllocator.checkIn(id);
 		}
 	}
 
 	/**
 	 * Disposes the given client and removes it from the mapping.
 	 * 
-	 * @param client the client
+	 * @param client
+	 *            the client
 	 */
 	public final void disposeClient(final Client client) {
 		disposeClient(client.getID());
-	}
-
-	/**
-	 * Gets an identification number that doesn't have a client bound to it.
-	 * 
-	 * @return the available id, or <code>-1</code> if there isn't one available
-	 */
-	public final int getAvailableID() {
-		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
-			if (clientMap.get(i) == null) {
-				return i;
-			}
-		}
-		return -1;
 	}
 
 	/**
@@ -90,8 +86,8 @@ public class ClientManager {
 		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
 			Client c = clientMap.get(i);
 			if (c != null
-					&& (c.getNetClient() == null || !c
-							.getNetClient().isConnected())) {
+					&& (c.getNetClient() == null || !c.getNetClient()
+							.isConnected())) {
 				disposeClient(c);
 			}
 		}
@@ -104,8 +100,8 @@ public class ClientManager {
 		for (int i = 0; i < ServerConstants.MAX_CLIENTS; i++) {
 			Client c = clientMap.get(i);
 			if (c != null
-					&& (c.getNetClient() == null || !c
-							.getNetClient().isConnected())) {
+					&& (c.getNetClient() == null || !c.getNetClient()
+							.isConnected())) {
 				c.getNetClient().checkHandshakes();
 			}
 		}
@@ -117,7 +113,8 @@ public class ClientManager {
 	 * slot.
 	 * 
 	 * @see #getAvailableID()
-	 * @param c the client to register
+	 * @param c
+	 *            the client to register
 	 * @return the identification number
 	 */
 	public final int registerClient(final Client c) {
@@ -125,29 +122,22 @@ public class ClientManager {
 		if (id >= 0) {
 			return id;
 		}
-		id = getAvailableID();
-		if (id != -1) {
+		id = idAllocator.checkOut();
+		if (id >= clientMap.capacity()) {
+			idAllocator.checkIn(id);
+			return -1;
+		} else {
 			clientMap.set(id, c);
 			return id;
 		}
-		return -1;
-	}
-
-	/**
-	 * Checks if there is an available slot for a client to be registered on.
-	 * 
-	 * @return <code>true</code> if there is an available slot, or
-	 *         <code>false</code> if not
-	 */
-	public final boolean hasAvaliableSlot() {
-		return getAvailableID() != -1;
 	}
 
 	/**
 	 * Scans the client map for the same client as the one provided, and returns
 	 * the identification number, or <code>-1</code> if not found.
 	 * 
-	 * @param c the client to scan for
+	 * @param c
+	 *            the client to scan for
 	 * @return the id number
 	 */
 	public final int getClientID(final Client c) {
@@ -173,7 +163,8 @@ public class ClientManager {
 	/**
 	 * Removes the client with the given ID from the registry.
 	 * 
-	 * @param id the identification number
+	 * @param id
+	 *            the identification number
 	 */
 	public final void removeFromRegistry(final int id) {
 		clientMap.remove(id);
