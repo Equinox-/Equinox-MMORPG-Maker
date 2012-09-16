@@ -24,14 +24,12 @@ public class PIButton extends PIComponent {
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		super.keyPressed(e);
-		if (e.getKeyChar() == '\n' && isFocused()) {
-			MouseEvent ev =
-					new MouseEvent(e.getComponent(),
-							MouseEvent.MOUSE_CLICKED,
-							System.currentTimeMillis(), 0,
-							getAbsoluteX() + (getWidth() / 2),
-							getAbsoluteY() + (getHeight() / 2),
-							1, false);
+		if (isVisible() && !e.isConsumed() && e.getKeyChar() == '\n'
+				&& isFocused()) {
+			MouseEvent ev = new MouseEvent(e.getComponent(),
+					MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
+					getAbsoluteX() + (getWidth() / 2), getAbsoluteY()
+							+ (getHeight() / 2), 1, false);
 			mouseClicked(ev);
 		}
 	}

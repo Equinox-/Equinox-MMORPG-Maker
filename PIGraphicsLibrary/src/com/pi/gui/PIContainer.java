@@ -20,8 +20,7 @@ public class PIContainer extends PIComponent {
 	/**
 	 * The children this container has.
 	 */
-	private List<PIComponent> children =
-			new ArrayList<PIComponent>();
+	private List<PIComponent> children = new ArrayList<PIComponent>();
 	/**
 	 * The tab index list, where each item on the list refers to the child with
 	 * that index.
@@ -31,7 +30,8 @@ public class PIContainer extends PIComponent {
 	/**
 	 * Adds the specified child to this container.
 	 * 
-	 * @param child the child to add
+	 * @param child
+	 *            the child to add
 	 */
 	public final void add(final PIComponent child) {
 		children.add(child);
@@ -58,12 +58,13 @@ public class PIContainer extends PIComponent {
 	/**
 	 * Sets the tab index of a specific component.
 	 * 
-	 * @param p the component to set the tab index for
-	 * @param idx the tab index for this component
+	 * @param p
+	 *            the component to set the tab index for
+	 * @param idx
+	 *            the tab index for this component
 	 * @return if the component was registered in the tab index list
 	 */
-	public final boolean setTabIndex(final PIComponent p,
-			final int idx) {
+	public final boolean setTabIndex(final PIComponent p, final int idx) {
 		int inIDX = children.indexOf(p);
 		if (inIDX != -1) {
 			int tCIDX = tabIndex.indexOf(inIDX);
@@ -104,8 +105,10 @@ public class PIContainer extends PIComponent {
 	@Override
 	public final void mouseClicked(final MouseEvent e) {
 		super.mouseClicked(e);
-		for (PIComponent child : children) {
-			child.mouseClicked(e);
+		if (isVisible() && !e.isConsumed()) {
+			for (PIComponent child : children) {
+				child.mouseClicked(e);
+			}
 		}
 	}
 
@@ -181,24 +184,23 @@ public class PIContainer extends PIComponent {
 
 	@Override
 	public final void keyTyped(final KeyEvent e) {
-		if (e.getKeyChar() == '\t') {
-			int newIDX = getCurrentTabIndex() + 1;
-			if (newIDX >= tabIndex.size()) {
-				newIDX = 0;
-			}
-			if (newIDX < tabIndex.size()) {
-				for (PIComponent c : children) {
-					c.setFocused(false);
+		if (isVisible() && !e.isConsumed()) {
+			if (e.getKeyChar() == '\t') {
+				int newIDX = getCurrentTabIndex() + 1;
+				if (newIDX >= tabIndex.size()) {
+					newIDX = 0;
 				}
-				PIComponent c =
-						children.get(tabIndex.get(newIDX));
-				if (c != null) {
-					c.setFocused(true);
-					e.consume();
+				if (newIDX < tabIndex.size()) {
+					for (PIComponent c : children) {
+						c.setFocused(false);
+					}
+					PIComponent c = children.get(tabIndex.get(newIDX));
+					if (c != null) {
+						c.setFocused(true);
+						e.consume();
+					}
 				}
 			}
-		}
-		if (isVisible() && !e.isConsumed() && !e.isConsumed()) {
 			super.keyTyped(e);
 			for (PIComponent child : children) {
 				child.keyTyped(e);

@@ -143,10 +143,6 @@ public class MainGameMenu extends PIContainer {
 								- ((i + 1) * BUTTON_WIDTH),
 						(int) currentLayout.getHeight()
 								- BUTTON_HEIGHT);
-				gui.getClient()
-						.getLog()
-						.info(menuButtons[i].getX() + ","
-								+ menuButtons[i].getY());
 				if (menuOptions[i] != null) {
 					menuOptions[i]
 							.setLocation(

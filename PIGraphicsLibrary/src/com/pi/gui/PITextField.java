@@ -29,8 +29,7 @@ public class PITextField extends PIComponent {
 	/**
 	 * Action listeners that check for text changes.
 	 */
-	private List<ActionListener> actListener =
-			new ArrayList<ActionListener>();
+	private List<ActionListener> actListener = new ArrayList<ActionListener>();
 
 	/**
 	 * The text to display when there is no content.
@@ -70,7 +69,7 @@ public class PITextField extends PIComponent {
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		super.keyTyped(e);
-		if (isFocused()) {
+		if (isFocused() && !e.isConsumed() && isVisible()) {
 			ActionEvent evt = null;
 			char c = e.getKeyChar();
 			if (c == '\b') {
@@ -98,7 +97,8 @@ public class PITextField extends PIComponent {
 	 * Sets the maximum length of this text field, or <code>-1</code> if there
 	 * is no limit.
 	 * 
-	 * @param max the maximum length
+	 * @param max
+	 *            the maximum length
 	 */
 	public final void setMaxLength(final Integer max) {
 		this.maxLength = max;
@@ -115,7 +115,8 @@ public class PITextField extends PIComponent {
 	 * Sets the character mask of this text field, or <code>null</code> if there
 	 * isn't one.
 	 * 
-	 * @param sMask the character mask
+	 * @param sMask
+	 *            the character mask
 	 */
 	public final void setMask(final Character sMask) {
 		this.mask = sMask;
@@ -124,7 +125,8 @@ public class PITextField extends PIComponent {
 	/**
 	 * Adds the action listener to the action listener array.
 	 * 
-	 * @param l the action listener to add
+	 * @param l
+	 *            the action listener to add
 	 */
 	public final void addActionListener(final ActionListener l) {
 		actListener.add(l);
@@ -133,7 +135,8 @@ public class PITextField extends PIComponent {
 	/**
 	 * The text to display when there is no content in this text field.
 	 * 
-	 * @param s the example string
+	 * @param s
+	 *            the example string
 	 */
 	public final void setExampleString(final String s) {
 		this.exampleString = s;

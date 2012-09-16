@@ -34,7 +34,8 @@ public class PICheckbox extends PIComponent {
 	/**
 	 * Set the checked state of this checkbox.
 	 * 
-	 * @param checked the new checked state
+	 * @param checked
+	 *            the new checked state
 	 */
 	public final void setChecked(final boolean checked) {
 		this.setActive(checked);
@@ -61,20 +62,18 @@ public class PICheckbox extends PIComponent {
 			Rectangle bounds = getAbsoluteBounds();
 			if (style.background != null) {
 				g.setColor(style.background);
-				g.fillRect(bounds.x, bounds.y, bounds.height,
-						bounds.height);
+				g.fillRect(bounds.x, bounds.y, bounds.height, bounds.height);
 			}
 			if (style.border != null) {
 				g.setColor(style.border);
-				g.drawRect(bounds.x, bounds.y, bounds.height,
-						bounds.height);
+				g.drawRect(bounds.x, bounds.y, bounds.height, bounds.height);
 			}
 		}
 	}
 
 	@Override
 	public final void mouseClicked(final MouseEvent e) {
-		if (isFocused()) {
+		if (isVisible() && !e.isConsumed() && isFocused()) {
 			setActive(!isActive());
 		}
 		super.mouseClicked(e);
@@ -83,21 +82,20 @@ public class PICheckbox extends PIComponent {
 	@Override
 	public final Rectangle getAbsolutePaddedBounds() {
 		Rectangle bounds = getAbsoluteBounds();
-		bounds.setBounds(bounds.x + bounds.height + 4, bounds.y,
-				bounds.width, bounds.height);
+		bounds.setBounds(bounds.x + bounds.height + 4, bounds.y, bounds.width,
+				bounds.height);
 		return bounds;
 	}
 
 	@Override
 	public final void keyTyped(final KeyEvent e) {
 		super.keyPressed(e);
-		if (e.getKeyChar() == '\n' && isFocused()) {
-			MouseEvent ev =
-					new MouseEvent(e.getComponent(),
-							MouseEvent.MOUSE_CLICKED,
-							System.currentTimeMillis(), 0, getAbsoluteX()
-									+ (getWidth() / 2), getAbsoluteY()
-									+ (getHeight() / 2), 1, false);
+		if (e.getKeyChar() == '\n' && isFocused() && isVisible()
+				&& !e.isConsumed()) {
+			MouseEvent ev = new MouseEvent(e.getComponent(),
+					MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0,
+					getAbsoluteX() + (getWidth() / 2), getAbsoluteY()
+							+ (getHeight() / 2), 1, false);
 			ev.setSource(this);
 			mouseClicked(ev);
 		}

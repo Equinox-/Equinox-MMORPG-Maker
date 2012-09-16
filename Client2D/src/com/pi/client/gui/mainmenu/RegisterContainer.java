@@ -128,7 +128,7 @@ public class RegisterContainer extends PIContainer {
 				} else {
 					menu.getClient()
 							.getRenderLoop()
-							.alert("Cannot login without network connection!");
+							.alert("Cannot register without network connection!");
 				}
 			}
 		});

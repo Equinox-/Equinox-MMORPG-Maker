@@ -24,14 +24,12 @@ import com.pi.gui.PIStyle.StyleType;
  * @author Westin
  * 
  */
-public class PIComponent implements Renderable,
-		MouseWheelListener, MouseListener, MouseMotionListener,
-		KeyListener {
+public class PIComponent implements Renderable, MouseWheelListener,
+		MouseListener, MouseMotionListener, KeyListener {
 	/**
 	 * The current style mapping for each different state.
 	 */
-	private PIStyle[] styles = new PIStyle[PIStyle.StyleType
-			.values().length];
+	private PIStyle[] styles = new PIStyle[PIStyle.StyleType.values().length];
 	/**
 	 * The relative x, y position of this component.
 	 */
@@ -55,23 +53,19 @@ public class PIComponent implements Renderable,
 	/**
 	 * The mouse listeners registered to this component.
 	 */
-	private List<MouseListener> mouseListeners =
-			new ArrayList<MouseListener>();
+	private List<MouseListener> mouseListeners = new ArrayList<MouseListener>();
 	/**
 	 * The mouse wheel listeners registered to this component.
 	 */
-	private List<MouseWheelListener> mouseWheelListeners =
-			new ArrayList<MouseWheelListener>();
+	private List<MouseWheelListener> mouseWheelListeners = new ArrayList<MouseWheelListener>();
 	/**
 	 * The mouse motion listeners registered to this component.
 	 */
-	private List<MouseMotionListener> mouseMotionListeners =
-			new ArrayList<MouseMotionListener>();
+	private List<MouseMotionListener> mouseMotionListeners = new ArrayList<MouseMotionListener>();
 	/**
 	 * The key listeners registered to this component.
 	 */
-	private List<KeyListener> keyListeners =
-			new ArrayList<KeyListener>();
+	private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
 	/**
 	 * If this component is visible.
 	 */
@@ -100,8 +94,7 @@ public class PIComponent implements Renderable,
 	 * components.
 	 */
 	public PIComponent() {
-		styles[PIStyle.StyleType.NORMAL.ordinal()] =
-				GUIKit.DEFAULT_STYLE;
+		styles[PIStyle.StyleType.NORMAL.ordinal()] = GUIKit.DEFAULT_STYLE;
 	}
 
 	@Override
@@ -122,13 +115,13 @@ public class PIComponent implements Renderable,
 	 * <code>null</code>, as if the mapping is <code>null</code>, it will be set
 	 * to a clone of the {@link GUIKit#DEFAULT_STYLE}.
 	 * 
-	 * @param type the style type
+	 * @param type
+	 *            the style type
 	 * @return the style instance
 	 */
 	public final PIStyle getStyle(final PIStyle.StyleType type) {
 		if (styles[type.ordinal()] == null) {
-			styles[type.ordinal()] =
-					GUIKit.DEFAULT_STYLE.clone();
+			styles[type.ordinal()] = GUIKit.DEFAULT_STYLE.clone();
 		}
 		return styles[type.ordinal()];
 	}
@@ -136,18 +129,19 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the style bound to the specified type.
 	 * 
-	 * @param type the style type
-	 * @param style the style
+	 * @param type
+	 *            the style type
+	 * @param style
+	 *            the style
 	 */
-	public final void setStyle(final PIStyle.StyleType type,
-			final PIStyle style) {
+	public final void setStyle(final PIStyle.StyleType type, final PIStyle style) {
 		styles[type.ordinal()] = style;
 	}
 
 	/**
-	 * Updates the absolute x and y position of this component. Should be called every
-	 * time the x and y position of this component, or any parent components
-	 * changes.
+	 * Updates the absolute x and y position of this component. Should be called
+	 * every time the x and y position of this component, or any parent
+	 * components changes.
 	 */
 	public void compile() {
 		if (parent != null) {
@@ -163,11 +157,11 @@ public class PIComponent implements Renderable,
 	 * Checks if the style mapping has a non-null entry for the given style
 	 * type.
 	 * 
-	 * @param type the style type
+	 * @param type
+	 *            the style type
 	 * @return if the mapping is non-null
 	 */
-	public final boolean containsStyle(
-			final PIStyle.StyleType type) {
+	public final boolean containsStyle(final PIStyle.StyleType type) {
 		return styles[type.ordinal()] != null;
 	}
 
@@ -190,7 +184,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the active state of this component.
 	 * 
-	 * @param active the new active state
+	 * @param active
+	 *            the new active state
 	 */
 	public final void setActive(final boolean active) {
 		this.isActive = active;
@@ -199,7 +194,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Paints the background of this component to the provided graphics object.
 	 * 
-	 * @param g the graphics object
+	 * @param g
+	 *            the graphics object
 	 */
 	public void paintBackground(final IGraphics g) {
 		if (isVisible) {
@@ -214,8 +210,7 @@ public class PIComponent implements Renderable,
 			}
 			if (style.bgImage != null) {
 				g.drawTiledImage(style.bgImage, bounds,
-						style.stretchBackgroundX,
-						style.stretchBackgroundY);
+						style.stretchBackgroundX, style.stretchBackgroundY);
 			}
 			if (style.border != null) {
 				g.setColor(style.border);
@@ -228,8 +223,10 @@ public class PIComponent implements Renderable,
 	 * Sets the current styles to this style set's styles. Cloning them if
 	 * specified.
 	 * 
-	 * @param set the style set
-	 * @param clones if the styles should be cloned
+	 * @param set
+	 *            the style set
+	 * @param clones
+	 *            if the styles should be cloned
 	 */
 	public final void setStyleSet(final PIStyle.PIStyleSet set,
 			final boolean clones) {
@@ -251,7 +248,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Paints the foreground of this component to the specified graphics object.
 	 * 
-	 * @param g the graphics object
+	 * @param g
+	 *            the graphics object
 	 */
 	public final void paintForeground(final IGraphics g) {
 		if (isVisible) {
@@ -270,8 +268,7 @@ public class PIComponent implements Renderable,
 				String disp = getDisplay().trim();
 				if (disp.length() > 0) {
 					g.drawWrappedText(bounds, style.font, disp,
-							style.foreground, style.hAlign,
-							style.vAlign);
+							style.foreground, style.hAlign, style.vAlign);
 				}
 			}
 			if (clipContents) {
@@ -308,7 +305,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the visible flag of this component.
 	 * 
-	 * @param visible the new visible state
+	 * @param visible
+	 *            the new visible state
 	 */
 	public final void setVisible(final boolean visible) {
 		this.isVisible = visible;
@@ -328,7 +326,8 @@ public class PIComponent implements Renderable,
 	 * Sets the parent container of this component, or <code>null</code> if it a
 	 * top level component.
 	 * 
-	 * @param sParent the new parent
+	 * @param sParent
+	 *            the new parent
 	 */
 	public final void setParent(final PIContainer sParent) {
 		this.parent = sParent;
@@ -379,12 +378,12 @@ public class PIComponent implements Renderable,
 	 * 
 	 * @see PIComponent#getAbsoluteX()
 	 * @see PIComponent#getAbsoluteY()
-	 * @param r the rectangle to apply the bounds to
+	 * @param r
+	 *            the rectangle to apply the bounds to
 	 * @return the rectangle
 	 */
 	public final Rectangle getAbsoluteBounds(final Rectangle r) {
-		r.setBounds(getAbsoluteX(), getAbsoluteY(), width,
-				height);
+		r.setBounds(getAbsoluteX(), getAbsoluteY(), width, height);
 		return r;
 	}
 
@@ -405,7 +404,8 @@ public class PIComponent implements Renderable,
 	 * Gets the relative bounds of this component and applies it to the
 	 * preallocated rectangle.
 	 * 
-	 * @param r the rectangle to apply the bounds to
+	 * @param r
+	 *            the rectangle to apply the bounds to
 	 * @return the rectangle
 	 */
 	public final Rectangle getBounds(final Rectangle r) {
@@ -461,7 +461,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the textual content of this component.
 	 * 
-	 * @param s the new content
+	 * @param s
+	 *            the new content
 	 */
 	public final void setContent(final String s) {
 		this.content = s;
@@ -470,8 +471,10 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the size of this component.
 	 * 
-	 * @param sWidth the new width
-	 * @param sHeight the new height
+	 * @param sWidth
+	 *            the new width
+	 * @param sHeight
+	 *            the new height
 	 */
 	public void setSize(final int sWidth, final int sHeight) {
 		this.width = sWidth;
@@ -481,7 +484,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the size of this component.
 	 * 
-	 * @param d the new size
+	 * @param d
+	 *            the new size
 	 */
 	public final void setSize(final Dimension d) {
 		setSize(d.width, d.height);
@@ -490,7 +494,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the width of this component.
 	 * 
-	 * @param sWidth the new width
+	 * @param sWidth
+	 *            the new width
 	 */
 	public final void setWidth(final int sWidth) {
 		setSize(width, getHeight());
@@ -499,7 +504,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the height of this component.
 	 * 
-	 * @param sHeight the new height
+	 * @param sHeight
+	 *            the new height
 	 */
 	public final void setHeight(final int sHeight) {
 		setSize(getWidth(), sHeight);
@@ -509,7 +515,8 @@ public class PIComponent implements Renderable,
 	 * Sets the x coordinate of this component.The {@link PIComponent#compile()}
 	 * method must be invoked before the absolute location will be updated.
 	 * 
-	 * @param sX the new x coordinate
+	 * @param sX
+	 *            the new x coordinate
 	 */
 	public final void setX(final int sX) {
 		this.x = sX;
@@ -519,7 +526,8 @@ public class PIComponent implements Renderable,
 	 * Sets the y coordinate of this component.The {@link PIComponent#compile()}
 	 * method must be invoked before the absolute location will be updated.
 	 * 
-	 * @param sY the new y coordinate
+	 * @param sY
+	 *            the new y coordinate
 	 */
 	public final void setY(final int sY) {
 		this.y = sY;
@@ -529,8 +537,10 @@ public class PIComponent implements Renderable,
 	 * Sets the location of this component.The {@link PIComponent#compile()}
 	 * method must be invoked before the absolute location will be updated.
 	 * 
-	 * @param sX the new x coordinate
-	 * @param sY the new y coordinate
+	 * @param sX
+	 *            the new x coordinate
+	 * @param sY
+	 *            the new y coordinate
 	 */
 	public final void setLocation(final int sX, final int sY) {
 		this.x = sX;
@@ -541,7 +551,8 @@ public class PIComponent implements Renderable,
 	 * Sets the location of this component. The {@link PIComponent#compile()}
 	 * method must be invoked before the absolute location will be updated.
 	 * 
-	 * @param p the new location
+	 * @param p
+	 *            the new location
 	 */
 	public final void setLocation(final Point2D p) {
 		this.x = (int) p.getX();
@@ -551,7 +562,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets the focused state of this component.
 	 * 
-	 * @param value the new state
+	 * @param value
+	 *            the new state
 	 */
 	public final void setFocused(final boolean value) {
 		this.isFocused = value;
@@ -560,15 +572,12 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseClicked(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()
-				&& !e.isConsumed()) {
+		if (isVisible() && r.contains(e.getPoint()) && !e.isConsumed()) {
 			isFocused = true;
-			MouseEvent nE =
-					new MouseEvent(e.getComponent(), e.getID(),
-							e.getWhen(), e.getModifiers(),
-							e.getX() - r.x, e.getY() - r.y,
-							e.getClickCount(),
-							e.isPopupTrigger(), e.getButton());
+			MouseEvent nE = new MouseEvent(e.getComponent(), e.getID(),
+					e.getWhen(), e.getModifiers(), e.getX() - r.x, e.getY()
+							- r.y, e.getClickCount(), e.isPopupTrigger(),
+					e.getButton());
 			nE.setSource(this);
 			for (MouseListener l : mouseListeners) {
 				l.mouseClicked(nE);
@@ -581,14 +590,11 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mousePressed(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()
-				&& !e.isConsumed()) {
-			MouseEvent nE =
-					new MouseEvent(e.getComponent(), e.getID(),
-							e.getWhen(), e.getModifiers(),
-							e.getX() - r.x, e.getY() - r.y,
-							e.getClickCount(),
-							e.isPopupTrigger(), e.getButton());
+		if (isVisible() && r.contains(e.getPoint()) && !e.isConsumed()) {
+			MouseEvent nE = new MouseEvent(e.getComponent(), e.getID(),
+					e.getWhen(), e.getModifiers(), e.getX() - r.x, e.getY()
+							- r.y, e.getClickCount(), e.isPopupTrigger(),
+					e.getButton());
 			nE.setSource(this);
 			for (MouseListener l : mouseListeners) {
 				l.mousePressed(nE);
@@ -602,14 +608,11 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()
-				&& !e.isConsumed()) {
-			MouseEvent nE =
-					new MouseEvent(e.getComponent(), e.getID(),
-							e.getWhen(), e.getModifiers(),
-							e.getX() - r.x, e.getY() - r.y,
-							e.getClickCount(),
-							e.isPopupTrigger(), e.getButton());
+		if (isVisible() && r.contains(e.getPoint()) && !e.isConsumed()) {
+			MouseEvent nE = new MouseEvent(e.getComponent(), e.getID(),
+					e.getWhen(), e.getModifiers(), e.getX() - r.x, e.getY()
+							- r.y, e.getClickCount(), e.isPopupTrigger(),
+					e.getButton());
 			nE.setSource(this);
 			for (MouseListener l : mouseListeners) {
 				l.mouseReleased(nE);
@@ -620,14 +623,11 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseMoved(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()
-				&& !e.isConsumed()) {
-			MouseEvent nE =
-					new MouseEvent(e.getComponent(), e.getID(),
-							e.getWhen(), e.getModifiers(),
-							e.getX() - r.x, e.getY() - r.y,
-							e.getClickCount(),
-							e.isPopupTrigger(), e.getButton());
+		if (isVisible() && r.contains(e.getPoint()) && !e.isConsumed()) {
+			MouseEvent nE = new MouseEvent(e.getComponent(), e.getID(),
+					e.getWhen(), e.getModifiers(), e.getX() - r.x, e.getY()
+							- r.y, e.getClickCount(), e.isPopupTrigger(),
+					e.getButton());
 			nE.setSource(this);
 			for (MouseMotionListener l : mouseMotionListeners) {
 				l.mouseMoved(nE);
@@ -641,14 +641,11 @@ public class PIComponent implements Renderable,
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		Rectangle r = getAbsoluteBounds();
-		if (r.contains(e.getPoint()) && isVisible()
-				&& !e.isConsumed()) {
-			MouseEvent nE =
-					new MouseEvent(e.getComponent(), e.getID(),
-							e.getWhen(), e.getModifiers(),
-							e.getX() - r.x, e.getY() - r.y,
-							e.getClickCount(),
-							e.isPopupTrigger(), e.getButton());
+		if (isVisible() && r.contains(e.getPoint()) && !e.isConsumed()) {
+			MouseEvent nE = new MouseEvent(e.getComponent(), e.getID(),
+					e.getWhen(), e.getModifiers(), e.getX() - r.x, e.getY()
+							- r.y, e.getClickCount(), e.isPopupTrigger(),
+					e.getButton());
 			nE.setSource(this);
 			for (MouseMotionListener l : mouseMotionListeners) {
 				l.mouseDragged(nE);
@@ -659,17 +656,18 @@ public class PIComponent implements Renderable,
 	/**
 	 * Adds the mouse motion listener to the mouse motion listener array.
 	 * 
-	 * @param l the mouse motion listener to add
+	 * @param l
+	 *            the mouse motion listener to add
 	 */
-	public final void addMouseMotionListener(
-			final MouseMotionListener l) {
+	public final void addMouseMotionListener(final MouseMotionListener l) {
 		mouseMotionListeners.add(l);
 	}
 
 	/**
 	 * Adds the mouse listener to the mouse listener array.
 	 * 
-	 * @param l the mouse listener to add
+	 * @param l
+	 *            the mouse listener to add
 	 */
 	public final void addMouseListener(final MouseListener l) {
 		mouseListeners.add(l);
@@ -678,17 +676,18 @@ public class PIComponent implements Renderable,
 	/**
 	 * Adds the mouse wheel listener to the mouse wheel listener array.
 	 * 
-	 * @param l the mouse wheel listener to add
+	 * @param l
+	 *            the mouse wheel listener to add
 	 */
-	public final void addMouseWheelListener(
-			final MouseWheelListener l) {
+	public final void addMouseWheelListener(final MouseWheelListener l) {
 		mouseWheelListeners.add(l);
 	}
 
 	/**
 	 * Adds the key listener to the key listener array.
 	 * 
-	 * @param l the key listener to add
+	 * @param l
+	 *            the key listener to add
 	 */
 	public final void addKeyListener(final KeyListener l) {
 		keyListeners.add(l);
@@ -741,7 +740,8 @@ public class PIComponent implements Renderable,
 	/**
 	 * Sets if this component should clip it's contents.
 	 * 
-	 * @param val the new value
+	 * @param val
+	 *            the new value
 	 */
 	public final void setClipContents(final boolean val) {
 		this.clipContents = val;
