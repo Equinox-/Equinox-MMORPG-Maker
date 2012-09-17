@@ -1,4 +1,4 @@
-package com.pi.common.contants;
+package com.pi.common.constants;
 
 import java.awt.Color;
 import java.awt.Font;

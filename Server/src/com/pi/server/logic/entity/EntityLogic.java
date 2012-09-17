@@ -2,7 +2,7 @@ package com.pi.server.logic.entity;
 
 import java.util.Random;
 
-import com.pi.common.contants.Direction;
+import com.pi.common.constants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.HealthComponent;

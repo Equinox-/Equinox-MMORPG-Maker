@@ -1,4 +1,4 @@
-package com.pi.common.contants;
+package com.pi.common.constants;
 
 import com.pi.common.database.Item;
 

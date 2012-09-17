@@ -2,7 +2,7 @@ package com.pi.common.database;
 
 import java.io.IOException;
 
-import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.net.packet.PacketObject;

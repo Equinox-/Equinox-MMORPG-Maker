@@ -1,6 +1,6 @@
 package com.pi.server.entity;
 
-import com.pi.common.contants.Direction;
+import com.pi.common.constants.Direction;
 import com.pi.common.database.Location;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.EntityManager;

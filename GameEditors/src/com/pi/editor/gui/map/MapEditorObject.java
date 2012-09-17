@@ -11,9 +11,9 @@ import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import com.pi.common.contants.SectorConstants;
-import com.pi.common.contants.TileConstants;
-import com.pi.common.contants.TileFlags;
+import com.pi.common.constants.SectorConstants;
+import com.pi.common.constants.TileConstants;
+import com.pi.common.constants.TileFlags;
 import com.pi.common.database.io.DatabaseIO;
 import com.pi.common.database.io.GraphicsDirectories;
 import com.pi.common.database.world.Sector;

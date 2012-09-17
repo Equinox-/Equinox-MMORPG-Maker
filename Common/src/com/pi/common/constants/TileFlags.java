@@ -1,4 +1,4 @@
-package com.pi.common.contants;
+package com.pi.common.constants;
 
 /**
  * A class containing tile flag constants.

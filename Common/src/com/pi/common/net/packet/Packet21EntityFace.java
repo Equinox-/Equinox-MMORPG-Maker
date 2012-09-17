@@ -2,8 +2,8 @@ package com.pi.common.net.packet;
 
 import java.io.IOException;
 
-import com.pi.common.contants.Direction;
-import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.constants.Direction;
+import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 

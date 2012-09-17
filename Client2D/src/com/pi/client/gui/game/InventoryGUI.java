@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
-import com.pi.common.contants.GraphicsConstants;
-import com.pi.common.contants.ItemConstants;
+import com.pi.common.constants.GraphicsConstants;
+import com.pi.common.constants.ItemConstants;
 import com.pi.common.database.Inventory;
 import com.pi.common.database.Item;
 import com.pi.common.database.def.ItemDef;

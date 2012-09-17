@@ -1,8 +1,8 @@
 package com.pi.common.game.entity;
 
-import com.pi.common.contants.Direction;
-import com.pi.common.contants.SectorConstants;
-import com.pi.common.contants.TileFlags;
+import com.pi.common.constants.Direction;
+import com.pi.common.constants.SectorConstants;
+import com.pi.common.constants.TileFlags;
 import com.pi.common.database.Location;
 import com.pi.common.database.world.Sector;
 import com.pi.common.database.world.Tile;

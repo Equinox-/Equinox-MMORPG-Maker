@@ -2,8 +2,8 @@ package com.pi.server.net;
 
 import java.util.Iterator;
 
-import com.pi.common.contants.Direction;
-import com.pi.common.contants.GameState;
+import com.pi.common.constants.Direction;
+import com.pi.common.constants.GameState;
 import com.pi.common.database.Account;
 import com.pi.common.database.Item;
 import com.pi.common.database.Location;

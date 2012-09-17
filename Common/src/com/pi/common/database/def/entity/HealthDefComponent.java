@@ -2,7 +2,7 @@ package com.pi.common.database.def.entity;
 
 import java.io.IOException;
 
-import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.game.entity.comp.EntityComponent;
 import com.pi.common.game.entity.comp.HealthComponent;
 import com.pi.common.net.PacketInputStream;

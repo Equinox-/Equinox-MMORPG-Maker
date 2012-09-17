@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 
-import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.constants.NetworkConstants.SizeOf;
 
 /**
  * A wrapper around a byte buffer for reading from it in a way comparable to a

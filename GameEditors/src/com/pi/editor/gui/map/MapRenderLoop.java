@@ -1,6 +1,6 @@
 package com.pi.editor.gui.map;
 
-import com.pi.common.contants.TileConstants;
+import com.pi.common.constants.TileConstants;
 import com.pi.editor.Editor;
 import com.pi.editor.gui.EditorPage;
 import com.pi.graphics.device.IGraphics;

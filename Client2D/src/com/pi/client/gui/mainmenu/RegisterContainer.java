@@ -3,7 +3,7 @@ package com.pi.client.gui.mainmenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import com.pi.common.contants.UserConstants;
+import com.pi.common.constants.UserConstants;
 import com.pi.common.net.packet.Packet3Register;
 import com.pi.common.util.PICryptUtils;
 import com.pi.gui.GUIKit;

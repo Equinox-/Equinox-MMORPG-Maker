@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import com.pi.common.contants.SectorConstants;
-import com.pi.common.contants.TileConstants;
+import com.pi.common.constants.SectorConstants;
+import com.pi.common.constants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.world.Sector;
 import com.pi.common.database.world.Tile;

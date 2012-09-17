@@ -1,6 +1,6 @@
 package com.pi.client.game;
 
-import com.pi.common.contants.ItemConstants;
+import com.pi.common.constants.ItemConstants;
 import com.pi.common.database.Inventory;
 
 /**

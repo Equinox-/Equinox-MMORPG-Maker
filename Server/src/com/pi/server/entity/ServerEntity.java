@@ -1,6 +1,6 @@
 package com.pi.server.entity;
 
-import com.pi.common.contants.EntityConstants;
+import com.pi.common.constants.EntityConstants;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.EntityContainer;

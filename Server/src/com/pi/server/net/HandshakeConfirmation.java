@@ -1,6 +1,6 @@
 package com.pi.server.net;
 
-import com.pi.common.contants.NetworkConstants;
+import com.pi.common.constants.NetworkConstants;
 import com.pi.common.net.packet.Packet;
 
 /**

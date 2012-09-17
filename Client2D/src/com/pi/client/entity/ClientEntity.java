@@ -1,7 +1,7 @@
 package com.pi.client.entity;
 
-import com.pi.common.contants.EntityConstants;
-import com.pi.common.contants.TileConstants;
+import com.pi.common.constants.EntityConstants;
+import com.pi.common.constants.TileConstants;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.EntityContainer;
 

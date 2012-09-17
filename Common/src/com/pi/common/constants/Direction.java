@@ -1,4 +1,4 @@
-package com.pi.common.contants;
+package com.pi.common.constants;
 
 /**
  * An enum representing directions for entities.

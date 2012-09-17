@@ -1,6 +1,6 @@
 package com.pi.server.logic.entity;
 
-import com.pi.common.contants.Direction;
+import com.pi.common.constants.Direction;
 import com.pi.server.Server;
 import com.pi.server.entity.ServerEntity;
 

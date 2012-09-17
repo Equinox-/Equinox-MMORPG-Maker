@@ -7,8 +7,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.pi.common.contants.NetworkConstants;
-import com.pi.common.contants.NetworkConstants.SizeOf;
+import com.pi.common.constants.NetworkConstants;
+import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.packet.Packet;
 

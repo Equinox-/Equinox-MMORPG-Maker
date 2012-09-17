@@ -14,7 +14,7 @@ import java.util.Map;
 import com.pi.client.Client;
 import com.pi.client.constants.Constants;
 import com.pi.client.database.Paths;
-import com.pi.common.contants.NetworkConstants;
+import com.pi.common.constants.NetworkConstants;
 
 /**
  * Fetches and updates the graphics from the server.

@@ -3,7 +3,7 @@ package com.pi.gui;
 import java.awt.Color;
 import java.awt.Font;
 
-import com.pi.common.contants.GraphicsConstants;
+import com.pi.common.constants.GraphicsConstants;
 import com.pi.common.database.GraphicsObject;
 
 /**

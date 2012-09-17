@@ -2,9 +2,9 @@ package com.pi.server.database;
 
 import java.io.IOException;
 
-import com.pi.common.contants.SectorConstants;
-import com.pi.common.contants.TileConstants;
-import com.pi.common.contants.TileFlags;
+import com.pi.common.constants.SectorConstants;
+import com.pi.common.constants.TileConstants;
+import com.pi.common.constants.TileFlags;
 import com.pi.common.database.def.ItemDef;
 import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.database.def.entity.HealthDefComponent;
