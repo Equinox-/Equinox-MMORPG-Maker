@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.packet.Packet;
+import com.pi.common.net.packet.PacketManager;
+import com.pi.common.util.ObjectHeap;
 
 /**
  * A class for processing abstract packets.
@@ -12,6 +14,36 @@ import com.pi.common.net.packet.Packet;
  * 
  */
 public abstract class NetHandler {
+	/**
+	 * Method lookup map to speed up packet processing times.
+	 */
+	private final ObjectHeap<Method> methodLookupMap =
+			new ObjectHeap<Method>(
+					PacketManager.getPacketCount());
+
+	/**
+	 * Generates the method lookup map.
+	 */
+	public NetHandler() {
+		Class<? extends NetHandler> clazz = getClass();
+		for (int id = 0; id < PacketManager.getPacketCount(); id++) {
+			Class<? extends Packet> packetClass =
+					PacketManager.getPacketClass(id);
+			if (packetClass != null) {
+				try {
+					Method m =
+							clazz.getMethod("process",
+									packetClass);
+					if (m != null) {
+						methodLookupMap.set(id, m);
+					}
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	/**
 	 * Generic method to process packets without a custom method. This should
 	 * not be used, except for an error message.
@@ -45,22 +77,20 @@ public abstract class NetHandler {
 	 * @param p the packet to process
 	 */
 	public final void processPacket(final Packet p) {
-		try {
-			Method m =
-					getClass()
-							.getMethod("process", p.getClass());
-			m.invoke(this, p);
-			if (p.requiresHandshake()) {
-				sendHandshake(p.getID());
+		Method m = methodLookupMap.get(p.getID());
+		if (m != null) {
+			try {
+				m.invoke(this, p);
+			} catch (Exception e) {
+				getLog().printStackTrace(e);
 			}
-			return;
-		} catch (Exception e) {
+		} else {
 			getLog().severe(
 					getClass().getSimpleName()
 							+ ": No custom method for packet: "
 							+ p.getName());
+			process(p);
 		}
-		process(p);
 		if (p.requiresHandshake()) {
 			sendHandshake(p.getID());
 		}

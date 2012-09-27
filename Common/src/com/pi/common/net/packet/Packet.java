@@ -24,6 +24,33 @@ public abstract class Packet implements PacketObject,
 	private long timeStamp = System.currentTimeMillis();
 
 	/**
+	 * This packet's id, cached.
+	 */
+	private final int packetID;
+
+	/**
+	 * Sets the cached packet id from the class name.
+	 */
+	protected Packet() {
+		char[] name = getClass().getSimpleName().toCharArray();
+		boolean numStart = false;
+		String num = new String();
+		for (int i = 0; i < name.length; i++) {
+			if (name[i] >= '0' && name[i] <= '9') {
+				numStart = true;
+				num += name[i];
+			} else if (numStart) {
+				break;
+			}
+		}
+		if (numStart) {
+			packetID = Integer.valueOf(num);
+		}
+		throw new UnsupportedOperationException(
+				"The class name doesn't contain ID, please format it to contain a number");
+	}
+
+	/**
 	 * Gets the name of this packet, this class' name if not overridden.
 	 * 
 	 * @return the packet name
@@ -60,23 +87,7 @@ public abstract class Packet implements PacketObject,
 	 * @return the packet id
 	 */
 	public final int getID() {
-		// This is a janky way to do it.
-		char[] name = getClass().getSimpleName().toCharArray();
-		boolean numStart = false;
-		String num = new String();
-		for (int i = 0; i < name.length; i++) {
-			if (name[i] >= '0' && name[i] <= '9') {
-				numStart = true;
-				num += name[i];
-			} else if (numStart) {
-				break;
-			}
-		}
-		if (numStart) {
-			return Integer.valueOf(num);
-		}
-		throw new UnsupportedOperationException(
-				"The class name doesn't contain ID, please override getID()");
+		return packetID;
 	}
 
 	@Override
