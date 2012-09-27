@@ -1,5 +1,5 @@
-Server/equinox-server/log/*
-Server/equinox-server/database/accounts.db
+Server/equinox-server/*
+equinox-server/*
 
 #################
 ## Eclipse
