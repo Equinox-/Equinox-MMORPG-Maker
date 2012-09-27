@@ -1,5 +1,5 @@
-Server/equinox-server/*
-equinox-server/*
+*/equinox-server
+*/equinox-server/*
 
 #################
 ## Eclipse
