@@ -19,7 +19,7 @@ public final class ServerConfiguration {
 	 * @see #BINARY_KEYS
 	 */
 	public static final String[] BINARY_FILES = {
-			"jogl.all.jar", "gluegen-rt.jar",
+			"jogl-all.jar", "gluegen-rt.jar",
 			"EquinoxClient.jar" };
 	/**
 	 * Binary keys to download, but not unzip.

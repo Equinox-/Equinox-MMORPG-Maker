@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="help" name="Create binaries and javadoc for Equinox MMORPG maker">
-	<property name="setDir" location="C:/Users/Westin/java-workspace/EMMORPG" />
+	<property name="setDir" location="/home/westin/Programming/java-workspace/EMMORPG" />
 	<!-- Help + Info -->
 	<target name="help">
 		<echo>Apache ANT Buildfile for Equinox MMORPG Maker
@@ -65,22 +65,19 @@ package_server: Packages the server into a runnable JAR file, stored in the main
     <path id="client_classpath">
 		<pathelement location="${setDir}/Common/bin"/>
 		<pathelement location="${setDir}/PIGraphicsLibrary/bin"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl-all.jar"/>
 		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
     </path>
     <path id="editors_classpath">
 		<pathelement location="${setDir}/Common/bin"/>
 		<pathelement location="${setDir}/PIGraphicsLibrary/bin"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl-all.jar"/>
 		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
     </path>
     <path id="graphicslib_classpath">
 		<pathelement location="${setDir}/Common/bin"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
+		<pathelement path="${setDir}/ClientLauncher/lib/jogl-all.jar"/>
 		<pathelement path="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
-		<pathelement path="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
     </path>
 	<path id="server_classpath">
 		<pathelement location="${setDir}/Common/bin"/>
@@ -156,8 +153,7 @@ package_server: Packages the server into a runnable JAR file, stored in the main
             </manifest>
             <fileset dir="${setDir}/GameEditors/bin"/>
             <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/gluegen-rt.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/jogl.all.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/nativewindow.all.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="${setDir}/ClientLauncher/lib/jogl-all.jar"/>
             <fileset dir="${setDir}/Common/bin"/>
             <fileset dir="${setDir}/PIGraphicsLibrary/bin"/>
         </jar>
@@ -165,6 +161,6 @@ package_server: Packages the server into a runnable JAR file, stored in the main
 	
 	<!--Documentation-->
     <target name="javadoc">
-        <javadoc access="private" author="true" classpath="${setDir}/ClientLauncher/lib/gluegen-rt.jar;/Common/bin;${setDir}/ClientLauncher/lib/jogl.all.jar;${setDir}/ClientLauncher/lib/nativewindow.all.jar;${setDir}/PIGraphicsLibrary/bin" destdir="${setDir}/../EMMORPG_doc" doctitle="Equinox MMORPG Maker" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.pi.server.debug,com.pi.common.world,com.pi.common.net,com.pi.client.net,com.pi.server.net,com.pi.graphics.device.opengl,com.pi.common.database.def,com.pi.server.constants,com.pi.server,com.pi.graphics.device,com.pi.graphics.device.awt,com.pi.common.game,com.pi.common,com.pi.common.contants,com.pi.common.debug,com.pi.editor,com.pi.client.world,com.pi.client.game,com.pi.client.debug,com.pi.launcher,com.pi.client,com.pi.client.entity,com.pi.client.database.webfiles,com.pi.gui,com.pi.editor.gui,com.pi.editor.gui.map,com.pi.common.net.packet,com.pi.server.world,com.pi.client.database,com.pi.server.def,com.pi.server.logic,com.pi.client.graphics,com.pi.client.clientviewer,com.pi.common.database.io,com.pi.client.gui.mainmenu,com.pi.client.constants,com.pi.server.entity,com.pi.client.def,com.pi.server.logic.entity,com.pi.server.database,com.pi.server.client,com.pi.common.database" source="1.6" sourcepath="C:\Users\Westin\java-workspace\EMMORPG\PIGraphicsLibrary\src;C:\Users\Westin\java-workspace\EMMORPG\Client2D\src;C:\Users\Westin\java-workspace\EMMORPG\Server\src;C:\Users\Westin\java-workspace\EMMORPG\Common\src;C:\Users\Westin\java-workspace\EMMORPG\ClientLauncher\src;C:\Users\Westin\java-workspace\EMMORPG\GameEditors\src" splitindex="true" use="true" version="true"/>
+        <javadoc access="private" author="true" classpath="${setDir}/ClientLauncher/lib/gluegen-rt.jar;/Common/bin;${setDir}/ClientLauncher/lib/jogl-all.jar;${setDir}/PIGraphicsLibrary/bin" destdir="${setDir}/../EMMORPG_doc" doctitle="Equinox MMORPG Maker" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.pi.server.debug,com.pi.common.world,com.pi.common.net,com.pi.client.net,com.pi.server.net,com.pi.graphics.device.opengl,com.pi.common.database.def,com.pi.server.constants,com.pi.server,com.pi.graphics.device,com.pi.graphics.device.awt,com.pi.common.game,com.pi.common,com.pi.common.contants,com.pi.common.debug,com.pi.editor,com.pi.client.world,com.pi.client.game,com.pi.client.debug,com.pi.launcher,com.pi.client,com.pi.client.entity,com.pi.client.database.webfiles,com.pi.gui,com.pi.editor.gui,com.pi.editor.gui.map,com.pi.common.net.packet,com.pi.server.world,com.pi.client.database,com.pi.server.def,com.pi.server.logic,com.pi.client.graphics,com.pi.client.clientviewer,com.pi.common.database.io,com.pi.client.gui.mainmenu,com.pi.client.constants,com.pi.server.entity,com.pi.client.def,com.pi.server.logic.entity,com.pi.server.database,com.pi.server.client,com.pi.common.database" source="1.6" sourcepath="${setDir}/PIGraphicsLibrary/src;${setDir}/Client2D/src;${setDir}/Server/src;${setDir}/Common/src;${setDir}/ClientLauncher/src;${setDir}/GameEditors/src" splitindex="true" use="true" version="true"/>
     </target>
 </project>
