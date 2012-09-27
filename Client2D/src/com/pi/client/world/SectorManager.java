@@ -38,17 +38,17 @@ public class SectorManager extends ClientThread implements
 	/**
 	 * The sector load queue.
 	 */
-	private Queue<SectorLocation> loadQueue =
+	private volatile Queue<SectorLocation> loadQueue =
 			new LinkedBlockingQueue<SectorLocation>();
 	/**
 	 * The storage map for the sectors.
 	 */
-	private Hashtable<SectorLocation, SectorStorage> map =
+	private volatile Hashtable<SectorLocation, SectorStorage> map =
 			new Hashtable<SectorLocation, SectorStorage>();
 	/**
 	 * The sent request storage map for the sectors.
 	 */
-	private Hashtable<SectorLocation, Long> sentRequests =
+	private volatile Hashtable<SectorLocation, Long> sentRequests =
 			new Hashtable<SectorLocation, Long>();
 
 	/**

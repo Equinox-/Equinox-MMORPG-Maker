@@ -22,13 +22,13 @@ public abstract class ImageManager<T> extends Thread {
 	/**
 	 * The object heap used to store the images.
 	 */
-	private ObjectHeap<ObjectHeap<GraphicsStorage>> map =
+	private volatile ObjectHeap<ObjectHeap<GraphicsStorage>> map =
 			new ObjectHeap<ObjectHeap<GraphicsStorage>>(
 					GraphicsDirectories.values().length);
 	/**
 	 * The image load queue.
 	 */
-	private Queue<Integer> loadQueue =
+	private volatile Queue<Integer> loadQueue =
 			new LinkedBlockingQueue<Integer>();
 	/**
 	 * Boolean representing the running state of this thread.

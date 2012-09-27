@@ -70,7 +70,7 @@ public class Client implements Disposable, DeviceRegistration {
 	 * Boolean value monitoring the disposal state of the client. Mainly used to
 	 * prevent re-disposal of systems.
 	 */
-	private boolean disposing = false;
+	private volatile boolean disposing = false;
 
 	// Network Start
 	/**

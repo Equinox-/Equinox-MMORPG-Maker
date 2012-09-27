@@ -15,7 +15,7 @@ public abstract class ClientThread extends Thread {
 	 * the {@link com.pi.client.ClientThread#shouldLoop()} method, allowing the
 	 * thread to quit nicely.
 	 */
-	private boolean running = true;
+	private volatile boolean running = true;
 
 	/**
 	 * The client instance allowing subsystems access to each other.
@@ -26,7 +26,7 @@ public abstract class ClientThread extends Thread {
 	 * A mutex object for providing {@link java.lang.Object#wait()} and
 	 * {@link java.lang.Object#notify()} access for the thread.
 	 */
-	private Object mutex;
+	private volatile Object mutex;
 
 	/**
 	 * Creates a new thread in the client's thread group, with the class's

@@ -58,7 +58,7 @@ public class NetServer extends Thread {
 	/**
 	 * If the selector thread is running.
 	 */
-	private boolean isRunning = true;
+	private volatile boolean isRunning = true;
 
 	/**
 	 * Creates a network server bound to the given server and port.

@@ -19,8 +19,8 @@ public class Definitions {
 	private final ItemDefLoader itemDefLoader;
 
 	/**
-	 * Creates a definitions loader for the specified server, and starts the
-	 * thread.
+	 * Creates a definitions loader for the specified server and loads all the
+	 * definitions.
 	 * 
 	 * @param server the server instance
 	 */

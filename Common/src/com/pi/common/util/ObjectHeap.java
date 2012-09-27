@@ -31,7 +31,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * The object data.
 	 */
-	private transient Object[] elementData;
+	private volatile Object[] elementData;
 
 	/**
 	 * Creates an object heap with a starting array of the given size.

@@ -56,7 +56,7 @@ public class ClientNetwork extends Thread {
 	 * The queue that manages changes to the channel's interested operations and
 	 * selector registration.
 	 */
-	private Queue<NetChangeRequest> pendingChanges =
+	private volatile Queue<NetChangeRequest> pendingChanges =
 			new LinkedBlockingQueue<NetChangeRequest>();
 	/**
 	 * The packet handler.
@@ -85,7 +85,7 @@ public class ClientNetwork extends Thread {
 	/**
 	 * Running flag for the thread.
 	 */
-	private boolean isRunning = true;
+	private volatile boolean isRunning = true;
 
 	/**
 	 * Creates a network model and tries to establish a connection to the given

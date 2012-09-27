@@ -15,7 +15,7 @@ public abstract class ServerThread extends Thread {
 	 * the {@link com.pi.server.ServerThread#shouldLoop()} method, allowing the
 	 * thread to quit nicely.
 	 */
-	private boolean running = true;
+	private volatile boolean running = true;
 
 	/**
 	 * The server instance allowing subsystems access to each other.
@@ -26,7 +26,7 @@ public abstract class ServerThread extends Thread {
 	 * A mutex object for providing {@link java.lang.Object#wait()} and
 	 * {@link java.lang.Object#notify()} access for the thread.
 	 */
-	private Object mutex;
+	private volatile Object mutex;
 
 	/**
 	 * Creates a new thread in the server's thread group, with the class's

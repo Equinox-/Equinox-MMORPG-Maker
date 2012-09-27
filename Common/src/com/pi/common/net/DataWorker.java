@@ -20,7 +20,7 @@ public abstract class DataWorker extends Thread {
 	/**
 	 * The queue used for processing packets.
 	 */
-	private Queue<DataEvent> queue =
+	private volatile Queue<DataEvent> queue =
 			new PriorityBlockingQueue<DataEvent>();
 
 	/**

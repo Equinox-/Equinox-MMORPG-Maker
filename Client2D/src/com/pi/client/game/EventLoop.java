@@ -28,7 +28,7 @@ public class EventLoop extends ClientThread implements KeyListener {
 	/**
 	 * The pressed state of various keys.
 	 */
-	private boolean[] keyState = new boolean[MAXIMUM_KEY_CODE];
+	private volatile boolean[] keyState = new boolean[MAXIMUM_KEY_CODE];
 
 	/**
 	 * The last time this client attacked something.
