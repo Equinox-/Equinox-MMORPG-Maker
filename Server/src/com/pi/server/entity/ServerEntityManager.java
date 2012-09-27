@@ -222,7 +222,7 @@ public class ServerEntityManager extends EntityManager<ServerEntity> {
 	}
 
 	@Override
-	protected ServerEntity createEntityContainer(Entity entity) {
+	protected final ServerEntity createEntityContainer(final Entity entity) {
 		return new ServerEntity(server.getDefs().getEntityLoader(), entity);
 	}
 }

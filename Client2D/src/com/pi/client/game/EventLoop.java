@@ -20,7 +20,8 @@ import com.pi.common.net.packet.Packet19Interact;
  * @author Westin
  * 
  */
-public class EventLoop extends ClientThread implements KeyListener {
+public class EventLoop extends ClientThread implements
+		KeyListener {
 	/**
 	 * The maximum key code, for creating the array.
 	 */
@@ -28,22 +29,29 @@ public class EventLoop extends ClientThread implements KeyListener {
 	/**
 	 * The pressed state of various keys.
 	 */
-	private volatile boolean[] keyState = new boolean[MAXIMUM_KEY_CODE];
+	private volatile boolean[] keyState =
+			new boolean[MAXIMUM_KEY_CODE];
 
 	/**
 	 * The last time this client attacked something.
 	 */
 	private long lastAttackTime;
 
+	/**
+	 * The last time this client picked something up.
+	 */
 	private long lastPickupTime;
 
+	/**
+	 * The number of keys currently pressed. This is used to allow the thread to
+	 * sleep when the user isn't using the keyboard.
+	 */
 	private int keyDownCount = 0;
 
 	/**
 	 * Creates an event loop for the given client.
 	 * 
-	 * @param sClient
-	 *            the client
+	 * @param sClient the client
 	 */
 	public EventLoop(final Client sClient) {
 		super(sClient);
@@ -61,7 +69,9 @@ public class EventLoop extends ClientThread implements KeyListener {
 				}
 			}
 		} else {
-			ClientEntity cEnt = getClient().getEntityManager().getLocalEntity();
+			ClientEntity cEnt =
+					getClient().getEntityManager()
+							.getLocalEntity();
 			if (cEnt != null) {
 				Direction dir = null;
 				if (keyState[KeyEvent.VK_UP]) {
@@ -73,19 +83,25 @@ public class EventLoop extends ClientThread implements KeyListener {
 				} else if (keyState[KeyEvent.VK_RIGHT]) {
 					dir = Direction.RIGHT;
 				}
-				long timeToAttack = EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
-				if (keyState[InteractionButton.ATTACK.getKeyCode()]
+				long timeToAttack =
+						EntityConstants.DEFAULT_ENTITY_ATTACK_SPEED;
+				if (keyState[InteractionButton.ATTACK
+						.getKeyCode()]
 						&& System.currentTimeMillis() >= lastAttackTime
 								+ timeToAttack) {
-					getClient().getNetwork().send(
-							Packet19Interact.create(InteractionButton.ATTACK));
+					getClient()
+							.getNetwork()
+							.send(Packet19Interact
+									.create(InteractionButton.ATTACK));
 					lastAttackTime = System.currentTimeMillis();
 				}
 				if (keyState[InteractionButton.GRAB.getKeyCode()]
 						&& System.currentTimeMillis() >= lastPickupTime
 								+ ItemConstants.DEFAULT_ITEM_PICKUP_SPEED) {
-					getClient().getNetwork().send(
-							Packet19Interact.create(InteractionButton.GRAB));
+					getClient()
+							.getNetwork()
+							.send(Packet19Interact
+									.create(InteractionButton.GRAB));
 					lastPickupTime = System.currentTimeMillis();
 				}
 				if (dir != null && !cEnt.isMoving()) {
@@ -93,8 +109,9 @@ public class EventLoop extends ClientThread implements KeyListener {
 					local.setDir(dir);
 					if (local.canMove(getClient().getWorld())) {
 						cEnt.doMovement(keyState[KeyEvent.VK_SHIFT]);
-						getClient().getNetwork().send(
-								Packet14ClientMove.create(local));
+						getClient().getNetwork()
+								.send(Packet14ClientMove
+										.create(local));
 					}
 				}
 			}
@@ -107,7 +124,8 @@ public class EventLoop extends ClientThread implements KeyListener {
 
 	@Override
 	public final void keyPressed(final KeyEvent e) {
-		if (e.getKeyCode() >= 0 && e.getKeyCode() < keyState.length) {
+		if (e.getKeyCode() >= 0
+				&& e.getKeyCode() < keyState.length) {
 			if (!keyState[e.getKeyCode()]) {
 				if (keyDownCount == 0) {
 					synchronized (getMutex()) {
@@ -122,7 +140,8 @@ public class EventLoop extends ClientThread implements KeyListener {
 
 	@Override
 	public final void keyReleased(final KeyEvent e) {
-		if (e.getKeyCode() >= 0 && e.getKeyCode() < keyState.length) {
+		if (e.getKeyCode() >= 0
+				&& e.getKeyCode() < keyState.length) {
 			if (keyState[e.getKeyCode()]) {
 				keyDownCount--;
 			}

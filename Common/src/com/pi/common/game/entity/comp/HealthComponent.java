@@ -6,17 +6,31 @@ import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * An entity component representing the current amount of health an entity has.
+ * 
+ * @author westin
+ * 
+ */
 public class HealthComponent extends EntityComponent {
 	/**
 	 * Current health.
 	 */
 	private int health = 1;
 
+	/**
+	 * Creates an empty health component.
+	 */
 	public HealthComponent() {
 	}
 
-	public HealthComponent(int health) {
-		this.health = health;
+	/**
+	 * Creates a health component with the given current health.
+	 * 
+	 * @param sHealth the current health
+	 */
+	public HealthComponent(final int sHealth) {
+		this.health = sHealth;
 	}
 
 	/**
@@ -38,24 +52,24 @@ public class HealthComponent extends EntityComponent {
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut)
+	public final void writeData(final PacketOutputStream pOut)
 			throws IOException {
 		pOut.writeInt(health);
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return SizeOf.INT;
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn)
+	public final void readData(final PacketInputStream pIn)
 			throws IOException {
 		health = pIn.readInt();
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "Health[" + health + "]";
 	}
 }

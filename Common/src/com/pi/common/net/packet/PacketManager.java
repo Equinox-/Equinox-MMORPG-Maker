@@ -1,10 +1,10 @@
 package com.pi.common.net.packet;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import com.pi.common.debug.PILogger;
 import com.pi.common.net.PacketInputStream;
+import com.pi.common.util.ClassIntPairManager;
 
 /**
  * Class managing packet registration and packet identification.
@@ -14,85 +14,48 @@ import com.pi.common.net.PacketInputStream;
  */
 public final class PacketManager {
 	/**
-	 * The packet class mapping array of this packet manager.
+	 * The pair manager that is currently in use.
 	 */
-	@SuppressWarnings("unchecked")
-	private static Class<? extends Packet>[] idMapping =
-			new Class[0];
+	private static final ClassIntPairManager<Packet> INSTANCE =
+			new ClassIntPairManager<Packet>();
+
+	/**
+	 * Gets the current pair manager INSTANCE being used by this packet manager.
+	 * 
+	 * @return the pair manager
+	 */
+	public static ClassIntPairManager<Packet> getInstance() {
+		return INSTANCE;
+	}
 
 	static {
-		try {
-			registerPacket(Packet0Handshake.class);
-			registerPacket(Packet1Login.class);
-			registerPacket(Packet2Alert.class);
-			registerPacket(Packet3Register.class);
-			registerPacket(Packet4Sector.class);
-			registerPacket(Packet5SectorRequest.class);
-			registerPacket(Packet6BlankSector.class);
-			registerPacket(Packet7EntityTeleport.class);
-			registerPacket(Packet8EntityDispose.class);
-			registerPacket(Packet9EntityData.class);
-			registerPacket(Packet10EntityDataRequest.class);
-			registerPacket(Packet11LocalEntityID.class);
-			registerPacket(Packet12EntityDefRequest.class);
-			registerPacket(Packet13EntityDef.class);
-			registerPacket(Packet14ClientMove.class);
-			registerPacket(Packet15GameState.class);
-			registerPacket(Packet16EntityMove.class);
-			registerPacket(Packet17Clock.class);
-			registerPacket(Packet18EntityComponent.class);
-			registerPacket(Packet19Interact.class);
-			registerPacket(Packet20EntityAttack.class);
-			registerPacket(Packet21EntityFace.class);
-			registerPacket(Packet22ItemDefRequest.class);
-			registerPacket(Packet23ItemDef.class);
-			registerPacket(Packet24InventoryData.class);
-			registerPacket(Packet25InventoryUpdate.class);
-		} catch (Exception e) {
-			throw new RuntimeException(e.toString());
-		}
-	}
-
-	/**
-	 * Registers a packet with this packet manager.
-	 * 
-	 * @param pClass the packet class
-	 * @throws InstantiationException if the identification number wasn't
-	 *             fetched through the {@link Packet#getID()} method.
-	 * @throws IllegalAccessException if the identification number wasn't
-	 *             fetched through the {@link Packet#getID()} method.
-	 */
-	public static void registerPacket(
-			final Class<? extends Packet> pClass)
-			throws IllegalAccessException,
-			InstantiationException {
-		int id = pClass.newInstance().getID();
-		if (id < idMapping.length && idMapping[id] != null) {
-			throw new IllegalStateException(
-					"Duplicate packet id: " + id);
-		} else {
-			if (id >= idMapping.length) {
-				idMapping =
-						Arrays.copyOf(idMapping.clone(), Math
-								.max(id + 1, idMapping.length));
-			}
-			idMapping[id] = pClass;
-		}
-	}
-
-	/**
-	 * Gets the packet class for the given ID number, or <code>null</code> if
-	 * none exists.
-	 * 
-	 * @param id the id number
-	 * @return the packet class
-	 */
-	public static Class<? extends Packet> getPacketClass(final int id) {
-		if (id >= 0 && id < idMapping.length) {
-			return idMapping[id];
-		} else {
-			return null;
-		}
+		INSTANCE.registerPair(Packet0Handshake.class);
+		INSTANCE.registerPair(Packet1Login.class);
+		INSTANCE.registerPair(Packet2Alert.class);
+		INSTANCE.registerPair(Packet3Register.class);
+		INSTANCE.registerPair(Packet4Sector.class);
+		INSTANCE.registerPair(Packet5SectorRequest.class);
+		INSTANCE.registerPair(Packet6BlankSector.class);
+		INSTANCE.registerPair(Packet7EntityTeleport.class);
+		INSTANCE.registerPair(Packet8EntityDispose.class);
+		INSTANCE.registerPair(Packet9EntityData.class);
+		INSTANCE.registerPair(Packet10EntityDataRequest.class);
+		INSTANCE.registerPair(Packet11LocalEntityID.class);
+		INSTANCE.registerPair(Packet12EntityDefRequest.class);
+		INSTANCE.registerPair(Packet13EntityDef.class);
+		INSTANCE.registerPair(Packet14ClientMove.class);
+		INSTANCE.registerPair(Packet15GameState.class);
+		INSTANCE.registerPair(Packet16EntityMove.class);
+		INSTANCE.registerPair(Packet17Clock.class);
+		INSTANCE.registerPair(Packet18EntityComponent.class);
+		INSTANCE.registerPair(Packet19Interact.class);
+		INSTANCE.registerPair(Packet20EntityAttack.class);
+		INSTANCE.registerPair(Packet21EntityFace.class);
+		INSTANCE.registerPair(Packet22ItemDefRequest.class);
+		INSTANCE.registerPair(Packet23ItemDef.class);
+		INSTANCE.registerPair(Packet24InventoryData.class);
+		INSTANCE.registerPair(Packet25InventoryUpdate.class);
+		INSTANCE.trimMaps();
 	}
 
 	/**
@@ -107,8 +70,10 @@ public final class PacketManager {
 	public static Packet getPacket(final PILogger log,
 			final int id) {
 		try {
-			if (id >= 0 && id < idMapping.length) {
-				Class<? extends Packet> clazz = idMapping[id];
+
+			Class<? extends Packet> clazz =
+					INSTANCE.getPairClass(id);
+			if (clazz != null) {
 				return clazz.newInstance();
 			} else {
 				log.severe("Bad packet ID: " + id);
@@ -142,18 +107,6 @@ public final class PacketManager {
 		}
 		// packet.timeStamp = pIn.readLong();
 		return packet;
-	}
-
-	/**
-	 * Gets the maximum ID number plus 1 registered to this packet manager.
-	 * 
-	 * This should mainly be used when allocation an array that needs to be able
-	 * to represent every packet.
-	 * 
-	 * @return the maximum id number
-	 */
-	public static int getPacketCount() {
-		return idMapping.length;
 	}
 
 	/**

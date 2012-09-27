@@ -32,13 +32,14 @@ public class EntityDef extends GraphicsObject {
 	/**
 	 * Creates an entity definition with the given identification number.
 	 * 
-	 * @param eDefID
-	 *            the definition id
+	 * @param eDefID the definition id
 	 */
 	public EntityDef(final int eDefID) {
 		this.defID = eDefID;
-		components = new ObjectHeap<EntityDefComponent>(
-				EntityDefComponentType.getComponentCount(), true);
+		components =
+				new ObjectHeap<EntityDefComponent>(
+						EntityDefComponentManager.getInstance()
+								.getPairCount(), true);
 	}
 
 	/**
@@ -53,8 +54,7 @@ public class EntityDef extends GraphicsObject {
 	/**
 	 * Sets the number of horizontal frames for the movement animation.
 	 * 
-	 * @param f
-	 *            the number of horizontal frames
+	 * @param f the number of horizontal frames
 	 */
 	public final void setHorizontalFrames(final int f) {
 		this.horizFrames = f;
@@ -75,7 +75,8 @@ public class EntityDef extends GraphicsObject {
 		super.writeData(pOut);
 		pOut.writeInt(horizFrames);
 		EntityDefComponent comp;
-		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
+		for (int i = 0; i < EntityDefComponentManager
+				.getInstance().getPairCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				pOut.writeByte(1);
@@ -87,21 +88,27 @@ public class EntityDef extends GraphicsObject {
 	}
 
 	@Override
-	public final void readData(final PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		super.readData(pIn);
 		horizFrames = pIn.readInt();
 
-		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
+		for (int i = 0; i < EntityDefComponentManager
+				.getInstance().getPairCount(); i++) {
 			if (pIn.readByte() == 1) {
 				try {
-					Class<? extends EntityDefComponent> clazz = EntityDefComponentType
-							.getComponentClass(i);
-					EntityDefComponent comp = clazz.newInstance();
+					Class<? extends EntityDefComponent> clazz =
+							EntityDefComponentManager
+									.getInstance().getPairClass(
+											i);
+					EntityDefComponent comp =
+							clazz.newInstance();
 					components.set(i, comp);
 					comp.readData(pIn);
 				} catch (Exception e) {
-					throw new IOException("Unable to create a component: "
-							+ e.toString());
+					throw new IOException(
+							"Unable to create a component: "
+									+ e.toString());
 				}
 			} else {
 				components.set(i, null);
@@ -111,10 +118,14 @@ public class EntityDef extends GraphicsObject {
 
 	@Override
 	public final int getLength() {
-		int size = super.getLength() + SizeOf.INT
-				+ (SizeOf.BYTE * EntityDefComponentType.getComponentCount());
+		int size =
+				super.getLength()
+						+ SizeOf.INT
+						+ (SizeOf.BYTE * EntityDefComponentManager
+								.getInstance().getPairCount());
 		EntityDefComponent comp;
-		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
+		for (int i = 0; i < EntityDefComponentManager
+				.getInstance().getPairCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				size += comp.getLength();
@@ -123,37 +134,104 @@ public class EntityDef extends GraphicsObject {
 		return size;
 	}
 
-	public EntityDefComponent getComponent(int id) {
+	/**
+	 * Gets one of this definiton's components by id, and returns the component
+	 * instance, or <code>null</code> if the component type isn't registered
+	 * with this definition.
+	 * 
+	 * @param id the component ID to fetch
+	 * @return the component, or <code>null</code>
+	 */
+	public final EntityDefComponent getComponent(final int id) {
 		return components.get(id);
 	}
 
-	public EntityDefComponent getComponent(
-			Class<? extends EntityDefComponent> clazz) {
-		int id = EntityDefComponentType.getComponentID(clazz);
+	/**
+	 * Gets one of this definiton's components by class, and returns the
+	 * component instance, or <code>null</code> if the component type isn't
+	 * registered with this definition.
+	 * 
+	 * @param clazz the class to fetch
+	 * @return the component, or <code>null</code>
+	 */
+	public final EntityDefComponent getComponent(
+			final Class<? extends EntityDefComponent> clazz) {
+		int id =
+				EntityDefComponentManager.getInstance()
+						.getPairID(clazz);
 		return getComponent(id);
 	}
 
-	public void addEntityDefComponents(EntityDefComponent[] comps) {
+	/**
+	 * Adds all the given entity definition components to the component heap.
+	 * 
+	 * @param comps the components to add
+	 */
+	public final void addEntityDefComponents(
+			final EntityDefComponent[] comps) {
 		for (EntityDefComponent c : comps) {
 			addEntityDefComponent(c);
 		}
 	}
 
-	public void addEntityDefComponent(EntityDefComponent comp) {
-		int id = EntityDefComponentType.getComponentID(comp.getClass());
+	/**
+	 * Adds the given entity definition component to the component heap.
+	 * 
+	 * @param comp the component to add
+	 */
+	public final void addEntityDefComponent(
+			final EntityDefComponent comp) {
+		int id =
+				EntityDefComponentManager.getInstance()
+						.getPairID(comp.getClass());
 		if (id >= 0) {
 			components.set(id, comp);
 		}
 	}
 
-	public ObjectHeap<EntityDefComponent> getComponents() {
+	/**
+	 * Gets the data heap representing the components registered to this
+	 * definition.
+	 * 
+	 * @return the data heap
+	 */
+	public final ObjectHeap<EntityDefComponent> getComponents() {
 		return components;
 	}
 
-	public void setComponents(EntityDefComponent[] components) {
-		for (int i = 0; i < EntityDefComponentType.getComponentCount(); i++) {
-			this.components.set(i, null);
+	/**
+	 * Sets the current definiton's components by first clearing the list, then
+	 * adding the provided components.
+	 * 
+	 * @param nComponents the components to change to
+	 */
+	public final void setComponents(
+			final EntityDefComponent[] nComponents) {
+		for (int i = 0; i < EntityDefComponentManager
+				.getInstance().getPairCount(); i++) {
+			if (i < nComponents.length) {
+				this.components.set(i, nComponents[i]);
+			} else {
+				this.components.set(i, null);
+			}
 		}
-		addEntityDefComponents(components);
+	}
+
+	/**
+	 * Sets the current definiton's components by first clearing the list, then
+	 * adding the provided components.
+	 * 
+	 * @param nComponents the components to change to
+	 */
+	public final void setComponents(
+			final ObjectHeap<EntityDefComponent> nComponents) {
+		for (int i = 0; i < EntityDefComponentManager
+				.getInstance().getPairCount(); i++) {
+			if (i < nComponents.capacity()) {
+				this.components.set(i, nComponents.get(i));
+			} else {
+				this.components.set(i, null);
+			}
+		}
 	}
 }

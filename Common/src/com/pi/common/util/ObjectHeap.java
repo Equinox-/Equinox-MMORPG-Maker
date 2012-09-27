@@ -8,8 +8,7 @@ import java.util.Iterator;
  * 
  * @author Westin
  * 
- * @param <E>
- *            The class this ObjectHeap provides.
+ * @param <E> The class this ObjectHeap provides.
  */
 public class ObjectHeap<E> implements Iterable<E> {
 	/**
@@ -36,8 +35,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Creates an object heap with a starting array of the given size.
 	 * 
-	 * @param startLength
-	 *            the starting length
+	 * @param startLength the starting length
 	 */
 	public ObjectHeap(final int startLength) {
 		this(startLength, false);
@@ -46,14 +44,34 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Creates an object heap with a starting array of the given size.
 	 * 
-	 * @param startLength
-	 *            the starting length
-	 * @param fixedSize
-	 *            if this heap will never grow beyond the starting size
+	 * @param startLength the starting length
+	 * @param isFixedSize if this heap will never grow beyond the starting size
 	 */
-	public ObjectHeap(final int startLength, final boolean fixedSize) {
+	public ObjectHeap(final int startLength,
+			final boolean isFixedSize) {
 		elementData = new Object[startLength];
-		this.fixedSize = fixedSize;
+		this.fixedSize = isFixedSize;
+	}
+
+	/**
+	 * Trims the capacity of this <tt>ObjectHeap</tt> instance to be the heap's
+	 * current size. An application can use this operation to minimize the
+	 * storage of an <tt>ObjectHeap</tt> instance.
+	 */
+	public final void trimToSize() {
+		if (fixedSize) {
+			return;
+		}
+		int size = 0;
+		for (size = elementData.length - 1; size >= 0; size--) {
+			if (elementData[size] != null) {
+				size++;
+				break;
+			}
+		}
+		if (size < elementData.length) {
+			elementData = Arrays.copyOf(elementData, size);
+		}
 	}
 
 	/**
@@ -68,15 +86,15 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Grows the data array to the minimum length of the given parameter.
 	 * 
-	 * @param capacity
-	 *            the new array size.
+	 * @param capacity the new array size.
 	 * @return <code>true</code> if the array can hold the given value,
 	 *         <code>false</code> if not
 	 */
 	private boolean grow(final int capacity) {
-		if (elementData.length < capacity) {
-			elementData = Arrays.copyOf(elementData, capacity
-					+ DEFAULT_CAPACITY_INCREMENT);
+		if (elementData.length < capacity && !fixedSize) {
+			elementData =
+					Arrays.copyOf(elementData, capacity
+							+ DEFAULT_CAPACITY_INCREMENT);
 		}
 		return elementData.length >= capacity;
 	}
@@ -84,8 +102,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Gets the element data at the specified index.
 	 * 
-	 * @param index
-	 *            the global index
+	 * @param index the global index
 	 * @return the element at the given index, or <code>null</code> if out of
 	 *         bounds
 	 */
@@ -101,8 +118,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Gets the element data at the specified index.
 	 * 
-	 * @param index
-	 *            the global index
+	 * @param index the global index
 	 * @return the element at the given index, or <code>null</code> if out of
 	 *         bounds
 	 */
@@ -114,12 +130,11 @@ public class ObjectHeap<E> implements Iterable<E> {
 	 * Sets the element data at the specified index, updating it if necessary,
 	 * and growing the array if necessary.
 	 * 
-	 * @param index
-	 *            the global index
-	 * @param element
-	 *            the element data
+	 * @param index the global index
+	 * @param element the element data
 	 */
-	public final synchronized void set(final int index, final E element) {
+	public final synchronized void set(final int index,
+			final E element) {
 		if (element == null) {
 			remove(index);
 			return;
@@ -135,8 +150,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	/**
 	 * Sets the element data at the specified index.
 	 * 
-	 * @param index
-	 *            the global index
+	 * @param index the global index
 	 * @return the removed element, or <code>null</code> if out of bounds or a
 	 *         null element.
 	 */
@@ -196,14 +210,13 @@ public class ObjectHeap<E> implements Iterable<E> {
 	}
 
 	/**
-	 * Copies the element data into the given array. This method only copys as
+	 * Copies the element data into the given array. This method only copies as
 	 * many elements as it has room for.
 	 * 
-	 * @param arr
-	 *            the array to copy into
+	 * @param arr the array to copy into
 	 * @return the array
 	 */
-	public E[] toArray(E[] arr) {
+	public final E[] toArray(final E[] arr) {
 		System.arraycopy(elementData, 0, arr, 0, arr.length);
 		return arr;
 	}
@@ -213,7 +226,7 @@ public class ObjectHeap<E> implements Iterable<E> {
 	 * 
 	 * @return the array size
 	 */
-	public int capacity() {
+	public final int capacity() {
 		return elementData.length;
 	}
 }

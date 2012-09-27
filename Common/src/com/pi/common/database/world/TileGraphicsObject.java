@@ -1,7 +1,7 @@
 package com.pi.common.database.world;
 
-import com.pi.common.constants.TileConstants;
 import com.pi.common.constants.NetworkConstants.SizeOf;
+import com.pi.common.constants.TileConstants;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;

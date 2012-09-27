@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import com.pi.common.database.def.entity.EntityDef;
 import com.pi.common.debug.PIResourceViewer;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.EntityComponent;
@@ -103,8 +102,8 @@ public class EntityMonitorPanel extends JPanel {
 			}
 			if (sEnt != null) {
 				Entity ent = sEnt.getWrappedEntity();
-				EntityDef def = svr.getDefs().getEntityLoader()
-						.getDef(ent.getEntityDef());
+				//EntityDef def = svr.getDefs().getEntityLoader()
+				//		.getDef(ent.getEntityDef());
 				switch (col) {
 				case 0:
 					return ent.getEntityID() + "";

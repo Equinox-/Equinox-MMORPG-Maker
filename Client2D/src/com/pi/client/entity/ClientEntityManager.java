@@ -60,7 +60,7 @@ public class ClientEntityManager extends EntityManager<ClientEntity> {
 	}
 
 	@Override
-	protected ClientEntity createEntityContainer(Entity entity) {
+	protected final ClientEntity createEntityContainer(final Entity entity) {
 		return new ClientEntity(entity);
 	}
 }

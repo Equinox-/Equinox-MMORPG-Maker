@@ -8,7 +8,7 @@ import com.pi.common.database.world.Sector;
 import com.pi.common.database.world.Tile;
 import com.pi.common.database.world.TileLayer;
 import com.pi.common.game.entity.comp.EntityComponent;
-import com.pi.common.game.entity.comp.EntityComponentType;
+import com.pi.common.game.entity.comp.EntityComponentManager;
 import com.pi.common.util.ObjectHeap;
 import com.pi.common.world.SectorManager;
 
@@ -43,10 +43,8 @@ public class Entity extends Location {
 	/**
 	 * Create an entity with the given definition.
 	 * 
-	 * @param def
-	 *            the definition to use.
-	 * @param eID
-	 *            the entity ID
+	 * @param def the definition to use.
+	 * @param eID the entity ID
 	 */
 	Entity(final int eID, final int def) {
 		this(eID);
@@ -56,20 +54,20 @@ public class Entity extends Location {
 	/**
 	 * Creates an entity with the default values.
 	 * 
-	 * @param eID
-	 *            the entity ID
+	 * @param eID the entity ID
 	 */
 	Entity(final int eID) {
 		this.entityID = eID;
-		this.components = new ObjectHeap<EntityComponent>(
-				EntityComponentType.getComponentCount(), true);
+		this.components =
+				new ObjectHeap<EntityComponent>(
+						EntityComponentManager.getInstance()
+								.getPairCount(), true);
 	}
 
 	/**
 	 * Sets the entity definition to the provided value.
 	 * 
-	 * @param entityDef
-	 *            the definition to use
+	 * @param entityDef the definition to use
 	 */
 	public final void setEntityDef(final int entityDef) {
 		this.defID = entityDef;
@@ -115,8 +113,7 @@ public class Entity extends Location {
 	/**
 	 * Sets the location of this entity.
 	 * 
-	 * @param l
-	 *            the new location
+	 * @param l the new location
 	 */
 	public final void setLocation(final Location l) {
 		setLocation(l.x, l.plane, l.z);
@@ -125,8 +122,7 @@ public class Entity extends Location {
 	/**
 	 * Sets the tile layer that this entity will reside above.
 	 * 
-	 * @param t
-	 *            the new tile layer
+	 * @param t the new tile layer
 	 */
 	public final void setLayer(final TileLayer t) {
 		aboveLayer = t;
@@ -135,8 +131,7 @@ public class Entity extends Location {
 	/**
 	 * Sets the new direction for this entity.
 	 * 
-	 * @param sDir
-	 *            the new direction
+	 * @param sDir the new direction
 	 */
 	public final void setDir(final Direction sDir) {
 		this.dir = sDir;
@@ -155,8 +150,7 @@ public class Entity extends Location {
 	 * Does a short teleport to another location, changing this entity's
 	 * direction to the best fitting direction.
 	 * 
-	 * @param apply
-	 *            the new location
+	 * @param apply the new location
 	 */
 	public final void teleportShort(final Location apply) {
 		// calculate dir
@@ -173,21 +167,27 @@ public class Entity extends Location {
 	 * Checks if this entity can move in the specified direction, using the
 	 * provided sector manager to get sector information.
 	 * 
-	 * @param mgr
-	 *            the sector manager to use
-	 * @param sDir
-	 *            the direction to check movement in
+	 * @param mgr the sector manager to use
+	 * @param sDir the direction to check movement in
 	 * @return <code>true</code> if the entity can move in the specified
 	 *         direction, and won't be moving into an empty sector. Otherwise,
 	 *         <code>false</code>.
 	 */
-	public final boolean canMoveIn(final SectorManager mgr, final Direction sDir) {
-		Sector sec = mgr.getSector(getSectorX(), getPlane(), getSectorZ());
+	public final boolean canMoveIn(final SectorManager mgr,
+			final Direction sDir) {
+		Sector sec =
+				mgr.getSector(getSectorX(), getPlane(),
+						getSectorZ());
 		if (sec != null) {
-			int moveSX = SectorConstants.worldToSectorX(x + sDir.getXOff());
-			int moveSZ = SectorConstants.worldToSectorZ(z + sDir.getZOff());
+			int moveSX =
+					SectorConstants.worldToSectorX(x
+							+ sDir.getXOff());
+			int moveSZ =
+					SectorConstants.worldToSectorZ(z
+							+ sDir.getZOff());
 			Sector move;
-			if (moveSX != sec.getSectorX() || moveSZ != sec.getSectorZ()) {
+			if (moveSX != sec.getSectorX()
+					|| moveSZ != sec.getSectorZ()) {
 				move = mgr.getSector(moveSX, getPlane(), moveSZ);
 			} else {
 				move = sec;
@@ -218,8 +218,7 @@ public class Entity extends Location {
 	 * the provided sector manager to get sector information.
 	 * 
 	 * @see Entity#canMoveIn(SectorManager, Direction)
-	 * @param sec
-	 *            the sector manager
+	 * @param sec the sector manager
 	 * @return <code>true</code> if the entity can move in the specified
 	 *         direction, and won't be moving into an empty sector. Otherwise,
 	 *         <code>false</code>.
@@ -232,11 +231,10 @@ public class Entity extends Location {
 	 * Gets the entity component with the given ID number.
 	 * 
 	 * @see EntityComponentType#getComponentID(Class)
-	 * @param id
-	 *            the component's ID number
+	 * @param id the component's ID number
 	 * @return the entity component, or <code>null</code> if one doesn't exist
 	 */
-	public EntityComponent getComponent(int id) {
+	public final EntityComponent getComponent(final int id) {
 		return components.get(id);
 	}
 
@@ -244,12 +242,14 @@ public class Entity extends Location {
 	 * Gets the entity component with the given class.
 	 * 
 	 * @see EntityComponentType#getComponentID(Class)
-	 * @param clazz
-	 *            the component's class
+	 * @param clazz the component's class
 	 * @return the entity component, or <code>null</code> if one doesn't exist
 	 */
-	public EntityComponent getComponent(Class<? extends EntityComponent> clazz) {
-		int id = EntityComponentType.getComponentID(clazz);
+	public final EntityComponent getComponent(
+			final Class<? extends EntityComponent> clazz) {
+		int id =
+				EntityComponentManager.getInstance().getPairID(
+						clazz);
 		return getComponent(id);
 	}
 
@@ -257,10 +257,10 @@ public class Entity extends Location {
 	 * Adds all of the given entity components to this entity, overwriting ones
 	 * that already exist.
 	 * 
-	 * @param comps
-	 *            the entity components to add
+	 * @param comps the entity components to add
 	 */
-	public void addEntityComponents(EntityComponent[] comps) {
+	public final void addEntityComponents(
+			final EntityComponent[] comps) {
 		for (EntityComponent c : comps) {
 			addEntityComponent(c);
 		}
@@ -270,12 +270,14 @@ public class Entity extends Location {
 	 * Adds the given entity component to this entity, overwriting ones that
 	 * already exist.
 	 * 
-	 * @param comp
-	 *            the entity component to set
+	 * @param comp the entity component to set
 	 */
-	public void addEntityComponent(EntityComponent comp) {
+	public final void addEntityComponent(
+			final EntityComponent comp) {
 		if (comp != null) {
-			int id = EntityComponentType.getComponentID(comp.getClass());
+			int id =
+					EntityComponentManager.getInstance()
+							.getPairID(comp.getClass());
 			if (id >= 0) {
 				components.set(id, comp);
 			}
@@ -286,7 +288,7 @@ public class Entity extends Location {
 	 * Sets this entity's ID to <code>-1</code> thus marking this entity as not
 	 * managed by any entity manager.
 	 */
-	void checkIn() {
+	final void checkIn() {
 		entityID = -1;
 	}
 
@@ -295,7 +297,7 @@ public class Entity extends Location {
 	 * 
 	 * @return the component list
 	 */
-	public ObjectHeap<EntityComponent> getComponents() {
+	public final ObjectHeap<EntityComponent> getComponents() {
 		return components;
 	}
 
@@ -303,13 +305,35 @@ public class Entity extends Location {
 	 * Sets the current entity components by first clearing the list, then
 	 * adding the provided components.
 	 * 
-	 * @param components
-	 *            the components to add
+	 * @param nComponents the components to change to
 	 */
-	public void setComponents(EntityComponent[] components) {
-		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
-			this.components.set(i, null);
+	public final void setComponents(
+			final EntityComponent[] nComponents) {
+		for (int i = 0; i < EntityComponentManager.getInstance()
+				.getPairCount(); i++) {
+			if (i < nComponents.length) {
+				this.components.set(i, nComponents[i]);
+			} else {
+				this.components.set(i, null);
+			}
 		}
-		addEntityComponents(components);
+	}
+
+	/**
+	 * Sets the current entity components by first clearing the list, then
+	 * adding the provided components.
+	 * 
+	 * @param nComponents the components to change to
+	 */
+	public final void setComponents(
+			final ObjectHeap<EntityComponent> nComponents) {
+		for (int i = 0; i < EntityComponentManager.getInstance()
+				.getPairCount(); i++) {
+			if (i < nComponents.capacity()) {
+				this.components.set(i, nComponents.get(i));
+			} else {
+				this.components.set(i, null);
+			}
+		}
 	}
 }

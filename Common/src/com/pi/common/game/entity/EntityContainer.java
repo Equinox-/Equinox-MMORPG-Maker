@@ -1,5 +1,12 @@
 package com.pi.common.game.entity;
 
+/**
+ * A simple abstraction of a class that contains an <tt>Entity</tt> object, used
+ * for entity manager abstraction.
+ * 
+ * @author westin
+ * 
+ */
 public abstract class EntityContainer {
 	/**
 	 * The entity wrapped by this client entity.

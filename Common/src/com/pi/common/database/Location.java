@@ -2,8 +2,8 @@ package com.pi.common.database;
 
 import java.io.IOException;
 
-import com.pi.common.constants.SectorConstants;
 import com.pi.common.constants.NetworkConstants.SizeOf;
+import com.pi.common.constants.SectorConstants;
 import com.pi.common.database.world.SectorLocation;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;

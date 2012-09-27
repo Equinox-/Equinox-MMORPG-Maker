@@ -43,7 +43,7 @@ public class NetServerClient extends NetClient {
 	 */
 	private HandshakeConfirmation[] handshakes =
 			new HandshakeConfirmation[PacketManager
-					.getPacketCount()];
+					.getInstance().getPairCount()];
 
 	/**
 	 * Creates a network server client for the given server and channel.

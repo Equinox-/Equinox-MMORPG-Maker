@@ -7,7 +7,7 @@ import com.pi.common.database.Location;
 import com.pi.common.database.world.TileLayer;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.EntityComponent;
-import com.pi.common.game.entity.comp.EntityComponentType;
+import com.pi.common.game.entity.comp.EntityComponentManager;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 import com.pi.common.util.ObjectHeap;
@@ -24,8 +24,10 @@ public class Packet9EntityData extends Packet {
 	public TileLayer layer;
 	public int defID;
 	public int entID;
-	public ObjectHeap<EntityComponent> components = new ObjectHeap<EntityComponent>(
-			EntityComponentType.getComponentCount(), true);
+	public ObjectHeap<EntityComponent> components =
+			new ObjectHeap<EntityComponent>(
+					EntityComponentManager.getInstance()
+							.getPairCount(), true);
 
 	@Override
 	public final void writeData(final PacketOutputStream pOut)
@@ -40,7 +42,8 @@ public class Packet9EntityData extends Packet {
 		pOut.writeInt(defID);
 
 		EntityComponent comp;
-		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
+		for (int i = 0; i < EntityComponentManager.getInstance()
+				.getPairCount(); i++) {
 			comp = components.get(i);
 			if (comp != null) {
 				pOut.writeByte(1);
@@ -52,7 +55,8 @@ public class Packet9EntityData extends Packet {
 	}
 
 	@Override
-	public final void readData(final PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		entID = pIn.readInt();
 		if (loc == null) {
 			loc = new Location();
@@ -67,17 +71,20 @@ public class Packet9EntityData extends Packet {
 		}
 		defID = pIn.readInt();
 
-		for (int i = 0; i < EntityComponentType.getComponentCount(); i++) {
+		for (int i = 0; i < EntityComponentManager.getInstance()
+				.getPairCount(); i++) {
 			if (pIn.readByte() == 1) {
 				try {
-					Class<? extends EntityComponent> clazz = EntityComponentType
-							.getComponentClass(i);
+					Class<? extends EntityComponent> clazz =
+							EntityComponentManager.getInstance()
+									.getPairClass(i);
 					EntityComponent comp = clazz.newInstance();
 					components.set(i, comp);
 					comp.readData(pIn);
 				} catch (Exception e) {
-					throw new IOException("Unable to create a component: "
-							+ e.toString());
+					throw new IOException(
+							"Unable to create a component: "
+									+ e.toString());
 				}
 			} else {
 				components.set(i, null);
@@ -88,8 +95,7 @@ public class Packet9EntityData extends Packet {
 	/**
 	 * Create an instance of the entity data packet for the given entity.
 	 * 
-	 * @param e
-	 *            the entity to create a packet for
+	 * @param e the entity to create a packet for
 	 * @return the packet instance
 	 */
 	public static Packet9EntityData create(final Entity e) {
@@ -107,8 +113,9 @@ public class Packet9EntityData extends Packet {
 		if (loc == null) {
 			loc = new Location();
 		}
-		int size = (3 * SizeOf.INT) + loc.getLength()
-				+ (SizeOf.BYTE * components.capacity());
+		int size =
+				(3 * SizeOf.INT) + loc.getLength()
+						+ (SizeOf.BYTE * components.capacity());
 		EntityComponent comp;
 		for (int i = 0; i < components.capacity(); i++) {
 			comp = components.get(i);

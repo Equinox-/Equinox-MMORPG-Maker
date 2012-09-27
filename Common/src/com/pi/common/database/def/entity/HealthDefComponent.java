@@ -8,24 +8,38 @@ import com.pi.common.game.entity.comp.HealthComponent;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
+/**
+ * An entity definition for living entities, provides the maximum health for the
+ * entity.
+ * 
+ * @author westin
+ * 
+ */
 public class HealthDefComponent extends EntityDefComponent {
 	/**
 	 * Current maximum health.
 	 */
 	private int maxHealth = 1;
 
+	/**
+	 * Creates an empty health definition.
+	 */
 	public HealthDefComponent() {
 	}
 
-	public HealthDefComponent(int maxHealth) {
-		this.maxHealth = maxHealth;
+	/**
+	 * Creates a health definition with the provided maximum health.
+	 * 
+	 * @param sHealth the maximum health
+	 */
+	public HealthDefComponent(final int sHealth) {
+		this.maxHealth = sHealth;
 	}
 
 	/**
 	 * Sets the maximum health.
 	 * 
-	 * @param sHealth
-	 *            the new maximum health
+	 * @param sHealth the new maximum health
 	 */
 	public final void setMaximumHealth(final int sHealth) {
 		this.maxHealth = sHealth;
@@ -41,27 +55,30 @@ public class HealthDefComponent extends EntityDefComponent {
 	}
 
 	@Override
-	public void writeData(PacketOutputStream pOut) throws IOException {
+	public final void writeData(final PacketOutputStream pOut)
+			throws IOException {
 		pOut.writeInt(maxHealth);
 	}
 
 	@Override
-	public int getLength() {
+	public final int getLength() {
 		return SizeOf.INT;
 	}
 
 	@Override
-	public void readData(PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		maxHealth = pIn.readInt();
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "MaxHealth[" + maxHealth + "]";
 	}
 
 	@Override
-	public EntityComponent createDefaultComponent() {
-		return new HealthComponent(maxHealth);
+	public final EntityComponent[] createDefaultComponents() {
+		return new EntityComponent[] { new HealthComponent(
+				maxHealth) };
 	}
 }

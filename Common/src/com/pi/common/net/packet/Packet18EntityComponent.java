@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.pi.common.constants.NetworkConstants.SizeOf;
 import com.pi.common.game.entity.Entity;
 import com.pi.common.game.entity.comp.EntityComponent;
-import com.pi.common.game.entity.comp.EntityComponentType;
+import com.pi.common.game.entity.comp.EntityComponentManager;
 import com.pi.common.net.PacketInputStream;
 import com.pi.common.net.PacketOutputStream;
 
@@ -30,8 +30,8 @@ public class Packet18EntityComponent extends Packet {
 			throws IOException {
 		pOut.writeInt(entityID);
 		if (eComp != null) {
-			pOut.writeByte((byte) EntityComponentType.getComponentID(eComp
-					.getClass()));
+			pOut.writeByte((byte) EntityComponentManager
+					.getInstance().getPairID(eComp.getClass()));
 			eComp.writeData(pOut);
 		} else {
 			pOut.writeByte(-1);
@@ -48,15 +48,17 @@ public class Packet18EntityComponent extends Packet {
 	}
 
 	@Override
-	public final void readData(final PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		entityID = pIn.readInt();
 		byte compID = pIn.readByte();
 		if (compID == -1) {
 			eComp = null;
 		} else {
 			try {
-				Class<? extends EntityComponent> compClass = EntityComponentType
-						.getComponentClass(compID);
+				Class<? extends EntityComponent> compClass =
+						EntityComponentManager.getInstance()
+								.getPairClass(compID);
 				eComp = compClass.newInstance();
 				eComp.readData(pIn);
 			} catch (IOException e) {
@@ -70,15 +72,15 @@ public class Packet18EntityComponent extends Packet {
 	/**
 	 * Creates a entity component update for the given entity.
 	 * 
-	 * @param lE
-	 *            the entity
-	 * @param component
-	 *            the component type to use
+	 * @param lE the entity
+	 * @param component the component type to use
 	 * @return the created packet
 	 */
-	public static Packet18EntityComponent create(final Entity lE,
+	public static Packet18EntityComponent create(
+			final Entity lE,
 			final Class<? extends EntityComponent> component) {
-		Packet18EntityComponent p = new Packet18EntityComponent();
+		Packet18EntityComponent p =
+				new Packet18EntityComponent();
 		p.entityID = lE.getEntityID();
 		p.eComp = lE.getComponent(component);
 		return p;
@@ -87,15 +89,14 @@ public class Packet18EntityComponent extends Packet {
 	/**
 	 * Creates a entity component update for the given entity.
 	 * 
-	 * @param lE
-	 *            the entity
-	 * @param component
-	 *            the component to use
+	 * @param lE the entity
+	 * @param component the component to use
 	 * @return the created packet
 	 */
-	public static Packet18EntityComponent create(final int entity,
-			final EntityComponent comp) {
-		Packet18EntityComponent p = new Packet18EntityComponent();
+	public static Packet18EntityComponent create(
+			final int entity, final EntityComponent comp) {
+		Packet18EntityComponent p =
+				new Packet18EntityComponent();
 		p.entityID = entity;
 		p.eComp = comp;
 		return p;

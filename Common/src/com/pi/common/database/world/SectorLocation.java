@@ -1,7 +1,7 @@
 package com.pi.common.database.world;
 
-import com.pi.common.constants.SectorConstants;
 import com.pi.common.constants.NetworkConstants.SizeOf;
+import com.pi.common.constants.SectorConstants;
 import com.pi.common.database.Location;
 
 /**

@@ -9,7 +9,6 @@ import com.pi.client.Client;
 import com.pi.client.constants.Constants;
 import com.pi.client.entity.ClientEntity;
 import com.pi.common.constants.TileConstants;
-import com.pi.common.constants.TileFlags;
 import com.pi.common.database.GraphicsObject;
 import com.pi.common.database.Location;
 import com.pi.common.database.def.ItemDef;
@@ -25,7 +24,6 @@ import com.pi.common.util.Filter;
 import com.pi.common.util.FilteredIterator;
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
-import com.pi.gui.GUIKit;
 
 /**
  * The render loop for the actual game.

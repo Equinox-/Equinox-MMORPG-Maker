@@ -24,8 +24,7 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	/**
 	 * Creates a new inventory, with the given size.
 	 * 
-	 * @param size
-	 *            the allocated size
+	 * @param size the allocated size
 	 */
 	public Inventory(final int size) {
 		inventory = new Item[size];
@@ -47,13 +46,13 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	 * it not <code>null</code>, otherwise this method returns
 	 * {@link ItemConstants#createNullItem()}.
 	 * 
-	 * @param inventoryID
-	 *            the inventory location
+	 * @param inventoryID the inventory location
 	 * @return the item in the location
 	 */
 	public final Item getInventoryAt(final int inventoryID) {
 		if (inventory[inventoryID] == null) {
-			inventory[inventoryID] = ItemConstants.createNullItem();
+			inventory[inventoryID] =
+					ItemConstants.createNullItem();
 		}
 		return inventory[inventoryID];
 	}
@@ -65,14 +64,14 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	 * to the given argument, unless the argument is null, in which case this
 	 * method sets the inventory item to {@link ItemConstants#createNullItem()}.
 	 * 
-	 * @param inventoryID
-	 *            the inventory location
-	 * @param item
-	 *            the item in the location
+	 * @param inventoryID the inventory location
+	 * @param item the item in the location
 	 */
-	public final void setInventoryAt(final int inventoryID, final Item item) {
+	public final void setInventoryAt(final int inventoryID,
+			final Item item) {
 		if (item == null) {
-			inventory[inventoryID] = ItemConstants.createNullItem();
+			inventory[inventoryID] =
+					ItemConstants.createNullItem();
 		} else {
 			inventory[inventoryID] = item;
 		}
@@ -93,8 +92,7 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	/**
 	 * Resizes this inventory to the given new size, preserving the data.
 	 * 
-	 * @param newSize
-	 *            the new size
+	 * @param newSize the new size
 	 */
 	public final void resize(final int newSize) {
 		Item[] temp = new Item[newSize];
@@ -122,7 +120,8 @@ public class Inventory implements PacketObject, Iterable<Item> {
 	}
 
 	@Override
-	public final void readData(final PacketInputStream pIn) throws IOException {
+	public final void readData(final PacketInputStream pIn)
+			throws IOException {
 		int length = pIn.readInt();
 		if (inventory.length != length) {
 			inventory = new Item[length];
@@ -172,7 +171,8 @@ public class Inventory implements PacketObject, Iterable<Item> {
 
 			@Override
 			public void remove() {
-				if (currentIndex >= 0 && currentIndex < inventory.length) {
+				if (currentIndex >= 0
+						&& currentIndex < inventory.length) {
 					setInventoryAt(currentIndex, null);
 				}
 				rNext = getNext();
@@ -180,9 +180,16 @@ public class Inventory implements PacketObject, Iterable<Item> {
 		};
 	}
 
-	public int getFreeSlot() {
+	/**
+	 * Gets the first empty slot in the inventory.
+	 * 
+	 * @return the first empty slot, or <code>-1</code> if there wasn't one
+	 *         found.
+	 */
+	public final int getFreeSlot() {
 		for (int slot = 0; slot < inventory.length; slot++) {
-			if (inventory[slot] == null || inventory[slot].getItemID() <= 0
+			if (inventory[slot] == null
+					|| inventory[slot].getItemID() <= 0
 					|| inventory[slot].getItemCount() <= 0) {
 				return slot;
 			}

@@ -24,8 +24,7 @@ public class Definitions extends ClientThread {
 	 * Creates a definitions loader for the specified client, and starts the
 	 * thread.
 	 * 
-	 * @param client
-	 *            the client instance
+	 * @param client the client instance
 	 */
 	public Definitions(final Client client) {
 		super(client);
@@ -68,6 +67,9 @@ public class Definitions extends ClientThread {
 		itemDefLoader.loadLoop();
 	}
 
+	/**
+	 * Notifies the mutex that the thread needs to check for new updates.
+	 */
 	public final void notifyMutex() {
 		synchronized (getMutex()) {
 			getMutex().notify();

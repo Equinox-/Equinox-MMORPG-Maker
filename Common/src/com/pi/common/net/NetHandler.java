@@ -18,17 +18,18 @@ public abstract class NetHandler {
 	 * Method lookup map to speed up packet processing times.
 	 */
 	private final ObjectHeap<Method> methodLookupMap =
-			new ObjectHeap<Method>(
-					PacketManager.getPacketCount());
+			new ObjectHeap<Method>(PacketManager.getInstance()
+					.getPairCount());
 
 	/**
 	 * Generates the method lookup map.
 	 */
 	public NetHandler() {
 		Class<? extends NetHandler> clazz = getClass();
-		for (int id = 0; id < PacketManager.getPacketCount(); id++) {
+		for (int id = 0; id < PacketManager.getInstance()
+				.getPairCount(); id++) {
 			Class<? extends Packet> packetClass =
-					PacketManager.getPacketClass(id);
+					PacketManager.getInstance().getPairClass(id);
 			if (packetClass != null) {
 				try {
 					Method m =
@@ -38,7 +39,8 @@ public abstract class NetHandler {
 						methodLookupMap.set(id, m);
 					}
 				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
+					// This packet handler has no custom method for a packet. It
+					// probably never gets it.
 				}
 			}
 		}
