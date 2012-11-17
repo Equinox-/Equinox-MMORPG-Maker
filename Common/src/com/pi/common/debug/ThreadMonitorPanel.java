@@ -11,7 +11,7 @@ import javax.swing.table.AbstractTableModel;
  * 
  */
 public class ThreadMonitorPanel extends JPanel {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Creates a thread monitor panel bound to the specified thread group.
 	 * 
@@ -40,6 +40,7 @@ public class ThreadMonitorPanel extends JPanel {
 	 */
 	private static final class ThreadTableModel extends
 			AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The thread group this table model is bound to.
 		 */

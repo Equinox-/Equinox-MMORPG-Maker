@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="help" name="Create binaries and javadoc for Equinox MMORPG maker">
-	<property name="setDir" location="/home/westin/Programming/java-workspace/EMMORPG" />
+	<property name="setDir" location="./" />
 	<!-- Help + Info -->
 	<target name="help">
 		<echo>Apache ANT Buildfile for Equinox MMORPG Maker

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
@@ -160,8 +159,7 @@ public class NetServer extends Thread {
 		SocketChannel socketChannel =
 				serverSocketChannel.accept();
 		socketChannel.configureBlocking(false);
-		socketChannel.setOption(
-				StandardSocketOptions.TCP_NODELAY, true);
+		socketChannel.socket().setTcpNoDelay(false);
 		Client c =
 				new Client(server, new NetServerClient(server,
 						socketChannel));

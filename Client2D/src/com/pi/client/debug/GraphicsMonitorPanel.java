@@ -22,6 +22,7 @@ import com.pi.graphics.device.GraphicsStorage;
  * @see com.pi.graphics.device.DisplayManager
  */
 public class GraphicsMonitorPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Creates a graphics monitor panel with the specified display manager
 	 * providing the contents.

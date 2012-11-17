@@ -21,6 +21,8 @@ import com.pi.server.entity.ServerEntity;
  */
 public class EntityMonitorPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates an entity model panel using the provided server as the entity
 	 * source.
@@ -50,6 +52,7 @@ public class EntityMonitorPanel extends JPanel {
 	 * 
 	 */
 	private static final class EntityTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The names of the columns.
 		 */
@@ -102,8 +105,8 @@ public class EntityMonitorPanel extends JPanel {
 			}
 			if (sEnt != null) {
 				Entity ent = sEnt.getWrappedEntity();
-				//EntityDef def = svr.getDefs().getEntityLoader()
-				//		.getDef(ent.getEntityDef());
+				// EntityDef def = svr.getDefs().getEntityLoader()
+				// .getDef(ent.getEntityDef());
 				switch (col) {
 				case 0:
 					return ent.getEntityID() + "";
@@ -118,7 +121,7 @@ public class EntityMonitorPanel extends JPanel {
 				case 5:
 					return ent.getDir() + "";
 				case 6:
-					//return ent.getEntityDef();
+					// return ent.getEntityDef();
 				case 7:
 					StringBuilder b = new StringBuilder();
 					for (EntityComponent c : ent.getComponents()) {

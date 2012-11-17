@@ -16,6 +16,7 @@ import javax.swing.JTextPane;
  * 
  */
 public class PILoggerPane extends JPanel {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * A PrintStream for a logger to output to.
 	 */

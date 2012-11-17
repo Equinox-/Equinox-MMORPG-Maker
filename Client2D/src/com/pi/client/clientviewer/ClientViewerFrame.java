@@ -16,6 +16,7 @@ import com.pi.client.constants.Constants;
  * 
  */
 public class ClientViewerFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The client applet that the frame displays.
 	 */

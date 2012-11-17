@@ -16,6 +16,7 @@ import com.pi.server.net.NetServerClient;
  * 
  */
 public class ClientMonitorPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Creates a client monitoring panel for the given client manager.
@@ -43,6 +44,7 @@ public class ClientMonitorPanel extends JPanel {
 	 */
 	private static final class ClientTableModel extends
 			AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The column names.
 		 */

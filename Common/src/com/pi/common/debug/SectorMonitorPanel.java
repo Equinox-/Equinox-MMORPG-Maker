@@ -15,7 +15,7 @@ import com.pi.common.world.SectorManager.SectorStorage;
  * @see com.pi.common.world.SectorManager
  */
 public class SectorMonitorPanel extends JPanel {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Creates a sector manager panel with the specified Sector Manager
 	 * providing the contents.
@@ -47,6 +47,7 @@ public class SectorMonitorPanel extends JPanel {
 	 */
 	private static final class SectorTableModel extends
 			AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The name of each column.
 		 */

@@ -18,6 +18,7 @@ import com.pi.launcher.ServerConfiguration;
  * 
  */
 public class PILoggerPane extends JPanel {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * A PrintStream for a logger to output to.
 	 */

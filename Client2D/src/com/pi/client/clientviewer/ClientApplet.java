@@ -12,6 +12,7 @@ import com.pi.client.constants.Constants;
  * 
  */
 public class ClientApplet extends Applet {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The currently bound client instance.
 	 */

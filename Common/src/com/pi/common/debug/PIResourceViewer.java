@@ -12,6 +12,7 @@ import javax.swing.JTabbedPane;
  * 
  */
 public class PIResourceViewer extends JFrame {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The default width of the resource viewer and sub components.
 	 */

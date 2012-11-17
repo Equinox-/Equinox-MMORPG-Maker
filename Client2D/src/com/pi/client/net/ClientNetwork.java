@@ -3,7 +3,6 @@ package com.pi.client.net;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
@@ -290,8 +289,7 @@ public class ClientNetwork extends Thread {
 		socketChannel.configureBlocking(false);
 		socketChannel.connect(new InetSocketAddress(
 				this.hostAddress, this.port));
-		socketChannel.setOption(
-				StandardSocketOptions.TCP_NODELAY, true);
+		socketChannel.socket().setTcpNoDelay(true);
 		synchronized (this.pendingChanges) {
 			this.pendingChanges.add(new NetChangeRequest(
 					socketChannel, NetChangeRequest.REGISTER,

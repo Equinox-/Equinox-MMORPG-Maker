@@ -19,7 +19,7 @@ import com.pi.common.game.entity.Entity;
  * 
  */
 public class EntityMonitorPanel extends JPanel {
-
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Creates an entity model panel using the provided client as the entity
 	 * source.
@@ -50,6 +50,7 @@ public class EntityMonitorPanel extends JPanel {
 	 */
 	private static final class EntityTableModel extends
 			AbstractTableModel {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The names of the columns.
 		 */

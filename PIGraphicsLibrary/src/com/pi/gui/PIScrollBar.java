@@ -56,8 +56,7 @@ public class PIScrollBar extends PIContainer {
 	/**
 	 * The list of scroll bar listeners.
 	 */
-	private List<ScrollBarListener> scrollListeners =
-			new ArrayList<ScrollBarListener>();
+	private List<ScrollBarListener> scrollListeners = new ArrayList<ScrollBarListener>();
 	/**
 	 * The text overlaid on this scroll bar.
 	 */
@@ -67,7 +66,8 @@ public class PIScrollBar extends PIContainer {
 	 * Creates a scroll bar instance, vertically by default, horizontally if
 	 * specified.
 	 * 
-	 * @param sHorizontal if this should be a horizontal scroll bar
+	 * @param sHorizontal
+	 *            if this should be a horizontal scroll bar
 	 */
 	public PIScrollBar(final boolean sHorizontal) {
 		this.horizontal = sHorizontal;
@@ -78,12 +78,10 @@ public class PIScrollBar extends PIContainer {
 				if (e.getSource() == scrollContainer) {
 					if (horizontal) {
 						setScrollAmount(((float) e.getX())
-								/ ((float) scrollContainer
-										.getWidth()));
+								/ ((float) scrollContainer.getWidth()));
 					} else {
 						setScrollAmount(((float) e.getY())
-								/ ((float) scrollContainer
-										.getHeight()));
+								/ ((float) scrollContainer.getHeight()));
 					}
 					triggerScrollEvent();
 				} else if (e.getSource() == scrollUp) {
@@ -121,8 +119,7 @@ public class PIScrollBar extends PIContainer {
 			@Override
 			public void mouseWheelMoved(final MouseWheelEvent e) {
 				setScrollAmount(scrollAmount
-						- (((float) (e.getUnitsToScroll() / e
-								.getScrollAmount())) * step));
+						- (((float) (e.getUnitsToScroll() / e.getScrollAmount())) * step));
 				triggerScrollEvent();
 			}
 		});
@@ -138,7 +135,8 @@ public class PIScrollBar extends PIContainer {
 	/**
 	 * Sets the text overlay of this scroll bar.
 	 * 
-	 * @param s the new overlay
+	 * @param s
+	 *            the new overlay
 	 */
 	public final void setOverlay(final String s) {
 		this.overlayText = s;
@@ -157,10 +155,10 @@ public class PIScrollBar extends PIContainer {
 	/**
 	 * Adds the specified scroll bar listener to the scroll bar listener list.
 	 * 
-	 * @param l the listener to add
+	 * @param l
+	 *            the listener to add
 	 */
-	public final void addScrollBarListener(
-			final ScrollBarListener l) {
+	public final void addScrollBarListener(final ScrollBarListener l) {
 		scrollListeners.add(l);
 	}
 
@@ -169,13 +167,11 @@ public class PIScrollBar extends PIContainer {
 		super.render(g);
 		if (overlayText != null) {
 			PIStyle style = scrollContainer.getCurrentStyle();
-			Rectangle bounds =
-					scrollContainer.getAbsoluteBounds();
+			Rectangle bounds = scrollContainer.getAbsoluteBounds();
 			if (style.foreground != null && style.font != null
 					&& getContent() != null) {
-				g.drawWrappedText(bounds, style.font,
-						overlayText, style.foreground,
-						style.hAlign, style.vAlign);
+				g.drawWrappedText(bounds, style.font, overlayText,
+						style.foreground, style.hAlign, style.vAlign);
 			}
 		}
 	}
@@ -197,8 +193,7 @@ public class PIScrollBar extends PIContainer {
 			scrollDown.setLocation(width - size, 0);
 			scrollContainer.setLocation(size, 0);
 			scrollContainer.setSize(width - (size * 2), height);
-			scrollCurrent.setSize(
-					(int) (scrollContainer.getWidth() * step),
+			scrollCurrent.setSize((int) (scrollContainer.getWidth() * step),
 					height);
 		} else {
 			scrollDown.setLocation(0, height - size);
@@ -215,7 +210,8 @@ public class PIScrollBar extends PIContainer {
 	 * Sets the amount that the scroll amount is incremented by when clicking on
 	 * a direction button.
 	 * 
-	 * @param sStep the step amount
+	 * @param sStep
+	 *            the step amount
 	 */
 	public final void setStep(final float sStep) {
 		this.step = sStep;
@@ -236,7 +232,8 @@ public class PIScrollBar extends PIContainer {
 	 * Sets the currently scrolled amount, limited between <code>0</code> and
 	 * <code>1</code>.
 	 * 
-	 * @param f the new scroll amount
+	 * @param f
+	 *            the new scroll amount
 	 */
 	public final void setScrollAmount(final float f) {
 		this.scrollAmount = Math.max(0, Math.min(1, f));
@@ -244,17 +241,14 @@ public class PIScrollBar extends PIContainer {
 			scrollCurrent
 					.setLocation(
 							scrollContainer.getX()
-									+ (int) ((scrollContainer
-											.getWidth() - scrollCurrent
-											.getWidth()) * scrollAmount),
-							0);
+									+ (int) ((scrollContainer.getWidth() - scrollCurrent
+											.getWidth()) * scrollAmount), 0);
 		} else {
 			scrollCurrent
 					.setLocation(
 							0,
 							scrollContainer.getY()
-									+ (int) ((scrollContainer
-											.getHeight() - scrollCurrent
+									+ (int) ((scrollContainer.getHeight() - scrollCurrent
 											.getHeight()) * scrollAmount));
 		}
 		scrollCurrent.compile();
@@ -270,7 +264,8 @@ public class PIScrollBar extends PIContainer {
 		/**
 		 * Called when the current scroll bar value changes.
 		 * 
-		 * @param e the scroll event
+		 * @param e
+		 *            the scroll event
 		 */
 		void onScroll(ScrollEvent e);
 	}
@@ -282,6 +277,7 @@ public class PIScrollBar extends PIContainer {
 	 * 
 	 */
 	public static class ScrollEvent extends AWTEvent {
+		private static final long serialVersionUID = 1L;
 		/**
 		 * The event identification for the scroll event.
 		 */
@@ -295,11 +291,12 @@ public class PIScrollBar extends PIContainer {
 		 * Creates a scroll event with the given source object, and the
 		 * specified scroll position.
 		 * 
-		 * @param source the source event
-		 * @param sAmount the scroll position
+		 * @param source
+		 *            the source event
+		 * @param sAmount
+		 *            the scroll position
 		 */
-		public ScrollEvent(final Object source,
-				final float sAmount) {
+		public ScrollEvent(final Object source, final float sAmount) {
 			super(source, SCROLL_EVENT_ID);
 			this.amount = sAmount;
 		}

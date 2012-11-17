@@ -14,6 +14,7 @@ import com.pi.common.debug.PILoggerPane;
  * 
  */
 public class PILauncher extends Applet {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The logger that progress messages are printed into.
 	 */

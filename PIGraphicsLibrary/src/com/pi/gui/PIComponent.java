@@ -12,9 +12,11 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.pi.graphics.device.IGraphics;
 import com.pi.graphics.device.Renderable;
+import com.pi.graphics.device.WordWrappingCache;
 import com.pi.gui.PIStyle.StyleType;
 
 /**
@@ -90,11 +92,26 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	private int absX, absY;
 
 	/**
+	 * The cached word wrapping information.
+	 */
+	private WordWrappingCache[] cachedLineInfo = new WordWrappingCache[PIStyle.StyleType
+			.values().length];
+
+	/**
+	 * If the cached word wrapping information should be updated.
+	 */
+	private AtomicBoolean[] updateCachedLineInfo = new AtomicBoolean[PIStyle.StyleType
+			.values().length];
+
+	/**
 	 * Creates a new PIComponent with the {@link GUIKit#DEFAULT_STYLE} for
 	 * components.
 	 */
 	public PIComponent() {
 		styles[PIStyle.StyleType.NORMAL.ordinal()] = GUIKit.DEFAULT_STYLE;
+		for (int i = 0; i < updateCachedLineInfo.length; i++) {
+			updateCachedLineInfo[i] = new AtomicBoolean(false);
+		}
 	}
 
 	@Override
@@ -136,6 +153,7 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	 */
 	public final void setStyle(final PIStyle.StyleType type, final PIStyle style) {
 		styles[type.ordinal()] = style;
+		updateCachedLineInfo[type.ordinal()].set(true);
 	}
 
 	/**
@@ -179,6 +197,22 @@ public class PIComponent implements Renderable, MouseWheelListener,
 			return styles[PIStyle.StyleType.ACTIVE.ordinal()];
 		}
 		return styles[PIStyle.StyleType.NORMAL.ordinal()];
+	}
+
+	/**
+	 * Gets the currently active style type for this component.
+	 * 
+	 * @return the current style type
+	 */
+	public StyleType getCurrentStyleType() {
+		if (hovering && containsStyle(PIStyle.StyleType.HOVER)) {
+			return PIStyle.StyleType.HOVER;
+		}
+		if ((isFocused || isActive())
+				&& containsStyle(PIStyle.StyleType.ACTIVE)) {
+			return PIStyle.StyleType.ACTIVE;
+		}
+		return PIStyle.StyleType.NORMAL;
 	}
 
 	/**
@@ -253,7 +287,8 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	 */
 	public final void paintForeground(final IGraphics g) {
 		if (isVisible) {
-			PIStyle style = getCurrentStyle();
+			StyleType styleType = getCurrentStyleType();
+			PIStyle style = styles[styleType.ordinal()];
 			if (style == null) {
 				return;
 			}
@@ -267,7 +302,15 @@ public class PIComponent implements Renderable, MouseWheelListener,
 					&& content != null) {
 				String disp = getDisplay().trim();
 				if (disp.length() > 0) {
-					g.drawWrappedText(bounds, style.font, disp,
+					if (cachedLineInfo[styleType.ordinal()] == null
+							|| updateCachedLineInfo[styleType.ordinal()]
+									.getAndSet(false)) {
+						cachedLineInfo[styleType.ordinal()] = g
+								.getWordWrappingCache(bounds.width, style.font,
+										disp);
+					}
+					g.drawWrappedText(bounds, style.font,
+							cachedLineInfo[styleType.ordinal()],
 							style.foreground, style.hAlign, style.vAlign);
 				}
 			}
@@ -466,6 +509,9 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	 */
 	public final void setContent(final String s) {
 		this.content = s;
+		for (int i = 0; i < updateCachedLineInfo.length; i++) {
+			updateCachedLineInfo[i].set(true);
+		}
 	}
 
 	/**
@@ -479,6 +525,9 @@ public class PIComponent implements Renderable, MouseWheelListener,
 	public void setSize(final int sWidth, final int sHeight) {
 		this.width = sWidth;
 		this.height = sHeight;
+		for (int i = 0; i < updateCachedLineInfo.length; i++) {
+			updateCachedLineInfo[i].set(true);
+		}
 	}
 
 	/**
